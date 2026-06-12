@@ -236,7 +236,7 @@ void Object::initialize(
       ostringstream errmsg;
       errmsg << "Object::initialize():" << __LINE__
              << " ERROR: Unexpected NULL TrickHLA-Manager!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
    this->manager = trickhla_mgr;
 
@@ -260,7 +260,7 @@ void Object::initialize(
              << " an HLA instance of this object (i.e. 'create_HLA_instance'"
              << " field is set to true) or if the 'name_required' field is set"
              << " to true, which is the default." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Make sure we have a valid object FOM name.
@@ -270,7 +270,7 @@ void Object::initialize(
              << " ERROR: Object '" << name << "' is missing the Object FOM Name."
              << " Please check your input or modified-data files to make sure"
              << " the object FOM name is correctly specified." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Do a bounds check on the 'lag_comp_type' value.
@@ -283,7 +283,7 @@ void Object::initialize(
              << LAG_COMPENSATION_LAST_VALUE << ". Please check your input"
              << " or modified-data files to make sure the 'lag_comp_type' value"
              << " is correctly specified." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Make sure we have a lag compensation object if lag-compensation is specified.
@@ -294,7 +294,7 @@ void Object::initialize(
              << " is specified, but 'lag_comp' is NULL! Please check your input"
              << " or modified-data files to make sure the Lag-Compensation type"
              << " and object are correctly specified." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // If we have an attribute count but no attributes then let the user know.
@@ -305,7 +305,7 @@ void Object::initialize(
              << attr_count << " but no 'attributes' are"
              << " specified. Please check your input or modified-data files to"
              << " make sure the attributes are correctly specified." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // If we have attributes but the attribute-count is invalid then let
@@ -317,7 +317,7 @@ void Object::initialize(
              << attr_count << " but 'attributes' have been"
              << " specified. Please check your input or modified-data files to"
              << " make sure the attributes are correctly specified." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // If the user specified a packing object then make sure it extends the
@@ -330,7 +330,7 @@ void Object::initialize(
              << " extends the Packing class. Please check your input"
              << " or modified-data files to make sure the attributes are"
              << " correctly specified." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // If the user specified ownership handler object then make sure it extends
@@ -343,7 +343,7 @@ void Object::initialize(
              << " extends the OwnershipHandler class. Please check"
              << " your input or modified-data files to make sure the"
              << " attributes are correctly specified." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // If the user specified a resignation identification object then make sure
@@ -355,7 +355,7 @@ void Object::initialize(
              << " point to a class that extends the ObjectDeletedHandler"
              << " class. Please check your input or modified-data files to make"
              << " sure the attributes are correctly specified." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Reset the TrickHLA Attributes count if it is negative or if there
@@ -388,7 +388,7 @@ void Object::initialize(
                 << " configure all the Attributes of this object to use one of"
                 << " CONFIG_CYCLIC, CONFIG_ZERO_LOOKAHEAD or CONFIG_BLOCKING_IO"
                 << " for the Attribute 'config' setting." << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       }
       if ( any_cyclic_attr && any_blocking_io_attr ) {
          ostringstream errmsg;
@@ -399,7 +399,7 @@ void Object::initialize(
                 << " configure all the Attributes of this object to use one of"
                 << " CONFIG_CYCLIC, CONFIG_ZERO_LOOKAHEAD or CONFIG_BLOCKING_IO"
                 << " for the Attribute 'config' setting." << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       }
       if ( any_zero_lookahead_attr && any_blocking_io_attr ) {
          ostringstream errmsg;
@@ -410,7 +410,7 @@ void Object::initialize(
                 << " configure all the Attributes of this object to use one of"
                 << " CONFIG_CYCLIC, CONFIG_ZERO_LOOKAHEAD or CONFIG_BLOCKING_IO"
                 << " for the Attribute 'config' setting." << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       }
    }
 
@@ -428,7 +428,7 @@ void Object::initialize(
              << " the Lag-Compensation type 'lag_comp_type' is set to"
              << " LAG_COMPENSATION_NONE to disable Lag-Compensation when using"
              << " zero-lookahead configured object attributes." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // If any attribute is configured for blocking I/O then lag compensation
@@ -445,7 +445,7 @@ void Object::initialize(
              << " the Lag-Compensation type 'lag_comp_type' is set to"
              << " LAG_COMPENSATION_NONE to disable Lag-Compensation when using"
              << " blocking I/O configured object attributes." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // If any attribute is configured for zero-lookahead then the federate must
@@ -461,7 +461,7 @@ void Object::initialize(
              << Int64BaseTime::get_base_unit() << "). The lookahead time must be"
              << " set to zero to support zero-lookahead data exchanges, which"
              << " is what this object is configured for." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // TODO: Get the preferred order by parsing the FOM.
@@ -497,7 +497,7 @@ void Object::initialize(
                 << " FOM Name at array index " << i << ". Please check your input"
                 << " or modified-data files to make sure the object attribute"
                 << " FOM name is correctly specified." << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       }
 
       // Since Object updates are sent as a AttributeHandleValueMap there can be
@@ -513,7 +513,7 @@ void Object::initialize(
                    << "'. Please check your input or modified-data files to"
                    << " make sure the object attributes do not use duplicate"
                    << " FOM names." << endl;
-            DebugHandler::terminate_with_message( errmsg.str() );
+            DebugHandler::terminate( errmsg.str() );
          }
       }
 
@@ -530,7 +530,7 @@ void Object::initialize(
              << " point to a class that extends the LagCompensation"
              << " class. Please check your input or modified-data files to make"
              << " sure the attributes are correctly specified." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Initialize the Packing handler.
@@ -625,7 +625,7 @@ void Object::remove()
          errmsg << "Object::remove():" << __LINE__
                 << " Object '" << get_name() << "'"
                 << " DeletePrivilegeNotHeld: " << rti_err_msg << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       } catch ( ObjectInstanceNotKnown const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -633,7 +633,7 @@ void Object::remove()
          errmsg << "Object::remove():" << __LINE__
                 << " Object '" << get_name() << "'"
                 << " ObjectInstanceNotKnown: " << rti_err_msg << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       } catch ( FederateNotExecutionMember const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -641,7 +641,7 @@ void Object::remove()
          errmsg << "Object::remove():" << __LINE__
                 << " Object '" << get_name() << "'"
                 << " FederateNotExecutionMember: " << rti_err_msg << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       } catch ( SaveInProgress const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -649,7 +649,7 @@ void Object::remove()
          errmsg << "Object::remove():" << __LINE__
                 << " Object '" << get_name() << "'"
                 << " SaveInProgress: " << rti_err_msg << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       } catch ( RestoreInProgress const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -657,7 +657,7 @@ void Object::remove()
          errmsg << "Object::remove():" << __LINE__
                 << " Object '" << get_name() << "'"
                 << " RestoreInProgress: " << rti_err_msg << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       } catch ( NotConnected const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -665,7 +665,7 @@ void Object::remove()
          errmsg << "Object::remove():" << __LINE__
                 << " Object '" << get_name() << "'"
                 << " NotConnected: " << rti_err_msg << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
          Federate *federate = get_federate();
          if ( federate != NULL ) {
             federate->set_connection_lost();
@@ -677,7 +677,7 @@ void Object::remove()
          errmsg << "Object::remove():" << __LINE__
                 << " Object '" << get_name() << "'"
                 << " RTIinternalError: " << rti_err_msg << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       } catch ( RTI1516_NAMESPACE::Exception const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -685,7 +685,7 @@ void Object::remove()
          errmsg << "Object::remove():" << __LINE__
                 << " Object '" << get_name() << "'"
                 << " Exception: " << rti_err_msg << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       }
 
       // Macro to restore the saved FPU Control Word register value.
@@ -841,7 +841,7 @@ void Object::publish_object_attributes()
       errmsg << "Object::publish_object_attributes():" << __LINE__
              << " Object '" << get_name() << "'"
              << " ObjectClassNotDefined: " << rti_err_msg << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    } catch ( AttributeNotDefined const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
@@ -849,7 +849,7 @@ void Object::publish_object_attributes()
       errmsg << "Object::publish_object_attributes():" << __LINE__
              << " Object '" << get_name() << "'"
              << " AttributeNotDefined: " << rti_err_msg << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    } catch ( FederateNotExecutionMember const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
@@ -857,7 +857,7 @@ void Object::publish_object_attributes()
       errmsg << "Object::publish_object_attributes():" << __LINE__
              << " Object '" << get_name() << "'"
              << " FederateNotExecutionMember: " << rti_err_msg << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    } catch ( SaveInProgress const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
@@ -865,7 +865,7 @@ void Object::publish_object_attributes()
       errmsg << "Object::publish_object_attributes():" << __LINE__
              << " Object '" << get_name() << "'"
              << " SaveInProgress: " << rti_err_msg << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    } catch ( RestoreInProgress const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
@@ -873,7 +873,7 @@ void Object::publish_object_attributes()
       errmsg << "Object::publish_object_attributes():" << __LINE__
              << " Object '" << get_name() << "'"
              << " RestoreInProgress: " << rti_err_msg << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    } catch ( NotConnected const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
@@ -881,7 +881,7 @@ void Object::publish_object_attributes()
       errmsg << "Object::publish_object_attributes():" << __LINE__
              << " Object '" << get_name() << "'"
              << " NotConnected: " << rti_err_msg << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       Federate *federate = get_federate();
       if ( federate != NULL ) {
          federate->set_connection_lost();
@@ -893,7 +893,7 @@ void Object::publish_object_attributes()
       errmsg << "Object::publish_object_attributes():" << __LINE__
              << " Object '" << get_name() << "'"
              << " RTIinternalError: " << rti_err_msg << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
@@ -901,7 +901,7 @@ void Object::publish_object_attributes()
       errmsg << "Object::publish_object_attributes():" << __LINE__
              << " Object '" << get_name() << "'"
              << " Exception: " << rti_err_msg << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
    // Macro to restore the saved FPU Control Word register value.
    TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -944,7 +944,7 @@ void Object::unpublish_all_object_attributes()
          errmsg << "Object::unpublish_all_object_attributes():" << __LINE__
                 << " Object '" << get_name() << "'"
                 << " ObjectClassNotDefined: " << rti_err_msg << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       } catch ( RTI1516_NAMESPACE::OwnershipAcquisitionPending const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -952,7 +952,7 @@ void Object::unpublish_all_object_attributes()
          errmsg << "Object::unpublish_all_object_attributes():" << __LINE__
                 << " Object '" << get_name() << "'"
                 << " OwnershipAcquisitionPending: " << rti_err_msg << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -960,7 +960,7 @@ void Object::unpublish_all_object_attributes()
          errmsg << "Object::unpublish_all_object_attributes():" << __LINE__
                 << " Object '" << get_name() << "'"
                 << " FederateNotExecutionMember: " << rti_err_msg << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       } catch ( RTI1516_NAMESPACE::SaveInProgress const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -968,7 +968,7 @@ void Object::unpublish_all_object_attributes()
          errmsg << "Object::unpublish_all_object_attributes():" << __LINE__
                 << " Object '" << get_name() << "'"
                 << " SaveInProgress: " << rti_err_msg << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       } catch ( RTI1516_NAMESPACE::RestoreInProgress const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -976,7 +976,7 @@ void Object::unpublish_all_object_attributes()
          errmsg << "Object::unpublish_all_object_attributes():" << __LINE__
                 << " Object '" << get_name() << "'"
                 << " RestoreInProgress: " << rti_err_msg << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -984,7 +984,7 @@ void Object::unpublish_all_object_attributes()
          errmsg << "Object::unpublish_all_object_attributes():" << __LINE__
                 << " Object '" << get_name() << "'"
                 << " NotConnected: " << rti_err_msg << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
          Federate *federate = get_federate();
          if ( federate != NULL ) {
             federate->set_connection_lost();
@@ -996,7 +996,7 @@ void Object::unpublish_all_object_attributes()
          errmsg << "Object::unpublish_all_object_attributes():" << __LINE__
                 << " Object '" << get_name() << "'"
                 << " RTIinternalError: " << rti_err_msg << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       } catch ( RTI1516_NAMESPACE::Exception const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1004,7 +1004,7 @@ void Object::unpublish_all_object_attributes()
          errmsg << "Object::unpublish_all_object_attributes():" << __LINE__
                 << " Object '" << get_name() << "'"
                 << " Exception: " << rti_err_msg << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       }
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -1063,7 +1063,7 @@ void Object::subscribe_to_object_attributes()
       errmsg << "Object::subscribe_to_object_attributes():" << __LINE__
              << " Object '" << get_name() << "'"
              << " ObjectClassNotDefined: " << rti_err_msg << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    } catch ( AttributeNotDefined const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1071,7 +1071,7 @@ void Object::subscribe_to_object_attributes()
       errmsg << "Object::subscribe_to_object_attributes():" << __LINE__
              << " Object '" << get_name() << "'"
              << " AttributeNotDefined: " << rti_err_msg << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    } catch ( FederateNotExecutionMember const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1079,7 +1079,7 @@ void Object::subscribe_to_object_attributes()
       errmsg << "Object::subscribe_to_object_attributes():" << __LINE__
              << " Object '" << get_name() << "'"
              << " FederateNotExecutionMember: " << rti_err_msg << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    } catch ( SaveInProgress const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1087,7 +1087,7 @@ void Object::subscribe_to_object_attributes()
       errmsg << "Object::subscribe_to_object_attributes():" << __LINE__
              << " Object '" << get_name() << "'"
              << " SaveInProgress: " << rti_err_msg << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    } catch ( RestoreInProgress const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1095,7 +1095,7 @@ void Object::subscribe_to_object_attributes()
       errmsg << "Object::subscribe_to_object_attributes():" << __LINE__
              << " Object '" << get_name() << "'"
              << " RestoreInProgress: " << rti_err_msg << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    } catch ( InvalidUpdateRateDesignator const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1103,7 +1103,7 @@ void Object::subscribe_to_object_attributes()
       errmsg << "Object::subscribe_to_object_attributes():" << __LINE__
              << " Object '" << get_name() << "'"
              << " InvalidUpdateRateDesignator: " << rti_err_msg << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    } catch ( NotConnected const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1111,7 +1111,7 @@ void Object::subscribe_to_object_attributes()
       errmsg << "Object::subscribe_to_object_attributes():" << __LINE__
              << " Object '" << get_name() << "'"
              << " NotConnected: " << rti_err_msg << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       Federate *federate = get_federate();
       if ( federate != NULL ) {
          federate->set_connection_lost();
@@ -1123,7 +1123,7 @@ void Object::subscribe_to_object_attributes()
       errmsg << "Object::subscribe_to_object_attributes():" << __LINE__
              << " Object '" << get_name() << "'"
              << " RTIinternalError: " << rti_err_msg << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1131,7 +1131,7 @@ void Object::subscribe_to_object_attributes()
       errmsg << "Object::subscribe_to_object_attributes():" << __LINE__
              << " Object '" << get_name() << "'"
              << " Exception: " << rti_err_msg << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
    // Macro to restore the saved FPU Control Word register value.
    TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -1175,7 +1175,7 @@ void Object::unsubscribe_all_object_attributes()
          errmsg << "Object::unsubscribe_all_object_attributes():" << __LINE__
                 << " Object '" << get_name() << "'"
                 << " ObjectClassNotDefined: " << rti_err_msg << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1183,7 +1183,7 @@ void Object::unsubscribe_all_object_attributes()
          errmsg << "Object::unsubscribe_all_object_attributes():" << __LINE__
                 << " Object '" << get_name() << "'"
                 << " FederateNotExecutionMember: " << rti_err_msg << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       } catch ( RTI1516_NAMESPACE::SaveInProgress const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1191,7 +1191,7 @@ void Object::unsubscribe_all_object_attributes()
          errmsg << "Object::unsubscribe_all_object_attributes():" << __LINE__
                 << " Object '" << get_name() << "'"
                 << " SaveInProgress: " << rti_err_msg << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       } catch ( RTI1516_NAMESPACE::RestoreInProgress const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1199,7 +1199,7 @@ void Object::unsubscribe_all_object_attributes()
          errmsg << "Object::unsubscribe_all_object_attributes():" << __LINE__
                 << " Object '" << get_name() << "'"
                 << " RestoreInProgress: " << rti_err_msg << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1207,7 +1207,7 @@ void Object::unsubscribe_all_object_attributes()
          errmsg << "Object::unsubscribe_all_object_attributes():" << __LINE__
                 << " Object '" << get_name() << "'"
                 << " NotConnected: " << rti_err_msg << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
          Federate *federate = get_federate();
          if ( federate != NULL ) {
             federate->set_connection_lost();
@@ -1219,7 +1219,7 @@ void Object::unsubscribe_all_object_attributes()
          errmsg << "Object::unsubscribe_all_object_attributes():" << __LINE__
                 << " Object '" << get_name() << "'"
                 << " RTIinternalError: " << rti_err_msg << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       } catch ( RTI1516_NAMESPACE::Exception const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1227,7 +1227,7 @@ void Object::unsubscribe_all_object_attributes()
          errmsg << "Object::unsubscribe_all_object_attributes():" << __LINE__
                 << " Object '" << get_name() << "'"
                 << " Exception: " << rti_err_msg << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       }
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -1296,7 +1296,7 @@ Requesting reservation of Object instance name '%s'.\n",
          errmsg << "Object::reserve_object_name_with_RTI():" << __LINE__
                 << " Object '" << get_name() << "'"
                 << " IllegalName: " << rti_err_msg << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       } catch ( FederateNotExecutionMember const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1304,7 +1304,7 @@ Requesting reservation of Object instance name '%s'.\n",
          errmsg << "Object::reserve_object_name_with_RTI():" << __LINE__
                 << " Object '" << get_name() << "'"
                 << " FederateNotExecutionMember: " << rti_err_msg << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       } catch ( SaveInProgress const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1312,7 +1312,7 @@ Requesting reservation of Object instance name '%s'.\n",
          errmsg << "Object::SaveInProgress():" << __LINE__
                 << " Object '" << get_name() << "'"
                 << " FederateNotExecutionMember: " << rti_err_msg << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       } catch ( RestoreInProgress const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1320,7 +1320,7 @@ Requesting reservation of Object instance name '%s'.\n",
          errmsg << "Object::SaveInProgress():" << __LINE__
                 << " Object '" << get_name() << "'"
                 << " RestoreInProgress: " << rti_err_msg << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       } catch ( NotConnected const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1328,7 +1328,7 @@ Requesting reservation of Object instance name '%s'.\n",
          errmsg << "Object::SaveInProgress():" << __LINE__
                 << " Object '" << get_name() << "'"
                 << " NotConnected: " << rti_err_msg << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
          Federate *federate = get_federate();
          if ( federate != NULL ) {
             federate->set_connection_lost();
@@ -1340,7 +1340,7 @@ Requesting reservation of Object instance name '%s'.\n",
          errmsg << "Object::SaveInProgress():" << __LINE__
                 << " Object '" << get_name() << "'"
                 << " RTIinternalError: " << rti_err_msg << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       } catch ( RTI1516_NAMESPACE::Exception const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1348,7 +1348,7 @@ Requesting reservation of Object instance name '%s'.\n",
          errmsg << "Object::SaveInProgress():" << __LINE__
                 << " Object '" << get_name() << "'"
                 << " Exception: " << rti_err_msg << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       }
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -1412,7 +1412,7 @@ Waiting on reservation of Object Instance Name '%s'.\n",
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
                       << " the Central RTI Component (CRC) level!" << endl;
-               DebugHandler::terminate_with_message( errmsg.str() );
+               DebugHandler::terminate( errmsg.str() );
             }
          }
 
@@ -1484,7 +1484,7 @@ Detected object already registered '%s' Instance-ID:%s\n",
          errmsg << "Object::register_object_with_RTI():" << __LINE__
                 << " Object '" << get_name() << "'"
                 << " ObjectInstanceNameInUse: " << rti_err_msg << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       } catch ( ObjectInstanceNameNotReserved const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1492,7 +1492,7 @@ Detected object already registered '%s' Instance-ID:%s\n",
          errmsg << "Object::register_object_with_RTI():" << __LINE__
                 << " Object '" << get_name() << "'"
                 << " ObjectInstanceNameNotReserved: " << rti_err_msg << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       } catch ( ObjectClassNotDefined const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1500,7 +1500,7 @@ Detected object already registered '%s' Instance-ID:%s\n",
          errmsg << "Object::register_object_with_RTI():" << __LINE__
                 << " Object '" << get_name() << "'"
                 << " ObjectClassNotDefined: " << rti_err_msg << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       } catch ( ObjectClassNotPublished const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1508,7 +1508,7 @@ Detected object already registered '%s' Instance-ID:%s\n",
          errmsg << "Object::register_object_with_RTI():" << __LINE__
                 << " Object '" << get_name() << "'"
                 << " ObjectClassNotPublished: " << rti_err_msg << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       } catch ( FederateNotExecutionMember const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1516,7 +1516,7 @@ Detected object already registered '%s' Instance-ID:%s\n",
          errmsg << "Object::register_object_with_RTI():" << __LINE__
                 << " Object '" << get_name() << "'"
                 << " FederateNotExecutionMember: " << rti_err_msg << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       } catch ( SaveInProgress const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1524,7 +1524,7 @@ Detected object already registered '%s' Instance-ID:%s\n",
          errmsg << "Object::register_object_with_RTI():" << __LINE__
                 << " Object '" << get_name() << "'"
                 << " SaveInProgress: " << rti_err_msg << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       } catch ( RestoreInProgress const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1532,7 +1532,7 @@ Detected object already registered '%s' Instance-ID:%s\n",
          errmsg << "Object::register_object_with_RTI():" << __LINE__
                 << " Object '" << get_name() << "'"
                 << " RestoreInProgress: " << rti_err_msg << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       } catch ( NotConnected const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1540,7 +1540,7 @@ Detected object already registered '%s' Instance-ID:%s\n",
          errmsg << "Object::register_object_with_RTI():" << __LINE__
                 << " Object '" << get_name() << "'"
                 << " NotConnected: " << rti_err_msg << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
          Federate *federate = get_federate();
          if ( federate != NULL ) {
             federate->set_connection_lost();
@@ -1552,7 +1552,7 @@ Detected object already registered '%s' Instance-ID:%s\n",
          errmsg << "Object::register_object_with_RTI():" << __LINE__
                 << " Object '" << get_name() << "'"
                 << " RTIinternalError: " << rti_err_msg << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       } catch ( RTI1516_NAMESPACE::Exception const &e ) {
          string rti_err_msg;
          StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1560,7 +1560,7 @@ Detected object already registered '%s' Instance-ID:%s\n",
          errmsg << "Object::register_object_with_RTI():" << __LINE__
                 << " Object '" << get_name() << "'"
                 << " Exception: " << rti_err_msg << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       }
 
       // Macro to restore the saved FPU Control Word register value.
@@ -1585,7 +1585,7 @@ Detected object already registered '%s' Instance-ID:%s\n",
             errmsg << "Object::register_object_with_RTI():" << __LINE__
                    << " Object '" << get_name() << "'"
                    << " ObjectInstanceNotKnown: " << rti_err_msg << endl;
-            DebugHandler::terminate_with_message( errmsg.str() );
+            DebugHandler::terminate( errmsg.str() );
          } catch ( FederateNotExecutionMember const &e ) {
             string rti_err_msg;
             StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1593,7 +1593,7 @@ Detected object already registered '%s' Instance-ID:%s\n",
             errmsg << "Object::register_object_with_RTI():" << __LINE__
                    << " Object '" << get_name() << "'"
                    << " FederateNotExecutionMember: " << rti_err_msg << endl;
-            DebugHandler::terminate_with_message( errmsg.str() );
+            DebugHandler::terminate( errmsg.str() );
          } catch ( NotConnected const &e ) {
             string rti_err_msg;
             StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1601,7 +1601,7 @@ Detected object already registered '%s' Instance-ID:%s\n",
             errmsg << "Object::register_object_with_RTI():" << __LINE__
                    << " Object '" << get_name() << "'"
                    << " NotConnected: " << rti_err_msg << endl;
-            DebugHandler::terminate_with_message( errmsg.str() );
+            DebugHandler::terminate( errmsg.str() );
             Federate *federate = get_federate();
             if ( federate != NULL ) {
                federate->set_connection_lost();
@@ -1613,7 +1613,7 @@ Detected object already registered '%s' Instance-ID:%s\n",
             errmsg << "Object::register_object_with_RTI():" << __LINE__
                    << " Object '" << get_name() << "'"
                    << " RTIinternalError: " << rti_err_msg << endl;
-            DebugHandler::terminate_with_message( errmsg.str() );
+            DebugHandler::terminate( errmsg.str() );
          } catch ( RTI1516_NAMESPACE::Exception const &e ) {
             string rti_err_msg;
             StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1621,7 +1621,7 @@ Detected object already registered '%s' Instance-ID:%s\n",
             errmsg << "Object::register_object_with_RTI():" << __LINE__
                    << " Object '" << get_name() << "'"
                    << " Exception: " << rti_err_msg << endl;
-            DebugHandler::terminate_with_message( errmsg.str() );
+            DebugHandler::terminate( errmsg.str() );
          }
          // Macro to restore the saved FPU Control Word register value.
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -1674,7 +1674,7 @@ void Object::wait_for_object_registration()
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
                       << " the Central RTI Component (CRC) level!" << endl;
-               DebugHandler::terminate_with_message( errmsg.str() );
+               DebugHandler::terminate( errmsg.str() );
             }
          }
 
@@ -1784,7 +1784,7 @@ void Object::setup_preferred_order_with_RTI()
       errmsg << "Object::setup_preferred_order_with_RTI():" << __LINE__
              << " Object '" << get_name() << "'"
              << " ObjectInstanceNotKnown: " << rti_err_msg << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    } catch ( AttributeNotOwned const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1792,7 +1792,7 @@ void Object::setup_preferred_order_with_RTI()
       errmsg << "Object::setup_preferred_order_with_RTI():" << __LINE__
              << " Object '" << get_name() << "'"
              << " AttributeNotOwned: " << rti_err_msg << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    } catch ( AttributeNotDefined const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1800,7 +1800,7 @@ void Object::setup_preferred_order_with_RTI()
       errmsg << "Object::setup_preferred_order_with_RTI():" << __LINE__
              << " Object '" << get_name() << "'"
              << " AttributeNotDefined: " << rti_err_msg << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    } catch ( FederateNotExecutionMember const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1808,7 +1808,7 @@ void Object::setup_preferred_order_with_RTI()
       errmsg << "Object::setup_preferred_order_with_RTI():" << __LINE__
              << " Object '" << get_name() << "'"
              << " FederateNotExecutionMember: " << rti_err_msg << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    } catch ( SaveInProgress const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1816,7 +1816,7 @@ void Object::setup_preferred_order_with_RTI()
       errmsg << "Object::setup_preferred_order_with_RTI():" << __LINE__
              << " Object '" << get_name() << "'"
              << " SaveInProgress: " << rti_err_msg << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    } catch ( RestoreInProgress const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1824,7 +1824,7 @@ void Object::setup_preferred_order_with_RTI()
       errmsg << "Object::setup_preferred_order_with_RTI():" << __LINE__
              << " Object '" << get_name() << "'"
              << " RestoreInProgress: " << rti_err_msg << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    } catch ( NotConnected const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1832,7 +1832,7 @@ void Object::setup_preferred_order_with_RTI()
       errmsg << "Object::setup_preferred_order_with_RTI():" << __LINE__
              << " Object '" << get_name() << "'"
              << " NotConnected: " << rti_err_msg << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       Federate *federate = get_federate();
       if ( federate != NULL ) {
          federate->set_connection_lost();
@@ -1844,7 +1844,7 @@ void Object::setup_preferred_order_with_RTI()
       errmsg << "Object::setup_preferred_order_with_RTI():" << __LINE__
              << " Object '" << get_name() << "'"
              << " RTIinternalError: " << rti_err_msg << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1852,7 +1852,7 @@ void Object::setup_preferred_order_with_RTI()
       errmsg << "Object::setup_preferred_order_with_RTI():" << __LINE__
              << " Object '" << get_name() << "'"
              << " Exception: " << rti_err_msg << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Macro to restore the saved FPU Control Word register value.
@@ -1898,7 +1898,7 @@ void Object::request_attribute_value_update()
       errmsg << "Object::request_attribute_value_update():" << __LINE__
              << " Object '" << get_name() << "'"
              << " AttributeNotDefined: " << rti_err_msg << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    } catch ( ObjectInstanceNotKnown const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1906,7 +1906,7 @@ void Object::request_attribute_value_update()
       errmsg << "Object::request_attribute_value_update():" << __LINE__
              << " Object '" << get_name() << "'"
              << " ObjectInstanceNotKnown: " << rti_err_msg << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    } catch ( FederateNotExecutionMember const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1914,7 +1914,7 @@ void Object::request_attribute_value_update()
       errmsg << "Object::request_attribute_value_update():" << __LINE__
              << " Object '" << get_name() << "'"
              << " FederateNotExecutionMember: " << rti_err_msg << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    } catch ( SaveInProgress const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1922,7 +1922,7 @@ void Object::request_attribute_value_update()
       errmsg << "Object::request_attribute_value_update():" << __LINE__
              << " Object '" << get_name() << "'"
              << " SaveInProgress: " << rti_err_msg << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    } catch ( RestoreInProgress const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1930,7 +1930,7 @@ void Object::request_attribute_value_update()
       errmsg << "Object::request_attribute_value_update():" << __LINE__
              << " Object '" << get_name() << "'"
              << " RestoreInProgress: " << rti_err_msg << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    } catch ( NotConnected const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1938,7 +1938,7 @@ void Object::request_attribute_value_update()
       errmsg << "Object::request_attribute_value_update():" << __LINE__
              << " Object '" << get_name() << "'"
              << " NotConnected: " << rti_err_msg << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       Federate *federate = get_federate();
       if ( federate != NULL ) {
          federate->set_connection_lost();
@@ -1950,7 +1950,7 @@ void Object::request_attribute_value_update()
       errmsg << "Object::request_attribute_value_update():" << __LINE__
              << " Object '" << get_name() << "'"
              << " RTIinternalError: " << rti_err_msg << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
@@ -1958,7 +1958,7 @@ void Object::request_attribute_value_update()
       errmsg << "Object::request_attribute_value_update():" << __LINE__
              << " Object '" << get_name() << "'"
              << " Exception: " << rti_err_msg << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Macro to restore the saved FPU Control Word register value.
@@ -2570,7 +2570,7 @@ void Object::send_zero_lookahead_and_requested_data(
                    << " type 'lag_comp_type' is set to LAG_COMPENSATION_NONE"
                    << " to disable Lag-Compensation when sending zero-lookahead"
                    << " configured object attributes." << endl;
-            DebugHandler::terminate_with_message( errmsg.str() );
+            DebugHandler::terminate( errmsg.str() );
             break;
          }
       }
@@ -2841,7 +2841,7 @@ void Object::send_blocking_io_data()
                    << " type 'lag_comp_type' is set to LAG_COMPENSATION_NONE"
                    << " to disable Lag-Compensation when sending blocking I/O"
                    << " configured object attributes." << endl;
-            DebugHandler::terminate_with_message( errmsg.str() );
+            DebugHandler::terminate( errmsg.str() );
             break;
          }
       }
@@ -3223,7 +3223,7 @@ void Object::receive_zero_lookahead_data()
                       << " type 'lag_comp_type' is set to LAG_COMPENSATION_NONE"
                       << " to disable Lag-Compensation when sending zero-lookahead"
                       << " configured object attributes." << endl;
-               DebugHandler::terminate_with_message( errmsg.str() );
+               DebugHandler::terminate( errmsg.str() );
                break;
             }
          }
@@ -3298,7 +3298,7 @@ void Object::receive_blocking_io_data()
                       << " type 'lag_comp_type' is set to LAG_COMPENSATION_NONE"
                       << " to disable Lag-Compensation when receiving blocking I/O"
                       << " configured object attributes." << endl;
-               DebugHandler::terminate_with_message( errmsg.str() );
+               DebugHandler::terminate( errmsg.str() );
                break;
             }
          }
@@ -4137,7 +4137,7 @@ void Object::pull_ownership_at_init(
       errmsg << "Object::pull_ownership_at_init():" << __LINE__
              << " ERROR: No attributes found to pull ownership for object '"
              << get_name() << "'!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return;
    }
 
@@ -4161,7 +4161,7 @@ void Object::pull_ownership_at_init(
                    << " ERROR: For object '" << get_name()
                    << "', no TrickHLA-Attribute found for attribute FOM name '"
                    << attr_name_vector[i] << "'!" << endl;
-            DebugHandler::terminate_with_message( errmsg.str() );
+            DebugHandler::terminate( errmsg.str() );
             return;
          }
 
@@ -4279,7 +4279,7 @@ object '%s' because of error: '%s'\n",
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
                          << " the Central RTI Component (CRC) level!" << endl;
-                  DebugHandler::terminate_with_message( errmsg.str() );
+                  DebugHandler::terminate( errmsg.str() );
                }
             }
 
@@ -4352,7 +4352,7 @@ void Object::handle_pulled_ownership_at_init()
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
                       << " the Central RTI Component (CRC) level!" << endl;
-               DebugHandler::terminate_with_message( errmsg.str() );
+               DebugHandler::terminate( errmsg.str() );
             }
          }
 
@@ -4935,7 +4935,7 @@ for Attributes of object '%s'.\n",
          ostringstream errmsg;
          errmsg << "Object::push_ownership():" << __LINE__
                 << " ERROR: Failed to create ownership divestiture pthread!" << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       }
    }
 }
@@ -4973,7 +4973,7 @@ void Object::push_ownership_at_init(
       errmsg << "Object::push_ownership_at_init():" << __LINE__
              << " ERROR: No attributes found to push ownership for object '"
              << get_name() << "'!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return;
    }
 
@@ -5000,7 +5000,7 @@ void Object::push_ownership_at_init(
                    << " ERROR: For object '" << get_name()
                    << "', no TrickHLA-Attribute found for attribute FOM name '"
                    << attr_name_vector[i] << "'!" << endl;
-            DebugHandler::terminate_with_message( errmsg.str() );
+            DebugHandler::terminate( errmsg.str() );
             return;
          }
 
@@ -5061,7 +5061,7 @@ push Attribute '%s'->'%s' of object '%s' because it is already remotely owned.\n
          ostringstream errmsg;
          errmsg << "Object::push_ownership_at_init():" << __LINE__
                 << " ERROR: Failed to create ownership divestiture pthread!" << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       }
 
       Federate *federate = get_federate();
@@ -5106,7 +5106,7 @@ push Attribute '%s'->'%s' of object '%s' because it is already remotely owned.\n
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
                          << " the Central RTI Component (CRC) level!" << endl;
-                  DebugHandler::terminate_with_message( errmsg.str() );
+                  DebugHandler::terminate( errmsg.str() );
                }
             }
 
@@ -5180,7 +5180,7 @@ void Object::handle_pushed_ownership_at_init()
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
                       << " the Central RTI Component (CRC) level!" << endl;
-               DebugHandler::terminate_with_message( errmsg.str() );
+               DebugHandler::terminate( errmsg.str() );
             }
          }
 
@@ -5702,7 +5702,7 @@ Unable to pull ownership for the attributes of object '%s' because of error: '%s
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
                          << " the Central RTI Component (CRC) level!" << endl;
-                  DebugHandler::terminate_with_message( errmsg.str() );
+                  DebugHandler::terminate( errmsg.str() );
                }
             }
 
@@ -5760,7 +5760,7 @@ void Object::initialize_thread_ID_array()
              << " ERROR: Could not allocate memory for 'thread_ids_array'"
              << " for requested size " << this->thread_ids_array_count
              << "!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
    for ( unsigned int id = 0; id < this->thread_ids_array_count; ++id ) {
       this->thread_ids_array[id] = false;
@@ -5799,7 +5799,7 @@ void Object::initialize_thread_ID_array()
                    << " Valid Trick thread-ID range is 0 to "
                    << ( this->thread_ids_array_count - 1 )
                    << "!" << endl;
-            DebugHandler::terminate_with_message( errmsg.str() );
+            DebugHandler::terminate( errmsg.str() );
          }
       }
    }

@@ -235,7 +235,7 @@ else:
 #--------------------------------------------------------------------------
 # Pitch specific local settings designator:
 #THLA.federate.rti_address = 'localhost:8989'
-THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
+THLA.federate.local_settings = 'crcHost = localhost\:8989'
 
 #--------------------------------------------------------------------------
 # Set up federate time related parameters.

@@ -77,7 +77,7 @@ Enum8Data::Enum8Data(
       ostringstream errmsg;
       errmsg << "Enum8Data::Enum8Data():" << __LINE__
              << " ERROR: Failed to allocate memory for ptr_enum8!" << endl;
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      TrickHLA::DebugHandler::terminate( errmsg.str() );
       return;
    }
    for ( int i = 0; i < ptr_enum8_size; ++i ) {

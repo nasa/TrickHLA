@@ -81,7 +81,7 @@ CharRawDataEncoder::CharRawDataEncoder(
              << ") is not the expected type '"
              << trickTypeCharString( TRICK_CHARACTER, "UNSUPPORTED_TYPE" )
              << "'." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return;
    }
 
@@ -90,7 +90,7 @@ CharRawDataEncoder::CharRawDataEncoder(
       errmsg << "CharRawDataEncoder::CharRawDataEncoder():" << __LINE__
              << " ERROR: Trick ref-attributes for '" << data_name
              << "' the variable must be a dynamic variable array!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return;
    }
 }
@@ -145,7 +145,7 @@ size_t CharRawDataEncoder::decodeFrom(
    errmsg << "CharRawDataEncoder::decodeFrom():" << __LINE__
           << " ERROR: Encoding not supported for a field of an HLA Record!"
           << endl;
-   DebugHandler::terminate_with_message( errmsg.str() );
+   DebugHandler::terminate( errmsg.str() );
    return index;
 }
 #pragma GCC diagnostic pop

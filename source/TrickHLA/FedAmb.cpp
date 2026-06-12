@@ -141,7 +141,7 @@ void FedAmb::initialize()
       ostringstream errmsg;
       errmsg << "FedAmb::initialize():" << __LINE__
              << " ERROR: Unexpected NULL TrickHLA::Federate." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Check to make sure we have a reference to the TrickHLA::Manager.
@@ -149,7 +149,7 @@ void FedAmb::initialize()
       ostringstream errmsg;
       errmsg << "FedAmb::initialize():" << __LINE__
              << " ERROR: Unexpected NULL TrickHLA::Manager." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
@@ -161,7 +161,7 @@ void FedAmb::initialize()
       ostringstream errmsg;
       errmsg << "FedAmb::initialize():" << __LINE__
              << " ERROR: Unexpected empty federate name." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -197,7 +197,7 @@ void FedAmb::connectionLost(
       errmsg << "FedAmb::connectionLost():" << __LINE__
              << " ERROR: Lost the connection to the RTI. Reason:'"
              << fault_msg << "' Terminating the simulation!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       exit( -1 );
    }
 }

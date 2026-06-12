@@ -257,7 +257,7 @@ void ExecutionControlBase::initialize()
                 << " configured as the Trick real time clock! Make sure"
                 << " the CTETimelineBase class constructor is calling"
                 << " real_time_change_clock( this );" << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       }
 
       // Make sure to update the clock resolution so that it uses the
@@ -294,7 +294,7 @@ void ExecutionControlBase::initialize()
       ostringstream errmsg;
       errmsg << "ExecutionControlBase::initialize():" << __LINE__
              << " ERROR: Time constraints verification failed!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    if ( !does_scenario_timeline_exist() ) {
@@ -312,7 +312,7 @@ Trick simulation time as the default scenario-timeline.\n",
          errmsg << "ExecutionControlBase::initialize():" << __LINE__
                 << " FAILED to allocate enough memory for ScenarioTimeline class!"
                 << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
          return;
       }
    }
@@ -425,7 +425,7 @@ bool ExecutionControlBase::object_instance_name_reservation_failed(
                 << execution_configuration->get_name()
                 << "'! This conflicts with this being the designated Master federate!"
                 << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       }
 
       // We failed to register the ExecutionConfiguration object instance name
@@ -511,7 +511,7 @@ void ExecutionControlBase::add_multiphase_init_sync_points()
          errmsg << "ExecutionControlBase::add_multiphase_init_sync_points:" << __LINE__
                 << " ERROR: User specified multiphase init sync-point label '"
                 << user_sync_pt_labels[i] << "' already added!" << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       } else {
          add_sync_point( ws_label, TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST );
       }
@@ -608,7 +608,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
              << " sure at least one ExecutionConfiguration attribute has 'publish = true'"
              << " set. Please check your input or modified-data files to make"
              << " sure the 'publish' value is correctly specified." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 }
 
@@ -665,7 +665,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
                          << " the Central RTI Component (CRC) level!" << endl;
-                  DebugHandler::terminate_with_message( errmsg.str() );
+                  DebugHandler::terminate( errmsg.str() );
                }
             }
 
@@ -694,7 +694,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
              << " 'subscribe = true' set. Please check your input or modified-data"
              << " files to make sure the 'subscribe' value is correctly specified."
              << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 }
 
@@ -1129,7 +1129,7 @@ void ExecutionControlBase::setup_checkpoint()
                             << " RTI or we are no longer joined to the federation"
                             << " execution because someone forced our resignation at"
                             << " the Central RTI Component (CRC) level!" << endl;
-                     DebugHandler::terminate_with_message( errmsg.str() );
+                     DebugHandler::terminate( errmsg.str() );
                   }
                }
 
@@ -1338,7 +1338,7 @@ void ExecutionControlBase::setup_restore()
          ostringstream errmsg;
          errmsg << "ExecutionControlBase::setup_restore():" << __LINE__ << endl
                 << "ERROR: " << return_string;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       }
       // set the federate restore_name to filename (without the federation name)- this gets announced to other feds
       federate->initiate_restore_announce( restore_name_str );
@@ -1369,7 +1369,7 @@ void ExecutionControlBase::setup_restore()
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
                          << " the Central RTI Component (CRC) level!" << endl;
-                  DebugHandler::terminate_with_message( errmsg.str() );
+                  DebugHandler::terminate( errmsg.str() );
                }
             }
 
@@ -1471,7 +1471,7 @@ void ExecutionControlBase::post_restore()
          ostringstream errmsg;
          errmsg << "TrickExecutionControlBase::post_restore():" << __LINE__
                 << " ERROR: " << tStr << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
