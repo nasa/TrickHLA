@@ -782,7 +782,13 @@ class ExecutionControlBase : public SyncPointManagerBase
    virtual bool restore_request_status_check();
 
    /*! @brief Requests a Federatation wide Restore. */
-   virtual void restore_request( std::wstring const &label = L"" );
+   virtual void restore_request()
+   {
+      restore_request( L"" );
+   }
+
+   /*! @brief Requests a Federatation wide Restore. */
+   virtual void restore_request( std::wstring const &label );
 
    /*! @brief Checks for Restore request success or failure. */
    virtual void restore_request_check();

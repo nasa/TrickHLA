@@ -658,8 +658,7 @@ void Object::remove()
                 << " Object '" << get_name() << "'"
                 << " NotConnected: " << rti_err_msg << endl;
          DebugHandler::terminate( errmsg.str() );
-         if ( federate != NULL )
-         {
+         if ( federate != NULL ) {
             federate->set_connection_lost();
          }
       } catch ( RTIinternalError const &e ) {
