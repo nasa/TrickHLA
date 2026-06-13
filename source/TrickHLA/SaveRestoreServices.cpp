@@ -363,10 +363,9 @@ void SaveRestoreServices::set_save_time(
    Int64Time granted_time = time_management_service->get_granted_time();
    if ( time < granted_time ) {
 
-      std::string label_str;
-      StringUtilities::to_string( label_str, save_label );
-
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+         std::string label_str;
+         StringUtilities::to_string( label_str, save_label );
          ostringstream msg;
          msg << "SaveRestoreServices::set_save_time():" << __LINE__
              << " : WARNING: Save time for label \'" << label_str
@@ -623,13 +622,10 @@ bool SaveRestoreServices::save_in_progress_check()
    }
 
    if ( save_state == THLASaveProcessEnum::SAVE_IN_PROGRESS ) {
-
-      std::string label_str;
-      StringUtilities::to_string( label_str, save_label );
-
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
-         message_publish( MSG_WARNING,
-                          "SaveRestoreServices::save_in_progress_check():%d HLA Save for label \'%s\' in progress!\n",
+         std::string label_str;
+         StringUtilities::to_string( label_str, save_label );
+         message_publish( MSG_WARNING, "SaveRestoreServices::save_in_progress_check():%d HLA Save for label \'%s\' in progress!\n",
                           __LINE__, label_str.c_str() );
       }
       return ( true );
@@ -1103,8 +1099,7 @@ bool SaveRestoreServices::set_restore_state( THLARestoreProcessEnum state )
         && ( state != THLARestoreProcessEnum::RESTORE_UNSUPPORTED ) ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
-         message_publish( MSG_WARNING,
-                          "SaveRestoreServices::set_restore_state():%d : HLA SaveRestore NOT supported!\n",
+         message_publish( MSG_WARNING, "SaveRestoreServices::set_restore_state():%d : HLA SaveRestore NOT supported!\n",
                           __LINE__ );
       }
 
@@ -1340,10 +1335,7 @@ std::string SaveRestoreServices::to_string( RTI1516_NAMESPACE::FederateRestoreSt
    for ( FederateRestoreStatus const &status : response ) {
 
       // Get the individual federate status string.
-      response_msg << to_string( status );
-
-      // Terminate the message string with a new line.
-      response_msg << endl;
+      response_msg << to_string( status ) << endl;
    }
 
    return ( response_msg.str() );
@@ -1471,13 +1463,10 @@ bool SaveRestoreServices::restore_in_progress_check()
    }
 
    if ( this->restore_state == THLARestoreProcessEnum::RESTORE_IN_PROGRESS ) {
-
-      std::string label_str;
-      StringUtilities::to_string( label_str, restore_label );
-
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
-         message_publish( MSG_WARNING,
-                          "SaveRestoreServices::restore_in_progress_check():%d HLA Restore for label \'%s\' in progress!\n",
+         std::string label_str;
+         StringUtilities::to_string( label_str, restore_label );
+         message_publish( MSG_WARNING, "SaveRestoreServices::restore_in_progress_check():%d HLA Restore for label \'%s\' in progress!\n",
                           __LINE__, label_str.c_str() );
       }
       return ( true );
