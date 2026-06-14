@@ -74,6 +74,13 @@ void DebugHandler::set(
    }
 }
 
+void DebugHandler::print_message(
+   string const      &message,
+   MESSAGE_TYPE const msg_level )
+{
+   message_publish( msg_level, message.c_str() );
+}
+
 void DebugHandler::terminate(
    string const &message,
    int const     exit_code )
