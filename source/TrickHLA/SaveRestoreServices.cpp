@@ -172,8 +172,8 @@ std::string TrickHLA::to_string( THLARestoreProcessEnum restore_state )
  */
 SaveRestoreServices::SaveRestoreServices( Federate &fed )
    : federate( &fed ),
-     object_service( NULL ),
-     time_management_service( NULL ),
+     object_service( fed.get_object_service() ),
+     time_management_service( fed.get_time_management_service() ),
      execution_control( NULL ),
      running_feds_count_at_time_of_restore( 0 ),
      joined_federates_file_name( "" ),
@@ -211,12 +211,6 @@ SaveRestoreServices::SaveRestoreServices( Federate &fed )
      restart_flag( false ),
      restart_cfg_flag( false )
 {
-   // Set the TrickHLA::Manager instance reference.
-   this->object_service = fed.get_object_service();
-
-   // Register the Time Management Services instance.
-   time_management_service = fed.get_time_management_service();
-
    return;
 }
 
