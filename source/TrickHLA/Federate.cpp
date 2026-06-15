@@ -4203,7 +4203,7 @@ void Federate::remove_MOM_HLAfederate_instance_id(
    // Search for the federate information from running_feds...
    foundName = false;
    for ( size_t i = 0; i < running_feds_count; ++i ) {
-      if ( running_feds[i].MOM_instance_name != tMOMName ) {
+      if ( running_feds[i].MOM_instance_name == tMOMName ) {
          foundName = true;
          tFedName  = running_feds[i].name;
       }
