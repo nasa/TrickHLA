@@ -48,7 +48,7 @@ NASA, Johnson Space Center\n
 
 #   if !defined( SWIG )
 #      if !defined( __linux__ )
-#         error "The TSync Central Timing Equipment (CTE) card is only supported on Linux."
+#         error The TSync Central Timing Equipment (CTE) card is only supported on Linux.
 #      endif
 
 extern "C" {

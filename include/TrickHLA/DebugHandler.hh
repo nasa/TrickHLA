@@ -36,6 +36,9 @@ NASA, Johnson Space Center\n
 // System includes.
 #include <string>
 
+// Trick includes.
+#include "trick/message_type.h"
+
 // TrickHLA includes.
 #include "TrickHLA/Types.hh"
 
@@ -72,11 +75,17 @@ class DebugHandler
     *  @param code  Debug code source area of the incoming message. */
    static void set( DebugLevelEnum const level, DebugSourceEnum const code );
 
+   /*! @brief Print the message for the given Trick message level.
+    *  @param message The message to print to the console.
+    *  @param msg_level Trick message level. */
+   static void print_message( std::string const &message,
+                              MESSAGE_TYPE const msg_level = MSG_NORMAL );
+
    /*! @brief Print the message then shutdown by calling exec_terminate().
-    *  @param message Error message to print to standard error.
+    *  @param message Error message to print to the console.
     *  @param exit_code the exit code to use with a default of 1. */
-   static void terminate_with_message( std::string const &message,
-                                       int const          exit_code = 1 );
+   static void terminate( std::string const &message,
+                          int const          exit_code = 1 );
 
   public:
    static DebugLevelEnum  debug_level;  ///< @trick_units{--} Maximum debug report level requested by the user, default: THLA_NO_TRACE

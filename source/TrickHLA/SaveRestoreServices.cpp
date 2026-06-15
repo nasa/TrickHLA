@@ -239,7 +239,7 @@ void SaveRestoreServices::load_and_print_running_federate_names()
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
                       << " the Central RTI Component (CRC) level!" << endl;
-               DebugHandler::terminate_with_message( errmsg.str() );
+               DebugHandler::terminate( errmsg.str() );
             }
          }
 
@@ -302,7 +302,7 @@ MOM just informed us that there are %d federates currently running in the federa
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
                       << " the Central RTI Component (CRC) level!" << endl;
-               DebugHandler::terminate_with_message( errmsg.str() );
+               DebugHandler::terminate( errmsg.str() );
             }
          }
 
@@ -340,7 +340,7 @@ MOM just informed us that there are %d federates currently running in the federa
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
                       << " the Central RTI Component (CRC) level!" << endl;
-               DebugHandler::terminate_with_message( errmsg.str() );
+               DebugHandler::terminate( errmsg.str() );
             }
          }
 
@@ -408,7 +408,7 @@ void SaveRestoreServices::update_running_feds()
       ostringstream errmsg;
       errmsg << "SaveRestoreServices::update_running_feds():" << __LINE__
              << " ERROR: Could not allocate memory for running_feds!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    if ( federate->joined_federate_name_map.size() != running_feds_count ) {
@@ -437,7 +437,7 @@ void SaveRestoreServices::update_running_feds()
              << federate->joined_federate_name_map.size()
              << " entries but running_feds_count = " << running_feds_count
              << "!!!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Loop through joined_federate_name_map to build the running_feds list
@@ -488,7 +488,7 @@ void SaveRestoreServices::add_a_single_entry_into_running_feds()
       errmsg << "SaveRestoreServices::add_a_single_entry_into_running_feds():" << __LINE__
              << " ERROR: Could not allocate memory for temp_feds when attempting to add"
              << " an entry into running_feds!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    } else {
 
       // copy current running_feds entries into temporary structure...
@@ -554,7 +554,7 @@ void SaveRestoreServices::write_running_feds_file(
       ostringstream errmsg;
       errmsg << "SaveRestoreServices::write_running_feds_file():" << __LINE__
              << " ERROR: Failed to open file '" << full_path << "' for writing!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 }
 
@@ -757,7 +757,7 @@ void SaveRestoreServices::read_running_feds_file(
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::read_running_feds_file():" << __LINE__
                 << " ERROR: Could not allocate memory for known_feds!" << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       }
 
       string current_line;
@@ -777,7 +777,7 @@ void SaveRestoreServices::read_running_feds_file(
       ostringstream errmsg;
       errmsg << "SaveRestoreServices::read_running_feds_file()" << __LINE__
              << " ERROR: Failed to open file '" << full_path << "'!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 }
 
@@ -792,7 +792,7 @@ void SaveRestoreServices::copy_running_feds_into_known_feds()
       ostringstream errmsg;
       errmsg << "SaveRestoreServices::copy_running_feds_into_known_feds():" << __LINE__
              << " ERROR: Could not allocate memory for known_feds!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Copy everything from running_feds into known_feds...
@@ -929,7 +929,7 @@ void SaveRestoreServices::wait_for_federation_restore_begun()
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
                       << " the Central RTI Component (CRC) level!" << endl;
-               DebugHandler::terminate_with_message( errmsg.str() );
+               DebugHandler::terminate( errmsg.str() );
             }
          }
 
@@ -978,7 +978,7 @@ void SaveRestoreServices::wait_until_federation_is_ready_to_restore()
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
                       << " the Central RTI Component (CRC) level!" << endl;
-               DebugHandler::terminate_with_message( errmsg.str() );
+               DebugHandler::terminate( errmsg.str() );
             }
          }
 
@@ -1062,7 +1062,7 @@ string SaveRestoreServices::wait_for_federation_restore_to_complete()
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
                          << " the Central RTI Component (CRC) level!" << endl;
-                  DebugHandler::terminate_with_message( errmsg.str() );
+                  DebugHandler::terminate( errmsg.str() );
                }
             }
 
@@ -1125,7 +1125,7 @@ void SaveRestoreServices::wait_for_restore_request_callback()
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
                       << " the Central RTI Component (CRC) level!" << endl;
-               DebugHandler::terminate_with_message( errmsg.str() );
+               DebugHandler::terminate( errmsg.str() );
             }
          }
 
@@ -1174,7 +1174,7 @@ void SaveRestoreServices::wait_for_restore_status_to_complete()
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
                       << " the Central RTI Component (CRC) level!" << endl;
-               DebugHandler::terminate_with_message( errmsg.str() );
+               DebugHandler::terminate( errmsg.str() );
             }
          }
 
@@ -1223,7 +1223,7 @@ void SaveRestoreServices::wait_for_save_status_to_complete()
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
                       << " the Central RTI Component (CRC) level!" << endl;
-               DebugHandler::terminate_with_message( errmsg.str() );
+               DebugHandler::terminate( errmsg.str() );
             }
          }
 
@@ -1281,7 +1281,7 @@ void SaveRestoreServices::wait_for_federation_restore_failed_callback_to_complet
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
                       << " the Central RTI Component (CRC) level!" << endl;
-               DebugHandler::terminate_with_message( errmsg.str() );
+               DebugHandler::terminate( errmsg.str() );
             }
          }
 

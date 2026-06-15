@@ -97,7 +97,7 @@ void RefFrameState::set_data(
       errmsg << "SpaceFOM::RefFrameState::pre_initialize():" << __LINE__
              << " ERROR: Unexpected NULL reference frame: " << this->packing_data.name << endl;
       // Print message and terminate.
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return;
    }
    this->ref_frame_data = ref_frame_data_ptr;
@@ -117,7 +117,7 @@ void RefFrameState::initialize()
       errmsg << "SpaceFOM::RefFrameState::initialize():" << __LINE__
              << " ERROR: Unexpected NULL reference frame: " << this->packing_data.name << endl;
       // Print message and terminate.
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return;
    }
 

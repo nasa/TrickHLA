@@ -198,7 +198,7 @@ void TimeManagementServices::restart_initialization()
              << " must be greater than or equal to zero and not negative. Make"
              << " sure 'lookahead_time' in your input.py or modified-data file is"
              << " not a negative number." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -401,7 +401,7 @@ void TimeManagementServices::scale_trick_tics_to_HLA_base_time_multiplier()
              << " in order to support the HLA base unit of '"
              << Int64BaseTime::get_base_unit()
              << "'." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 }
 
@@ -430,7 +430,7 @@ void TimeManagementServices::set_lookahead(
              << " Specific Federation Agreement (FESFA) and TimeManagementServices Compliance"
              << " Declaration (FCD) documents for your Federation to document"
              << " the change in timing class resolution." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Determine if the Trick time Tic can represent the lookahead time.
@@ -442,7 +442,7 @@ void TimeManagementServices::set_lookahead(
              << setprecision( 18 ) << value
              << " seconds). Please update the Trick time tic value in your"
              << " input.py file (i.e. by calling 'trick.exec_set_time_tic_value()')." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
@@ -672,7 +672,7 @@ void TimeManagementServices::setup_time_constrained()
 
    // Sanity check.
    if ( RTI_ambassador.get() == NULL ) {
-      DebugHandler::terminate_with_message( "TimeManagementServices::setup_time_constrained() ERROR: NULL pointer to RTIambassador!" );
+      DebugHandler::terminate( "TimeManagementServices::setup_time_constrained() ERROR: NULL pointer to RTIambassador!" );
       return;
    }
 
@@ -725,7 +725,7 @@ void TimeManagementServices::setup_time_constrained()
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
                          << " the Central RTI Component (CRC) level!" << endl;
-                  DebugHandler::terminate_with_message( errmsg.str() );
+                  DebugHandler::terminate( errmsg.str() );
                }
             }
 
@@ -866,7 +866,7 @@ void TimeManagementServices::setup_time_regulation()
 
    // Sanity check.
    if ( RTI_ambassador.get() == NULL ) {
-      DebugHandler::terminate_with_message( "TimeManagementServices::setup_time_regulation() ERROR: NULL pointer to RTIambassador!" );
+      DebugHandler::terminate( "TimeManagementServices::setup_time_regulation() ERROR: NULL pointer to RTIambassador!" );
       return;
    }
 
@@ -925,7 +925,7 @@ void TimeManagementServices::setup_time_regulation()
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
                          << " the Central RTI Component (CRC) level!" << endl;
-                  DebugHandler::terminate_with_message( errmsg.str() );
+                  DebugHandler::terminate( errmsg.str() );
                }
             }
 
@@ -1318,7 +1318,7 @@ void TimeManagementServices::wait_for_zero_lookahead_TARA_TAG()
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
                          << " the Central RTI Component (CRC) level!" << endl;
-                  DebugHandler::terminate_with_message( errmsg.str() );
+                  DebugHandler::terminate( errmsg.str() );
                }
             }
 
@@ -1355,7 +1355,7 @@ bool TimeManagementServices::verify_time_constraints()
              << " (i.e. by calling 'trick.exec_set_time_tic_value( "
              << Int64BaseTime::get_base_time_multiplier() << " )')." << endl;
 
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return false;
    }
 
@@ -1374,7 +1374,7 @@ bool TimeManagementServices::verify_time_constraints()
       }
       errmsg << ". Please update the Trick time tic value in your input.py file"
              << " (i.e. by calling 'trick.exec_set_time_tic_value( )')." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return false;
    }
 
@@ -1459,7 +1459,7 @@ void TimeManagementServices::wait_for_time_advance_grant()
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
                          << " the Central RTI Component (CRC) level!" << endl;
-                  DebugHandler::terminate_with_message( errmsg.str() );
+                  DebugHandler::terminate( errmsg.str() );
                }
             }
 

@@ -131,7 +131,7 @@ void MTRInteractionHandler::send_interaction(
       ostringstream errmsg;
       errmsg << "SpaceFOM::MTRInteractionHandler::send_interaction():" << __LINE__
              << " ERROR: Unexpected NULL Interaction!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Get the ExecutionControl object and cast it to an SpaceFOM::ExecutionControl.
@@ -227,7 +227,7 @@ void MTRInteractionHandler::receive_interaction(
       ostringstream errmsg;
       errmsg << "SpaceFOM::MTRInteractionHandler::receive_interaction():" << __LINE__
              << " ERROR: Unexpected NULL Interaction!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Get the ExecutionControl object and cast it to an SpaceFOM::ExecutionControl.
@@ -236,7 +236,7 @@ void MTRInteractionHandler::receive_interaction(
       ostringstream errmsg;
       errmsg << "SpaceFOM::MTRInteractionHandler::receive_interaction():" << __LINE__
              << "  ERROR: Unexpected NULL SpaceFOM::ExecutionControl!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       exit( 1 );
    }
 

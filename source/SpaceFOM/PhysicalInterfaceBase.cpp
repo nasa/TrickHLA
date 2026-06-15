@@ -205,7 +205,7 @@ void PhysicalInterfaceBase::initialize()
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterfaceBase::initialize():" << __LINE__
              << " ERROR: Unexpected NULL TrickHLA Object pointer!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return;
    }
 
@@ -215,7 +215,7 @@ void PhysicalInterfaceBase::initialize()
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterfaceBase::initialize():" << __LINE__
              << " ERROR: Unexpected empty interface name!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Should have interface parent specified if creating this interface.
@@ -306,7 +306,7 @@ void PhysicalInterfaceBase::pack()
       errmsg << "PhysicalInterfaceBase::pack():" << __LINE__
 #if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
              << " ERROR: The initialize() function has not been called!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
 #else
              << " WARNING: The initialize() function has not been called!" << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
@@ -341,7 +341,7 @@ void PhysicalInterfaceBase::unpack()
       errmsg << "PhysicalInterfaceBase::unpack():" << __LINE__
 #if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
              << " ERROR: The initialize() function has not been called!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
 #else
              << " WARNING: The initialize() function has not been called!" << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );

@@ -77,7 +77,7 @@ Enum32Data::Enum32Data(
       ostringstream errmsg;
       errmsg << "Enum32Data::Enum32Data():" << __LINE__
              << " ERROR: Failed to allocate memory for ptr_enum32!" << endl;
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      TrickHLA::DebugHandler::terminate( errmsg.str() );
       return;
    }
    for ( int i = 0; i < ptr_enum32_size; ++i ) {

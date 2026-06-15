@@ -4,17 +4,20 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## [Unreleased] - 2026-04-01
+## [Unreleased] - 2026-06-12
 
 ### Notable Additions
 
 
 ### Breaking Changes
 
-- The minimum supported Trick version is 25.0.3 because of Trick changes for variable server security, swig class pointers, and std::wstring support.
+- The minimum supported Trick version is 25.1.0 because of Trick changes for variable server security, swig class pointers, and std::wstring support.
 - The function name to disable Trick child thread associations in TrickHLA was changed and the corresponding function call in the TrickHLAFederateConfig.py has also been updated.
   - FROM: disable_trick_child_thread_associations()
   - TO: disable_trick_thread_associations()
+- Simplified the DebugHandler terminate function name.
+  - FROM: DebugHandler::terminate_with_message()
+  - TO: DebugHandler::terminate()
 
 
 ### Added
