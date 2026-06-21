@@ -56,14 +56,15 @@ NASA, Johnson Space Center\n
 // and restore the FPU control word value. Note: The last semicolon is left off
 // so that the macro can be used with a semicolon. This is only supported for
 // Linux and Intel Macs.
-//
-// Precision-Control values (bits 8 and 9 of the FPU control-word)
-#define _FPU_PC_MASK 0x300
-#define _FPU_PC_EXTENDED 0x300
-#define _FPU_PC_DOUBLE 0x200
-#define _FPU_PC_UNDEFINED 0x100
-#define _FPU_PC_SINGLE 0x000
 #if ( defined( FPU_CW_PROTECTION ) && ( defined( __i386__ ) || defined( __x86_64__ ) ) && !defined( SWIG ) )
+
+// Precision-Control values (bits 8 and 9 of the FPU control-word)
+#   define _FPU_PC_MASK 0x300
+#   define _FPU_PC_EXTENDED 0x300
+#   define _FPU_PC_DOUBLE 0x200
+#   define _FPU_PC_UNDEFINED 0x100
+#   define _FPU_PC_SINGLE 0x000
+
 #   if defined( __APPLE__ )
 // Mac OS support on Intel CPUs
 // Some code below is from the fpu_control.h header file, which is missing
@@ -86,7 +87,7 @@ extern fpu_control_t __fpu_control;
 // Linux support.
 #      include <fpu_control.h>               // For FPU Control Word register access.
 #      define TRICKHLA_INIT_FPU_CONTROL_WORD // No need to initialize for Linux.
-#   endif
+#   endif                                    // __APPLE__
 
 #   define TRICKHLA_SAVE_FPU_CONTROL_WORD \
       fpu_control_t _fpu_cw;              \
@@ -113,14 +114,14 @@ TrickHLA team for support.\n",                                                  
          }
 #   else
 #      define TRICKHLA_VALIDATE_FPU_CONTROL_WORD // FPU Control Word validation not enabled.
-#   endif
+#   endif                                        // TRICKHLA_ENABLE_FPU_CONTROL_WORD_VALIDATION
 
 #else
 #   define TRICKHLA_INIT_FPU_CONTROL_WORD     // FPU Control Word protected not enabled.
 #   define TRICKHLA_SAVE_FPU_CONTROL_WORD     // FPU Control Word protected not enabled.
 #   define TRICKHLA_RESTORE_FPU_CONTROL_WORD  // FPU Control Word protected not enabled.
 #   define TRICKHLA_VALIDATE_FPU_CONTROL_WORD // FPU Control Word protected not enabled.
-#endif
+#endif                                        // FPU_CW_PROTECTION
 
 namespace TrickHLA
 {
