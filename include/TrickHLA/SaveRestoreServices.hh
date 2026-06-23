@@ -388,7 +388,7 @@ class SaveRestoreServices : public CheckpointConversionBase
    void restore_request_status();
 
    /*! @brief Routine to check if the restore request status in complete. */
-   void restore_request_status_check();
+   void restore_waiting_for_request_status();
 
    /*! @brief Format a FederateRestore status response string. */
    static std::string to_string( RTI1516_NAMESPACE::FederateRestoreStatus const &restore_status );
@@ -401,7 +401,7 @@ class SaveRestoreServices : public CheckpointConversionBase
    void restore_request( std::wstring const &label );
 
    /*! @brief Checks for Restore request success or failure. */
-   void restore_request_check();
+   void restore_waiting_for_request();
 
    /*! @brief Function called when a Restore request fails. */
    void restore_request_failed();
@@ -429,7 +429,7 @@ class SaveRestoreServices : public CheckpointConversionBase
 
    /*! @brief Function called cyclicly checking on Restore process progress.
     *  @return Returns true if the Restore has been initiated. */
-   bool restore_in_progress_check();
+   bool restore_waiting_for_completion();
 
    /*! @brief Function called to inform the Federation that this federate has
     *  successfully completed a Trick checkpoint Restore. */
@@ -444,6 +444,10 @@ class SaveRestoreServices : public CheckpointConversionBase
 
    /*! @brief Function called when a Restore process fails. */
    void restore_failed();
+
+   /*! @brief Prints the reason for the federation restore failure.
+    * @param reason Restore failure reason. */
+   void restore_failed_print_reason( RTI1516_NAMESPACE::RestoreFailureReason reason );
 
    //--------------------------------------------------------------------------
    // Potentially deprecated SaveRestoreService functions.
@@ -544,10 +548,6 @@ class SaveRestoreServices : public CheckpointConversionBase
     * @param status_vector Save status. */
    void process_requested_federation_restore_status(
       RTI1516_NAMESPACE::FederateRestoreStatusVector const &status_vector );
-
-   /*! @brief Prints the reason for the federation restore failure.
-    * @param reason Restore failure reason. */
-   void print_restore_failure_reason( RTI1516_NAMESPACE::RestoreFailureReason reason );
 
    /*! @brief Sets the Save filename and flag.
     *  @param restore_name_label Restore file name. */
@@ -655,10 +655,10 @@ class SaveRestoreServices : public CheckpointConversionBase
    std::string joined_federates_file_name; ///< @trick_io{**} File containing the names of the joined federates.
 
    // Save and Restore variables.
-   std::string HLA_save_directory;     ///< @trick_units{--} HLA Save directory.
-   bool        copy_run_directory;     ///< @trick_units{--} Make a backup of RUN directory before restarting the federation (default: false).
-   bool        unfreeze_after_save;    ///< @trick_units{--} Flag to indicate that we should go to run immediately after a save (default: false)
-   bool        support_tcp_checkpoint; ///< @trick_units{--} Support Save/Restore from Trick Control Panel (default: false).
+   std::string  HLA_save_directory;     ///< @trick_units{--} HLA Save directory.
+   bool         copy_run_directory;     ///< @trick_units{--} Make a backup of RUN directory before restarting the federation (default: false).
+   bool         unfreeze_after_save;    ///< @trick_units{--} Flag to indicate that we should go to run immediately after a save (default: false)
+   bool         support_tcp_checkpoint; ///< @trick_units{--} Support Save/Restore from Trick Control Panel (default: false).
 
    // Save process variables.
    THLASaveProcessEnum save_state; ///< @trick_units{1} Where we are in the Save process.
@@ -670,7 +670,7 @@ class SaveRestoreServices : public CheckpointConversionBase
    std::set< ScheduledSave > pending_save_queue; //< @trick_io{**} A time ordered queue for pending Save requests.
 
    // Restore process variables.
-   THLARestoreProcessEnum restore_state; ///< @trick_io{**}  Where we are in the restore process
+   THLARestoreProcessEnum restore_state; ///< @trick_io{**} Where we are in the restore process
    std::wstring           restore_label; ///< @trick_io{**} Restore label.
 
    bool restore_status_response_complete; ///< @trick_units{--} Flag indicating if HLA Restore status response is complete.

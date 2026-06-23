@@ -55,6 +55,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/time/CTETimelineBase.hh"
 #include "TrickHLA/time/ScenarioTimeline.hh"
 #include "TrickHLA/time/SimTimeline.hh"
+#include "TrickHLA/utils/SleepTimeout.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -778,8 +779,8 @@ class ExecutionControlBase : public SyncPointManagerBase
    /*! @brief Request a Federation Restore status. */
    virtual void restore_request_status();
 
-   /*! @brief Request a Federation Restore status. */
-   virtual bool restore_request_status_check();
+   /*! @brief Wait for a Federation Restore request status. */
+   virtual bool restore_waiting_for_request_status();
 
    /*! @brief Requests a Federatation wide Restore. */
    virtual void restore_request()
@@ -791,7 +792,7 @@ class ExecutionControlBase : public SyncPointManagerBase
    virtual void restore_request( std::wstring const &label );
 
    /*! @brief Checks for Restore request success or failure. */
-   virtual void restore_request_check();
+   virtual void restore_waiting_for_request();
 
    /*! @brief Function called when a Restore request fails. */
    virtual void restore_request_failed();
@@ -803,7 +804,7 @@ class ExecutionControlBase : public SyncPointManagerBase
    virtual void restore_begun();
 
    /*! @brief Function called cyclicly while waiting for Restore initiated callback. */
-   virtual void waiting_for_restore_initiated();
+   virtual void restore_waiting_for_initiated();
 
    /*! @brief Function called when a Restore has been initiated. */
    virtual void restore_initiated(
@@ -818,7 +819,7 @@ class ExecutionControlBase : public SyncPointManagerBase
 #endif // IEEE_1516_2025
 
    /*! @brief Function called cyclicly checking on Restore process progress. */
-   virtual void restore_in_progress_check();
+   virtual void restore_waiting_for_completion();
 
    /*! @brief Function called when a Restore process succeeds. */
    virtual void restore_succeded();
@@ -901,6 +902,8 @@ class ExecutionControlBase : public SyncPointManagerBase
 
    // FIXME: This is probably covered with the current_execution_control_mode.
    // bool execution_has_begun; ///< @trick_units{--} Flag to indicate if the federate has begun simulation execution.
+
+   SleepTimeout process_timer; ///< @trick_units{--} Timer used to control printout frequency for process loops.
 
    ExecutionConfigurationBase *execution_configuration; /**< @trick_units{--}
       Associates TrickHLA::ExecutionConfigurationBase class object instance.

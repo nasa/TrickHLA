@@ -932,6 +932,9 @@ bool ExecutionControlBase::check_for_shutdown_with_termination()
 
 void ExecutionControlBase::freeze_init()
 {
+   // Reset the process timer.
+   process_timer.reset();
+
    // Wait while we get an updated joined federate list.
    federate->wait_for_joined_federates_update();
 
@@ -1342,7 +1345,7 @@ void ExecutionControlBase::restore_process()
 
       case THLARestoreProcessEnum::RESTORE_REQUEST_STATUS:
          // Continue checking the Restore status request state.
-         this->restore_request_status_check();
+         this->restore_waiting_for_request_status();
          break;
 
       case THLARestoreProcessEnum::RESTORE_STATUS_COMPLETE:
@@ -1355,7 +1358,7 @@ void ExecutionControlBase::restore_process()
       case THLARestoreProcessEnum::RESTORE_REQUESTED:
          // This marks the phase in the Restore process where we are waiting for
          // confirmation on the restore request.
-         this->restore_request_check();
+         this->restore_waiting_for_request();
          break;
 
       case THLARestoreProcessEnum::RESTORE_REQUEST_FAILED:
@@ -1372,7 +1375,7 @@ void ExecutionControlBase::restore_process()
       case THLARestoreProcessEnum::RESTORE_BEGUN:
          // The Federation wide Restore has begun.  This is also a transient phase as
          // an FedAmb::initiateFederateRestore() callback should follow shortly.
-         this->waiting_for_restore_initiated();
+         this->restore_waiting_for_initiated();
          break;
 
       case THLARestoreProcessEnum::RESTORE_IN_PROGRESS:
@@ -1380,7 +1383,7 @@ void ExecutionControlBase::restore_process()
          // while waiting for the restore to complete.  This phase is entered
          // upon receiveing the FedAmb::initiateFederateRestore() callback and
          // persists until we receive the FedAmb::federationRestored() callback.
-         this->restore_in_progress_check();
+         this->restore_waiting_for_completion();
          break;
 
       case THLARestoreProcessEnum::RESTORE_COMPLETE:
@@ -1531,9 +1534,9 @@ void ExecutionControlBase::restore_request_status()
 /*!
  *  @job_class{scheduled}
  */
-bool ExecutionControlBase::restore_request_status_check()
+bool ExecutionControlBase::restore_waiting_for_request_status()
 {
-   save_restore_service->restore_request_status_check();
+   save_restore_service->restore_waiting_for_request_status();
    return ( false );
 }
 
@@ -1549,9 +1552,9 @@ void ExecutionControlBase::restore_request( std::wstring const &label )
 /*!
  *  @job_class{scheduled}
  */
-void ExecutionControlBase::restore_request_check()
+void ExecutionControlBase::restore_waiting_for_request()
 {
-   save_restore_service->restore_request_check();
+   save_restore_service->restore_waiting_for_request();
    return;
 }
 
@@ -1585,7 +1588,7 @@ void ExecutionControlBase::restore_begun()
 /*!
  *  @job_class{scheduled}
  */
-void ExecutionControlBase::waiting_for_restore_initiated()
+void ExecutionControlBase::restore_waiting_for_initiated()
 {
    save_restore_service->restore_waiting_for_initiated();
    return;
@@ -1612,9 +1615,9 @@ void ExecutionControlBase::restore_initiated(
 /*!
  *  @job_class{scheduled}
  */
-void ExecutionControlBase::restore_in_progress_check()
+void ExecutionControlBase::restore_waiting_for_completion()
 {
-   save_restore_service->restore_in_progress_check();
+   save_restore_service->restore_waiting_for_completion();
    return;
 }
 

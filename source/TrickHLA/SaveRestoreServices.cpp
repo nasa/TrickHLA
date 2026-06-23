@@ -1175,7 +1175,7 @@ void SaveRestoreServices::restore_request_status()
 /*!
  *  @job_class{scheduled}
  */
-void SaveRestoreServices::restore_request_status_check()
+void SaveRestoreServices::restore_waiting_for_request_status()
 {
    bool restore_conflict = false;
 
@@ -1184,7 +1184,7 @@ void SaveRestoreServices::restore_request_status_check()
    if ( !execution_control->is_save_and_restore_supported() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
          ostringstream errmsg;
-         errmsg << "SaveRestoreServices::restore_request_status_check():" << __LINE__
+         errmsg << "SaveRestoreServices::restore_waiting_for_request_status():" << __LINE__
                 << " ERROR: SaveRestore NOT supported!" << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
@@ -1198,6 +1198,16 @@ void SaveRestoreServices::restore_request_status_check()
 
    // Check to see if we have received a Restore status response.
    if ( restore_status_response.empty() ) {
+
+      // Check to see if we want to print out a wait message.
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+         if ( execution_control->process_timer.timeout( execution_control->process_timer.time() ) ) {
+            execution_control->process_timer.reset();
+            message_publish( MSG_NORMAL,
+                             "SaveRestoreServices::restore_waiting_for_request_status():%d Waiting for Restore status response ...\n",
+                             __LINE__ );
+         }
+      }
 
       // An empty Restore status response means we are still waiting for the
       // FedAmb::federationRestoreStatusResponse callback.
@@ -1218,7 +1228,7 @@ void SaveRestoreServices::restore_request_status_check()
    // Check for Restore response status conflict.
    if ( restore_conflict ) {
       ostringstream errmsg;
-      errmsg << "SaveRestoreServices::restore_request_status_check():" << __LINE__
+      errmsg << "SaveRestoreServices::restore_waiting_for_request_status():" << __LINE__
              << " ERROR: Federation NOT in state to Restore:" << endl;
       errmsg << to_string( restore_status_response ) << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
@@ -1227,7 +1237,7 @@ void SaveRestoreServices::restore_request_status_check()
       restore_state = THLARestoreProcessEnum::RESTORE_STATUS_COMPLETE;
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
          ostringstream msg;
-         msg << "SaveRestoreServices::restore_request_status_check():" << __LINE__
+         msg << "SaveRestoreServices::restore_waiting_for_request_status():" << __LINE__
              << ": Restore status response complete." << endl;
          message_publish( MSG_WARNING, msg.str().c_str() );
       }
@@ -1389,13 +1399,26 @@ std::string SaveRestoreServices::to_string( FederateRestoreStatus const &restore
 /*!
  *  @job_class{scheduled}
  */
-void SaveRestoreServices::restore_request_check()
+void SaveRestoreServices::restore_waiting_for_request()
 {
 
    // Check the current Restore state.
    if ( restore_state == THLARestoreProcessEnum::RESTORE_REQUESTED ) {
+
       // We're still waiting for the FedAmb callback from the
-      // RTIamb->requestFederationRestore call.  So, just return.
+      // RTIamb->requestFederationRestore call.
+
+      // Check to see if we want to print out a wait message.
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+         if ( execution_control->process_timer.timeout( execution_control->process_timer.time() ) ) {
+            execution_control->process_timer.reset();
+            message_publish( MSG_NORMAL,
+                             "SaveRestoreServices::restore_waiting_for_request():%d Waiting for Restore request callback ...\n",
+                             __LINE__ );
+         }
+      }
+
+      // Just return.
       return;
    }
    else if ( restore_state == THLARestoreProcessEnum::RESTORE_REQUEST_SUCCEEDED ) {
@@ -1403,7 +1426,7 @@ void SaveRestoreServices::restore_request_check()
          string label_str;
          StringUtilities::to_string( label_str, restore_label );
          ostringstream errmsg;
-         errmsg << "SaveRestoreServices::restore_request_check():" << __LINE__
+         errmsg << "SaveRestoreServices::restore_waiting_for_request():" << __LINE__
                 << " : Restore succeeded!  Label: '" << label_str << "'" << endl;
          message_publish( MSG_NORMAL, errmsg.str().c_str(), __LINE__ );
       }
@@ -1412,7 +1435,7 @@ void SaveRestoreServices::restore_request_check()
       string label_str;
       StringUtilities::to_string( label_str, restore_label );
       ostringstream errmsg;
-      errmsg << "SaveRestoreServices::restore_request_check():" << __LINE__
+      errmsg << "SaveRestoreServices::restore_waiting_for_request():" << __LINE__
              << " ERROR: Restore failed!  Label: '" << label_str << "'" << endl;
       message_publish( MSG_ERROR, errmsg.str().c_str(), __LINE__ );
    }
@@ -1487,7 +1510,16 @@ void SaveRestoreServices::restore_begun()
 /*! @brief Function called after Restore begun while waiting for initiation. */
 void SaveRestoreServices::restore_waiting_for_initiated()
 {
-   // FIXME: Probably need a timed print here.
+   // Check to see if we want to print out a wait message.
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+      if ( execution_control->process_timer.timeout( execution_control->process_timer.time() ) ) {
+         execution_control->process_timer.reset();
+         message_publish( MSG_NORMAL,
+                          "SaveRestoreServices::restore_waiting_for_initiated():%d Waiting for Restore initiated callback ...\n",
+                          __LINE__ );
+      }
+   }
+
    return;
 }
 
@@ -1531,18 +1563,59 @@ void SaveRestoreServices::restore_initiated(
       // Notify the Federation that we could not complete the Restore.
       restore_failed_notification();
 
+      return;
+
    }
 
    // Report status to the user.
    message_publish( MSG_NORMAL, "SaveRestoreServices::restore_initiated() Restoring checkpoint file %s\n",
                     checkpoint_file_name.c_str() );
 
-   // This will run pre-load-checkpoint jobs, clear memory, read checkpoint
-   // file, and run restart jobs.
+   // Set the checkpoint file name.
    the_cpr->load_checkpoint( checkpoint_file_name, true );
+
+   // Now actually initiate the Trick load checkpoint process:
+   // 1. The “preload_checkpoint” jobs are called. These job-classes allow you to prepare
+   // your sim for a checkpoint-restore, in whatever way you see fit.
+   // 2. init_from_checkpoint( <filename> ) is called, which:
+   //    i.  Calls reset_memory to delete all dynamically allocated objects.
+   //    ii. Calls read_checkpoint( <filename> ) to read, parse, and restore
+   //        the state described in the checkpoint file.
+   //        • Read the definitions section of the checkpoint file, and allocate all of the
+   //          objects described there in.
+   //        • Clear all of the objects to 0, as appropriate to the data-type.
+   //        • Read the assignment statement section, and assign values to the objects.
+   // 3. Run the “restart” jobs. These too are user-defined jobs that “tidy up” the simulation
+   //    state. This is where the Federate::checkpoint_restart jobs are called.
    the_cpr->load_checkpoint_job();
 
-   // Mark the restore as in progress.
+   // Check to see that the checkpoint_restart jobs ran successfully.
+   // If so, the restore_state should be THLARestoreProcessEnum::RESTORE_IN_PROGRESS.
+   // This indicates that we are still waiting for all the other federates to
+   // report in and the entire Federation Restore state to be determined.
+   if ( this->restore_state == THLARestoreProcessEnum::RESTORE_FAILED ){
+
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+         StringUtilities::to_string( restore_label_str, restore_label );
+         message_publish( MSG_ERROR,
+                          "SaveRestoreServices::restore_failed_notification(): %d : Restore failed for label: \'%s\'!\n",
+                          __LINE__, restore_label_str.c_str() );
+      }
+
+      // Notify the Federation that we could not complete the Restore.
+      restore_failed_notification();
+
+      return;
+
+   }
+
+   // TODO: Load the checkpoint base time units into the Int64BaseTime class
+   // so that all the HLA time representations use the correct base time.
+   //
+   // Refresh the HLA time constants given the HLA base time from the checkpoint.
+   time_management_service->refresh_HLA_time_constants();
+
+   // Mark the restore as in progress.  Should already be set.
    this->restore_state = THLARestoreProcessEnum::RESTORE_IN_PROGRESS;
 
    // Notify the Federation that we successfully completed the Restore.
@@ -1644,35 +1717,33 @@ void SaveRestoreServices::restore_failed_notification()
    TRICKHLA_RESTORE_FPU_CONTROL_WORD;
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-   
    return;
 }
 
 /*!
  *  @job_class{scheduled}
  */
-bool SaveRestoreServices::restore_in_progress_check()
+bool SaveRestoreServices::restore_waiting_for_completion()
 {
    // If Federation SaveRestore is not supported then return without action.
    if ( this->restore_state == THLARestoreProcessEnum::RESTORE_UNSUPPORTED ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
-         message_publish( MSG_WARNING, "SaveRestoreServices::restore_in_progress_check():%d HLA SaveRestore NOT supported!\n",
+         message_publish( MSG_WARNING, "SaveRestoreServices::restore_waiting_for_completion():%d HLA SaveRestore NOT supported!\n",
                           __LINE__ );
       }
       return ( false );
    }
 
-   if ( this->restore_state == THLARestoreProcessEnum::RESTORE_BEGUN ) {
-      // We're still waiting no the Restore to be initiated.
-      return ( false );
-   }
-
    if ( this->restore_state == THLARestoreProcessEnum::RESTORE_IN_PROGRESS ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
-         std::string label_str;
-         StringUtilities::to_string( label_str, restore_label );
-         message_publish( MSG_WARNING, "SaveRestoreServices::restore_in_progress_check():%d HLA Restore for label \'%s\' in progress!\n",
-                          __LINE__, label_str.c_str() );
+         if ( execution_control->process_timer.timeout( execution_control->process_timer.time() ) ) {
+            std::string label_str;
+            StringUtilities::to_string( label_str, restore_label );
+            execution_control->process_timer.reset();
+            message_publish( MSG_NORMAL,
+                             "SaveRestoreServices::restore_waiting_for_completion():%d HLA Restore in progress for label \'%s\'!\n",
+                             __LINE__, label_str.c_str() );
+         }
       }
       return ( true );
    }
@@ -1716,6 +1787,35 @@ void SaveRestoreServices::restore_failed()
 
    // Resume publishing HLA data.
    federate->publish_data = true;
+
+   return;
+}
+
+void SaveRestoreServices::restore_failed_print_reason(
+   RestoreFailureReason reason )
+{
+   // dump the contents...
+   ostringstream msg;
+
+   if ( reason == RTI_UNABLE_TO_RESTORE ) {
+      msg << "SaveRestoreServices::restore_failed_print_reason():" << __LINE__
+          << " failure reason=\"RTI_UNABLE_TO_RESTORE\"" << endl;
+   }
+   if ( reason == FEDERATE_REPORTED_FAILURE_DURING_RESTORE ) {
+      msg << "SaveRestoreServices::restore_failed_print_reason():" << __LINE__
+          << " failure reason=\"FEDERATE_REPORTED_FAILURE_DURING_RESTORE\"" << endl;
+   }
+   if ( reason == FEDERATE_RESIGNED_DURING_RESTORE ) {
+      msg << "SaveRestoreServices::restore_failed_print_reason():" << __LINE__
+          << " failure reason=\"FEDERATE_RESIGNED_DURING_RESTORE\"" << endl;
+   }
+   if ( reason == RTI_DETECTED_FAILURE_DURING_RESTORE ) {
+      msg << "SaveRestoreServices::restore_failed_print_reason():" << __LINE__
+          << " failure reason=\"RTI_DETECTED_FAILURE_DURING_RESTORE\"" << endl;
+   }
+   message_publish( MSG_NORMAL, msg.str().c_str() );
+
+   this->federation_restore_failed_callback_complete = true;
 
    return;
 }
@@ -2041,7 +2141,7 @@ string SaveRestoreServices::wait_for_federation_restore_to_complete()
       // the failure of the the federate restore. build and return a message.
       return_string = "SaveRestoreServices::wait_for_federation_restore_to_complete() "
                       "Federation restore FAILED! Look at the message from the "
-                      "SaveRestoreServices::print_restore_failure_reason() routine "
+                      "SaveRestoreServices::restore_failed_print_reason() routine "
                       "for a reason why the federation restore failed.\n"
                       "TERMINATING SIMULATION!";
       return return_string;
@@ -2100,7 +2200,7 @@ string SaveRestoreServices::wait_for_federation_restore_to_complete()
       // accepted the failure of the federate restore. build and return a message.
       return_string = "SaveRestoreServices::wait_for_federation_restore_to_complete() "
                       "Federation restore FAILED! Look at the message from the "
-                      "SaveRestoreServices::print_restore_failure_reason() routine "
+                      "SaveRestoreServices::restore_failed_print_reason() routine "
                       "for a reason why the federation restore failed.\n"
                       "TERMINATING SIMULATION!";
       return return_string;
@@ -2418,33 +2518,6 @@ void SaveRestoreServices::process_requested_federation_restore_status(
 
    // indicate that the request has completed...
    restore_status_response_complete = true;
-}
-
-void SaveRestoreServices::print_restore_failure_reason(
-   RestoreFailureReason reason )
-{
-   // dump the contents...
-   ostringstream msg;
-
-   if ( reason == RTI_UNABLE_TO_RESTORE ) {
-      msg << "SaveRestoreServices::print_restore_failure_reason():" << __LINE__
-          << " failure reason=\"RTI_UNABLE_TO_RESTORE\"" << endl;
-   }
-   if ( reason == FEDERATE_REPORTED_FAILURE_DURING_RESTORE ) {
-      msg << "SaveRestoreServices::print_restore_failure_reason():" << __LINE__
-          << " failure reason=\"FEDERATE_REPORTED_FAILURE_DURING_RESTORE\"" << endl;
-   }
-   if ( reason == FEDERATE_RESIGNED_DURING_RESTORE ) {
-      msg << "SaveRestoreServices::print_restore_failure_reason():" << __LINE__
-          << " failure reason=\"FEDERATE_RESIGNED_DURING_RESTORE\"" << endl;
-   }
-   if ( reason == RTI_DETECTED_FAILURE_DURING_RESTORE ) {
-      msg << "SaveRestoreServices::print_restore_failure_reason():" << __LINE__
-          << " failure reason=\"RTI_DETECTED_FAILURE_DURING_RESTORE\"" << endl;
-   }
-   message_publish( MSG_NORMAL, msg.str().c_str() );
-
-   this->federation_restore_failed_callback_complete = true;
 }
 
 void SaveRestoreServices::initiate_restore_announce(

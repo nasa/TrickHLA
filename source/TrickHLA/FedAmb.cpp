@@ -495,7 +495,7 @@ void FedAmb::federationNotRestored(
                        __LINE__ );
    }
    save_restore_service->restore_set_state( THLARestoreProcessEnum::RESTORE_FAILED );
-   save_restore_service->print_restore_failure_reason( reason );
+   save_restore_service->restore_failed_print_reason( reason );
    
    return;
 }
