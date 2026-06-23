@@ -1326,7 +1326,7 @@ restore with label '%s'.\n",
    return;
 }
 
-std::string SaveRestoreServices::to_string( RTI1516_NAMESPACE::FederateRestoreStatusVector const &response )
+std::string SaveRestoreServices::to_string( FederateRestoreStatusVector const &response )
 {
    ostringstream response_msg;
 
@@ -1340,7 +1340,7 @@ std::string SaveRestoreServices::to_string( RTI1516_NAMESPACE::FederateRestoreSt
    return ( response_msg.str() );
 }
 
-std::string SaveRestoreServices::to_string( rti1516e::FederateRestoreStatus const &restore_status )
+std::string SaveRestoreServices::to_string( FederateRestoreStatus const &restore_status )
 {
    std::ostringstream restore_status_str;
 

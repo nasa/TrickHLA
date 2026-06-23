@@ -36,6 +36,7 @@ NASA, Johnson Space Center\n
 #include "trick/trick_byteswap.h"
 
 // TrickHLA includes.
+#include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Version.hh"
@@ -48,7 +49,7 @@ NASA, Johnson Space Center\n
 // For a Mac, add support for the FPU control word value at program start.
 #if defined( FPU_CW_PROTECTION ) && defined( __APPLE__ ) && ( defined( __i386__ ) || defined( __x86_64__ ) )
 fpu_control_t __fpu_control;
-#endif
+#endif // FPU_CW_PROTECTION
 
 using namespace std;
 using namespace TrickHLA;

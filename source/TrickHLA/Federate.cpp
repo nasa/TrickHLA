@@ -274,7 +274,7 @@ void Federate::fix_FPU_control_word()
       // Reset the original FPU Control Word to the current value set by Python.
       __fpu_control = _fpu_cw;
    }
-#endif
+#endif // FPU_CW_PROTECTION
 
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 }

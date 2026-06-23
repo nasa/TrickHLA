@@ -391,10 +391,10 @@ class SaveRestoreServices : public CheckpointConversionBase
    void restore_request_status_check();
 
    /*! @brief Format a FederateRestore status response string. */
-   static std::string to_string( rti1516e::FederateRestoreStatus const &restore_status );
+   static std::string to_string( RTI1516_NAMESPACE::FederateRestoreStatus const &restore_status );
 
    /*! @brief Format a FederateRestore status response string. */
-   static std::string to_string( rti1516e::FederateRestoreStatusVector const &response );
+   static std::string to_string( RTI1516_NAMESPACE::FederateRestoreStatusVector const &response );
 
    /*! @brief Request that the Federation Restore with the associated Restore label.
     *  @param label The HLA Restore label. */
