@@ -53,6 +53,7 @@ class Federate;
 class InteractionServices;
 class ObjectServices;
 class SaveRestoreServices;
+class ExecutionControlBase;
 
 class FedAmbBase
 {
@@ -77,36 +78,12 @@ class FedAmbBase
       return;
    }
 
-   /*! @brief Switch to echo (versus process) in a federationRestoreStatusResponse() callback... */
-   // void set_federation_restore_status_response_to_echo()
-   //{
-   //    this->federation_restore_status_response_context_switch = true;
-   // }
-   /*! @brief Switch to process (versus echo) in a federationRestoreStatusResponse() callback... */
-   // void set_federation_restore_status_response_to_process()
-   //{
-   //    this->federation_restore_status_response_context_switch = false;
-   // }
-
-   /*! @brief Enable the option to rebuild the federate handle set after a federation restore. */
-   void set_federation_restored_rebuild_federate_handle_set()
-   {
-      this->federation_restored_rebuild_federate_handle_set = true;
-   }
-   /*! @brief Disable the option to rebuild the federate handle set after a federation restore. */
-   void reset_federation_restored_rebuild_federate_handle_set()
-   {
-      this->federation_restored_rebuild_federate_handle_set = false;
-   }
-
   protected:
-   Federate            *federate;             ///< @trick_units{--} Associated TrickHLA::Federate.
-   ObjectServices      *object_service;       ///< @trick_units{--} Associated TrickHLA::ObjectServices.
-   InteractionServices *interaction_service;  ///< @trick_units{--} Associated TrickHLA::InteractionServices.
-   SaveRestoreServices *save_restore_service; ///< @trick_units{--} Associated TrickHLA::SaveRestoreServices.
-
-   // bool federation_restore_status_response_context_switch;
-   bool federation_restored_rebuild_federate_handle_set;
+   Federate             *federate;             ///< @trick_units{--} Associated TrickHLA::Federate.
+   ObjectServices       *object_service;       ///< @trick_units{--} Associated TrickHLA::ObjectServices.
+   InteractionServices  *interaction_service;  ///< @trick_units{--} Associated TrickHLA::InteractionServices.
+   SaveRestoreServices  *save_restore_service; ///< @trick_units{--} Associated TrickHLA::SaveRestoreServices.
+   ExecutionControlBase *execution_control;    ///< @trick_units{--} Associated TrickHLA::ExecutionControl.
 
   private:
    // Do not allow the copy constructor or assignment operator.

@@ -2331,7 +2331,7 @@ void ExecutionControl::start_federation_save_at_SST(
    string checkpoint_file_name;
 
    // Map the save label to the needed file names.
-   checkpoint_file_name = map_save_label_to_checkpoint_file_name( save_label ); // cppcheck-suppress [unreadVariable]
+   checkpoint_file_name = map_label_to_checkpoint_file_name( save_label ); // cppcheck-suppress [unreadVariable]
 
    if ( freeze_interaction->get_handler() != NULL ) {
 

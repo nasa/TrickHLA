@@ -351,11 +351,11 @@ class SaveRestoreServices : public CheckpointConversionBase
 
    /*! @brief Set the Restore label.
     *  @param label Desired Restore label. */
-   void set_restore_label( std::wstring const &label );
+   void restore_set_label( std::wstring const &label );
 
    /*! @brief Get the current Federate HLA Save label.
     *  @return Federate HLA Save lable. */
-   std::wstring const &get_restore_label()
+   std::wstring const &restore_get_label()
    {
       return ( restore_label );
    }
@@ -374,11 +374,11 @@ class SaveRestoreServices : public CheckpointConversionBase
 
    /*! @brief Set the Restore state.
     *  @param state Desired Restore state. */
-   bool set_restore_state( THLARestoreProcessEnum state );
+   bool restore_set_state( THLARestoreProcessEnum state );
 
    /*! @brief Get the current Federate HLA Restore state.
     *  @return Federate HLA Restore state. */
-   THLARestoreProcessEnum get_restore_state()
+   THLARestoreProcessEnum restore_get_state()
    {
       return ( restore_state );
    }
@@ -412,8 +412,32 @@ class SaveRestoreServices : public CheckpointConversionBase
    /*! @brief Function called when a Restore has begun. */
    void restore_begun();
 
-   /*! @brief Function called cyclicly checking on Restore process progress. */
+   /*! @brief Function called cyclicly while waiting for Restore initiated callback. */
+   void restore_waiting_for_initiated();
+
+   /*! @brief Function called when a Restore has been initiated. */
+   void restore_initiated(
+#if defined( IEEE_1516_2025 )
+   std::wstring const                      &label,
+   std::wstring const                      &federate_name,
+   RTI1516_NAMESPACE::FederateHandle const &new_federate_handle );
+#else
+   std::wstring const                &label,
+   std::wstring const                &federate_name,
+   RTI1516_NAMESPACE::FederateHandle  new_federate_handle );
+#endif // IEEE_1516_2025
+
+   /*! @brief Function called cyclicly checking on Restore process progress.
+    *  @return Returns true if the Restore has been initiated. */
    bool restore_in_progress_check();
+
+   /*! @brief Function called to inform the Federation that this federate has
+    *  successfully completed a Trick checkpoint Restore. */
+   void restore_success_notification();
+
+   /*! @brief Function called to inform the Federation that this federate has
+    *  failed to complete a Trick checkpoint Restore. */
+   void restore_failed_notification();
 
    /*! @brief Function called when a Restore process succeeds. */
    void restore_succeded();
@@ -627,8 +651,8 @@ class SaveRestoreServices : public CheckpointConversionBase
    // The SaveRestoreServices information known at execution time. This is
    // loaded when we join the federation and is automatically kept current when
    // other federates join / resign from the federation.
-   std::size_t running_feds_count_at_time_of_restore; ///< @trick_io{**} Number of joined Federates at the time of the restore (default: 0)
-   std::string joined_federates_file_name;            ///< @trick_io{**} File containing the names of the joined federates.
+   std::size_t restore_federates_count;    ///< @trick_io{**} Number of joined Federates at the time of the restore (default: 0)
+   std::string joined_federates_file_name; ///< @trick_io{**} File containing the names of the joined federates.
 
    // Save and Restore variables.
    std::string HLA_save_directory;     ///< @trick_units{--} HLA Save directory.
@@ -646,12 +670,13 @@ class SaveRestoreServices : public CheckpointConversionBase
    std::set< ScheduledSave > pending_save_queue; //< @trick_io{**} A time ordered queue for pending Save requests.
 
    // Restore process variables.
-   THLARestoreProcessEnum restore_state; ///< @trick_units{1} Where we are in the restore process
-   std::wstring           restore_label; ///< @trick_units{--} Restore label.
+   THLARestoreProcessEnum restore_state; ///< @trick_io{**}  Where we are in the restore process
+   std::wstring           restore_label; ///< @trick_io{**} Restore label.
 
-   bool restore_status_response_complete;                                  ///< @trick_units{--} Flag indicating if HLA Restore status response is complete.
-   bool restore_status_process_response;                                   /**< @trick_units{--} Flag indicating to process HLA Restore status response.
-                                                                                Otherwise, just echo out the response status. */
+   bool restore_status_response_complete; ///< @trick_units{--} Flag indicating if HLA Restore status response is complete.
+   bool restore_status_process_response;  /**< @trick_units{--} Flag indicating to process HLA Restore status response.
+                                                                Otherwise, just echo out the response status. */
+
    RTI1516_NAMESPACE::FederateRestoreStatusVector restore_status_response; ///< @trick_units{--} Federation Restore status vector.
 
    //*************************************************************************
@@ -668,12 +693,12 @@ class SaveRestoreServices : public CheckpointConversionBase
    THLARestoreProcessEnum prev_restore_process;      ///< @trick_io{**} previous state of the restore process
    bool                   initiate_restore_flag;     ///< @trick_io{**} Restore announce flag
    bool                   restore_in_progress;       ///< @trick_io{**} Restore in progress flag
-                                                     //   bool                   restore_failed;                              ///< @trick_io{**} Restore of the federate failed
+   // bool                   restore_failed;                              ///< @trick_io{**} Restore of the federate failed
    bool restore_is_imminent;                         ///< @trick_io{**} Restore has been signaled by the Federate
    bool announce_restore;                            ///< @trick_io{**} flag to indicate whether we have announced the federation restore
    bool restore_label_generated;                     ///< @trick_io{**} Restore filename has been generated.
-                                                     //   bool                   restore_begun;                               ///< @trick_io{**} Restore begun
-                                                     //   bool                   restore_request_complete;                    ///< @trick_io{**} restore status request complete
+   // bool                   restore_begun;                               ///< @trick_io{**} Restore begun
+   // bool                   restore_request_complete;                    ///< @trick_io{**} restore status request complete
    bool restore_completed;                           ///< @trick_io{**} Restore completed.
    bool federation_restore_failed_callback_complete; ///< @trick_io{**} federation not restored callback complete
 

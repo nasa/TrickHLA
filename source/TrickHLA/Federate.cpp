@@ -5507,8 +5507,16 @@ void Federate::restore_federate_handles_from_MOM()
                        __LINE__ );
    }
 
+   // FIXME:
    // Make sure that we are in federate handle rebuild mode...
-   federate_ambassador.set_federation_restored_rebuild_federate_handle_set();
+   //federate_ambassador.set_federation_restored_rebuild_federate_handle_set();
+   // Check to insure that we are in the correct Restore state.
+   if ( save_restore_service.restore_state != THLARestoreProcessEnum::RESTORE_IN_PROGRESS ) {
+      message_publish( MSG_WARNING,
+                       "Federate::restore_federate_handles_from_MOM:%d : Invalid Restore state: \'%s\'!\n",
+                       __LINE__, TrickHLA::to_string( save_restore_service.restore_state ).c_str() );
+      return;
+   }
 
    // Concurrency critical code section because joined-federate state is changed
    // by FedAmb callback to the Federate::set_MOM_HLAfederate_instance_attributes()
@@ -5590,11 +5598,14 @@ void Federate::restore_federate_handles_from_MOM()
    // Only unsubscribe from the attributes we subscribed to in this function.
    unsubscribe_attributes( MOM_HLAfederate_class_handle, fedMomAttributes );
 
+   // FIXME:
    // Make sure that we are no longer in federate handle rebuild mode...
-   federate_ambassador.reset_federation_restored_rebuild_federate_handle_set();
+   //federate_ambassador.reset_federation_restored_rebuild_federate_handle_set();
 
    fedMomAttributes.clear();
    requestedAttributes.clear();
+
+   return;
 }
 
 void Federate::rebuild_federate_handles(
@@ -5644,6 +5655,8 @@ void Federate::rebuild_federate_handles(
                           __LINE__, id_str.c_str(), fed_id.c_str() );
       }
    }
+
+   return;
 }
 
 /*!

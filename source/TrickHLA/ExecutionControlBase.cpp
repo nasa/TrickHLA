@@ -1326,7 +1326,7 @@ void ExecutionControlBase::restore_process()
    // SaveRestroreService.
 
    // Convert the save label for use in messages.
-   StringUtilities::to_string( restore_label_str, save_restore_service->get_restore_label() );
+   StringUtilities::to_string( restore_label_str, save_restore_service->restore_get_label() );
 
    switch ( save_restore_service->restore_state ) {
 
@@ -1364,7 +1364,7 @@ void ExecutionControlBase::restore_process()
          break;
 
       case THLARestoreProcessEnum::RESTORE_REQUEST_SUCCEEDED:
-         // The Restore request failed.  This is a transient phase as a
+         // The Restore request succeeded.  This is a transient phase as a
          // FedAmb::federationRestoreBegun() callback should follow shortly.
          this->restore_request_succeeded();
          break;
@@ -1372,7 +1372,7 @@ void ExecutionControlBase::restore_process()
       case THLARestoreProcessEnum::RESTORE_BEGUN:
          // The Federation wide Restore has begun.  This is also a transient phase as
          // an FedAmb::initiateFederateRestore() callback should follow shortly.
-         this->restore_begun();
+         this->waiting_for_restore_initiated();
          break;
 
       case THLARestoreProcessEnum::RESTORE_IN_PROGRESS:
@@ -1423,7 +1423,9 @@ void ExecutionControlBase::restore_process()
    return;
 }
 
-/*! @brief Perform setup for federate restore. */
+/*!
+ *  @job_class{scheduled}
+ */
 void ExecutionControlBase::restore_setup()
 {
    // Just return if HLA save and restore is not supported by the simulation
@@ -1514,73 +1516,120 @@ void ExecutionControlBase::restore_setup()
       }
    }
 
-   save_restore_service->set_restore_state( THLARestoreProcessEnum::RESTORE_IN_PROGRESS );
+   save_restore_service->restore_set_state( THLARestoreProcessEnum::RESTORE_IN_PROGRESS );
 }
 
-/*! @brief Requests a Federatation wide Restore. */
+/*!
+ *  @job_class{scheduled}
+ */
 void ExecutionControlBase::restore_request_status()
 {
    save_restore_service->restore_request_status();
    return;
 }
 
-/*! @brief Requests a Federatation wide Restore. */
+/*!
+ *  @job_class{scheduled}
+ */
 bool ExecutionControlBase::restore_request_status_check()
 {
    save_restore_service->restore_request_status_check();
    return ( false );
 }
 
-/*! @brief Requests a Federatation wide Restore. */
+/*!
+ *  @job_class{scheduled}
+ */
 void ExecutionControlBase::restore_request( std::wstring const &label )
 {
    save_restore_service->restore_request( label );
    return;
 }
 
-/*! @brief Checks for Restore request success or failure. */
+/*!
+ *  @job_class{scheduled}
+ */
 void ExecutionControlBase::restore_request_check()
 {
    save_restore_service->restore_request_check();
    return;
 }
 
-/*! @brief Function called when a Restore request fails. */
+/*!
+ *  @job_class{scheduled}
+ */
 void ExecutionControlBase::restore_request_failed()
 {
    save_restore_service->restore_request_failed();
    return;
 }
 
-/*! @brief Function called when a Restore request succeeds. */
+/*!
+ *  @job_class{scheduled}
+ */
 void ExecutionControlBase::restore_request_succeeded()
 {
    save_restore_service->restore_request_succeeded();
    return;
 }
 
-/*! @brief Function called when a Restore has begun. */
+/*!
+ *  @job_class{scheduled}
+ */
 void ExecutionControlBase::restore_begun()
 {
    save_restore_service->restore_begun();
    return;
 }
 
-/*! @brief Function called cyclicly checking on Restore process progress. */
+/*!
+ *  @job_class{scheduled}
+ */
+void ExecutionControlBase::waiting_for_restore_initiated()
+{
+   save_restore_service->restore_waiting_for_initiated();
+   return;
+}
+
+/*!
+ *  @job_class{scheduled}
+ */
+void ExecutionControlBase::restore_initiated(
+#if defined( IEEE_1516_2025 )
+   wstring const        &label,
+   wstring const        &federate_name,
+   FederateHandle const &new_federate_handle )
+#else
+   wstring const &label,
+   wstring const &federate_name,
+   FederateHandle new_federate_handle )
+#endif // IEEE_1516_2025
+{
+   save_restore_service->restore_initiated( label, federate_name, new_federate_handle );
+   return;
+}
+
+/*!
+ *  @job_class{scheduled}
+ */
 void ExecutionControlBase::restore_in_progress_check()
 {
    save_restore_service->restore_in_progress_check();
    return;
 }
 
-/*! @brief Function called when a Restore process succeeds. */
+/*!
+ *  @job_class{scheduled}
+ */
 void ExecutionControlBase::restore_succeded()
 {
    save_restore_service->restore_succeded();
    return;
 }
 
-/*! @brief Function called when a Restore process fails. */
+/*!
+ *  @job_class{scheduled}
+ */
 void ExecutionControlBase::restore_failed()
 {
    save_restore_service->restore_failed();
@@ -1610,7 +1659,7 @@ bool ExecutionControlBase::restore( wstring const &label )
    }
 
    // Get the current Restore state.
-   current_restore_state = save_restore_service->get_restore_state();
+   current_restore_state = save_restore_service->restore_get_state();
 
    // Convert the Restore label for use in messages.
    current_restore_state_str = TrickHLA::to_string( current_restore_state );
@@ -1627,8 +1676,8 @@ bool ExecutionControlBase::restore( wstring const &label )
    }
 
    // Initiate the Restore process.
-   save_restore_service->set_restore_label( label );
-   save_restore_service->set_restore_state( THLARestoreProcessEnum::RESTORE_ACTIVATE );
+   save_restore_service->restore_set_label( label );
+   save_restore_service->restore_set_state( THLARestoreProcessEnum::RESTORE_ACTIVATE );
 
    return ( true );
 }
@@ -1698,7 +1747,7 @@ void ExecutionControlBase::restore_after()
    }
 
    if ( save_restore_service->is_start_to_restore() ) {
-      save_restore_service->set_restore_state( THLARestoreProcessEnum::RESTORE_COMPLETE );
+      save_restore_service->restore_set_state( THLARestoreProcessEnum::RESTORE_COMPLETE );
 
       // Make a copy of restore_process because it is used in the
       // inform_RTI_of_restore_completion() function.
@@ -1800,7 +1849,7 @@ void ExecutionControlBase::restore_after()
 /*
  * @job_class{checkpoint}
  */
-std::string const ExecutionControlBase::map_save_label_to_checkpoint_file_name(
+std::string const ExecutionControlBase::map_label_to_checkpoint_file_name(
    wstring const &save_label )
 {
    std::string save_label_str;

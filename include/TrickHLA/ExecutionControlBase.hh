@@ -802,6 +802,21 @@ class ExecutionControlBase : public SyncPointManagerBase
    /*! @brief Function called when a Restore has begun. */
    virtual void restore_begun();
 
+   /*! @brief Function called cyclicly while waiting for Restore initiated callback. */
+   virtual void waiting_for_restore_initiated();
+
+   /*! @brief Function called when a Restore has been initiated. */
+   virtual void restore_initiated(
+#if defined( IEEE_1516_2025 )
+   std::wstring const                      &label,
+   std::wstring const                      &federate_name,
+   RTI1516_NAMESPACE::FederateHandle const &new_federate_handle );
+#else
+   std::wstring const                &label,
+   std::wstring const                &federate_name,
+   RTI1516_NAMESPACE::FederateHandle  new_federate_handle );
+#endif // IEEE_1516_2025
+
    /*! @brief Function called cyclicly checking on Restore process progress. */
    virtual void restore_in_progress_check();
 
@@ -825,8 +840,8 @@ class ExecutionControlBase : public SyncPointManagerBase
    //..........................................................................
    // Checkpointing functions.
    //..........................................................................
-   /*! @brief Map a Save label into a checkpoint file name. */
-   virtual std::string const map_save_label_to_checkpoint_file_name( std::wstring const &save_label );
+   /*! @brief Map a Save/Restore label into a checkpoint file name. */
+   virtual std::string const map_label_to_checkpoint_file_name( std::wstring const &save_label );
 
    /*! @brief Convert the variables to a form Trick can checkpoint. */
    virtual void convert_data_before_checkpoint() override; // cppcheck-suppress [uselessOverride, unmatchedSuppression]

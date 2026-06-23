@@ -363,10 +363,9 @@ void FedAmb::federationNotSaved(
                        __LINE__ );
    }
 
-   save_restore_service->print_save_failure_reason( reason );
-
    // Mark the Save process as failed.
    save_restore_service->set_save_state( THLASaveProcessEnum::SAVE_FAILED );
+   save_restore_service->print_save_failure_reason( reason );
 
    return;
 }
@@ -381,6 +380,7 @@ void FedAmb::federationSaveStatusResponse(
       message_publish( MSG_NORMAL, "FedAmb::federationSaveStatusResponse():%d\n",
                        __LINE__ );
    }
+
    return;
 }
 
@@ -394,7 +394,9 @@ void FedAmb::requestFederationRestoreSucceeded(
       message_publish( MSG_NORMAL, "FedAmb::requestFederationRestoreSucceeded():%d\n",
                        __LINE__ );
    }
-   save_restore_service->set_restore_state( THLARestoreProcessEnum::RESTORE_REQUEST_SUCCEEDED );
+   save_restore_service->restore_set_state( THLARestoreProcessEnum::RESTORE_REQUEST_SUCCEEDED );
+
+   return;
 }
 
 void FedAmb::requestFederationRestoreFailed(
@@ -407,7 +409,9 @@ void FedAmb::requestFederationRestoreFailed(
       message_publish( MSG_NORMAL, "FedAmb::requestFederationRestoreFailed():%d\n",
                        __LINE__ );
    }
-   save_restore_service->set_restore_state( THLARestoreProcessEnum::RESTORE_REQUEST_FAILED );
+   save_restore_service->restore_set_state( THLARestoreProcessEnum::RESTORE_REQUEST_FAILED );
+
+   return;
 }
 
 void FedAmb::federationRestoreBegun()
@@ -415,11 +419,21 @@ void FedAmb::federationRestoreBegun()
    throw( FederateInternalError )
 #endif // IEEE_1516_2010
 {
+   // Status report.
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      message_publish( MSG_NORMAL, "FedAmb::federationRestoreBegun():%d\n",
-                       __LINE__ );
+      string label_str;
+      StringUtilities::to_string( label_str, save_restore_service->restore_get_label() );
+      ostringstream errmsg;
+      errmsg << "FedAmb::federationRestoreBegun():" << __LINE__
+             << " : Restore begun for Label '" << label_str << "'." << endl;
+      message_publish( MSG_NORMAL, errmsg.str().c_str(), __LINE__ );
    }
-   save_restore_service->set_restore_state( THLARestoreProcessEnum::RESTORE_BEGUN );
+
+   // Tell ExecutionControl that the Restore has begun.
+   save_restore_service->restore_set_state( THLARestoreProcessEnum::RESTORE_BEGUN );
+   execution_control->restore_begun();
+
+   return;
 }
 
 void FedAmb::initiateFederateRestore(
@@ -433,14 +447,27 @@ void FedAmb::initiateFederateRestore(
    FederateHandle postRestoreFederateHandle ) throw( FederateInternalError )
 #endif // IEEE_1516_2025
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      string name;
-      StringUtilities::to_string( name, federateName );
-      message_publish( MSG_NORMAL, "FedAmb::initiateFederateRestore():%d for federate '%s'\n",
-                       __LINE__, name.c_str() );
-   }
-   save_restore_service->set_restore_state( THLARestoreProcessEnum::RESTORE_IN_PROGRESS );
    save_restore_service->restore_label = label;
+   save_restore_service->restore_set_state( THLARestoreProcessEnum::RESTORE_IN_PROGRESS );
+
+   // Report status.
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
+      string label_str;
+      StringUtilities::to_string( label_str, save_restore_service->restore_get_label() );
+      ostringstream errmsg;
+      errmsg << "FedAmb::initiateFederateRestore():" << __LINE__
+             << " : Restore initiated for Label '" << label_str << "'." << endl;
+      message_publish( MSG_NORMAL, errmsg.str().c_str(), __LINE__ );
+   }
+
+   // FIXME: Need to handle name changes.
+   // FIXME: Need to store new federate handle.
+
+   // Tell ExecutionControl that restore has been initiated.
+   execution_control->restore_initiated( label, federateName, postRestoreFederateHandle );
+
+   return;
+
 }
 
 void FedAmb::federationRestored()
@@ -452,7 +479,9 @@ void FedAmb::federationRestored()
       message_publish( MSG_NORMAL, "FedAmb::federationRestored():%d\n",
                        __LINE__ );
    }
-   save_restore_service->set_restore_state( THLARestoreProcessEnum::RESTORE_COMPLETE );
+   save_restore_service->restore_set_state( THLARestoreProcessEnum::RESTORE_COMPLETE );
+
+   return;
 }
 
 void FedAmb::federationNotRestored(
@@ -465,8 +494,10 @@ void FedAmb::federationNotRestored(
       message_publish( MSG_NORMAL, "FedAmb::federationNotRestored():%d\n",
                        __LINE__ );
    }
-   save_restore_service->set_restore_state( THLARestoreProcessEnum::RESTORE_FAILED );
+   save_restore_service->restore_set_state( THLARestoreProcessEnum::RESTORE_FAILED );
    save_restore_service->print_restore_failure_reason( reason );
+   
+   return;
 }
 
 void FedAmb::federationRestoreStatusResponse(
@@ -485,6 +516,8 @@ void FedAmb::federationRestoreStatusResponse(
    for ( FederateRestoreStatus const &status : response ) {
       save_restore_service->restore_status_response.push_back( status );
    }
+
+   return;
 }
 
 /////////////////////////////////////
@@ -747,7 +780,7 @@ void FedAmb::reflectAttributeValues(
    // instance.  We use these to process joined federate data.
    if ( ( federate != NULL ) && federate->is_joined_federate_by_object_handle( objectInstance ) ) {
 
-      if ( federation_restored_rebuild_federate_handle_set ) {
+      if ( save_restore_service->restore_state == THLARestoreProcessEnum::RESTORE_IN_PROGRESS ) {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
             string id_str;
             StringUtilities::to_string( id_str, objectInstance );
