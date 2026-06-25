@@ -856,11 +856,6 @@ class Federate : public CheckpointConversionBase
     * @param instance_hndl Federate instance to remove. */
    void remove_joined_federate( RTI1516_NAMESPACE::ObjectInstanceHandle const &instance_hndl );
 
-   /*! @brief Get the federate MOM information from the RTI.
-    *  @param handle MOM HLAfederate instance handle. */
-   // void get_federate_info( RTI1516_NAMESPACE::FederateHandle & federate_handle,
-   //                         KnownFederate                     & federate       );
-
    /*! @brief Get the joined federate MOM object instance name from the RTI.
     *  @return True if an ID of joined federate, otherwise false.
     *  @param handle MOM HLAfederate instance handle. */

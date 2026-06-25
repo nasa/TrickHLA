@@ -290,9 +290,9 @@ void FedAmb::initiateFederateSave(
    i64time = federate->get_granted_time();
 
    // Set the Save and Restore state.
-   save_restore_service->set_save_label( label );
-   save_restore_service->set_save_state( THLASaveProcessEnum::SAVE_REQUESTED );
-   save_restore_service->set_save_time( i64time );
+   save_restore_service->save_set_label( label );
+   save_restore_service->save_set_label( THLASaveProcessEnum::SAVE_REQUESTED );
+   save_restore_service->save_set_time( i64time );
 
    // Convert the Save label wstring to a string.
    StringUtilities::to_string( save_label_str, label );
@@ -320,9 +320,9 @@ void FedAmb::initiateFederateSave(
    i64time.set( time );
 
    // Set the Save and Restore state.
-   save_restore_service->set_save_label( label );
-   save_restore_service->set_save_state( THLASaveProcessEnum::SAVE_REQUESTED );
-   save_restore_service->set_save_time( i64time );
+   save_restore_service->save_set_label( label );
+   save_restore_service->save_set_label( THLASaveProcessEnum::SAVE_REQUESTED );
+   save_restore_service->save_set_time( i64time );
 
    // Convert the Save label wstring to a string.
    StringUtilities::to_string( save_label_str, label );
@@ -347,7 +347,7 @@ void FedAmb::federationSaved()
    }
 
    // Mark the Save process as completed.
-   save_restore_service->set_save_state( THLASaveProcessEnum::SAVE_COMPLETE );
+   save_restore_service->save_set_label( THLASaveProcessEnum::SAVE_COMPLETE );
 
    return;
 }
@@ -364,7 +364,7 @@ void FedAmb::federationNotSaved(
    }
 
    // Mark the Save process as failed.
-   save_restore_service->set_save_state( THLASaveProcessEnum::SAVE_FAILED );
+   save_restore_service->save_set_label( THLASaveProcessEnum::SAVE_FAILED );
    save_restore_service->print_save_failure_reason( reason );
 
    return;
@@ -450,6 +450,11 @@ void FedAmb::initiateFederateRestore(
    save_restore_service->restore_label = label;
    save_restore_service->restore_set_state( THLARestoreProcessEnum::RESTORE_IN_PROGRESS );
 
+   // Convert federate name to string.
+   string new_federate_name_str;
+   save_restore_service->restore_name = federateName;
+   StringUtilities::to_string( new_federate_name_str, federateName );
+
    // Report status.
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       string label_str;
@@ -460,8 +465,20 @@ void FedAmb::initiateFederateRestore(
       message_publish( MSG_NORMAL, errmsg.str().c_str(), __LINE__ );
    }
 
-   // FIXME: Need to handle name changes.
-   // FIXME: Need to store new federate handle.
+   // Check for federate name change.
+   if ( federate->name != new_federate_name_str ){
+      string label_str;
+      StringUtilities::to_string( label_str, save_restore_service->restore_get_label() );
+      ostringstream errmsg;
+      errmsg << "FedAmb::initiateFederateRestore():" << __LINE__
+             << " : Federate name change for Restore Label '" << label_str << "'." << endl;
+      errmsg << "\tOld name: " << federate->name << endl
+             << "\tNew name: " << new_federate_name_str << endl;
+      message_publish( MSG_NORMAL, errmsg.str().c_str(), __LINE__ );
+   }
+
+   // Save off the restored federate handle.
+   save_restore_service->restore_handle = postRestoreFederateHandle;
 
    // Tell ExecutionControl that restore has been initiated.
    execution_control->restore_initiated( label, federateName, postRestoreFederateHandle );

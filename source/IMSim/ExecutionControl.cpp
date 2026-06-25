@@ -409,7 +409,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
 
             // signal the MASTER federate to track all federates who join,
             // looking for anyone who is not required.
-            save_restore_service->set_restore_is_imminent();
+            save_restore_service->restore_set_state( THLARestoreProcessEnum::RESTORE_ACTIVATE );
 
             // read the required federates data from external file, replacing
             // the contents of 'known_feds'.
@@ -2491,7 +2491,7 @@ bool ExecutionControl::is_save_initiated()
    THLASaveProcessEnum save_state;
 
    // Get the current Save state.
-   save_state = save_restore_service->get_save_state();
+   save_state = save_restore_service->save_get_state();
 
    // When user calls start_federation_save, initiate_save_flag is
    // set in federation_synchronized when feds sync to FEDSAVE_v2 sync point

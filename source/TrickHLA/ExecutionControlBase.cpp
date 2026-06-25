@@ -126,7 +126,6 @@ ExecutionControlBase::ExecutionControlBase()
      enable_least_common_time_step( false ),
      least_common_time_step_seconds( -1.0 ),
      least_common_time_step( -1 ),
-     // FIXME: execution_has_begun( false ),
      execution_configuration( NULL ),
      mode_transition_requested( false ),
      requested_execution_control_mode( EXECUTION_CONTROL_UNINITIALIZED ),
@@ -163,7 +162,6 @@ ExecutionControlBase::ExecutionControlBase(
      enable_least_common_time_step( false ),
      least_common_time_step_seconds( -1.0 ),
      least_common_time_step( -1 ),
-     // FIXME: execution_has_begun( false ),
      execution_configuration( &exec_config ),
      mode_transition_requested( false ),
      requested_execution_control_mode( EXECUTION_CONTROL_UNINITIALIZED ),
@@ -313,9 +311,11 @@ Trick simulation time as the default scenario-timeline.\n",
 
    // Depending on if Save and Restore is supported, set the intial state.
    if ( this->is_save_and_restore_supported() ) {
-      this->save_restore_service->set_save_state( THLASaveProcessEnum::SAVE_NONE );
+      this->save_restore_service->save_set_label( THLASaveProcessEnum::SAVE_NONE );
+      this->save_restore_service->restore_set_state( THLARestoreProcessEnum::RESTORE_NONE );
    } else {
-      this->save_restore_service->set_save_state( THLASaveProcessEnum::SAVE_UNSUPPORTED );
+      this->save_restore_service->save_set_label( THLASaveProcessEnum::SAVE_UNSUPPORTED );
+      this->save_restore_service->restore_set_state( THLARestoreProcessEnum::RESTORE_UNSUPPORTED );
    }
 
    // Initialize then Configure the ExecutionConfiguration object if present.
@@ -1012,12 +1012,6 @@ void ExecutionControlBase::free_converted_data_for_checkpoint()
    SyncPointManagerBase::free_converted_data_for_checkpoint();
 }
 
-/*! @brief Federates that did not announce the save, perform a checkpoint. */
-bool ExecutionControlBase::can_initiate_save()
-{
-   return false;
-}
-
 /*!
  *  @job_class{scheduled}
  *  @detail The default behavior is to use the current granted time as the
@@ -1089,7 +1083,7 @@ void ExecutionControlBase::save_process()
    // SaveRestroreService.
 
    // Convert the save label for use in messages.
-   StringUtilities::to_string( save_label_str, save_restore_service->get_save_label() );
+   StringUtilities::to_string( save_label_str, save_restore_service->save_get_label() );
 
    // Manage the Federate HLA Save process state.
    switch ( save_restore_service->save_state ) {
@@ -1182,7 +1176,7 @@ bool ExecutionControlBase::save( wstring const &label )
    std::string         current_save_state_str;
 
    // Get the current Save state.
-   current_save_state = save_restore_service->get_save_state();
+   current_save_state = save_restore_service->save_get_state();
 
    // Convert the save label for use in messages.
    current_save_state_str = TrickHLA::to_string( current_save_state );
@@ -1369,7 +1363,7 @@ void ExecutionControlBase::restore_process()
       case THLARestoreProcessEnum::RESTORE_REQUEST_SUCCEEDED:
          // The Restore request succeeded.  This is a transient phase as a
          // FedAmb::federationRestoreBegun() callback should follow shortly.
-         this->restore_request_succeeded();
+         this->restore_waiting_for_begun();
          break;
 
       case THLARestoreProcessEnum::RESTORE_BEGUN:
@@ -1429,102 +1423,6 @@ void ExecutionControlBase::restore_process()
 /*!
  *  @job_class{scheduled}
  */
-void ExecutionControlBase::restore_setup()
-{
-   // Just return if HLA save and restore is not supported by the simulation
-   // initialization scheme selected by the user.
-   if ( !is_save_and_restore_supported() ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         ostringstream errmsg;
-         errmsg << "ExecutionControlBase::restore_setup():" << __LINE__
-                << " ERROR: SaveRestore NOT supported!" << endl;
-         message_publish( MSG_WARNING, errmsg.str().c_str() );
-      }
-      return;
-   }
-
-   // if restoring at startup, do nothing here (that is handled in restore_checkpoint)
-   if ( ( current_execution_control_mode == EXECUTION_CONTROL_UNINITIALIZED )
-        || ( current_execution_control_mode == EXECUTION_CONTROL_INITIALIZING ) ) {
-      return;
-   }
-
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "ExecutionControlBase::restore_setup():%d Federate Restore Pre-load.\n",
-                       __LINE__ );
-   }
-   // Determine if I am the federate that clicked Load Chkpnt on sim control panel
-   save_restore_service->set_announce_restore( !save_restore_service->is_start_to_restore() );
-   set_freeze_announced( save_restore_service->is_announce_restore() );
-
-   // if I announced the restore, must initiate federation restore
-   if ( save_restore_service->is_announce_restore() ) {
-
-      // Make sure we have a save directory specified
-      save_restore_service->check_HLA_save_directory();
-
-      // Read in the known required federates before we do the restore
-      save_restore_service->read_known_federates_from_file();
-
-      string return_string;
-      return_string = federate->wait_for_required_federates_to_join(); // sets running_feds_count
-      if ( !return_string.empty() ) {
-         return_string += '\n';
-         ostringstream errmsg;
-         errmsg << "ExecutionControlBase::setup_restore():" << __LINE__ << endl
-                << "ERROR: " << return_string;
-         DebugHandler::terminate( errmsg.str() );
-      }
-
-      // FIXME: This need work.
-      // Initiate the restore.
-      save_restore_service->initiate_restore_announce( save_restore_service->restore_label );
-
-      SleepTimeout print_timer;
-      SleepTimeout sleep_timer;
-
-      // need to wait for federation to initiate restore
-      while ( !save_restore_service->is_start_to_restore() ) {
-
-         // Check for shutdown.
-         check_for_shutdown_with_termination();
-
-         sleep_timer.sleep();
-
-         if ( !save_restore_service->is_start_to_restore() ) {
-
-            // To be more efficient, we get the time once and share it.
-            int64_t wallclock_time = sleep_timer.time();
-
-            if ( sleep_timer.timeout( wallclock_time ) ) {
-               sleep_timer.reset();
-               if ( !federate->is_execution_member() ) {
-                  ostringstream errmsg;
-                  errmsg << "ExecutionControlBase::setup_restore():" << __LINE__
-                         << " ERROR: Unexpectedly the Federate is no longer an execution"
-                         << " member. This means we are either not connected to the"
-                         << " RTI or we are no longer joined to the federation"
-                         << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!" << endl;
-                  DebugHandler::terminate( errmsg.str() );
-               }
-            }
-
-            if ( print_timer.timeout( wallclock_time ) ) {
-               print_timer.reset();
-               message_publish( MSG_NORMAL, "ExecutionControlBase::setup_restore():%d Federate Restore Pre-load, waiting...\n",
-                                __LINE__ );
-            }
-         }
-      }
-   }
-
-   save_restore_service->restore_set_state( THLARestoreProcessEnum::RESTORE_IN_PROGRESS );
-}
-
-/*!
- *  @job_class{scheduled}
- */
 void ExecutionControlBase::restore_request_status()
 {
    save_restore_service->restore_request_status();
@@ -1570,9 +1468,9 @@ void ExecutionControlBase::restore_request_failed()
 /*!
  *  @job_class{scheduled}
  */
-void ExecutionControlBase::restore_request_succeeded()
+void ExecutionControlBase::restore_waiting_for_begun()
 {
-   save_restore_service->restore_request_succeeded();
+   save_restore_service->restore_waiting_for_begun();
    return;
 }
 
@@ -1609,6 +1507,15 @@ void ExecutionControlBase::restore_initiated(
 #endif // IEEE_1516_2025
 {
    save_restore_service->restore_initiated( label, federate_name, new_federate_handle );
+   return;
+}
+
+/*!
+ *  @job_class{scheduled}
+ */
+void ExecutionControlBase::restore_after_checkpoint_load()
+{
+   save_restore_service->restore_after_checkpoint_load();
    return;
 }
 
@@ -1685,170 +1592,6 @@ bool ExecutionControlBase::restore( wstring const &label )
    return ( true );
 }
 
-/*!
- * @job_class{scheduled}
- */
-void ExecutionControlBase::restore()
-{
-   // Just return if HLA save and restore is not supported by the simulation
-   // initialization scheme selected by the user.
-   if ( !is_save_and_restore_supported() ) {
-      return;
-   }
-
-   if ( save_restore_service->is_start_to_restore() ) {
-
-      // if I announced the restore, sim control panel was clicked and invokes the load
-      if ( !save_restore_service->is_announce_restore() ) {
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-            message_publish( MSG_NORMAL, "ExecutionControlBase::perform_restore():%d Federate Restore Started.\n",
-                             __LINE__ );
-         }
-
-         // Create the filename from the Federation name and the "restore-name".
-         // Replace all directory characters with an underscore.
-         string restore_name_str;
-         StringUtilities::to_string( restore_name_str, save_restore_service->get_restore_name() );
-         string str_restore_label = federate->get_federation_name() + "_" + restore_name_str;
-         for ( size_t i = 0; i < str_restore_label.length(); ++i ) {
-            if ( str_restore_label[i] == '/' ) {
-               str_restore_label[i] = '_';
-            }
-         }
-         message_publish( MSG_NORMAL, "ExecutionControlBase::perform_restore():%d LOADING %s\n",
-                          __LINE__, str_restore_label.c_str() );
-
-         // make sure we have a save directory specified
-         save_restore_service->check_HLA_save_directory();
-
-         // This will run pre-load-checkpoint jobs, clear memory, read checkpoint file, and run restart jobs
-         load_checkpoint( ( save_restore_service->get_HLA_save_directory() + "/" + str_restore_label ).c_str() );
-
-         load_checkpoint_job();
-
-         // exec_freeze();
-      }
-
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "ExecutionControlBase::perform_restore():%d Checkpoint Load Completed.\n",
-                          __LINE__ );
-      }
-
-      restore_after();
-   }
-}
-
-/*!
- * @job_class{scheduled}
- */
-void ExecutionControlBase::restore_after()
-{
-   // Just return if HLA save and restore is not supported by the simulation
-   // initialization scheme selected by the user.
-   if ( !is_save_and_restore_supported() ) {
-      return;
-   }
-
-   if ( save_restore_service->is_start_to_restore() ) {
-      save_restore_service->restore_set_state( THLARestoreProcessEnum::RESTORE_COMPLETE );
-
-      // Make a copy of restore_process because it is used in the
-      // inform_RTI_of_restore_completion() function.
-      // (backward compatibility with previous restore process)
-      save_restore_service->preserve_restore_process();
-
-      // wait for RTI to inform us that the federation restore has
-      // begun before informing the RTI that we are done.
-      save_restore_service->wait_for_federation_restore_begun();
-
-      // signal RTI that this federate has already been loaded
-      save_restore_service->inform_RTI_of_restore_completion();
-
-      // wait until we get a callback to inform us that the federation restore is complete
-      string tStr = save_restore_service->wait_for_federation_restore_to_complete();
-      if ( tStr.length() ) {
-         save_restore_service->wait_for_federation_restore_failed_callback_to_complete();
-         ostringstream errmsg;
-         errmsg << "TrickExecutionControlBase::post_restore():" << __LINE__
-                << " ERROR: " << tStr << endl;
-         DebugHandler::terminate( errmsg.str() );
-      }
-
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "ExecutionControlBase::post_restore():%d Federation Restore Completed.\n",
-                          __LINE__ );
-         message_publish( MSG_NORMAL, "ExecutionControlBase::post_restore():%d Rebuilding HLA Handles.\n",
-                          __LINE__ );
-      }
-
-      // get us restarted again...
-      // reset RTI data to the state it was in when checkpointed
-      object_service->setup_object_ref_attributes();
-      interaction_service->setup_interaction_ref_attributes();
-      object_service->setup_object_RTI_handles();
-      interaction_service->setup_interaction_RTI_handles();
-      object_service->set_all_object_instance_handles_by_name();
-
-      if ( save_restore_service->is_announce_restore() ) {
-         federate->set_all_federate_MOM_instance_handles_by_name();
-         federate->restore_federate_handles_from_MOM();
-      }
-
-      // Restore interactions and sync points
-      interaction_service->restore_data_after_checkpoint();
-      reinstate_logged_sync_pts();
-
-      // Restore ownership transfer data for all objects
-      Object *objects   = object_service->get_objects();
-      int     obj_count = object_service->get_object_count();
-      for ( int i = 0; i < obj_count; ++i ) {
-         objects[i].restore_data_after_checkpoint();
-      }
-
-      // Macro to save the FPU Control Word register value.
-      TRICKHLA_SAVE_FPU_CONTROL_WORD;
-      try {
-         HLAinteger64Time time;
-         federate->get_RTI_ambassador()->queryLogicalTime( time );
-         federate->time_management_service.set_granted_time( time );
-      } catch ( FederateNotExecutionMember const &e ) {
-         message_publish( MSG_WARNING, "ExecutionControlBase::post_restore():%d queryLogicalTime EXCEPTION: FederateNotExecutionMember\n",
-                          __LINE__ );
-      } catch ( SaveInProgress const &e ) {
-         message_publish( MSG_WARNING, "ExecutionControlBase::post_restore():%d queryLogicalTime EXCEPTION: SaveInProgress\n",
-                          __LINE__ );
-      } catch ( RestoreInProgress const &e ) {
-         message_publish( MSG_WARNING, "ExecutionControlBase::post_restore():%d queryLogicalTime EXCEPTION: RestoreInProgress\n",
-                          __LINE__ );
-      } catch ( NotConnected const &e ) {
-         message_publish( MSG_WARNING, "ExecutionControlBase::post_restore():%d queryLogicalTime EXCEPTION: NotConnected\n",
-                          __LINE__ );
-         federate->set_connection_lost();
-      } catch ( RTIinternalError const &e ) {
-         message_publish( MSG_WARNING, "ExecutionControlBase::post_restore():%d queryLogicalTime EXCEPTION: RTIinternalError\n",
-                          __LINE__ );
-      }
-
-      federate->time_management_service.set_requested_time_to_granted_time();
-
-      save_restore_service->federation_restored();
-
-      // Macro to restore the saved FPU Control Word register value.
-      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "ExecutionControlBase::post_restore():%d Federate Restart Completed.\n",
-                          __LINE__ );
-      }
-   } else {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "ExecutionControlBase::post_restore():%d Federate Restore Already Completed.\n",
-                          __LINE__ );
-      }
-   }
-}
-
 /*
  * @job_class{checkpoint}
  */
@@ -1910,7 +1653,7 @@ void ExecutionControlBase::checkpoint_before()
    }
 
    // Get the current Save state.
-   current_save_state = save_restore_service->get_save_state();
+   current_save_state = save_restore_service->save_get_state();
 
    // Check to see if this checkpoint was initiated from Federate Ambassador
    // initiateFederateSave callback.  If so, a Save has already been requested

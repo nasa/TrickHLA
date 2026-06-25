@@ -754,27 +754,12 @@ class ExecutionControlBase : public SyncPointManagerBase
    virtual void start_federation_save_at_SST( double              freeze_sst,
                                               std::wstring const &save_label ) = 0;
 
-   /*! @brief Check if this Federate can initiate a Federation save.
-    *  @return True if federate can initiate a Save, false otherwise. */
-   virtual bool can_initiate_save();
-
-   /*! @brief Checks if Save has been initiated by this ExecutionControl method.
-    * @return True if Save is initiated and synchronized with the federation,
-    * False if Save not supported. */
-   virtual bool is_save_initiated()
-   {
-      return ( false );
-   }
-
    //..........................................................................
    // Restore functions.
    //..........................................................................
 
    /*! @brief Federate HLA Restore process executive. */
    virtual void restore_process();
-
-   /*! @brief Perform setup for Federate restore. */
-   virtual void restore_setup();
 
    /*! @brief Request a Federation Restore status. */
    virtual void restore_request_status();
@@ -797,8 +782,9 @@ class ExecutionControlBase : public SyncPointManagerBase
    /*! @brief Function called when a Restore request fails. */
    virtual void restore_request_failed();
 
-   /*! @brief Function called when a Restore request succeeds. */
-   virtual void restore_request_succeeded();
+   /*! @brief Function called when a Restore request succeeds and we
+    *  are waiting for the Federation Restore process to begin. */
+   virtual void restore_waiting_for_begun();
 
    /*! @brief Function called when a Restore has begun. */
    virtual void restore_begun();
@@ -818,6 +804,9 @@ class ExecutionControlBase : public SyncPointManagerBase
    RTI1516_NAMESPACE::FederateHandle  new_federate_handle );
 #endif // IEEE_1516_2025
 
+   /*! @brief Rebuild the HLA state after a checkpoint load. */
+   virtual void restore_after_checkpoint_load();
+
    /*! @brief Function called cyclicly checking on Restore process progress. */
    virtual void restore_waiting_for_completion();
 
@@ -831,12 +820,6 @@ class ExecutionControlBase : public SyncPointManagerBase
     *  @return The success or failure of initiating the Federation Restore.
     *  @param label The Restore label for the HLA restore process. */
    virtual bool restore( std::wstring const &label );
-
-   /*! @brief Federates that did not announce the restore, perform a restore. */
-   virtual void restore();
-
-   /*! @brief Complete Federate restore and prepare to restart execution. */
-   virtual void restore_after();
 
    //..........................................................................
    // Checkpointing functions.
@@ -899,9 +882,6 @@ class ExecutionControlBase : public SyncPointManagerBase
       where GALT is the greatest available logical time. This is used to
       synchronize the federates in a federation execution to be on a common
       logical time boundary. */
-
-   // FIXME: This is probably covered with the current_execution_control_mode.
-   // bool execution_has_begun; ///< @trick_units{--} Flag to indicate if the federate has begun simulation execution.
 
    SleepTimeout process_timer; ///< @trick_units{--} Timer used to control printout frequency for process loops.
 

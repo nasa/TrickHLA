@@ -298,6 +298,9 @@ void Federate::setup(
    // Set the Federate execution control.
    this->execution_control = &federate_execution_control;
 
+   // Set the association in the Federate Ambassador.
+   federate_ambassador.execution_control = this->execution_control;
+
    // Set the Federate execution configuration.
    this->execution_config = &federate_execution_config;
 
@@ -2072,7 +2075,7 @@ string Federate::wait_for_required_federates_to_join()
                      found_an_unrequired_federate = true;
                      string fedname;
                      StringUtilities::to_string( fedname, joined_federate.name );
-                     if ( save_restore_service.restore_is_imminent ) {
+                     if ( save_restore_service.restore_state ==  THLARestoreProcessEnum::RESTORE_ACTIVATE ) {
                         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
                            message_publish( MSG_NORMAL, "Federate::wait_for_required_federates_to_join():%d Found an UNREQUIRED federate %s!\n",
                                             __LINE__, fedname.c_str() );
@@ -2191,7 +2194,8 @@ string Federate::wait_for_required_federates_to_join()
    // terminate the execution instead of the federation failing to restore
    // and the user is left to scratch their heads why the federation failed
    // to restore!
-   if ( save_restore_service.restore_is_imminent && found_an_unrequired_federate ) {
+   if (    save_restore_service.restore_state == THLARestoreProcessEnum::RESTORE_ACTIVATE
+        && found_an_unrequired_federate ) {
       ostringstream errmsg;
       errmsg << "FATAL ERROR: You indicated a restore of a checkpoint set but "
              << "at least one federate which was NOT executing at the time of "
@@ -3775,7 +3779,7 @@ void Federate::checkpoint_after()
 /*!
  *  \par<b>Assumptions and Limitations:</b>
  *  - Currently only used with DIS and IMSim initialization schemes.
- *  @job_class{preload_checkpoint}
+ *  @job_class{restart}
  */
 void Federate::checkpoint_restart()
 {
@@ -5507,9 +5511,6 @@ void Federate::restore_federate_handles_from_MOM()
                        __LINE__ );
    }
 
-   // FIXME:
-   // Make sure that we are in federate handle rebuild mode...
-   //federate_ambassador.set_federation_restored_rebuild_federate_handle_set();
    // Check to insure that we are in the correct Restore state.
    if ( save_restore_service.restore_state != THLARestoreProcessEnum::RESTORE_IN_PROGRESS ) {
       message_publish( MSG_WARNING,
@@ -5597,10 +5598,6 @@ void Federate::restore_federate_handles_from_MOM()
 
    // Only unsubscribe from the attributes we subscribed to in this function.
    unsubscribe_attributes( MOM_HLAfederate_class_handle, fedMomAttributes );
-
-   // FIXME:
-   // Make sure that we are no longer in federate handle rebuild mode...
-   //federate_ambassador.reset_federation_restored_rebuild_federate_handle_set();
 
    fedMomAttributes.clear();
    requestedAttributes.clear();

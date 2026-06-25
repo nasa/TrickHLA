@@ -67,6 +67,10 @@ class FedAmbBase
    // Syntax: friend void init_attr<namespace>__<class name>();
    friend void init_attrTrickHLA__FedAmbBase();
 
+   // Allow the Federate core classe to have access to protected
+   // and private data.
+   friend class Federate;
+
   public:
    /*! @brief Default constructor for the TrickHLA FedAmb class.
     *  @param fed Associated Federate instance. */
