@@ -76,7 +76,6 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/time/SimTimeline.hh"
 #include "TrickHLA/utils/SleepTimeout.hh"
 #include "TrickHLA/utils/StringUtilities.hh"
-#include "TrickHLA/utils/Utilities.hh"
 
 #if defined( IEEE_1516_2010 )
 // C++11 deprecated dynamic exception specifications for a function so we need
@@ -87,12 +86,9 @@ NASA, Johnson Space Center\n
 #endif
 
 // HLA include files.
-#include "RTI/Exception.h"
 #include "RTI/Handle.h"
 #include "RTI/RTIambassador.h"
-#include "RTI/RTIambassadorFactory.h"
 #include "RTI/Typedefs.h"
-#include "RTI/time/HLAinteger64Time.h"
 
 // Access the Trick global objects for CheckPoint restart and the Clock.
 extern Trick::CheckPointRestart *the_cpr;

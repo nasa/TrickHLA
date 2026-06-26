@@ -2075,7 +2075,7 @@ string Federate::wait_for_required_federates_to_join()
                      found_an_unrequired_federate = true;
                      string fedname;
                      StringUtilities::to_string( fedname, joined_federate.name );
-                     if ( save_restore_service.restore_state ==  THLARestoreProcessEnum::RESTORE_ACTIVATE ) {
+                     if ( save_restore_service.restore_state == THLARestoreProcessEnum::RESTORE_ACTIVATE ) {
                         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
                            message_publish( MSG_NORMAL, "Federate::wait_for_required_federates_to_join():%d Found an UNREQUIRED federate %s!\n",
                                             __LINE__, fedname.c_str() );
@@ -2194,7 +2194,7 @@ string Federate::wait_for_required_federates_to_join()
    // terminate the execution instead of the federation failing to restore
    // and the user is left to scratch their heads why the federation failed
    // to restore!
-   if (    save_restore_service.restore_state == THLARestoreProcessEnum::RESTORE_ACTIVATE
+   if ( save_restore_service.restore_state == THLARestoreProcessEnum::RESTORE_ACTIVATE
         && found_an_unrequired_federate ) {
       ostringstream errmsg;
       errmsg << "FATAL ERROR: You indicated a restore of a checkpoint set but "

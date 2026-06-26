@@ -422,13 +422,13 @@ class SaveRestoreServices : public CheckpointConversionBase
    /*! @brief Function called when a Restore has been initiated. */
    void restore_initiated(
 #if defined( IEEE_1516_2025 )
-   std::wstring const                      &label,
-   std::wstring const                      &federate_name,
-   RTI1516_NAMESPACE::FederateHandle const &new_federate_handle );
+      std::wstring const                      &label,
+      std::wstring const                      &federate_name,
+      RTI1516_NAMESPACE::FederateHandle const &new_federate_handle );
 #else
-   std::wstring const                &label,
-   std::wstring const                &federate_name,
-   RTI1516_NAMESPACE::FederateHandle  new_federate_handle );
+      std::wstring const               &label,
+      std::wstring const               &federate_name,
+      RTI1516_NAMESPACE::FederateHandle new_federate_handle );
 #endif // IEEE_1516_2025
 
    /*! @brief Rebuild the HLA state after a checkpoint load. */
@@ -454,7 +454,7 @@ class SaveRestoreServices : public CheckpointConversionBase
 
    /*! @brief Prints the reason for the federation restore failure.
     * @param reason Restore failure reason. */
-   void restore_failed_print_reason( RTI1516_NAMESPACE::RestoreFailureReason reason );
+   static void restore_failed_print_reason( RTI1516_NAMESPACE::RestoreFailureReason reason );
 
    /*! @brief Converts checkpointed sync points into HLA sync points. */
    void reinstate_logged_sync_pts();
@@ -487,10 +487,10 @@ class SaveRestoreServices : public CheckpointConversionBase
    std::string joined_federates_file_name; ///< @trick_io{**} File containing the names of the joined federates.
 
    // Save and Restore variables.
-   std::string  HLA_save_directory;     ///< @trick_units{--} HLA Save directory.
-   bool         copy_run_directory;     ///< @trick_units{--} Make a backup of RUN directory before restarting the federation (default: false).
-   bool         unfreeze_after_save;    ///< @trick_units{--} Flag to indicate that we should go to run immediately after a save (default: false)
-   bool         support_tcp_checkpoint; ///< @trick_units{--} Support Save/Restore from Trick Control Panel (default: false).
+   std::string HLA_save_directory;     ///< @trick_units{--} HLA Save directory.
+   bool        copy_run_directory;     ///< @trick_units{--} Make a backup of RUN directory before restarting the federation (default: false).
+   bool        unfreeze_after_save;    ///< @trick_units{--} Flag to indicate that we should go to run immediately after a save (default: false)
+   bool        support_tcp_checkpoint; ///< @trick_units{--} Support Save/Restore from Trick Control Panel (default: false).
 
    // Save process variables.
    THLASaveProcessEnum save_state; ///< @trick_units{1} Where we are in the Save process.
