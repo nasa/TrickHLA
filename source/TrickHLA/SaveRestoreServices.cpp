@@ -265,7 +265,7 @@ bool SaveRestoreServices::check_HLA_save_directory()
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
          ostringstream msg;
          msg << "SaveRestoreServices::check_HLA_save_directory():" << __LINE__
-             << " ERROR: Save directory path \'" << this->HLA_save_directory
+             << ": ERROR: Save directory path \'" << this->HLA_save_directory
              << "\' does NOT exist!";
          message_publish( MSG_ERROR, "%s\n", msg.str().c_str() );
       }
@@ -277,7 +277,7 @@ bool SaveRestoreServices::check_HLA_save_directory()
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
          ostringstream msg;
          msg << "SaveRestoreServices::check_HLA_save_directory():" << __LINE__
-             << " ERROR: Save directory path \'" << this->HLA_save_directory
+             << ": ERROR: Save directory path \'" << this->HLA_save_directory
              << "\' exists but is NOT a directory!";
          message_publish( MSG_ERROR, "%s\n", msg.str().c_str() );
       }
@@ -303,7 +303,7 @@ bool SaveRestoreServices::save_set_label( THLASaveProcessEnum state )
 
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
          message_publish( MSG_WARNING,
-                          "SaveRestoreServices::save_set_label():%d : HLA SaveRestore NOT supported!\n",
+                          "SaveRestoreServices::save_set_label():%d: HLA SaveRestore NOT supported!\n",
                           __LINE__ );
       }
 
@@ -331,7 +331,7 @@ void SaveRestoreServices::save_set_time(
         && ( this->save_state != THLASaveProcessEnum::SAVE_UNSUPPORTED ) ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
-         message_publish( MSG_WARNING, "SaveRestoreServices::save_set_time():%d : Save already in progress: \'%s\'!\n",
+         message_publish( MSG_WARNING, "SaveRestoreServices::save_set_time():%d: Save already in progress: \'%s\'!\n",
                           __LINE__, TrickHLA::to_string( save_state ).c_str() );
       }
       return;
@@ -374,7 +374,7 @@ void SaveRestoreServices::save_request(
    // If Federation SaveRestore is not supported then return without action.
    if ( save_state == THLASaveProcessEnum::SAVE_UNSUPPORTED ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
-         message_publish( MSG_WARNING, "SaveRestoreServices::save_request():%d : HLA SaveRestore NOT supported!\n",
+         message_publish( MSG_WARNING, "SaveRestoreServices::save_request():%d: HLA SaveRestore NOT supported!\n",
                           __LINE__ );
       }
       return;
@@ -385,7 +385,7 @@ void SaveRestoreServices::save_request(
         && ( save_state != THLASaveProcessEnum::SAVE_UNSUPPORTED ) ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
-         message_publish( MSG_WARNING, "SaveRestoreServices::save_request():%d : Save already in progress: \'%s\'!\n",
+         message_publish( MSG_WARNING, "SaveRestoreServices::save_request():%d: Save already in progress: \'%s\'!\n",
                           __LINE__, TrickHLA::to_string( save_state ).c_str() );
       }
       return;
@@ -397,7 +397,7 @@ void SaveRestoreServices::save_request(
       if ( this->save_label.empty() ) {
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::save_request():" << __LINE__
-                << " ERROR: No Save label set!" << endl;
+                << ": ERROR: No Save label set!" << endl;
          DebugHandler::terminate( errmsg.str() );
       }
       return;
@@ -413,7 +413,7 @@ void SaveRestoreServices::save_request(
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
          string label_str;
          StringUtilities::to_string( label_str, this->save_label );
-         message_publish( MSG_NORMAL, "SaveRestoreServices::save_request():%d save_label: \'%s\'\n",
+         message_publish( MSG_NORMAL, "SaveRestoreServices::save_request():%d: save_label: \'%s\'\n",
                           __LINE__, label_str.c_str() );
       }
 
@@ -421,23 +421,23 @@ void SaveRestoreServices::save_request(
       federate->get_RTI_ambassador()->requestFederationSave( this->save_label );
 
    } catch ( FederateNotExecutionMember const &e ) {
-      message_publish( MSG_WARNING, "SaveRestoreServices::save_request():%d EXCEPTION: FederateNotExecutionMember\n",
+      message_publish( MSG_WARNING, "SaveRestoreServices::save_request():%d: EXCEPTION: FederateNotExecutionMember\n",
                        __LINE__ );
    } catch ( SaveInProgress const &e ) {
-      message_publish( MSG_WARNING, "SaveRestoreServices::save_request():%d EXCEPTION: SaveInProgress\n",
+      message_publish( MSG_WARNING, "SaveRestoreServices::save_request():%d: EXCEPTION: SaveInProgress\n",
                        __LINE__ );
    } catch ( RestoreInProgress const &e ) {
-      message_publish( MSG_WARNING, "SaveRestoreServices::save_request():%d EXCEPTION: RestoreInProgress\n",
+      message_publish( MSG_WARNING, "SaveRestoreServices::save_request():%d: EXCEPTION: RestoreInProgress\n",
                        __LINE__ );
    } catch ( NotConnected const &e ) {
-      message_publish( MSG_WARNING, "SaveRestoreServices::save_request():%d EXCEPTION: NotConnected\n",
+      message_publish( MSG_WARNING, "SaveRestoreServices::save_request():%d: EXCEPTION: NotConnected\n",
                        __LINE__ );
       federate->set_connection_lost();
    } catch ( RTIinternalError const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
 
-      message_publish( MSG_WARNING, "SaveRestoreServices::save_request():%d EXCEPTION: RTIinternalError: '%s'\n",
+      message_publish( MSG_WARNING, "SaveRestoreServices::save_request():%d: EXCEPTION: RTIinternalError: '%s'\n",
                        __LINE__, rti_err_msg.c_str() );
    }
 
@@ -462,7 +462,7 @@ void SaveRestoreServices::save( wstring const &label )
    // If Federation SaveRestore is not supported then return without action.
    if ( save_state == THLASaveProcessEnum::SAVE_UNSUPPORTED ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
-         message_publish( MSG_WARNING, "SaveRestoreServices::save():%d HLA SaveRestore NOT supported!\n",
+         message_publish( MSG_WARNING, "SaveRestoreServices::save():%d: HLA SaveRestore NOT supported!\n",
                           __LINE__ );
       }
       return;
@@ -473,7 +473,7 @@ void SaveRestoreServices::save( wstring const &label )
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::save():" << __LINE__
-                << " ERROR: Save state mismatch: "
+                << ": WARNING: Save state mismatch: "
                 << TrickHLA::to_string( save_state ) << "!" << std::endl;
          message_publish( MSG_WARNING, "%s\n",
                           __LINE__, errmsg.str().c_str() );
@@ -487,7 +487,7 @@ void SaveRestoreServices::save( wstring const &label )
       if ( this->save_label.empty() ) {
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::save():" << __LINE__
-                << " ERROR: No Save label set!" << endl;
+                << ": ERROR: No Save label set!" << endl;
          DebugHandler::terminate( errmsg.str() );
       }
    } else {
@@ -505,22 +505,22 @@ void SaveRestoreServices::save( wstring const &label )
       federate->get_RTI_ambassador()->federateSaveBegun();
 
    } catch ( SaveNotInitiated const &e ) {
-      message_publish( MSG_WARNING, "SaveRestoreServices::setup_checkpoint():%d EXCEPTION: SaveNotInitiated\n",
+      message_publish( MSG_WARNING, "SaveRestoreServices::setup_checkpoint():%d: EXCEPTION: SaveNotInitiated\n",
                        __LINE__ );
    } catch ( FederateNotExecutionMember const &e ) {
-      message_publish( MSG_WARNING, "SaveRestoreServices::setup_checkpoint():%d EXCEPTION: FederateNotExecutionMember\n",
+      message_publish( MSG_WARNING, "SaveRestoreServices::setup_checkpoint():%d: EXCEPTION: FederateNotExecutionMember\n",
                        __LINE__ );
    } catch ( RestoreInProgress const &e ) {
-      message_publish( MSG_WARNING, "SaveRestoreServices::setup_checkpoint():%d EXCEPTION: RestoreInProgress\n",
+      message_publish( MSG_WARNING, "SaveRestoreServices::setup_checkpoint():%d: EXCEPTION: RestoreInProgress\n",
                        __LINE__ );
    } catch ( NotConnected const &e ) {
-      message_publish( MSG_WARNING, "SaveRestoreServices::setup_checkpoint():%d EXCEPTION: NotConnected\n",
+      message_publish( MSG_WARNING, "SaveRestoreServices::setup_checkpoint():%d: EXCEPTION: NotConnected\n",
                        __LINE__ );
       federate->set_connection_lost();
    } catch ( RTIinternalError const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "SaveRestoreServices::setup_checkpoint():%d EXCEPTION: RTIinternalError: '%s'\n",
+      message_publish( MSG_WARNING, "SaveRestoreServices::setup_checkpoint():%d: EXCEPTION: RTIinternalError: '%s'\n",
                        __LINE__, rti_err_msg.c_str() );
    }
 
@@ -552,27 +552,27 @@ void SaveRestoreServices::save( wstring const &label )
       federate->get_RTI_ambassador()->federateSaveComplete();
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
-         message_publish( MSG_NORMAL, "SaveRestoreServices::save():%d Federate Save Completed.\n",
+         message_publish( MSG_NORMAL, "SaveRestoreServices::save():%d: Federate Save Completed.\n",
                           __LINE__ );
       }
 
    } catch ( FederateHasNotBegunSave const &e ) {
-      message_publish( MSG_WARNING, "SaveRestoreServices::save():%d EXCEPTION: FederateHasNotBegunSave\n",
+      message_publish( MSG_WARNING, "SaveRestoreServices::save():%d: EXCEPTION: FederateHasNotBegunSave\n",
                        __LINE__ );
    } catch ( FederateNotExecutionMember const &e ) {
-      message_publish( MSG_WARNING, "SaveRestoreServices::save():%d EXCEPTION: FederateNotExecutionMember\n",
+      message_publish( MSG_WARNING, "SaveRestoreServices::save():%d: EXCEPTION: FederateNotExecutionMember\n",
                        __LINE__ );
    } catch ( RestoreInProgress const &e ) {
-      message_publish( MSG_WARNING, "SaveRestoreServices::save():%d EXCEPTION: RestoreInProgress\n",
+      message_publish( MSG_WARNING, "SaveRestoreServices::save():%d: EXCEPTION: RestoreInProgress\n",
                        __LINE__ );
    } catch ( NotConnected const &e ) {
-      message_publish( MSG_WARNING, "SaveRestoreServices::save():%d EXCEPTION: NotConnected\n",
+      message_publish( MSG_WARNING, "SaveRestoreServices::save():%d: EXCEPTION: NotConnected\n",
                        __LINE__ );
       federate->set_connection_lost();
    } catch ( RTIinternalError const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "SaveRestoreServices::post_checkpoint():%d EXCEPTION: RTIinternalError: '%s'\n",
+      message_publish( MSG_WARNING, "SaveRestoreServices::post_checkpoint():%d: EXCEPTION: RTIinternalError: '%s'\n",
                        __LINE__, rti_err_msg.c_str() );
    }
 
@@ -593,7 +593,7 @@ bool SaveRestoreServices::save_in_progress_check()
    // If Federation SaveRestore is not supported then return without action.
    if ( save_state == THLASaveProcessEnum::SAVE_UNSUPPORTED ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
-         message_publish( MSG_WARNING, "SaveRestoreServices::save_in_progress_check():%d HLA SaveRestore NOT supported!\n",
+         message_publish( MSG_WARNING, "SaveRestoreServices::save_in_progress_check():%d: HLA SaveRestore NOT supported!\n",
                           __LINE__ );
       }
       return ( false );
@@ -603,7 +603,7 @@ bool SaveRestoreServices::save_in_progress_check()
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
          std::string label_str;
          StringUtilities::to_string( label_str, save_label );
-         message_publish( MSG_WARNING, "SaveRestoreServices::save_in_progress_check():%d HLA Save for label \'%s\' in progress!\n",
+         message_publish( MSG_WARNING, "SaveRestoreServices::save_in_progress_check():%d: HLA Save for label \'%s\' in progress!\n",
                           __LINE__, label_str.c_str() );
       }
       return ( true );
@@ -622,7 +622,7 @@ void SaveRestoreServices::save_succeded()
    // If Federation SaveRestore is not supported then return without action.
    if ( save_state == THLASaveProcessEnum::SAVE_UNSUPPORTED ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
-         message_publish( MSG_WARNING, "SaveRestoreServices::save_succeded():%d HLA SaveRestore NOT supported!\n",
+         message_publish( MSG_WARNING, "SaveRestoreServices::save_succeded():%d: HLA SaveRestore NOT supported!\n",
                           __LINE__ );
       }
       return;
@@ -635,7 +635,7 @@ void SaveRestoreServices::save_succeded()
    if ( save_state != THLASaveProcessEnum::SAVE_COMPLETE ) {
       ostringstream errmsg;
       errmsg << "SaveRestoreServices::save_succeded():" << __LINE__
-             << " ERROR: Save state mismatch: "
+             << ": ERROR: Save state mismatch: "
              << TrickHLA::to_string( save_state ) << "!" << std::endl;
       DebugHandler::terminate( errmsg.str() );
    }
@@ -657,7 +657,7 @@ void SaveRestoreServices::save_failed()
    // If Federation SaveRestore is not supported then return without action.
    if ( save_state == THLASaveProcessEnum::SAVE_UNSUPPORTED ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
-         message_publish( MSG_WARNING, "SaveRestoreServices::save_failed():%d HLA SaveRestore NOT supported!\n",
+         message_publish( MSG_WARNING, "SaveRestoreServices::save_failed():%d: HLA SaveRestore NOT supported!\n",
                           __LINE__ );
       }
       return;
@@ -670,7 +670,7 @@ void SaveRestoreServices::save_failed()
    if ( save_state != THLASaveProcessEnum::SAVE_FAILED ) {
       ostringstream errmsg;
       errmsg << "SaveRestoreServices::save_failed():" << __LINE__
-             << " ERROR: Save state mismatch: "
+             << ": ERROR: Save state mismatch: "
              << TrickHLA::to_string( save_state ) << "!" << std::endl;
       DebugHandler::terminate( errmsg.str() );
    }
@@ -707,7 +707,7 @@ bool SaveRestoreServices::write_joined_federates_to_file(
       if ( this->save_label.empty() ) {
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::write_joined_federates_file():" << __LINE__
-                << " ERROR: No Save label set!" << endl;
+                << ": ERROR: No Save label set!" << endl;
          DebugHandler::terminate( errmsg.str() );
       }
       // Get the joined federates file name from the ExecutionControl service.
@@ -750,7 +750,7 @@ bool SaveRestoreServices::write_joined_federates_to_file(
 
       ostringstream errmsg;
       errmsg << "SaveRestoreServices::write_joined_federates_file():" << __LINE__
-             << " ERROR: Failed to open file '" << full_file_path << "' for writing!" << std::endl;
+             << ": ERROR: Failed to open file '" << full_file_path << "' for writing!" << std::endl;
       message_publish( MSG_ERROR, errmsg.str().c_str() );
 
       return ( false );
@@ -809,20 +809,20 @@ void SaveRestoreServices::request_federation_save_status() // cppcheck-suppress 
    try {
       federate->get_RTI_ambassador()->queryFederationSaveStatus();
    } catch ( FederateNotExecutionMember const &e ) {
-      message_publish( MSG_WARNING, "SaveRestoreServices::request_federation_save_status():%d EXCEPTION: FederateNotExecutionMember\n",
+      message_publish( MSG_WARNING, "SaveRestoreServices::request_federation_save_status():%d: EXCEPTION: FederateNotExecutionMember\n",
                        __LINE__ );
    } catch ( RestoreInProgress const &e ) {
-      message_publish( MSG_WARNING, "SaveRestoreServices::request_federation_save_status():%d EXCEPTION: RestoreInProgress\n",
+      message_publish( MSG_WARNING, "SaveRestoreServices::request_federation_save_status():%d: EXCEPTION: RestoreInProgress\n",
                        __LINE__ );
    } catch ( NotConnected const &e ) {
-      message_publish( MSG_WARNING, "SaveRestoreServices::request_federation_save_status():%d EXCEPTION: NotConnected\n",
+      message_publish( MSG_WARNING, "SaveRestoreServices::request_federation_save_status():%d: EXCEPTION: NotConnected\n",
                        __LINE__ );
       federate->set_connection_lost();
    } catch ( RTIinternalError const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
 
-      message_publish( MSG_WARNING, "SaveRestoreServices::request_federation_save_status():%d EXCEPTION: RTIinternalError: '%s'\n",
+      message_publish( MSG_WARNING, "SaveRestoreServices::request_federation_save_status():%d: EXCEPTION: RTIinternalError: '%s'\n",
                        __LINE__, rti_err_msg.c_str() );
    }
 
@@ -875,7 +875,7 @@ bool SaveRestoreServices::read_known_federates_from_file(
       if ( this->restore_label.empty() ) {
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::read_known_federates_from_file():" << __LINE__
-                << " ERROR: No Restore label set!" << endl;
+                << ": ERROR: No Restore label set!" << endl;
          DebugHandler::terminate( errmsg.str() );
       }
       // Get the joined federates file name from the ExecutionControl service.
@@ -895,7 +895,7 @@ bool SaveRestoreServices::read_known_federates_from_file(
    if ( !file.is_open() ) {
       ostringstream errmsg;
       errmsg << "SaveRestoreServices::read_known_federates_from_file()" << __LINE__
-             << " ERROR: Failed to open file '" << full_path << "'!" << endl;
+             << ": ERROR: Failed to open file '" << full_path << "'!" << endl;
       message_publish( MSG_ERROR, "%s\n", errmsg.str().c_str() );
       return ( false );
    }
@@ -916,7 +916,7 @@ bool SaveRestoreServices::read_known_federates_from_file(
          std::wcerr << L"Invalid input: No conversion could be performed." << std::endl;
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::read_known_federates_from_file()" << __LINE__
-                << " ERROR: Reading number of known federates:'"
+                << ": ERROR: Reading number of known federates:'"
                 << " Invalid input: No conversion could be performed." << "'!" << endl;
          message_publish( MSG_ERROR, "%s\n", errmsg.str().c_str() );
          file.close();
@@ -933,7 +933,7 @@ bool SaveRestoreServices::read_known_federates_from_file(
       file.close();
       ostringstream errmsg;
       errmsg << "SaveRestoreServices::read_known_federates_from_file()" << __LINE__
-             << " ERROR: There has to be at least 1 federate.  Read in "
+             << ": ERROR: There has to be at least 1 federate.  Read in "
              << num_feds << " from '" << full_path << "'!" << endl;
       message_publish( MSG_ERROR, "%s\n", errmsg.str().c_str() );
       return ( false );
@@ -967,7 +967,7 @@ bool SaveRestoreServices::read_known_federates_from_file(
          // Let the user know that something went wrong.
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::read_known_federates_from_file()" << __LINE__
-                << " ERROR: Error reading the type for known federate '"
+                << ": ERROR: Error reading the type for known federate '"
                 << fed_name_str << "' at line " << line_num
                 << " from '" << full_path << "'!" << endl;
          message_publish( MSG_ERROR, "%s\n", errmsg.str().c_str() );
@@ -995,7 +995,7 @@ bool SaveRestoreServices::read_known_federates_from_file(
             // Let the user know that something went wrong.
             ostringstream errmsg;
             errmsg << "SaveRestoreServices::read_known_federates_from_file()" << __LINE__
-                   << " ERROR: Error reading if known federate '"
+                   << ": ERROR: Error reading if known federate '"
                    << fed_name_str << "' is required at line " << line_num
                    << " from '" << full_path << "'!" << std::endl;
             message_publish( MSG_ERROR, "%s\n", errmsg.str().c_str() );
@@ -1020,7 +1020,7 @@ bool SaveRestoreServices::read_known_federates_from_file(
          // Let the user know that something went wrong.
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::read_known_federates_from_file()" << __LINE__
-                << " ERROR: Error reading if known federate '"
+                << ": ERROR: Error reading if known federate '"
                 << fed_name_str << "' is required at line " << line_num
                 << " from '" << full_path << "'!" << std::endl;
          message_publish( MSG_ERROR, "%s\n", errmsg.str().c_str() );
@@ -1048,7 +1048,7 @@ bool SaveRestoreServices::read_known_federates_from_file(
       // Let the user know that something went wrong.
       ostringstream errmsg;
       errmsg << "SaveRestoreServices::read_known_federates_from_file()" << __LINE__
-             << " ERROR: Error reading the known federates file '"
+             << ": ERROR: Error reading the known federates file '"
              << full_path << "'!" << std::endl;
       message_publish( MSG_ERROR, "%s\n", errmsg.str().c_str() );
 
@@ -1061,7 +1061,7 @@ bool SaveRestoreServices::read_known_federates_from_file(
       // Let the user know that something went wrong.
       ostringstream errmsg;
       errmsg << "SaveRestoreServices::read_known_federates_from_file()" << __LINE__
-             << " ERROR: Federate file specified " << num_feds
+             << ": ERROR: Federate file specified " << num_feds
              << " but read in " << fed_count << "!" << std::endl;
       message_publish( MSG_ERROR, "%s\n", errmsg.str().c_str() );
 
@@ -1086,7 +1086,7 @@ bool SaveRestoreServices::restore_set_state( THLARestoreProcessEnum state )
         && ( state != THLARestoreProcessEnum::RESTORE_UNSUPPORTED ) ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
-         message_publish( MSG_WARNING, "SaveRestoreServices::restore_set_state():%d : HLA SaveRestore NOT supported!\n",
+         message_publish( MSG_WARNING, "SaveRestoreServices::restore_set_state():%d: HLA SaveRestore NOT supported!\n",
                           __LINE__ );
       }
 
@@ -1113,7 +1113,7 @@ void SaveRestoreServices::restore_request_status()
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::restore_request_status():" << __LINE__
-                << " ERROR: SaveRestore NOT supported!" << endl;
+                << ": WARNING: SaveRestore NOT supported!" << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
       return;
@@ -1140,17 +1140,17 @@ void SaveRestoreServices::restore_request_status()
       this->restore_state = THLARestoreProcessEnum::RESTORE_REQUEST_STATUS;
 
    } catch ( FederateNotExecutionMember const &e ) {
-      message_publish( MSG_WARNING, "SaveRestoreServices::restore_request_status():%d EXCEPTION: FederateNotExecutionMember\n",
+      message_publish( MSG_WARNING, "SaveRestoreServices::restore_request_status():%d: EXCEPTION: FederateNotExecutionMember\n",
                        __LINE__ );
    } catch ( SaveInProgress const &e ) {
-      message_publish( MSG_WARNING, "SaveRestoreServices::restore_request_status():%d EXCEPTION: SaveInProgress\n",
+      message_publish( MSG_WARNING, "SaveRestoreServices::restore_request_status():%d: EXCEPTION: SaveInProgress\n",
                        __LINE__ );
    } catch ( NotConnected const &e ) {
-      message_publish( MSG_WARNING, "SaveRestoreServices::restore_request_status():%d EXCEPTION: NotConnected\n",
+      message_publish( MSG_WARNING, "SaveRestoreServices::restore_request_status():%d: EXCEPTION: NotConnected\n",
                        __LINE__ );
       federate->set_connection_lost();
    } catch ( RTIinternalError const &e ) {
-      message_publish( MSG_WARNING, "SaveRestoreServices::restore_request_status():%d EXCEPTION: RTIinternalError\n",
+      message_publish( MSG_WARNING, "SaveRestoreServices::restore_request_status():%d: EXCEPTION: RTIinternalError\n",
                        __LINE__ );
    }
 
@@ -1174,7 +1174,7 @@ void SaveRestoreServices::restore_waiting_for_request_status()
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::restore_waiting_for_request_status():" << __LINE__
-                << " ERROR: SaveRestore NOT supported!" << endl;
+                << ": WARNING: SaveRestore NOT supported!" << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
       return;
@@ -1193,7 +1193,7 @@ void SaveRestoreServices::restore_waiting_for_request_status()
          if ( execution_control->process_timer.timeout( execution_control->process_timer.time() ) ) {
             execution_control->process_timer.reset();
             message_publish( MSG_NORMAL,
-                             "SaveRestoreServices::restore_waiting_for_request_status():%d Waiting for Restore status response ...\n",
+                             "SaveRestoreServices::restore_waiting_for_request_status():%d: Waiting for Restore status response ...\n",
                              __LINE__ );
          }
       }
@@ -1222,7 +1222,7 @@ void SaveRestoreServices::restore_waiting_for_request_status()
 
       ostringstream errmsg;
       errmsg << "SaveRestoreServices::restore_waiting_for_request_status():" << __LINE__
-             << " ERROR: Federation NOT in state to Restore:" << endl;
+             << ": WARNING: Federation NOT in state to Restore:" << endl;
       errmsg << to_string( restore_status_response ) << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
 
@@ -1256,7 +1256,7 @@ void SaveRestoreServices::restore_request( wstring const &label )
          StringUtilities::to_string( label_str, label );
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::restore_request():" << __LINE__
-                << " ERROR: SaveRestore NOT supported!" << endl
+                << ": WARNING: SaveRestore NOT supported!" << endl
                 << " Label:'" << label_str << "'" << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
@@ -1274,7 +1274,7 @@ void SaveRestoreServices::restore_request( wstring const &label )
       if ( this->restore_label.empty() ) {
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::restore_request():" << __LINE__
-                << " ERROR: No Restore label set!" << endl;
+                << ": ERROR: No Restore label set!" << endl;
          DebugHandler::terminate( errmsg.str() );
       }
    } else {
@@ -1285,7 +1285,7 @@ void SaveRestoreServices::restore_request( wstring const &label )
       string name_str;
       StringUtilities::to_string( name_str, this->restore_label );
       message_publish( MSG_NORMAL,
-                       "SaveRestoreServices::restore_request():%d Requesting RTI to Restore Federation with label '%s'.\n",
+                       "SaveRestoreServices::restore_request():%d: Requesting RTI to Restore Federation with label '%s'.\n",
                        __LINE__, name_str.c_str() );
    }
 
@@ -1302,25 +1302,25 @@ void SaveRestoreServices::restore_request( wstring const &label )
       this->restore_federates_count = federate->joined_federates_map.size();
 
    } catch ( FederateNotExecutionMember const &e ) {
-      message_publish( MSG_WARNING, "SaveRestoreServices::restore_request():%d EXCEPTION: FederateNotExecutionMember\n",
+      message_publish( MSG_WARNING, "SaveRestoreServices::restore_request():%d: EXCEPTION: FederateNotExecutionMember\n",
                        __LINE__ );
       this->restore_state = THLARestoreProcessEnum::RESTORE_NONE;
    } catch ( SaveInProgress const &e ) {
-      message_publish( MSG_WARNING, "SaveRestoreServices::restore_request():%d EXCEPTION: SaveInProgress\n",
+      message_publish( MSG_WARNING, "SaveRestoreServices::restore_request():%d: EXCEPTION: SaveInProgress\n",
                        __LINE__ );
       this->restore_state = THLARestoreProcessEnum::RESTORE_NONE;
    } catch ( RestoreInProgress const &e ) {
-      message_publish( MSG_WARNING, "SaveRestoreServices::restore_request():%d EXCEPTION: RestoreInProgress\n",
+      message_publish( MSG_WARNING, "SaveRestoreServices::restore_request():%d: EXCEPTION: RestoreInProgress\n",
                        __LINE__ );
    } catch ( NotConnected const &e ) {
-      message_publish( MSG_WARNING, "SaveRestoreServices::restore_request():%d EXCEPTION: NotConnected\n",
+      message_publish( MSG_WARNING, "SaveRestoreServices::restore_request():%d: EXCEPTION: NotConnected\n",
                        __LINE__ );
       federate->set_connection_lost();
    } catch ( RTIinternalError const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
 
-      message_publish( MSG_WARNING, "SaveRestoreServices::restore_request():%d EXCEPTION: RTIinternalError: '%s'\n",
+      message_publish( MSG_WARNING, "SaveRestoreServices::restore_request():%d: EXCEPTION: RTIinternalError: '%s'\n",
                        __LINE__, rti_err_msg.c_str() );
       this->restore_state = THLARestoreProcessEnum::RESTORE_NONE;
    }
@@ -1406,7 +1406,7 @@ void SaveRestoreServices::restore_waiting_for_request()
          StringUtilities::to_string( label_str, restore_label );
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::restore_waiting_for_request():" << __LINE__
-                << " ERROR: SaveRestore NOT supported!" << endl
+                << ": WARNING: SaveRestore NOT supported!" << endl
                 << " Label:'" << label_str << "'" << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
@@ -1426,7 +1426,7 @@ void SaveRestoreServices::restore_waiting_for_request()
       if ( execution_control->process_timer.timeout( execution_control->process_timer.time() ) ) {
          execution_control->process_timer.reset();
          message_publish( MSG_NORMAL,
-                           "SaveRestoreServices::restore_waiting_for_request():%d Waiting for Restore request callback ...\n",
+                           "SaveRestoreServices::restore_waiting_for_request():%d: Waiting for Restore request callback ...\n",
                            __LINE__ );
       }
    }
@@ -1447,7 +1447,7 @@ void SaveRestoreServices::restore_waiting_for_begun()
          StringUtilities::to_string( label_str, restore_label );
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::restore_waiting_for_begun():" << __LINE__
-                << " ERROR: SaveRestore NOT supported!" << endl
+                << ": WARNING: SaveRestore NOT supported!" << endl
                 << " Label:'" << label_str << "'" << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
@@ -1490,7 +1490,7 @@ void SaveRestoreServices::restore_request_failed()
    StringUtilities::to_string( label_str, restore_label );
    ostringstream errmsg;
    errmsg << "SaveRestoreServices::restore_request_failed():" << __LINE__
-          << " ERROR: Restore failed for Label: '" << label_str << "'" << endl;
+          << ": ERROR: Restore failed for Label: '" << label_str << "'" << endl;
    message_publish( MSG_ERROR, errmsg.str().c_str() );
 
    return;
@@ -1504,7 +1504,7 @@ void SaveRestoreServices::restore_begun()
    // If Federation SaveRestore is not supported then return without action.
    if ( this->restore_state == THLARestoreProcessEnum::RESTORE_UNSUPPORTED ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
-         message_publish( MSG_WARNING, "SaveRestoreServices::restore_begun():%d HLA SaveRestore NOT supported!\n",
+         message_publish( MSG_WARNING, "SaveRestoreServices::restore_begun():%d: HLA SaveRestore NOT supported!\n",
                           __LINE__ );
       }
       return;
@@ -1533,7 +1533,7 @@ void SaveRestoreServices::restore_waiting_for_initiated()
          StringUtilities::to_string( label_str, restore_label );
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::restore_waiting_for_initiated():" << __LINE__
-                << " ERROR: SaveRestore NOT supported!" << endl
+                << ": WARNING: SaveRestore NOT supported!" << endl
                 << " Label:'" << label_str << "'" << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
@@ -1550,7 +1550,7 @@ void SaveRestoreServices::restore_waiting_for_initiated()
       if ( execution_control->process_timer.timeout( execution_control->process_timer.time() ) ) {
          execution_control->process_timer.reset();
          message_publish( MSG_NORMAL,
-                          "SaveRestoreServices::restore_waiting_for_initiated():%d Waiting for Restore initiated callback ...\n",
+                          "SaveRestoreServices::restore_waiting_for_initiated():%d: Waiting for Restore initiated callback ...\n",
                           __LINE__ );
       }
    }
@@ -1584,7 +1584,7 @@ void SaveRestoreServices::restore_initiated(
          StringUtilities::to_string( label_str, restore_label );
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::restore_initiated():" << __LINE__
-                << " ERROR: SaveRestore NOT supported!" << endl
+                << ": WARNING: SaveRestore NOT supported!" << endl
                 << " Label:'" << label_str << "'" << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
@@ -1610,12 +1610,12 @@ void SaveRestoreServices::restore_initiated(
       this->restore_state = THLARestoreProcessEnum::RESTORE_FAILED;
 
       message_publish( MSG_ERROR,
-                       "SaveRestoreServices::restore_initiated(): %d : Could not find checkpoint file: \'%s\'!\n",
+                       "SaveRestoreServices::restore_initiated():%d: Could not find checkpoint file: \'%s\'!\n",
                        __LINE__, checkpoint_full_path.c_str() );
 
       StringUtilities::to_string( restore_label_str, restore_label );
       message_publish( MSG_ERROR,
-                       "SaveRestoreServices::restore_initiated(): %d : Restore failed for label: \'%s\'!\n",
+                       "SaveRestoreServices::restore_initiated():%d: Restore failed for label: \'%s\'!\n",
                        __LINE__, restore_label_str.c_str() );
 
       // Notify the Federation that we could not complete the Restore.
@@ -1626,8 +1626,8 @@ void SaveRestoreServices::restore_initiated(
    }
 
    // Report status to the user.
-   message_publish( MSG_NORMAL, "SaveRestoreServices::restore_initiated() Restoring checkpoint file %s\n",
-                    checkpoint_file_name.c_str() );
+   message_publish( MSG_NORMAL, "SaveRestoreServices::restore_initiated():%d: Restoring from checkpoint file %s\n",
+                    __LINE__, checkpoint_file_name.c_str() );
 
    // Set the checkpoint file name.
    the_cpr->load_checkpoint( checkpoint_full_path, true );
@@ -1656,7 +1656,7 @@ void SaveRestoreServices::restore_initiated(
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
          StringUtilities::to_string( restore_label_str, restore_label );
          message_publish( MSG_ERROR,
-                          "SaveRestoreServices::restore_failed_notification(): %d : Restore failed for label: \'%s\'!\n",
+                          "SaveRestoreServices::restore_failed_notification():%d: Restore failed for label: \'%s\'!\n",
                           __LINE__, restore_label_str.c_str() );
       }
 
@@ -1687,7 +1687,7 @@ void SaveRestoreServices::restore_after_checkpoint_load()
    // If Federation SaveRestore is not supported then return without action.
    if ( this->restore_state == THLARestoreProcessEnum::RESTORE_UNSUPPORTED ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
-         message_publish( MSG_WARNING, "SaveRestoreServices::restore_after_checkpoint_load():%d HLA SaveRestore NOT supported!\n",
+         message_publish( MSG_WARNING, "SaveRestoreServices::restore_after_checkpoint_load():%d: HLA SaveRestore NOT supported!\n",
                           __LINE__ );
       }
       return;
@@ -1756,7 +1756,7 @@ void SaveRestoreServices::restore_success_notification()
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
       StringUtilities::to_string( restore_label_str, restore_label );
       message_publish( MSG_NORMAL,
-                       "SaveRestoreServices::restore_success_notification(): %d : Restore succeeded for label: \'%s\'!\n",
+                       "SaveRestoreServices::restore_success_notification():%d: Restore succeeded for label: \'%s\'!\n",
                        __LINE__, restore_label_str.c_str() );
    }
 
@@ -1767,23 +1767,23 @@ void SaveRestoreServices::restore_success_notification()
    try {
       federate->get_RTI_ambassador()->federateRestoreComplete();
    } catch ( RestoreNotRequested const &e ) {
-      message_publish( MSG_WARNING, "SaveRestoreServices::restore_success_notification():%d -- restore complete -- EXCEPTION: RestoreNotRequested\n",
+      message_publish( MSG_WARNING, "SaveRestoreServices::restore_success_notification():%d: EXCEPTION: RestoreNotRequested\n",
                         __LINE__ );
    } catch ( FederateNotExecutionMember const &e ) {
-      message_publish( MSG_WARNING, "SaveRestoreServices::restore_success_notification():%d -- restore complete -- EXCEPTION: FederateNotExecutionMember\n",
+      message_publish( MSG_WARNING, "SaveRestoreServices::restore_success_notification():%d: EXCEPTION: FederateNotExecutionMember\n",
                         __LINE__ );
    } catch ( SaveInProgress const &e ) {
-      message_publish( MSG_WARNING, "SaveRestoreServices::restore_success_notification():%d -- restore complete -- EXCEPTION: SaveInProgress\n",
+      message_publish( MSG_WARNING, "SaveRestoreServices::restore_success_notification():%d: EXCEPTION: SaveInProgress\n",
                         __LINE__ );
    } catch ( NotConnected const &e ) {
-      message_publish( MSG_WARNING, "SaveRestoreServices::restore_success_notification():%d -- restore complete -- EXCEPTION: NotConnected\n",
+      message_publish( MSG_WARNING, "SaveRestoreServices::restore_success_notification():%d: EXCEPTION: NotConnected\n",
                         __LINE__ );
       federate->set_connection_lost();
    } catch ( RTIinternalError const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
 
-      message_publish( MSG_WARNING, "SaveRestoreServices::restore_success_notification():%d -- restore complete -- EXCEPTION: RTIinternalError: '%s'\n",
+      message_publish( MSG_WARNING, "SaveRestoreServices::restore_success_notification():%d: EXCEPTION: RTIinternalError: '%s'\n",
                         __LINE__, rti_err_msg.c_str() );
    }
 
@@ -1804,7 +1804,7 @@ void SaveRestoreServices::restore_failed_notification()
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
       StringUtilities::to_string( restore_label_str, restore_label );
       message_publish( MSG_ERROR,
-                        "SaveRestoreServices::restore_failed_notification(): %d : Restore failed for label: \'%s\'!\n",
+                        "SaveRestoreServices::restore_failed_notification():%d: Restore failed for label: \'%s\'!\n",
                         __LINE__, restore_label_str.c_str() );
    }
 
@@ -1815,23 +1815,23 @@ void SaveRestoreServices::restore_failed_notification()
    try {
       federate->get_RTI_ambassador()->federateRestoreNotComplete();
    } catch ( RestoreNotRequested const &e ) {
-      message_publish( MSG_WARNING, "SaveRestoreServices::restore_failed_notification():%d -- restore NOT complete -- EXCEPTION: RestoreNotRequested\n",
+      message_publish( MSG_WARNING, "SaveRestoreServices::restore_failed_notification():%d: EXCEPTION: RestoreNotRequested\n",
                         __LINE__ );
    } catch ( FederateNotExecutionMember const &e ) {
-      message_publish( MSG_WARNING, "SaveRestoreServices::restore_failed_notification():%d -- restore NOT complete -- EXCEPTION: FederateNotExecutionMember\n",
+      message_publish( MSG_WARNING, "SaveRestoreServices::restore_failed_notification():%d: EXCEPTION: FederateNotExecutionMember\n",
                         __LINE__ );
    } catch ( SaveInProgress const &e ) {
-      message_publish( MSG_WARNING, "SaveRestoreServices::restore_failed_notification():%d -- restore NOT complete -- EXCEPTION: SaveInProgress\n",
+      message_publish( MSG_WARNING, "SaveRestoreServices::restore_failed_notification():%d: EXCEPTION: SaveInProgress\n",
                         __LINE__ );
    } catch ( NotConnected const &e ) {
-      message_publish( MSG_WARNING, "SaveRestoreServices::restore_failed_notification():%d -- restore NOT complete -- EXCEPTION: NotConnected\n",
+      message_publish( MSG_WARNING, "SaveRestoreServices::restore_failed_notification():%d: EXCEPTION: NotConnected\n",
                         __LINE__ );
       federate->set_connection_lost();
    } catch ( RTIinternalError const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
 
-      message_publish( MSG_WARNING, "SaveRestoreServices::restore_failed_notification():%d -- restore NOT complete -- EXCEPTION: RTIinternalError: '%s'\n",
+      message_publish( MSG_WARNING, "SaveRestoreServices::restore_failed_notification():%d: EXCEPTION: RTIinternalError: '%s'\n",
                         __LINE__, rti_err_msg.c_str() );
    }
 
@@ -1850,7 +1850,7 @@ bool SaveRestoreServices::restore_waiting_for_completion()
    // If Federation SaveRestore is not supported then return without action.
    if ( this->restore_state == THLARestoreProcessEnum::RESTORE_UNSUPPORTED ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
-         message_publish( MSG_WARNING, "SaveRestoreServices::restore_waiting_for_completion():%d HLA SaveRestore NOT supported!\n",
+         message_publish( MSG_WARNING, "SaveRestoreServices::restore_waiting_for_completion():%d: HLA SaveRestore NOT supported!\n",
                           __LINE__ );
       }
       return ( false );
@@ -1863,7 +1863,7 @@ bool SaveRestoreServices::restore_waiting_for_completion()
             std::string label_str;
             StringUtilities::to_string( label_str, restore_label );
             message_publish( MSG_NORMAL,
-                             "SaveRestoreServices::restore_waiting_for_completion():%d HLA Restore in progress for label \'%s\'!\n",
+                             "SaveRestoreServices::restore_waiting_for_completion():%d: HLA Restore in progress for label \'%s\'!\n",
                              __LINE__, label_str.c_str() );
          }
       }
@@ -1887,7 +1887,7 @@ void SaveRestoreServices::restore_succeded()
          StringUtilities::to_string( label_str, restore_label );
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::restore_succeded():" << __LINE__
-                << " ERROR: SaveRestore NOT supported!" << endl
+                << ": WARNING: SaveRestore NOT supported!" << endl
                 << " Label:'" << label_str << "'" << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
@@ -1898,6 +1898,42 @@ void SaveRestoreServices::restore_succeded()
    if ( restore_state != THLARestoreProcessEnum::RESTORE_COMPLETE ) {
       return;
    }
+
+   // Macro to save the FPU Control Word register value.
+   TRICKHLA_SAVE_FPU_CONTROL_WORD;
+   try {
+      HLAinteger64Time time;
+      federate->get_RTI_ambassador()->queryLogicalTime( time );
+      federate->time_management_service.set_granted_time( time );
+   } catch ( FederateNotExecutionMember const &e ) {
+      message_publish( MSG_WARNING, "SaveRestoreServices::restore_succeded():%d: FederateNotExecutionMember\n",
+                        __LINE__ );
+   } catch ( SaveInProgress const &e ) {
+      message_publish( MSG_WARNING, "SaveRestoreServices::restore_succeded():%d: SaveInProgress\n",
+                        __LINE__ );
+   } catch ( RestoreInProgress const &e ) {
+      message_publish( MSG_WARNING, "SaveRestoreServices::restore_succeded():%d: RestoreInProgress\n",
+                        __LINE__ );
+   } catch ( NotConnected const &e ) {
+      message_publish( MSG_WARNING, "SaveRestoreServices::restore_succeded():%d: NotConnected\n",
+                        __LINE__ );
+      federate->set_connection_lost();
+   } catch ( RTIinternalError const &e ) {
+      message_publish( MSG_WARNING, "SaveRestoreServices::restore_succeded():%d: RTIinternalError\n",
+                        __LINE__ );
+   }
+
+   federate->time_management_service.set_requested_time_to_granted_time();
+
+   // Macro to restore the saved FPU Control Word register value.
+   TRICKHLA_RESTORE_FPU_CONTROL_WORD;
+   TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+
+   // TODO: Load the checkpoint base time units into the Int64BaseTime class
+   // so that all the HLA time representations use the correct base time.
+   //
+   // Refresh the HLA time constants given the HLA base time from the checkpoint.
+   time_management_service->refresh_HLA_time_constants();
 
    // Resume publishing HLA data.
    federate->publish_data = true;
@@ -1922,7 +1958,7 @@ void SaveRestoreServices::restore_failed()
          StringUtilities::to_string( label_str, restore_label );
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::restore_failed():" << __LINE__
-                << " ERROR: SaveRestore NOT supported!" << endl
+                << ": WARNING: SaveRestore NOT supported!" << endl
                 << " Label:'" << label_str << "'" << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
@@ -1994,8 +2030,8 @@ void SaveRestoreServices::restore_checkpoint(
    if ( trick_filename.compare( 0, federation_name_str.length(), federation_name_str ) != 0 ) {
       trick_filename = federation_name_str + "_" + file_name;
    }
-   message_publish( MSG_NORMAL, "SaveRestoreServices::restore_checkpoint() Restoring checkpoint file %s\n",
-                    trick_filename.c_str() );
+   message_publish( MSG_NORMAL, "SaveRestoreServices::restore_checkpoint():%d: Restoring checkpoint file %s\n",
+                    __LINE__, trick_filename.c_str() );
 
    // Must init all data recording groups since we are restarting at init
    // time before Trick would normally do this. Prior to Trick 10.8, the only way
@@ -2021,7 +2057,7 @@ void SaveRestoreServices::restore_checkpoint(
       exec_set_freeze_command( false );
    }
 
-   message_publish( MSG_NORMAL, "SaveRestoreServices::restore_checkpoint():%d Checkpoint file load complete.\n",
+   message_publish( MSG_NORMAL, "SaveRestoreServices::restore_checkpoint():%d: Checkpoint file load complete.\n",
                     __LINE__ );
 
    // indicate that the restore was completed successfully
@@ -2055,20 +2091,20 @@ void SaveRestoreServices::restart_checkpoint()
       federate->get_RTI_ambassador()->queryLogicalTime( fedTime );
       time_management_service->set_granted_time( fedTime );
    } catch ( FederateNotExecutionMember const &e ) {
-      message_publish( MSG_WARNING, "SaveRestoreServices::restart_checkpoint():%d queryLogicalTime EXCEPTION: FederateNotExecutionMember\n",
+      message_publish( MSG_WARNING, "SaveRestoreServices::restart_checkpoint():%d: FederateNotExecutionMember\n",
                        __LINE__ );
    } catch ( SaveInProgress const &e ) {
-      message_publish( MSG_WARNING, "SaveRestoreServices::restart_checkpoint():%d queryLogicalTime EXCEPTION: SaveInProgress\n",
+      message_publish( MSG_WARNING, "SaveRestoreServices::restart_checkpoint():%d: SaveInProgress\n",
                        __LINE__ );
    } catch ( RestoreInProgress const &e ) {
-      message_publish( MSG_WARNING, "SaveRestoreServices::restart_checkpoint():%d queryLogicalTime EXCEPTION: RestoreInProgress\n",
+      message_publish( MSG_WARNING, "SaveRestoreServices::restart_checkpoint():%d: RestoreInProgress\n",
                        __LINE__ );
    } catch ( NotConnected const &e ) {
-      message_publish( MSG_WARNING, "SaveRestoreServices::restart_checkpoint():%d queryLogicalTime EXCEPTION: NotConnected\n",
+      message_publish( MSG_WARNING, "SaveRestoreServices::restart_checkpoint():%d: NotConnected\n",
                        __LINE__ );
       federate->set_connection_lost();
    } catch ( RTIinternalError const &e ) {
-      message_publish( MSG_WARNING, "SaveRestoreServices::restart_checkpoint():%d queryLogicalTime EXCEPTION: RTIinternalError\n",
+      message_publish( MSG_WARNING, "SaveRestoreServices::restart_checkpoint():%d: RTIinternalError\n",
                        __LINE__ );
    }
 
