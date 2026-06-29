@@ -795,13 +795,13 @@ class ExecutionControlBase : public SyncPointManagerBase
    /*! @brief Function called when a Restore has been initiated. */
    virtual void restore_initiated(
 #if defined( IEEE_1516_2025 )
-   std::wstring const                      &label,
-   std::wstring const                      &federate_name,
-   RTI1516_NAMESPACE::FederateHandle const &new_federate_handle );
+      std::wstring const                      &label,
+      std::wstring const                      &federate_name,
+      RTI1516_NAMESPACE::FederateHandle const &new_federate_handle );
 #else
-   std::wstring const                &label,
-   std::wstring const                &federate_name,
-   RTI1516_NAMESPACE::FederateHandle  new_federate_handle );
+      std::wstring const               &label,
+      std::wstring const               &federate_name,
+      RTI1516_NAMESPACE::FederateHandle new_federate_handle );
 #endif // IEEE_1516_2025
 
    /*! @brief Rebuild the HLA state after a checkpoint load. */

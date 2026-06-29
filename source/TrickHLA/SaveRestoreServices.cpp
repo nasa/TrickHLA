@@ -32,7 +32,6 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
-#include <cstdint>
 #include <cstdlib>
 #include <cstring>
 #include <fstream>
@@ -45,14 +44,13 @@ NASA, Johnson Space Center\n
 
 // Trick includes.
 #include "trick/CheckPointRestart.hh"
-//#include "trick/CheckPointRestart_c_intf.hh"
 #include "trick/command_line_protos.h"
 #include "trick/exec_proto.h"
 #include "trick/message_proto.h"
 #include "trick/message_type.h"
 
 // Global singleton pointer to the CheckPointRestart.
-extern Trick::CheckPointRestart * the_cpr;
+extern Trick::CheckPointRestart *the_cpr;
 
 // TrickHLA includes.
 #include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
@@ -79,6 +77,7 @@ extern Trick::CheckPointRestart * the_cpr;
 // HLA include files.
 #include "RTI/Enums.h"
 #include "RTI/Exception.h"
+#include "RTI/Handle.h"
 #include "RTI/RTIambassador.h"
 #include "RTI/RTIambassadorFactory.h"
 #include "RTI/Typedefs.h"
@@ -1211,12 +1210,11 @@ void SaveRestoreServices::restore_waiting_for_request_status()
             break;
          }
       }
-
    }
 
    // Check for Restore response status conflict.
    if ( restore_conflict ) {
-      
+
       // Reset the Restore state.
       restore_state = THLARestoreProcessEnum::RESTORE_NONE;
 
@@ -1237,7 +1235,6 @@ void SaveRestoreServices::restore_waiting_for_request_status()
              << ": Restore status response complete." << endl;
          message_publish( MSG_NORMAL, msg.str().c_str() );
       }
-
    }
 
    return;
@@ -1341,7 +1338,6 @@ std::string SaveRestoreServices::to_string( FederateRestoreStatusVector const &r
 
       // Get the individual federate status string.
       response_msg << to_string( status ) << endl;
-
    }
 
    return ( response_msg.str() );
@@ -1469,7 +1465,6 @@ void SaveRestoreServices::restore_waiting_for_begun()
          errmsg << "SaveRestoreServices::restore_waiting_for_begun():" << __LINE__
                 << " : Waiting for Restore to begin for Label: '" << label_str << "'!" << endl;
          message_publish( MSG_NORMAL, errmsg.str().c_str() );
-
       }
    }
 
@@ -1481,7 +1476,7 @@ void SaveRestoreServices::restore_waiting_for_begun()
  */
 void SaveRestoreServices::restore_request_failed()
 {
-      
+
    // Reset the Restore state.
    restore_state = THLARestoreProcessEnum::RESTORE_NONE;
 
@@ -1582,6 +1577,10 @@ void SaveRestoreServices::restore_initiated(
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
          string label_str;
          StringUtilities::to_string( label_str, restore_label );
+         string fed_name_str;
+         StringUtilities::to_string( fed_name_str, federate_name );
+         string fed_handle_str;
+         StringUtilities::to_string( fed_handle_str, new_federate_handle );
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::restore_initiated():" << __LINE__
                 << ": WARNING: SaveRestore NOT supported!" << endl
@@ -1600,11 +1599,11 @@ void SaveRestoreServices::restore_initiated(
    this->restore_label = label;
 
    // Map the Restore label to the associated Trick checkpoint file names.
-   checkpoint_file_name = execution_control->map_label_to_checkpoint_file_name( label );
-   std::string checkpoint_full_path = this->HLA_save_directory + "/" + checkpoint_file_name;
+   checkpoint_file_name        = execution_control->map_label_to_checkpoint_file_name( label );
+   string checkpoint_full_path = this->HLA_save_directory + "/" + checkpoint_file_name;
 
    // Make sure that the checkpoint file exists.
-   if ( stat( checkpoint_full_path.c_str(), &temp_buf) != 0 ) {
+   if ( stat( checkpoint_full_path.c_str(), &temp_buf ) != 0 ) {
 
       // Mark this Restore as failed.
       this->restore_state = THLARestoreProcessEnum::RESTORE_FAILED;
@@ -1622,7 +1621,6 @@ void SaveRestoreServices::restore_initiated(
       restore_failed_notification();
 
       return;
-
    }
 
    // Report status to the user.
@@ -1651,7 +1649,7 @@ void SaveRestoreServices::restore_initiated(
    // If so, the restore_state should be THLARestoreProcessEnum::RESTORE_IN_PROGRESS.
    // This indicates that we are still waiting for all the other federates to
    // report in and the entire Federation Restore state to be determined.
-   if ( this->restore_state == THLARestoreProcessEnum::RESTORE_FAILED ){
+   if ( this->restore_state == THLARestoreProcessEnum::RESTORE_FAILED ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
          StringUtilities::to_string( restore_label_str, restore_label );
@@ -1664,7 +1662,6 @@ void SaveRestoreServices::restore_initiated(
       restore_failed_notification();
 
       return;
-
    }
 
    // Rebuild HLA state after the checkpoint load.
@@ -1694,7 +1691,7 @@ void SaveRestoreServices::restore_after_checkpoint_load()
    }
 
    // Make sure we are in an appropriate Restore state.
-   if ( restore_state ==  THLARestoreProcessEnum::RESTORE_IN_PROGRESS ) {
+   if ( restore_state == THLARestoreProcessEnum::RESTORE_IN_PROGRESS ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          message_publish( MSG_NORMAL, "SaveRestoreServices::restore_after_checkpoint_load():%d: Rebuilding HLA Handles.\n",
@@ -1740,7 +1737,6 @@ void SaveRestoreServices::restore_after_checkpoint_load()
          message_publish( MSG_WARNING, "SaveRestoreServices::restore_after_checkpoint_load():%d: Restore NOT in progress!\n",
                           __LINE__ );
       }
-
    }
 
    return;
@@ -1878,7 +1874,7 @@ bool SaveRestoreServices::restore_waiting_for_completion()
  */
 void SaveRestoreServices::restore_succeded()
 {
-   
+
    // Just return if HLA save and restore is not supported by the simulation
    // initialization scheme selected by the user.
    if ( !execution_control->is_save_and_restore_supported() ) {
@@ -1949,7 +1945,7 @@ void SaveRestoreServices::restore_succeded()
  */
 void SaveRestoreServices::restore_failed()
 {
-   
+
    // Just return if HLA save and restore is not supported by the simulation
    // initialization scheme selected by the user.
    if ( !execution_control->is_save_and_restore_supported() ) {
@@ -2066,7 +2062,6 @@ void SaveRestoreServices::restore_checkpoint(
    return;
 }
 
-
 //--------------------------------------------------------------------------
 // Potentially deprecated SaveRestoreService functions.
 //--------------------------------------------------------------------------
@@ -2120,5 +2115,4 @@ void SaveRestoreServices::restart_checkpoint()
    // FIXME: Reset the Save/Restore state.
    restore_label.clear();
    restore_state = THLARestoreProcessEnum::RESTORE_NONE;
-
 }

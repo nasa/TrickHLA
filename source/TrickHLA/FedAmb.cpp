@@ -466,7 +466,7 @@ void FedAmb::initiateFederateRestore(
    }
 
    // Check for federate name change.
-   if ( federate->name != new_federate_name_str ){
+   if ( federate->name != new_federate_name_str ) {
       string label_str;
       StringUtilities::to_string( label_str, save_restore_service->restore_get_label() );
       ostringstream errmsg;
@@ -484,7 +484,6 @@ void FedAmb::initiateFederateRestore(
    execution_control->restore_initiated( label, federateName, postRestoreFederateHandle );
 
    return;
-
 }
 
 void FedAmb::federationRestored()
@@ -513,7 +512,7 @@ void FedAmb::federationNotRestored(
    }
    save_restore_service->restore_set_state( THLARestoreProcessEnum::RESTORE_FAILED );
    save_restore_service->restore_failed_print_reason( reason );
-   
+
    return;
 }
 
