@@ -307,10 +307,10 @@ Trick simulation time as the default scenario-timeline.\n",
 
    // Depending on if Save and Restore is supported, set the intial state.
    if ( this->is_save_and_restore_supported() ) {
-      this->save_restore_service->save_set_label( THLASaveProcessEnum::SAVE_NONE );
+      this->save_restore_service->save_set_state( THLASaveProcessEnum::SAVE_NONE );
       this->save_restore_service->restore_set_state( THLARestoreProcessEnum::RESTORE_NONE );
    } else {
-      this->save_restore_service->save_set_label( THLASaveProcessEnum::SAVE_UNSUPPORTED );
+      this->save_restore_service->save_set_state( THLASaveProcessEnum::SAVE_UNSUPPORTED );
       this->save_restore_service->restore_set_state( THLARestoreProcessEnum::RESTORE_UNSUPPORTED );
    }
 
@@ -1063,14 +1063,6 @@ std::string const ExecutionControlBase::map_save_label_to_federates_file_name(
 /*!
  *  @job_class{scheduled}
  */
-size_t ExecutionControlBase::number_of_pending_saves()
-{
-   return ( save_restore_service->pending_save_queue.size() );
-}
-
-/*!
- *  @job_class{scheduled}
- */
 void ExecutionControlBase::save_process()
 {
    std::string save_label_str;
@@ -1625,14 +1617,8 @@ void ExecutionControlBase::checkpoint_before()
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream msg;
       msg << "SaveRestoreServices::checkpoint_before():"
-          << __LINE__ << " : Checkpoint initiated." << std::endl;
+          << __LINE__ << ": Checkpoint initiated." << std::endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
-   }
-
-   // Just return if HLA save and restore is not supported by the simulation
-   // initialization scheme selected by the user.
-   if ( !is_save_and_restore_supported() ) {
-      return;
    }
 
    // We don't initiate a Save in either initialization or shutdown.
@@ -1658,54 +1644,10 @@ void ExecutionControlBase::checkpoint_before()
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          ostringstream msg;
          msg << "SaveRestoreServices::checkpoint_before():"
-             << __LINE__ << " : Save already requested." << std::endl;
+             << __LINE__ << ": Save already requested." << std::endl;
          message_publish( MSG_NORMAL, msg.str().c_str() );
       }
       return;
-   }
-
-   // Check to see if we are set up to support a Trick Control Panel checkpoint.
-   if ( save_restore_service->is_tcp_save_supported() ) {
-
-      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         ostringstream msg;
-         msg << "SaveRestoreServices::checkpoint_before():"
-             << __LINE__ << " : Save initiated from Trick Control Panel checkpoint." << std::endl;
-         message_publish( MSG_NORMAL, msg.str().c_str() );
-      }
-
-      // Only initiate a Save if one is NOT already in progress.
-      if ( current_save_state == THLASaveProcessEnum::SAVE_NONE ) {
-
-         // Get the Save label from the Trick Control Panel checkpoint interface.
-         string  trick_filename;
-         string  slash( "/" );
-         size_t  found;
-         string  save_label_str;
-         wstring save_label_wstr;
-
-         // get checkpoint file name specified in control panel
-         trick_filename = checkpoint_get_output_file();
-
-         // Unfortunately, the Trick checkpoint output filename contains
-         // dir/filename.  We only need the filename specified in the Trick
-         // Control Panel input dialog.  So, only keep the text after the
-         // last slash.
-         found = trick_filename.rfind( slash );
-         if ( found != string::npos ) {
-            save_label_str = trick_filename.substr( found + 1 );
-         } else {
-            save_label_str = trick_filename;
-         }
-
-         // Convert the Save label string to a wstring.
-         StringUtilities::to_wstring( save_label_wstr, save_label_str );
-
-         // Call the ExecutionControlBase save function to initiate the Save.
-         // The rest will be handled like all other federates in the cyclic
-         // save_process freeze job.
-         save( save_label_wstr );
-      }
    }
 
    return;

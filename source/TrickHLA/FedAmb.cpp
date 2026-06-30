@@ -291,7 +291,7 @@ void FedAmb::initiateFederateSave(
 
    // Set the Save and Restore state.
    save_restore_service->save_set_label( label );
-   save_restore_service->save_set_label( THLASaveProcessEnum::SAVE_REQUESTED );
+   save_restore_service->save_set_state( THLASaveProcessEnum::SAVE_REQUESTED );
    save_restore_service->save_set_time( i64time );
 
    // Convert the Save label wstring to a string.
@@ -321,7 +321,7 @@ void FedAmb::initiateFederateSave(
 
    // Set the Save and Restore state.
    save_restore_service->save_set_label( label );
-   save_restore_service->save_set_label( THLASaveProcessEnum::SAVE_REQUESTED );
+   save_restore_service->save_set_state( THLASaveProcessEnum::SAVE_REQUESTED );
    save_restore_service->save_set_time( i64time );
 
    // Convert the Save label wstring to a string.
@@ -347,7 +347,7 @@ void FedAmb::federationSaved()
    }
 
    // Mark the Save process as completed.
-   save_restore_service->save_set_label( THLASaveProcessEnum::SAVE_COMPLETE );
+   save_restore_service->save_set_state( THLASaveProcessEnum::SAVE_COMPLETE );
 
    return;
 }
@@ -364,7 +364,7 @@ void FedAmb::federationNotSaved(
    }
 
    // Mark the Save process as failed.
-   save_restore_service->save_set_label( THLASaveProcessEnum::SAVE_FAILED );
+   save_restore_service->save_set_state( THLASaveProcessEnum::SAVE_FAILED );
    save_restore_service->print_save_failure_reason( reason );
 
    return;
@@ -495,7 +495,17 @@ void FedAmb::federationRestored()
       message_publish( MSG_NORMAL, "FedAmb::federationRestored():%d\n",
                        __LINE__ );
    }
+   // FIXME:
+   std::cout << "FedAmb::federationRestored():" << __LINE__
+             << ": Calling SaveRestoreServices::restore_set_state()!" << std::endl;
+             
    save_restore_service->restore_set_state( THLARestoreProcessEnum::RESTORE_COMPLETE );
+
+   // FIXME:
+   std::cout << "FedAmb::federationRestored():" << __LINE__
+             << ": Returned from SaveRestoreServices::restore_set_state()!" << std::endl;
+   std::cout << "FedAmb::federationRestored():" << __LINE__
+             << ": restore_state = " << to_string( save_restore_service->restore_get_state() ) << std::endl;
 
    return;
 }

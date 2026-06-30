@@ -179,20 +179,13 @@ SaveRestoreServices::SaveRestoreServices( Federate &fed )
      interaction_service( fed.get_interaction_service() ),
      time_management_service( fed.get_time_management_service() ),
      execution_control( NULL ),
-     restore_federates_count( 0 ),
      joined_federates_file_name( "" ),
      HLA_save_directory( "" ),
-     copy_run_directory( false ),
-     unfreeze_after_save( false ),
-     support_tcp_checkpoint( false ),
      save_state( THLASaveProcessEnum::SAVE_UNSUPPORTED ),
      save_label( L"" ),
-     save_status_request_complete( false ),
      restore_state( THLARestoreProcessEnum::RESTORE_UNSUPPORTED ),
      restore_label( L"" ),
-     restore_name( L"" ),
-     restore_status_response_complete( false ),
-     restore_status_process_response( false )
+     restore_name( L"" )
 {
    return;
 }
@@ -204,9 +197,6 @@ SaveRestoreServices::SaveRestoreServices( Federate &fed )
  */
 SaveRestoreServices::~SaveRestoreServices()
 {
-   // Clear the pending Save set.
-   pending_save_queue.clear();
-
    return;
 }
 
@@ -294,7 +284,7 @@ bool SaveRestoreServices::check_HLA_save_directory()
 /*!
  *  @job_class{scheduled}
  */
-bool SaveRestoreServices::save_set_label( THLASaveProcessEnum state )
+bool SaveRestoreServices::save_set_state( THLASaveProcessEnum state )
 {
    // Check to make sure that Save and Restore is supported for this federate.
    if ( ( !execution_control->is_save_and_restore_supported() )
@@ -1294,10 +1284,6 @@ void SaveRestoreServices::restore_request( wstring const &label )
       federate->get_RTI_ambassador()->requestFederationRestore( this->restore_label );
       this->restore_state = THLARestoreProcessEnum::RESTORE_REQUESTED;
 
-      // Save the # of federates at the time federation restore is initiated.
-      // this way, when the count decreases, we know someone has resigned!
-      this->restore_federates_count = federate->joined_federates_map.size();
-
    } catch ( FederateNotExecutionMember const &e ) {
       message_publish( MSG_WARNING, "SaveRestoreServices::restore_request():%d: EXCEPTION: FederateNotExecutionMember\n",
                        __LINE__ );
@@ -1854,14 +1840,14 @@ bool SaveRestoreServices::restore_waiting_for_completion()
 
    if ( this->restore_state == THLARestoreProcessEnum::RESTORE_IN_PROGRESS ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
-         if ( execution_control->process_timer.timeout( execution_control->process_timer.time() ) ) {
-            execution_control->process_timer.reset();
+         //if ( execution_control->process_timer.timeout( execution_control->process_timer.time() ) ) {
+         //   execution_control->process_timer.reset();
             std::string label_str;
             StringUtilities::to_string( label_str, restore_label );
             message_publish( MSG_NORMAL,
                              "SaveRestoreServices::restore_waiting_for_completion():%d: HLA Restore in progress for label \'%s\'!\n",
                              __LINE__, label_str.c_str() );
-         }
+         //}
       }
       return ( true );
    }

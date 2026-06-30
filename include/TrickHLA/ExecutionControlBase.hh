@@ -715,10 +715,6 @@ class ExecutionControlBase : public SyncPointManagerBase
    /*! @brief Map a Save label into a federates file name. */
    virtual std::string const map_save_label_to_federates_file_name( std::wstring const &save_label );
 
-   /*! @brief Get the number of pending scheduled Saves.
-    *  @return Number of pending Saves in Save queue. */
-   virtual std::size_t number_of_pending_saves();
-
    /*! @brief Federate HLA Save process executive. */
    virtual void save_process();
 
@@ -867,9 +863,8 @@ class ExecutionControlBase : public SyncPointManagerBase
   protected:
    double time_padding; ///< @trick_units{s} Time in seconds to add to the go-to-run time.
 
-   bool enable_least_common_time_step; /**< @trick_units{--} Enable the use of LCTS. */
-
-   double least_common_time_step_seconds; /**< @trick_units{s} The LCTS in seconds. */
+   bool   enable_least_common_time_step;  /**< @trick_units{--} Enable the use of LCTS. */
+   double least_common_time_step_seconds; /**< @trick_units{s}  The LCTS in seconds. */
 
    int64_t least_common_time_step; /**< @trick_units{--}
       A 64 bit integer time that represents the base HLA Logical Time representation
@@ -888,7 +883,7 @@ class ExecutionControlBase : public SyncPointManagerBase
    ExecutionConfigurationBase *execution_configuration; /**< @trick_units{--}
       Associates TrickHLA::ExecutionConfigurationBase class object instance.
       Since this is an abstract class, the actual instance will be a concrete
-      derived class instance (e.g. SpaceFOM:ExecutionControl). */
+      derived class instance (e.g. SpaceFOM:ExecutionConfiguration). */
 
    bool                 mode_transition_requested;        ///< @trick_units{--} Flag to indicate a mode transition has been requested.
    ExecutionControlEnum requested_execution_control_mode; ///< @trick_units{--} The latest mode transition requested.
@@ -920,6 +915,7 @@ class ExecutionControlBase : public SyncPointManagerBase
    /*! @brief Assignment operator for ExecutionControlBase class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
    ExecutionControlBase &operator=( ExecutionControlBase const &rhs );
+
 };
 
 } // namespace TrickHLA

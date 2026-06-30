@@ -196,70 +196,13 @@ class SaveRestoreServices : public CheckpointConversionBase
     * @return Success of HLA Save directory path. */
    bool check_HLA_save_directory();
 
-   //
-   // CheckpointConversionBase Interface.
-   //
-   /*! @brief Convert data to a form Trick can checkpoint. */
-   virtual void convert_data_before_checkpoint() override
-   {
-      return;
-   }
-
-   /*! @brief Restore data structures after loading a Trick checkpoint. */
-   virtual void restore_data_after_checkpoint() override
-   {
-      return;
-   }
-
-   /*! @brief Clear/release the memory used for the conversion data for the checkpoint. */
-   virtual void free_converted_data_for_checkpoint() override
-   {
-      return;
-   }
-
    //..........................................................................
    // Save functions.
    //..........................................................................
 
-   /*! @brief Set the unfreeze after save state.
-    *  @detail This is the state of the flag indicating if the ExecutionControl
-    *  is expecting the federate to immediately exit freeze after a Save is
-    *  complete.
-    *  @param state Desired save state. */
-   void set_unfreeze_after_save( bool state )
-   {
-      unfreeze_after_save = state;
-      return;
-   }
-
-   /*! @brief Check if we should unfreeze after a freeze.
-    *  @detail This is the state of the flag indicating if the ExecutionControl
-    *  is expecting the federate to immediately exit freeze after a Save is
-    *  complete.
-    *  @return Unfreeze after save status. */
-   bool is_unfreeze_after_save()
-   {
-      return ( unfreeze_after_save );
-   }
-
-   /*! @brief Set if Trick Control Panel checkpoint Save is supported.
-    *  @param status Desired save state. */
-   void set_tcp_save_supported( bool status )
-   {
-      support_tcp_checkpoint = status;
-      return;
-   }
-
-   /*! @brief Check if Trick Control Panel checkpoint Save is supported.
-    *  @return TCP Save support status. */
-   bool is_tcp_save_supported()
-   {
-      return ( support_tcp_checkpoint );
-   }
-
    /*! @brief Set the Save state.
     *  @param state Desired save state. */
-   bool save_set_label( THLASaveProcessEnum state );
+   bool save_set_state( THLASaveProcessEnum state );
 
    /*! @brief Get the current Federate HLA Save state.
     *  @return Federate HLA Save state. */
@@ -459,6 +402,27 @@ class SaveRestoreServices : public CheckpointConversionBase
    /*! @brief Converts checkpointed sync points into HLA sync points. */
    void reinstate_logged_sync_pts();
 
+   //..........................................................................
+   // CheckpointConversionBase Interface.
+   //..........................................................................
+   /*! @brief Convert data to a form Trick can checkpoint. */
+   virtual void convert_data_before_checkpoint() override
+   {
+      return;
+   }
+
+   /*! @brief Restore data structures after loading a Trick checkpoint. */
+   virtual void restore_data_after_checkpoint() override
+   {
+      return;
+   }
+
+   /*! @brief Clear/release the memory used for the conversion data for the checkpoint. */
+   virtual void free_converted_data_for_checkpoint() override
+   {
+      return;
+   }
+
    //--------------------------------------------------------------------------
    // Potentially deprecated SaveRestoreService functions.
    //--------------------------------------------------------------------------
@@ -483,23 +447,15 @@ class SaveRestoreServices : public CheckpointConversionBase
    // The SaveRestoreServices information known at execution time. This is
    // loaded when we join the federation and is automatically kept current when
    // other federates join / resign from the federation.
-   std::size_t restore_federates_count;    ///< @trick_io{**} Number of joined Federates at the time of the restore (default: 0)
    std::string joined_federates_file_name; ///< @trick_io{**} File containing the names of the joined federates.
 
    // Save and Restore variables.
    std::string HLA_save_directory;     ///< @trick_units{--} HLA Save directory.
-   bool        copy_run_directory;     ///< @trick_units{--} Make a backup of RUN directory before restarting the federation (default: false).
-   bool        unfreeze_after_save;    ///< @trick_units{--} Flag to indicate that we should go to run immediately after a save (default: false)
-   bool        support_tcp_checkpoint; ///< @trick_units{--} Support Save/Restore from Trick Control Panel (default: false).
-
+ 
    // Save process variables.
    THLASaveProcessEnum save_state; ///< @trick_units{1} Where we are in the Save process.
    std::wstring        save_label; ///< @trick_units{--} Save label.
    Int64Time           save_time;  ///< @trick_units{--} HLA Logical Time for Save.
-
-   bool save_status_request_complete; ///< @trick_units{--} Flag indicating if HLA Save status request is complete.
-
-   std::set< ScheduledSave > pending_save_queue; //< @trick_io{**} A time ordered queue for pending Save requests.
 
    // Restore process variables.
    THLARestoreProcessEnum            restore_state;  ///< @trick_io{**} Where we are in the restore process
@@ -507,11 +463,7 @@ class SaveRestoreServices : public CheckpointConversionBase
    std::wstring                      restore_name;   ///< @trick_io{**} Restored federate name.
    RTI1516_NAMESPACE::FederateHandle restore_handle; ///< @trick_io{**} Restored federate handle.
 
-   bool restore_status_response_complete; ///< @trick_units{--} Flag indicating if HLA Restore status response is complete.
-   bool restore_status_process_response;  /**< @trick_units{--} Flag indicating to process HLA Restore status response.
-                                                                Otherwise, just echo out the response status. */
-
-   RTI1516_NAMESPACE::FederateRestoreStatusVector restore_status_response; ///< @trick_units{--} Federation Restore status vector.
+   RTI1516_NAMESPACE::FederateRestoreStatusVector restore_status_response; ///< @trick_io{**} Federation Restore status vector.
 
   private:
    // Do not allow the copy constructor or assignment operator.

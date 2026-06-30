@@ -230,10 +230,6 @@ void ExecutionControl::setup(
    // Call the ExecutionControlBase method first.
    ExecutionControlBase::setup( fed );
 
-   // Mark the IMSim ExecutionControl class as supporting HLA Save using the
-   // Trick Control Panel (TCP) checkpoint interface.
-   save_restore_service->set_tcp_save_supported( true );
-
    return;
 }
 
