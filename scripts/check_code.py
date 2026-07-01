@@ -56,7 +56,7 @@ def main():
                                      epilog = textwrap.dedent( '''\n
 Options -s, -e, -u, -x: Default error suppression file: ''' + ccpcheck_suppresion_file + '''\n
 Option -a: Auto-generated error suppression file: ''' + cppcheck_output_dir + '/' + ccpcheck_suppresion_autogen_file + '''\n
-Examples:\n  check_code -s -o -v --exhaustive --hla3\n  check_code -i -o -v --exhaustive --hla3\n  check_code -e -o -v --exhaustive\n  check_code -c -vv''' ) )
+Examples:\n  check_code -s -o -v --exhaustive --hla4\n  check_code -i -o -v --exhaustive --hla4\n  check_code -e -o -v --exhaustive\n  check_code -c -vv''' ) )
 
    parser.add_argument( '-a', '--autogen', \
                         help = 'Auto-generate a suppression file for all issues. Use this as a starting point for a project specific suppression file.', \
