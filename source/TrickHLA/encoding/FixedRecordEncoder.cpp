@@ -91,8 +91,7 @@ void FixedRecordEncoder::update_before_encode(
          } catch ( std::bad_cast &e ) {
             ostringstream errmsg;
             errmsg << "FixedRecordEncoder::update_before_encode():" << __LINE__
-                   << " ERROR: Unexpected encoder that does not extend EncoderBase!"
-                   << endl;
+                   << " ERROR: Unexpected encoder that does not extend EncoderBase!\n";
             DebugHandler::terminate( errmsg.str() );
          }
       }
@@ -119,8 +118,7 @@ void FixedRecordEncoder::update_after_decode(
          } catch ( std::bad_cast &e ) {
             ostringstream errmsg;
             errmsg << "FixedRecordEncoder::update_after_decode():" << __LINE__
-                   << " ERROR: Unexpected encoder that does not extend EncoderBase!"
-                   << endl;
+                   << " ERROR: Unexpected encoder that does not extend EncoderBase!\n";
             DebugHandler::terminate( errmsg.str() );
          }
       }
@@ -133,7 +131,7 @@ size_t FixedRecordEncoder::get_data_size()
 
    ostringstream errmsg;
    errmsg << "FixedRecordEncoder::get_data_size():" << __LINE__
-          << " ERROR: Not Supported!" << endl;
+          << " ERROR: Not Supported!\n";
    DebugHandler::terminate( errmsg.str() );
 
    return 0;

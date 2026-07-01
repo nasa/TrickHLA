@@ -103,8 +103,8 @@ void QuaternionPacking::base_config(
    QuaternionData *working,
    Object         *mngr_object )
 {
-   string quat_name_str = string( sim_obj_name ) + "." + string( packing_name );
-   string trick_name_str;
+   string const quat_name_str = string( sim_obj_name ) + "." + string( packing_name );
+   string       trick_name_str;
 
    // Associate the instantiated Manager object with this packing object.
    if ( mngr_object == NULL ) {
@@ -389,18 +389,18 @@ void QuaternionPacking::unpack_into_working_data()
  */
 void QuaternionPacking::unpack_test()
 {
-   double tol = 4.0 * std::numeric_limits< double >::min();
+   double const tol = 4.0 * std::numeric_limits< double >::min();
 
    // Scalar
    if ( abs( test_data.scalar - packing_data.scalar ) > tol ) {
       ostringstream msg;
       msg << "QuaternionPacking::unpack_test(): " << __LINE__
-          << " : Failed scalar test!" << std::endl;
+          << " : Failed scalar test!\n";
       message_publish( MSG_ERROR, msg.str().c_str() );
    } else {
       ostringstream msg;
       msg << "QuaternionPacking::unpack_test(): " << __LINE__
-          << " : Passed scalar test!" << std::endl;
+          << " : Passed scalar test!\n";
       message_publish( MSG_INFO, msg.str().c_str() );
    }
 
@@ -410,12 +410,12 @@ void QuaternionPacking::unpack_test()
         || ( abs( test_data.vector[2] - packing_data.vector[2] ) > tol ) ) {
       ostringstream msg;
       msg << "QuaternionPacking::unpack_test(): " << __LINE__
-          << " : Failed vector test!" << std::endl;
+          << " : Failed vector test!\n";
       message_publish( MSG_ERROR, msg.str().c_str() );
    } else {
       ostringstream msg;
       msg << "QuaternionPacking::unpack_test(): " << __LINE__
-          << " : Passed vector test!" << std::endl;
+          << " : Passed vector test!\n";
       message_publish( MSG_INFO, msg.str().c_str() );
    }
 

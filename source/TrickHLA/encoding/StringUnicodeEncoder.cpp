@@ -77,7 +77,7 @@ StringUnicodeEncoder::StringUnicodeEncoder(
              << "' simulation variable (type:" << attr->type_name
              << ") is not the expected type '"
              << trickTypeCharString( TRICK_STRING, "UNSUPPORTED_TYPE" )
-             << "'." << endl;
+             << "'.\n";
       DebugHandler::terminate( errmsg.str() );
       return;
    }
@@ -86,7 +86,7 @@ StringUnicodeEncoder::StringUnicodeEncoder(
       ostringstream errmsg;
       errmsg << "StringUnicodeEncoder::StringUnicodeEncoder():" << __LINE__
              << " ERROR: Trick ref-attributes for '" << data_name
-             << "' the variable must be a 'std::string' and not an array!" << endl;
+             << "' the variable must be a 'std::string' and not an array!\n";
       DebugHandler::terminate( errmsg.str() );
       return;
    }

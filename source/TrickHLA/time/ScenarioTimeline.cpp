@@ -82,7 +82,7 @@ double ScenarioTimeline::time_from_simulation_time(
 Int64Time const ScenarioTimeline::compute_HLT(
    double const scenario_time )
 {
-   Int64Time elapsed_time( scenario_time - epoch );
+   Int64Time const elapsed_time( scenario_time - epoch );
    return ( elapsed_time - hlt_offset );
 }
 

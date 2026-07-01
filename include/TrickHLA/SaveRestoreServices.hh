@@ -450,8 +450,8 @@ class SaveRestoreServices : public CheckpointConversionBase
    std::string joined_federates_file_name; ///< @trick_io{**} File containing the names of the joined federates.
 
    // Save and Restore variables.
-   std::string HLA_save_directory;     ///< @trick_units{--} HLA Save directory.
- 
+   std::string HLA_save_directory; ///< @trick_units{--} HLA Save directory.
+
    // Save process variables.
    THLASaveProcessEnum save_state; ///< @trick_units{1} Where we are in the Save process.
    std::wstring        save_label; ///< @trick_units{--} Save label.

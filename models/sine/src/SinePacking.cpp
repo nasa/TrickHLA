@@ -137,7 +137,7 @@ void SinePacking::pack()
    if ( !initialized ) {
       ostringstream errmsg;
       errmsg << "SinePacking::pack():" << __LINE__
-             << " ERROR: The initialize() function has not been called!" << endl;
+             << " ERROR: The initialize() function has not been called!\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -167,66 +167,66 @@ void SinePacking::pack()
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_PACKING ) ) {
-      string        obj_name = ( this->object != NULL ) ? object->get_name() : "";
+      string const  obj_name = ( this->object != NULL ) ? object->get_name() : "";
       ostringstream msg;
-      msg << "SinePacking::pack():" << __LINE__ << endl
-          << "\t Object-Name:'" << obj_name << "'" << endl;
+      msg << "SinePacking::pack():" << __LINE__ << "\n"
+          << "\t Object-Name:'" << obj_name << "'\n";
 
       if ( name_attr->is_publish() && name_attr->is_locally_owned() ) {
          msg << "\t sim_data->name:'" << sim_data->get_name()
-             << "', Send-HLA-Data:Yes" << endl;
+             << "', Send-HLA-Data:Yes\n";
       } else {
-         msg << "\t sim_data->name, Send-HLA-Data:No" << endl;
+         msg << "\t sim_data->name, Send-HLA-Data:No\n";
       }
 
       if ( time_attr->is_publish() && time_attr->is_locally_owned() ) {
          msg << "\t sim_data->time:" << setprecision( 18 ) << sim_data->get_time()
-             << " seconds, Send-HLA-Data:Yes" << endl;
+             << " seconds, Send-HLA-Data:Yes\n";
       } else {
-         msg << "\t sim_data->time, Send-HLA-Data:No" << endl;
+         msg << "\t sim_data->time, Send-HLA-Data:No\n";
       }
 
       if ( value_attr->is_publish() && value_attr->is_locally_owned() ) {
          msg << "\t sim_data->value:" << sim_data->get_value()
-             << ", Send-HLA-Data:Yes" << endl;
+             << ", Send-HLA-Data:Yes\n";
       } else {
-         msg << "\t sim_data->value, Send-HLA-Data:No" << endl;
+         msg << "\t sim_data->value, Send-HLA-Data:No\n";
       }
 
       if ( dvdt_attr->is_publish() && dvdt_attr->is_locally_owned() ) {
          msg << "\t sim_data->dvdt:" << sim_data->get_derivative()
-             << ", Send-HLA-Data:Yes" << endl;
+             << ", Send-HLA-Data:Yes\n";
       } else {
-         msg << "\t sim_data->dvdt, Send-HLA-Data:No" << endl;
+         msg << "\t sim_data->dvdt, Send-HLA-Data:No\n";
       }
 
       if ( phase_attr->is_publish() && phase_attr->is_locally_owned() ) {
          msg << "\t sim_data->phase:" << sim_data->get_phase() << " radians"
              << " ==> packing-phase:" << phase_deg << " degrees"
-             << ", Send-HLA-Data:Yes" << endl;
+             << ", Send-HLA-Data:Yes\n";
       } else {
-         msg << "\t sim_data->phase, Send-HLA-Data:No" << endl;
+         msg << "\t sim_data->phase, Send-HLA-Data:No\n";
       }
 
       if ( amp_attr->is_publish() && amp_attr->is_locally_owned() ) {
          msg << "\t sim_data->amp:" << sim_data->get_amplitude()
-             << ", Send-HLA-Data:Yes" << endl;
+             << ", Send-HLA-Data:Yes\n";
       } else {
-         msg << "\t sim_data->amp, Send-HLA-Data:No" << endl;
+         msg << "\t sim_data->amp, Send-HLA-Data:No\n";
       }
 
       if ( freq_attr->is_publish() && freq_attr->is_locally_owned() ) {
          msg << "\t sim_data->freq:" << sim_data->get_frequency()
-             << ", Send-HLA-Data:Yes" << endl;
+             << ", Send-HLA-Data:Yes\n";
       } else {
-         msg << "\t sim_data->freq, Send-HLA-Data:No" << endl;
+         msg << "\t sim_data->freq, Send-HLA-Data:No\n";
       }
 
       if ( tol_attr->is_publish() && tol_attr->is_locally_owned() ) {
          msg << "\t sim_data->tol:" << sim_data->get_tolerance()
-             << ", Send-HLA-Data:Yes" << endl;
+             << ", Send-HLA-Data:Yes\n";
       } else {
-         msg << "\t sim_data->tol, Send-HLA-Data:No" << endl;
+         msg << "\t sim_data->tol, Send-HLA-Data:No\n";
       }
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
@@ -238,27 +238,27 @@ void SinePacking::pack()
 
       if ( buff != NULL ) {
 
-         msg << " SinePacking::pack():" << __LINE__ << " ADDITIONAL DEBUG:" << endl
-             << " buff_size: " << buff_size << endl;
+         msg << " SinePacking::pack():" << __LINE__ << " ADDITIONAL DEBUG:\n"
+             << " buff_size: " << buff_size << "\n";
 
-         unsigned char c = pack_count % 10;
+         unsigned char const c = pack_count % 10;
          for ( int i = 0; i < buff_size; ++i ) {
             buff[i] = c;
             msg << " SinePacking::pack():" << __LINE__
-                << " buffer[" << i << "] = " << (int)buff[i] << endl;
+                << " buffer[" << i << "] = " << (int)buff[i] << "\n";
          }
       }
 
-      string obj_name = ( this->object != NULL ) ? object->get_name() : "";
+      string const obj_name = ( this->object != NULL ) ? object->get_name() : "";
 
-      msg << "SinePacking::pack():" << __LINE__ << " ADDITIONAL DEBUG:" << endl
-          << "\t Object-Name:'" << obj_name << "'" << endl;
+      msg << "SinePacking::pack():" << __LINE__ << " ADDITIONAL DEBUG:\n"
+          << "\t Object-Name:'" << obj_name << "'\n";
 
       // This part of the example goes a little deeper into the details of
       // the TrickHLA API's, where most users may never go.
-      string name_attr_str = "Name";
+      string const name_attr_str = "Name";
 
-      msg << "\t FOM-Attribute '" << name_attr_str << "'" << endl;
+      msg << "\t FOM-Attribute '" << name_attr_str << "'\n";
 
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
@@ -269,7 +269,7 @@ void SinePacking::unpack()
    if ( !initialized ) {
       ostringstream errmsg;
       errmsg << "SinePacking::unpack():" << __LINE__
-             << " ERROR: The initialize() function has not been called!" << endl;
+             << " ERROR: The initialize() function has not been called!\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -317,66 +317,66 @@ void SinePacking::unpack()
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_PACKING ) ) {
 
-      string obj_name = ( this->object != NULL ) ? object->get_name() : "";
+      string const obj_name = ( this->object != NULL ) ? object->get_name() : "";
 
       ostringstream msg;
-      msg << "SinePacking::unpack():" << __LINE__ << endl
-          << "\t Object-Name:'" << obj_name << "'" << endl;
+      msg << "SinePacking::unpack():" << __LINE__ << "\n"
+          << "\t Object-Name:'" << obj_name << "'\n";
 
       if ( name_attr->is_received() ) {
          msg << "\t sim_data->name:'" << sim_data->get_name()
-             << "', Received-HLA-Data:Yes" << endl;
+             << "', Received-HLA-Data:Yes\n";
       } else {
-         msg << "\t sim_data->name, Received-HLA-Data:No" << endl;
+         msg << "\t sim_data->name, Received-HLA-Data:No\n";
       }
 
       if ( time_attr->is_received() ) {
          msg << "\t sim_data->time:" << setprecision( 18 ) << sim_data->get_time()
-             << " seconds, Received-HLA-Data:Yes" << endl;
+             << " seconds, Received-HLA-Data:Yes\n";
       } else {
-         msg << "\t sim_data->time, Received-HLA-Data:No" << endl;
+         msg << "\t sim_data->time, Received-HLA-Data:No\n";
       }
 
       if ( value_attr->is_received() ) {
          msg << "\t sim_data->value:" << sim_data->get_value()
-             << ", Received-HLA-Data:Yes" << endl;
+             << ", Received-HLA-Data:Yes\n";
       } else {
-         msg << "\t sim_data->value, Received-HLA-Data:No" << endl;
+         msg << "\t sim_data->value, Received-HLA-Data:No\n";
       }
 
       if ( dvdt_attr->is_received() ) {
          msg << "\t sim_data->dvdt:" << sim_data->get_derivative()
-             << ", Received-HLA-Data:Yes" << endl;
+             << ", Received-HLA-Data:Yes\n";
       } else {
-         msg << "\t sim_data->dvdt, Received-HLA-Data:No" << endl;
+         msg << "\t sim_data->dvdt, Received-HLA-Data:No\n";
       }
 
       if ( phase_attr->is_received() ) {
          msg << "\t packing-phase:" << phase_deg << " degrees ==> sim_data->phase:"
-             << sim_data->get_phase() << " radians, Received-HLA-Data:Yes" << endl;
+             << sim_data->get_phase() << " radians, Received-HLA-Data:Yes\n";
       } else {
-         msg << "\t packing-phase, Received-HLA-Data:No" << endl;
+         msg << "\t packing-phase, Received-HLA-Data:No\n";
       }
 
       if ( amp_attr->is_received() ) {
          msg << "\t sim_data->amp:" << sim_data->get_amplitude()
-             << ", Received-HLA-Data:Yes" << endl;
+             << ", Received-HLA-Data:Yes\n";
       } else {
-         msg << "\t sim_data->amp, Received-HLA-Data:No" << endl;
+         msg << "\t sim_data->amp, Received-HLA-Data:No\n";
       }
 
       if ( freq_attr->is_received() ) {
          msg << "\t sim_data->freq:" << sim_data->get_frequency()
-             << ", Received-HLA-Data:Yes" << endl;
+             << ", Received-HLA-Data:Yes\n";
       } else {
-         msg << "\t sim_data->freq, Received-HLA-Data:No" << endl;
+         msg << "\t sim_data->freq, Received-HLA-Data:No\n";
       }
 
       if ( tol_attr->is_received() ) {
          msg << "\t sim_data->tol:" << sim_data->get_tolerance()
-             << ", Received-HLA-Data:Yes" << endl;
+             << ", Received-HLA-Data:Yes\n";
       } else {
-         msg << "\t sim_data->tol, Received-HLA-Data:No" << endl;
+         msg << "\t sim_data->tol, Received-HLA-Data:No\n";
       }
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
@@ -387,24 +387,24 @@ void SinePacking::unpack()
       ostringstream msg;
 
       if ( buff != NULL ) {
-         msg << " SinePacking::unpack():" << __LINE__ << " ADDITIONAL DEBUG:" << endl
-             << " buff_size: " << buff_size << endl;
+         msg << " SinePacking::unpack():" << __LINE__ << " ADDITIONAL DEBUG:\n"
+             << " buff_size: " << buff_size << "\n";
          for ( int i = 0; i < buff_size; ++i ) {
             msg << " SinePacking::unpack():" << __LINE__
-                << " buffer[" << i << "] = " << (int)buff[i] << endl;
+                << " buffer[" << i << "] = " << (int)buff[i] << "\n";
          }
       }
 
-      string obj_name = ( this->object != NULL ) ? object->get_name() : "";
+      string const obj_name = ( this->object != NULL ) ? object->get_name() : "";
 
-      msg << "SinePacking::unpack():" << __LINE__ << " ADDITIONAL DEBUG:" << endl
-          << "\t Object-Name:'" << obj_name << "'" << endl;
+      msg << "SinePacking::unpack():" << __LINE__ << " ADDITIONAL DEBUG:\n"
+          << "\t Object-Name:'" << obj_name << "'\n";
 
       // This part of the example goes a little deeper into the details of
       // the TrickHLA API's where most users may never go.
-      string name_attr_str = "Name";
+      string const name_attr_str = "Name";
 
-      msg << "\t FOM-Attribute '" << name_attr_str << "'" << endl;
+      msg << "\t FOM-Attribute '" << name_attr_str << "'\n";
 
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }

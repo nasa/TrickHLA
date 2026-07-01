@@ -338,7 +338,7 @@ void SaveRestoreServices::save_set_time(
              << " : WARNING: Save time for label \'" << label_str
              << "\' in the past!";
          msg << " Save time is " << time.get_base_time()
-             << " but Granted time is " << granted_time.get_base_time() << std::endl;
+             << " but Granted time is " << granted_time.get_base_time() << endl;
          message_publish( MSG_WARNING, "%s\n", msg.str().c_str() );
       }
 
@@ -463,7 +463,7 @@ void SaveRestoreServices::save( wstring const &label )
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::save():" << __LINE__
                 << ": WARNING: Save state mismatch: "
-                << TrickHLA::to_string( save_state ) << "!" << std::endl;
+                << TrickHLA::to_string( save_state ) << "!" << endl;
          message_publish( MSG_WARNING, "%s\n",
                           __LINE__, errmsg.str().c_str() );
       }
@@ -625,7 +625,7 @@ void SaveRestoreServices::save_succeded()
       ostringstream errmsg;
       errmsg << "SaveRestoreServices::save_succeded():" << __LINE__
              << ": ERROR: Save state mismatch: "
-             << TrickHLA::to_string( save_state ) << "!" << std::endl;
+             << TrickHLA::to_string( save_state ) << "!" << endl;
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -660,7 +660,7 @@ void SaveRestoreServices::save_failed()
       ostringstream errmsg;
       errmsg << "SaveRestoreServices::save_failed():" << __LINE__
              << ": ERROR: Save state mismatch: "
-             << TrickHLA::to_string( save_state ) << "!" << std::endl;
+             << TrickHLA::to_string( save_state ) << "!" << endl;
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -669,7 +669,7 @@ void SaveRestoreServices::save_failed()
       ostringstream msg;
       msg << "SaveRestoreServices::save_failed():" << __LINE__
           << " : Save for label \'" << label_str
-          << "\' failed!" << std::endl;
+          << "\' failed!" << endl;
       message_publish( MSG_ERROR, msg.str().c_str() );
    }
 
@@ -716,7 +716,7 @@ bool SaveRestoreServices::write_joined_federates_to_file(
    if ( file.is_open() ) {
 
       // Start by writing the number of joined federates.
-      file << federate->joined_federates_map.size() << std::endl;
+      file << federate->joined_federates_map.size() << endl;
 
       // Write the contents of running_feds into file...
       KnownFederateMap::iterator map_iter;
@@ -739,7 +739,7 @@ bool SaveRestoreServices::write_joined_federates_to_file(
 
       ostringstream errmsg;
       errmsg << "SaveRestoreServices::write_joined_federates_file():" << __LINE__
-             << ": ERROR: Failed to open file '" << full_file_path << "' for writing!" << std::endl;
+             << ": ERROR: Failed to open file '" << full_file_path << "' for writing!" << endl;
       message_publish( MSG_ERROR, errmsg.str().c_str() );
 
       return ( false );
@@ -902,7 +902,7 @@ bool SaveRestoreServices::read_known_federates_from_file(
       try {
          num_feds = stoi( num_feds_wstr );
       } catch ( std::invalid_argument const &e ) {
-         std::wcerr << L"Invalid input: No conversion could be performed." << std::endl;
+         std::wcerr << L"Invalid input: No conversion could be performed." << endl;
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::read_known_federates_from_file()" << __LINE__
                 << ": ERROR: Reading number of known federates:'"
@@ -912,7 +912,7 @@ bool SaveRestoreServices::read_known_federates_from_file(
          return ( false );
       } catch ( std::out_of_range const &e ) {
          file.close();
-         std::wcerr << L"Error: Number is out of range for an int." << std::endl;
+         std::wcerr << L"Error: Number is out of range for an int." << endl;
          return ( false );
       }
    }
@@ -986,13 +986,13 @@ bool SaveRestoreServices::read_known_federates_from_file(
             errmsg << "SaveRestoreServices::read_known_federates_from_file()" << __LINE__
                    << ": ERROR: Error reading if known federate '"
                    << fed_name_str << "' is required at line " << line_num
-                   << " from '" << full_path << "'!" << std::endl;
+                   << " from '" << full_path << "'!" << endl;
             message_publish( MSG_ERROR, "%s\n", errmsg.str().c_str() );
 
          } catch ( std::out_of_range const &e ) {
 
             // Let the user know that something went wrong.
-            std::wcerr << L"Error: Number is out of range for an int." << std::endl;
+            std::wcerr << L"Error: Number is out of range for an int." << endl;
          }
 
          // NOTE that a boolean conversion error is NOT a read error.
@@ -1011,7 +1011,7 @@ bool SaveRestoreServices::read_known_federates_from_file(
          errmsg << "SaveRestoreServices::read_known_federates_from_file()" << __LINE__
                 << ": ERROR: Error reading if known federate '"
                 << fed_name_str << "' is required at line " << line_num
-                << " from '" << full_path << "'!" << std::endl;
+                << " from '" << full_path << "'!" << endl;
          message_publish( MSG_ERROR, "%s\n", errmsg.str().c_str() );
 
          // Break out of the read while loop.
@@ -1038,7 +1038,7 @@ bool SaveRestoreServices::read_known_federates_from_file(
       ostringstream errmsg;
       errmsg << "SaveRestoreServices::read_known_federates_from_file()" << __LINE__
              << ": ERROR: Error reading the known federates file '"
-             << full_path << "'!" << std::endl;
+             << full_path << "'!" << endl;
       message_publish( MSG_ERROR, "%s\n", errmsg.str().c_str() );
 
       return ( false );
@@ -1051,7 +1051,7 @@ bool SaveRestoreServices::read_known_federates_from_file(
       ostringstream errmsg;
       errmsg << "SaveRestoreServices::read_known_federates_from_file()" << __LINE__
              << ": ERROR: Federate file specified " << num_feds
-             << " but read in " << fed_count << "!" << std::endl;
+             << " but read in " << fed_count << "!" << endl;
       message_publish( MSG_ERROR, "%s\n", errmsg.str().c_str() );
 
       // NOTE that we are NOT clearing the known federates file.  We are just
@@ -1408,8 +1408,8 @@ void SaveRestoreServices::restore_waiting_for_request()
       if ( execution_control->process_timer.timeout( execution_control->process_timer.time() ) ) {
          execution_control->process_timer.reset();
          message_publish( MSG_NORMAL,
-                           "SaveRestoreServices::restore_waiting_for_request():%d: Waiting for Restore request callback ...\n",
-                           __LINE__ );
+                          "SaveRestoreServices::restore_waiting_for_request():%d: Waiting for Restore request callback ...\n",
+                          __LINE__ );
       }
    }
 
@@ -1750,23 +1750,23 @@ void SaveRestoreServices::restore_success_notification()
       federate->get_RTI_ambassador()->federateRestoreComplete();
    } catch ( RestoreNotRequested const &e ) {
       message_publish( MSG_WARNING, "SaveRestoreServices::restore_success_notification():%d: EXCEPTION: RestoreNotRequested\n",
-                        __LINE__ );
+                       __LINE__ );
    } catch ( FederateNotExecutionMember const &e ) {
       message_publish( MSG_WARNING, "SaveRestoreServices::restore_success_notification():%d: EXCEPTION: FederateNotExecutionMember\n",
-                        __LINE__ );
+                       __LINE__ );
    } catch ( SaveInProgress const &e ) {
       message_publish( MSG_WARNING, "SaveRestoreServices::restore_success_notification():%d: EXCEPTION: SaveInProgress\n",
-                        __LINE__ );
+                       __LINE__ );
    } catch ( NotConnected const &e ) {
       message_publish( MSG_WARNING, "SaveRestoreServices::restore_success_notification():%d: EXCEPTION: NotConnected\n",
-                        __LINE__ );
+                       __LINE__ );
       federate->set_connection_lost();
    } catch ( RTIinternalError const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
 
       message_publish( MSG_WARNING, "SaveRestoreServices::restore_success_notification():%d: EXCEPTION: RTIinternalError: '%s'\n",
-                        __LINE__, rti_err_msg.c_str() );
+                       __LINE__, rti_err_msg.c_str() );
    }
 
    // Macro to restore the saved FPU Control Word register value.
@@ -1786,8 +1786,8 @@ void SaveRestoreServices::restore_failed_notification()
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
       StringUtilities::to_string( restore_label_str, restore_label );
       message_publish( MSG_ERROR,
-                        "SaveRestoreServices::restore_failed_notification():%d: Restore failed for label: \'%s\'!\n",
-                        __LINE__, restore_label_str.c_str() );
+                       "SaveRestoreServices::restore_failed_notification():%d: Restore failed for label: \'%s\'!\n",
+                       __LINE__, restore_label_str.c_str() );
    }
 
    // Macro to save the FPU Control Word register value.
@@ -1798,23 +1798,23 @@ void SaveRestoreServices::restore_failed_notification()
       federate->get_RTI_ambassador()->federateRestoreNotComplete();
    } catch ( RestoreNotRequested const &e ) {
       message_publish( MSG_WARNING, "SaveRestoreServices::restore_failed_notification():%d: EXCEPTION: RestoreNotRequested\n",
-                        __LINE__ );
+                       __LINE__ );
    } catch ( FederateNotExecutionMember const &e ) {
       message_publish( MSG_WARNING, "SaveRestoreServices::restore_failed_notification():%d: EXCEPTION: FederateNotExecutionMember\n",
-                        __LINE__ );
+                       __LINE__ );
    } catch ( SaveInProgress const &e ) {
       message_publish( MSG_WARNING, "SaveRestoreServices::restore_failed_notification():%d: EXCEPTION: SaveInProgress\n",
-                        __LINE__ );
+                       __LINE__ );
    } catch ( NotConnected const &e ) {
       message_publish( MSG_WARNING, "SaveRestoreServices::restore_failed_notification():%d: EXCEPTION: NotConnected\n",
-                        __LINE__ );
+                       __LINE__ );
       federate->set_connection_lost();
    } catch ( RTIinternalError const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
 
       message_publish( MSG_WARNING, "SaveRestoreServices::restore_failed_notification():%d: EXCEPTION: RTIinternalError: '%s'\n",
-                        __LINE__, rti_err_msg.c_str() );
+                       __LINE__, rti_err_msg.c_str() );
    }
 
    // Macro to restore the saved FPU Control Word register value.
@@ -1840,13 +1840,13 @@ bool SaveRestoreServices::restore_waiting_for_completion()
 
    if ( this->restore_state == THLARestoreProcessEnum::RESTORE_IN_PROGRESS ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
-         //if ( execution_control->process_timer.timeout( execution_control->process_timer.time() ) ) {
-         //   execution_control->process_timer.reset();
-            std::string label_str;
-            StringUtilities::to_string( label_str, restore_label );
-            message_publish( MSG_NORMAL,
-                             "SaveRestoreServices::restore_waiting_for_completion():%d: HLA Restore in progress for label \'%s\'!\n",
-                             __LINE__, label_str.c_str() );
+         // if ( execution_control->process_timer.timeout( execution_control->process_timer.time() ) ) {
+         //    execution_control->process_timer.reset();
+         std::string label_str;
+         StringUtilities::to_string( label_str, restore_label );
+         message_publish( MSG_NORMAL,
+                          "SaveRestoreServices::restore_waiting_for_completion():%d: HLA Restore in progress for label \'%s\'!\n",
+                          __LINE__, label_str.c_str() );
          //}
       }
       return ( true );
@@ -1889,20 +1889,20 @@ void SaveRestoreServices::restore_succeded()
       federate->time_management_service.set_granted_time( time );
    } catch ( FederateNotExecutionMember const &e ) {
       message_publish( MSG_WARNING, "SaveRestoreServices::restore_succeded():%d: FederateNotExecutionMember\n",
-                        __LINE__ );
+                       __LINE__ );
    } catch ( SaveInProgress const &e ) {
       message_publish( MSG_WARNING, "SaveRestoreServices::restore_succeded():%d: SaveInProgress\n",
-                        __LINE__ );
+                       __LINE__ );
    } catch ( RestoreInProgress const &e ) {
       message_publish( MSG_WARNING, "SaveRestoreServices::restore_succeded():%d: RestoreInProgress\n",
-                        __LINE__ );
+                       __LINE__ );
    } catch ( NotConnected const &e ) {
       message_publish( MSG_WARNING, "SaveRestoreServices::restore_succeded():%d: NotConnected\n",
-                        __LINE__ );
+                       __LINE__ );
       federate->set_connection_lost();
    } catch ( RTIinternalError const &e ) {
       message_publish( MSG_WARNING, "SaveRestoreServices::restore_succeded():%d: RTIinternalError\n",
-                        __LINE__ );
+                       __LINE__ );
    }
 
    federate->time_management_service.set_requested_time_to_granted_time();

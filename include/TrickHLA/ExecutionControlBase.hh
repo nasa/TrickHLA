@@ -915,7 +915,6 @@ class ExecutionControlBase : public SyncPointManagerBase
    /*! @brief Assignment operator for ExecutionControlBase class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
    ExecutionControlBase &operator=( ExecutionControlBase const &rhs );
-
 };
 
 } // namespace TrickHLA

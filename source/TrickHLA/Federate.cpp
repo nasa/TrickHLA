@@ -1598,9 +1598,9 @@ bool Federate::verify_joined_federates()
             errmsg << "Federate::verify_joined_federates():" << __LINE__
                    << ": There are " << joined_federates_map.size()
                    << " joined federates but expected "
-                   << federate_handles.size() << "." << std::endl;
+                   << federate_handles.size() << "." << endl;
             message_publish( MSG_WARNING, errmsg.str().c_str() );
-            std::wcout << list_joined_federates() << std::endl;
+            std::wcout << list_joined_federates() << endl;
          }
          return ( false );
       }
@@ -1650,9 +1650,9 @@ bool Federate::verify_joined_federates()
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          ostringstream errmsg;
          errmsg << "Federate::verify_joined_federates():" << __LINE__
-                << ": Could not match joined federates with federates in Federation:" << std::endl;
+                << ": Could not match joined federates with federates in Federation:" << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
-         std::wcout << list_joined_federates() << std::endl;
+         std::wcout << list_joined_federates() << endl;
       }
    }
 
@@ -1730,7 +1730,7 @@ void Federate::update_joined_federates()
                 << " ERROR: There are " << joined_federates_map.size()
                 << " but only " << federate_handles.size()
                 << " federate in the federatesInFederation list!"
-                << std::endl;
+                << endl;
          message_publish( MSG_ERROR, errmsg.str().c_str() );
 
          // Mark the update process as failed.
@@ -1755,7 +1755,7 @@ void Federate::update_joined_federates()
       ostringstream errmsg;
       errmsg << "Federate::update_joined_federates():" << __LINE__
              << " ERROR: The federatesInFederation list is not consistent with the joined federates list!"
-             << std::endl;
+             << endl;
       message_publish( MSG_ERROR, errmsg.str().c_str() );
 
       // Mark the update process as failed.
@@ -1786,7 +1786,7 @@ void Federate::update_joined_federates()
                 << " ERROR: Found " << federate_handles.size()
                 << " in the federatesInFederation list but there are "
                 << joined_federates_map.size()
-                << " in the joined federates map!" << std::endl;
+                << " in the joined federates map!" << endl;
          message_publish( MSG_ERROR, errmsg.str().c_str() );
 
          // Mark the update process as failed.
@@ -1822,9 +1822,9 @@ void Federate::update_joined_federates()
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          ostringstream errmsg;
          errmsg << "Federate::update_joined_federates():" << __LINE__
-                << ": Federate Name, Type, Required:" << std::endl;
+                << ": Federate Name, Type, Required:" << endl;
          message_publish( MSG_NORMAL, errmsg.str().c_str() );
-         std::wcout << list_joined_federates() << std::endl;
+         std::wcout << list_joined_federates() << endl;
       }
 
       // Unsubscribe from all attributes for the MOM HLAfederate class.
@@ -1867,7 +1867,7 @@ void Federate::wait_for_joined_federates_update()
          if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
             ostringstream errmsg;
             errmsg << "Federate::wait_for_joined_federates_update(): State "
-                   << to_string( federate_update_state ) << std::endl;
+                   << to_string( federate_update_state ) << endl;
             message_publish( MSG_NORMAL, errmsg.str().c_str() );
             prev_state = federate_update_state;
          }
@@ -1879,9 +1879,9 @@ void Federate::wait_for_joined_federates_update()
 
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream msg;
-      msg << "Federate::wait_for_joined_federates_update(): Joined federates: " << std::endl;
+      msg << "Federate::wait_for_joined_federates_update(): Joined federates: " << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
-      std::wcout << list_joined_federates() << std::endl;
+      std::wcout << list_joined_federates() << endl;
    }
 
    return;
@@ -1904,7 +1904,7 @@ wstring Federate::list_joined_federates()
 
       // No end of line at the beginning.
       if ( map_iter != joined_federates_map.begin() ) {
-         federates_summary << std::endl;
+         federates_summary << endl;
       }
 
       // List out the federate information.
@@ -2272,7 +2272,7 @@ void Federate::update_and_print_joined_federates()
              << ": ERROR: Unexpected Federates update state."
              << "  We expected FEDERATE_UPDATE_NONE but the state was "
              << to_string( federate_update_state )
-             << "!" << std::endl;
+             << "!" << endl;
       DebugHandler::terminate( errmsg.str() );
    }
 

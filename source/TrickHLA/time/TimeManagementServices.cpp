@@ -162,7 +162,7 @@ void TimeManagementServices::initialize_thread_state(
    // Set the core job cycle time now that we know what it is so that the
    // attribute cyclic ratios can now be calculated for any multi-rate
    // attributes.
-   ObjectServices *object_service = federate->get_object_service();
+   ObjectServices const *object_service = federate->get_object_service();
    for ( int n = 0; n < object_service->obj_count; ++n ) {
       object_service->objects[n].set_core_job_cycle_time(
          Int64BaseTime::to_seconds(
@@ -193,7 +193,7 @@ void TimeManagementServices::restart_initialization()
              << " Lookahead time (" << lookahead_time << " seconds)"
              << " must be greater than or equal to zero and not negative. Make"
              << " sure 'lookahead_time' in your input.py or modified-data file is"
-             << " not a negative number." << endl;
+             << " not a negative number.\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -204,11 +204,11 @@ void TimeManagementServices::restart_initialization()
 void TimeManagementServices::set_time_advance_granted(
    RTI1516_NAMESPACE::LogicalTime const &time )
 {
-   Int64Time int64_time( time );
+   Int64Time const int64_time( time );
 
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
+   MutexProtection const auto_unlock_mutex( &time_adv_state_mutex );
 
    // Ignore any granted time less than the requested time otherwise it will
    // break our concept of HLA time since we are using scheduled jobs for
@@ -244,7 +244,7 @@ void TimeManagementServices::set_granted_time(
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
+   MutexProtection const auto_unlock_mutex( &time_adv_state_mutex );
 
    granted_time.set( time );
 
@@ -258,7 +258,7 @@ void TimeManagementServices::set_granted_time(
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
+   MutexProtection const auto_unlock_mutex( &time_adv_state_mutex );
 
    granted_time.set( time );
 
@@ -272,7 +272,7 @@ void TimeManagementServices::set_requested_time(
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
+   MutexProtection const auto_unlock_mutex( &time_adv_state_mutex );
    requested_time.set( time );
 }
 
@@ -281,14 +281,14 @@ void TimeManagementServices::set_requested_time(
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
+   MutexProtection const auto_unlock_mutex( &time_adv_state_mutex );
    requested_time.set( time );
 }
 
 /*! @brief Sets the requested time to the granted time. */
 void TimeManagementServices::set_requested_time_to_granted_time()
 {
-   MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
+   MutexProtection const auto_unlock_mutex( &time_adv_state_mutex );
    requested_time.set( granted_time );
 }
 
@@ -357,7 +357,7 @@ void TimeManagementServices::refresh_HLA_time_constants()
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &mutex );
+   MutexProtection const auto_unlock_mutex( &mutex );
 
    refresh_lookahead();
 
@@ -396,7 +396,7 @@ void TimeManagementServices::scale_trick_tics_to_HLA_base_time_multiplier()
              << setprecision( 18 ) << time_res
              << " in order to support the HLA base unit of '"
              << Int64BaseTime::get_base_unit()
-             << "'." << endl;
+             << "'.\n";
       DebugHandler::terminate( errmsg.str() );
    }
 }
@@ -425,7 +425,7 @@ void TimeManagementServices::set_lookahead(
              << ". You also need to update both the Federation Execution"
              << " Specific Federation Agreement (FESFA) and TimeManagementServices Compliance"
              << " Declaration (FCD) documents for your Federation to document"
-             << " the change in timing class resolution." << endl;
+             << " the change in timing class resolution.\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -437,13 +437,13 @@ void TimeManagementServices::set_lookahead(
              << ") does not have enough resolution to represent the HLA lookahead time ("
              << setprecision( 18 ) << value
              << " seconds). Please update the Trick time tic value in your"
-             << " input.py file (i.e. by calling 'trick.exec_set_time_tic_value()')." << endl;
+             << " input.py file (i.e. by calling 'trick.exec_set_time_tic_value()').\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
+   MutexProtection const auto_unlock_mutex( &time_adv_state_mutex );
    lookahead.set( value );
    this->lookahead_time = value;
 }
@@ -469,9 +469,9 @@ void TimeManagementServices::time_advance_request_to_GALT()
    try {
       HLAinteger64Time time;
       if ( federate->RTI_ambassador->queryGALT( time ) ) {
-         int64_t L = lookahead.get_base_time();
+         int64_t const L = lookahead.get_base_time();
          if ( L > 0 ) {
-            int64_t GALT = time.getTime();
+            int64_t const GALT = time.getTime();
 
             // Make sure the time is an integer multiple of the lookahead time.
             time.setTime( ( ( GALT / L ) + 1 ) * L );
@@ -533,7 +533,7 @@ void TimeManagementServices::time_advance_request_to_GALT_LCTS_multiple()
       HLAinteger64Time time;
       if ( federate->RTI_ambassador->queryGALT( time ) ) {
          if ( LCTS > 0 ) {
-            int64_t GALT = time.getTime();
+            int64_t const GALT = time.getTime();
 
             // Make sure the time is an integer multiple of the LCTS time.
             time.setTime( ( ( GALT / LCTS ) + 1 ) * LCTS );
@@ -635,7 +635,7 @@ void TimeManagementServices::set_time_constrained_enabled(
    {
       // When auto_unlock_mutex goes out of scope it automatically unlocks the
       // mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
+      MutexProtection const auto_unlock_mutex( &time_adv_state_mutex );
 
       // Set the control flags after the debug show above to avoid a race condition
       // with the main Trick thread printing to the console when these flags are set.
@@ -681,7 +681,7 @@ void TimeManagementServices::setup_time_constrained()
       {
          // When auto_unlock_mutex goes out of scope it automatically unlocks the
          // mutex even if there is an exception.
-         MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
+         MutexProtection const auto_unlock_mutex( &time_adv_state_mutex );
 
          this->time_adv_state         = TIME_ADVANCE_RESET;
          this->time_constrained_state = false;
@@ -709,7 +709,7 @@ void TimeManagementServices::setup_time_constrained()
          if ( !this->time_constrained_state ) { // cppcheck-suppress [knownConditionTrueFalse]
 
             // To be more efficient, we get the time once and share it.
-            int64_t wallclock_time = sleep_timer.time();
+            int64_t const wallclock_time = sleep_timer.time();
 
             if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
@@ -720,7 +720,7 @@ void TimeManagementServices::setup_time_constrained()
                          << " member. This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!" << endl;
+                         << " the Central RTI Component (CRC) level!\n";
                   DebugHandler::terminate( errmsg.str() );
                }
             }
@@ -829,7 +829,7 @@ void TimeManagementServices::set_time_regulation_enabled(
    {
       // When auto_unlock_mutex goes out of scope it automatically unlocks the
       // mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
+      MutexProtection const auto_unlock_mutex( &time_adv_state_mutex );
 
       // Set the control flags after the show above to avoid a race condition with
       // the main Trick thread printing to the console when these flags are set.
@@ -881,7 +881,7 @@ void TimeManagementServices::setup_time_regulation()
       {
          // When auto_unlock_mutex goes out of scope it automatically unlocks the
          // mutex even if there is an exception.
-         MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
+         MutexProtection const auto_unlock_mutex( &time_adv_state_mutex );
 
          this->time_adv_state        = TIME_ADVANCE_RESET;
          this->time_regulating_state = false;
@@ -909,7 +909,7 @@ void TimeManagementServices::setup_time_regulation()
          if ( !this->time_regulating_state ) { // cppcheck-suppress [knownConditionTrueFalse]
 
             // To be more efficient, we get the time once and share it.
-            int64_t wallclock_time = sleep_timer.time();
+            int64_t const wallclock_time = sleep_timer.time();
 
             if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
@@ -920,7 +920,7 @@ void TimeManagementServices::setup_time_regulation()
                          << " member. This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!" << endl;
+                         << " the Central RTI Component (CRC) level!\n";
                   DebugHandler::terminate( errmsg.str() );
                }
             }
@@ -1058,7 +1058,7 @@ void TimeManagementServices::time_advance_request()
    {
       // When auto_unlock_mutex goes out of scope it automatically unlocks the
       // mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
+      MutexProtection const auto_unlock_mutex( &time_adv_state_mutex );
 
       // Build the requested HLA logical time for the next time step.
       if ( is_zero_lookahead_time() ) {
@@ -1106,7 +1106,7 @@ void TimeManagementServices::perform_time_advance_request()
    {
       // When auto_unlock_mutex goes out of scope it automatically unlocks
       // the mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
+      MutexProtection const auto_unlock_mutex( &time_adv_state_mutex );
 
       if ( this->time_adv_state == TIME_ADVANCE_REQUESTED ) {
          message_publish( MSG_WARNING, "TimeManagementServices::perform_time_advance_request():%d WARNING: Already in time requested state!\n",
@@ -1191,7 +1191,7 @@ void TimeManagementServices::wait_for_zero_lookahead_TARA_TAG()
    {
       // When auto_unlock_mutex goes out of scope it automatically unlocks
       // the mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
+      MutexProtection const auto_unlock_mutex( &time_adv_state_mutex );
 
       if ( this->time_adv_state == TIME_ADVANCE_REQUESTED ) {
          message_publish( MSG_WARNING, "TimeManagementServices::wait_for_zero_lookahead_TARA_TAG():%d WARNING: Already in time requested state!\n",
@@ -1275,7 +1275,7 @@ void TimeManagementServices::wait_for_zero_lookahead_TARA_TAG()
    {
       // When auto_unlock_mutex goes out of scope it automatically unlocks
       // the mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
+      MutexProtection const auto_unlock_mutex( &time_adv_state_mutex );
       state = this->time_adv_state;
    }
 
@@ -1295,14 +1295,14 @@ void TimeManagementServices::wait_for_zero_lookahead_TARA_TAG()
          {
             // When auto_unlock_mutex goes out of scope it automatically unlocks
             // the mutex even if there is an exception.
-            MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
+            MutexProtection const auto_unlock_mutex( &time_adv_state_mutex );
             state = this->time_adv_state;
          }
 
          if ( state != TIME_ADVANCE_GRANTED ) {
 
             // To be more efficient, we get the time once and share it.
-            int64_t wallclock_time = sleep_timer.time();
+            int64_t const wallclock_time = sleep_timer.time();
 
             if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
@@ -1313,7 +1313,7 @@ void TimeManagementServices::wait_for_zero_lookahead_TARA_TAG()
                          << " member. This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!" << endl;
+                         << " the Central RTI Component (CRC) level!\n";
                   DebugHandler::terminate( errmsg.str() );
                }
             }
@@ -1349,7 +1349,7 @@ bool TimeManagementServices::verify_time_constraints()
       }
       errmsg << ". Please update the Trick time tic value in your input.py file"
              << " (i.e. by calling 'trick.exec_set_time_tic_value( "
-             << Int64BaseTime::get_base_time_multiplier() << " )')." << endl;
+             << Int64BaseTime::get_base_time_multiplier() << " )').\n";
 
       DebugHandler::terminate( errmsg.str() );
       return false;
@@ -1369,7 +1369,7 @@ bool TimeManagementServices::verify_time_constraints()
                 << " )";
       }
       errmsg << ". Please update the Trick time tic value in your input.py file"
-             << " (i.e. by calling 'trick.exec_set_time_tic_value( )')." << endl;
+             << " (i.e. by calling 'trick.exec_set_time_tic_value( )').\n";
       DebugHandler::terminate( errmsg.str() );
       return false;
    }
@@ -1404,7 +1404,7 @@ void TimeManagementServices::wait_for_time_advance_grant()
    {
       // When auto_unlock_mutex goes out of scope it automatically unlocks the
       // mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
+      MutexProtection const auto_unlock_mutex( &time_adv_state_mutex );
       state = this->time_adv_state;
    }
 
@@ -1436,14 +1436,14 @@ void TimeManagementServices::wait_for_time_advance_grant()
          {
             // When auto_unlock_mutex goes out of scope it automatically unlocks
             // the mutex even if there is an exception.
-            MutexProtection auto_unlock_mutex( &time_adv_state_mutex );
+            MutexProtection const auto_unlock_mutex( &time_adv_state_mutex );
             state = this->time_adv_state;
          }
 
          if ( state != TIME_ADVANCE_GRANTED ) {
 
             // To be more efficient, we get the time once and share it.
-            int64_t wallclock_time = sleep_timer.time();
+            int64_t const wallclock_time = sleep_timer.time();
 
             if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
@@ -1454,7 +1454,7 @@ void TimeManagementServices::wait_for_time_advance_grant()
                          << " member. This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!" << endl;
+                         << " the Central RTI Component (CRC) level!\n";
                   DebugHandler::terminate( errmsg.str() );
                }
             }
