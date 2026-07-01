@@ -1034,7 +1034,7 @@ wstring ExecutionControlBase::generate_save_label()
 }
 
 /*
- * @job_class{checkpoint}
+ * @job_class{scheduled}
  */
 std::string const ExecutionControlBase::map_save_label_to_federates_file_name(
    wstring const &save_label )
@@ -1061,7 +1061,7 @@ std::string const ExecutionControlBase::map_save_label_to_federates_file_name(
 }
 
 /*!
- *  @job_class{scheduled}
+ *  @job_class{freeze}
  */
 void ExecutionControlBase::save_process()
 {
@@ -1156,7 +1156,7 @@ void ExecutionControlBase::save_process()
 }
 
 /*!
- *  @job_class{scheduled}
+ *  @job_class{freeze}
  */
 bool ExecutionControlBase::save( wstring const &label )
 {
@@ -1219,7 +1219,7 @@ bool ExecutionControlBase::save( wstring const &label )
 }
 
 /*!
- *  @job_class{scheduled}
+ *  @job_class{freeze}
  */
 void ExecutionControlBase::save_at_SET(
    wstring const &label,
@@ -1246,7 +1246,7 @@ void ExecutionControlBase::save_at_SET(
 }
 
 /*!
- *  @job_class{scheduled}
+ *  @job_class{freeze}
  */
 void ExecutionControlBase::save_at_SST(
    wstring const &label,
@@ -1273,7 +1273,7 @@ void ExecutionControlBase::save_at_SST(
 }
 
 /*!
- *  @job_class{scheduled}
+ *  @job_class{freeze}
  */
 void ExecutionControlBase::save_at_HLT(
    wstring const                        &label,
@@ -1301,7 +1301,7 @@ void ExecutionControlBase::save_at_HLT(
 }
 
 /*!
- *  @job_class{scheduled}
+ *  @job_class{freeze}
  */
 void ExecutionControlBase::restore_process()
 {
@@ -1409,7 +1409,7 @@ void ExecutionControlBase::restore_process()
 }
 
 /*!
- *  @job_class{scheduled}
+ *  @job_class{freeze}
  */
 void ExecutionControlBase::restore_request_status()
 {
@@ -1418,7 +1418,7 @@ void ExecutionControlBase::restore_request_status()
 }
 
 /*!
- *  @job_class{scheduled}
+ *  @job_class{freeze}
  */
 bool ExecutionControlBase::restore_waiting_for_request_status()
 {
@@ -1427,7 +1427,7 @@ bool ExecutionControlBase::restore_waiting_for_request_status()
 }
 
 /*!
- *  @job_class{scheduled}
+ *  @job_class{freeze}
  */
 void ExecutionControlBase::restore_request( std::wstring const &label )
 {
@@ -1436,7 +1436,7 @@ void ExecutionControlBase::restore_request( std::wstring const &label )
 }
 
 /*!
- *  @job_class{scheduled}
+ *  @job_class{freeze}
  */
 void ExecutionControlBase::restore_waiting_for_request()
 {
@@ -1445,7 +1445,7 @@ void ExecutionControlBase::restore_waiting_for_request()
 }
 
 /*!
- *  @job_class{scheduled}
+ *  @job_class{freeze}
  */
 void ExecutionControlBase::restore_request_failed()
 {
@@ -1454,7 +1454,7 @@ void ExecutionControlBase::restore_request_failed()
 }
 
 /*!
- *  @job_class{scheduled}
+ *  @job_class{freeze}
  */
 void ExecutionControlBase::restore_waiting_for_begun()
 {
@@ -1463,7 +1463,7 @@ void ExecutionControlBase::restore_waiting_for_begun()
 }
 
 /*!
- *  @job_class{scheduled}
+ *  @job_class{freeze}
  */
 void ExecutionControlBase::restore_begun()
 {
@@ -1472,7 +1472,7 @@ void ExecutionControlBase::restore_begun()
 }
 
 /*!
- *  @job_class{scheduled}
+ *  @job_class{freeze}
  */
 void ExecutionControlBase::restore_waiting_for_initiated()
 {
@@ -1481,7 +1481,7 @@ void ExecutionControlBase::restore_waiting_for_initiated()
 }
 
 /*!
- *  @job_class{scheduled}
+ *  @job_class{freeze}
  */
 void ExecutionControlBase::restore_initiated(
 #if defined( IEEE_1516_2025 )
@@ -1499,7 +1499,7 @@ void ExecutionControlBase::restore_initiated(
 }
 
 /*!
- *  @job_class{scheduled}
+ *  @job_class{freeze}
  */
 void ExecutionControlBase::restore_after_checkpoint_load()
 {
@@ -1508,7 +1508,7 @@ void ExecutionControlBase::restore_after_checkpoint_load()
 }
 
 /*!
- *  @job_class{scheduled}
+ *  @job_class{freeze}
  */
 void ExecutionControlBase::restore_waiting_for_completion()
 {
@@ -1517,7 +1517,7 @@ void ExecutionControlBase::restore_waiting_for_completion()
 }
 
 /*!
- *  @job_class{scheduled}
+ *  @job_class{freeze}
  */
 void ExecutionControlBase::restore_succeded()
 {
@@ -1526,7 +1526,7 @@ void ExecutionControlBase::restore_succeded()
 }
 
 /*!
- *  @job_class{scheduled}
+ *  @job_class{freeze}
  */
 void ExecutionControlBase::restore_failed()
 {
@@ -1535,7 +1535,7 @@ void ExecutionControlBase::restore_failed()
 }
 
 /*!
- *  @job_class{scheduled}
+ *  @job_class{freeze}
  */
 bool ExecutionControlBase::restore( wstring const &label )
 {
@@ -1581,7 +1581,7 @@ bool ExecutionControlBase::restore( wstring const &label )
 }
 
 /*
- * @job_class{checkpoint}
+ * @job_class{scheduled}
  */
 std::string const ExecutionControlBase::map_label_to_checkpoint_file_name(
    wstring const &save_label )
