@@ -78,7 +78,7 @@ using namespace TrickHLA;
                                                                                                                                        \
       /* Connect the users array data to the encoder array elements. */                                                                \
       if ( addr != NULL ) {                                                                                                            \
-         SimpleDataType *array_data = static_cast< SimpleDataType * >( addr );                                                         \
+         SimpleDataType *array_data = static_cast< SimpleDataType * >( addr ); /* NOLINT */                                            \
          for ( std::size_t i = 0; i < length; ++i ) {                                                                                  \
             const_cast< EncodableDataType & >( /* NOLINT(bugprone-macro-parentheses) */                                                \
                                                dynamic_cast< EncodableDataType const & >(                                              \

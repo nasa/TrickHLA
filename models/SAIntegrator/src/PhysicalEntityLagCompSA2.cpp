@@ -201,8 +201,8 @@ int PhysicalEntityLagCompSA2::integrate(
    double const t_begin,
    double const t_end )
 {
-   double compensate_dt = t_end - t_begin;
-   double dt_go         = compensate_dt;
+   double const ompensate_dt = t_end - t_begin;
+   double       dt_go        = compensate_dt;
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
