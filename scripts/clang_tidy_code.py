@@ -47,7 +47,7 @@ def main():
                                      formatter_class = argparse.RawDescriptionHelpFormatter, \
                                      description = 'Scan the TrickHLA source code using clang-tidy.', \
                                      epilog = textwrap.dedent( '''\n
-Examples:\n  clang_tidy_code --TrickHLA --SpaceFOM -v --check-includes --hla3\n  clang_tidy_code --TrickHLA --SpaceFOM -v --hla3''' ) )
+Examples:\n  clang_tidy_code --TrickHLA --SpaceFOM -v --check-includes --hla4\n  clang_tidy_code --TrickHLA --SpaceFOM -v --check-includes --check-recommended --hla4''' ) )
 
    parser.add_argument( '--apply-fixes', \
                         help = 'Apply fixes.', \
@@ -100,6 +100,12 @@ Examples:\n  clang_tidy_code --TrickHLA --SpaceFOM -v --check-includes --hla3\n 
    parser.add_argument( '--check-portability', \
                         help = 'Check for portability.', \
                         action = 'store_true', dest = 'check_portability' )
+   parser.add_argument( '--check-recommended', \
+                        help = 'Check recommended: Full performance and subset of misc, readability and bugprone.', \
+                        action = 'store_true', dest = 'check_recommended' )
+   parser.add_argument( '--disable-performance-avoid-endl', \
+                        help = 'Disable the performance-avoid-endl check.', \
+                        action = 'store_true', dest = 'disable_performance_avoid_endl' )
    parser.add_argument( '-b', '--bin', \
                         help = 'Path to clang-tidy binaries directory.', \
                         dest = 'bin_path' )
@@ -327,6 +333,7 @@ Examples:\n  clang_tidy_code --TrickHLA --SpaceFOM -v --check-includes --hla3\n 
 
    # Configure the clang-tidy arguments.
    # List all checks: clang-tidy --checks='*' --dump-config --explain-config
+   # The insecureAPI checks are disabled because the results are not very good.
    checks = '--checks=\'-*,clang-diagnostic-*'
    if args.check_bugprone or args.check_all:
       checks += ',bugprone-*'
@@ -338,10 +345,14 @@ Examples:\n  clang_tidy_code --TrickHLA --SpaceFOM -v --check-includes --hla3\n 
       checks += ',misc-*'
    if args.check_portability or args.check_all:
       checks += ',portability-*'
+   if args.check_recommended or args.check_all:
+      checks += ',performance-*,misc-*,-misc-no-recursion,-misc-unused-parameters,readability-duplicate-include,readability-misleading-indentation,bugprone-assert-side-effect,bugprone-macro-repeated-side-effects,bugprone-infinite-loop,bugprone-macro-parentheses,bugprone-posix-return,bugprone-reserved-identifier,bugprone-signal-handler,bugprone-signed-char-misuse,bugprone-sizeof-expression,bugprone-branch-clone'
    if args.check_default or args.check_all:
-      checks += ',clang-analyzer-*,performance-*'
+      checks += ',performance-*,clang-analyzer-*,-clang-analyzer-security.insecureAPI.*'
    if not ( args.check_bugprone or args.check_cppcoreguidelines or args.check_includes or args.check_misc or args.check_portability or args.check_default ):
-      checks += ',clang-analyzer-*,performance-*'
+      checks += ',performance-*,clang-analyzer-*,-clang-analyzer-security.insecureAPI.*'
+   if args.disable_performance_avoid_endl:
+      checks += ',-performance-avoid-endl'
 
    checks += '\''
    clang_tidy_args.append( checks )
