@@ -1684,6 +1684,12 @@ void SaveRestoreServices::restore_after_checkpoint_load()
                           __LINE__ );
       }
 
+      // Restore the data constructs from loading the checkpoint file.
+      federate->restore_data_after_checkpoint();
+      if ( execution_control != NULL ) {
+         execution_control->restore_data_after_checkpoint();
+      }
+
       //
       // Get us restarted again...
       //
@@ -1702,15 +1708,15 @@ void SaveRestoreServices::restore_after_checkpoint_load()
       }
 
       // Restore interactions and sync points
-      interaction_service->restore_data_after_checkpoint();
       reinstate_logged_sync_pts();
 
+      // FIXME: This should have already been done.
       // Restore ownership transfer data for all objects
-      Object *objects   = object_service->get_objects();
-      int     obj_count = object_service->get_object_count();
-      for ( int i = 0; i < obj_count; ++i ) {
-         objects[i].restore_data_after_checkpoint();
-      }
+      //Object *objects   = object_service->get_objects();
+      //int     obj_count = object_service->get_object_count();
+      //for ( int i = 0; i < obj_count; ++i ) {
+      //   objects[i].restore_data_after_checkpoint();
+      //}
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          message_publish( MSG_NORMAL, "SaveRestoreServices::restore_after_checkpoint_load():%d: Rebuilt HLA federate state.\n",

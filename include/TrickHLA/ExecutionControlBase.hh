@@ -902,10 +902,10 @@ class ExecutionControlBase : public SyncPointManagerBase
    bool late_joiner_determined; ///< @trick_units{--} Flag for late joiner determination.
 
    // Shortcuts to associated TrickHLA management and control objects.
-   TrickHLA::ObjectServices         *object_service;          ///< @trick_io{**} Associated ObjectServices.
    TrickHLA::TimeManagementServices *time_management_service; ///< @trick_io{**} Associated time management services.
-   TrickHLA::SaveRestoreServices    *save_restore_service;    ///< @trick_io{**} Associated Save & Restore service.
+   TrickHLA::ObjectServices         *object_service;          ///< @trick_io{**} Associated ObjectServices.
    TrickHLA::InteractionServices    *interaction_service;     ///< @trick_io{**} Associated Interaction service.
+   TrickHLA::SaveRestoreServices    *save_restore_service;    ///< @trick_io{**} Associated Save & Restore service.
 
   private:
    // Do not allow the copy constructor.

@@ -3692,59 +3692,69 @@ void Federate::restore( wstring const &label )
 /*! @brief Convert data to a form Trick can checkpoint. */
 void Federate::convert_data_before_checkpoint()
 {
+
+   if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      ostringstream msg;
+      msg << "Federate::convert_data_before_checkpoint():"
+          << __LINE__ << ": Converting the federate data for checkpointing." << endl;
+      message_publish( MSG_NORMAL, msg.str().c_str() );
+   }
+
    // Make sure to free resources before doing the data conversions to avoid
    // a memory leak.
    free_converted_data_for_checkpoint();
 
-   // TODO: Convert other Federate data into data types Trick can checkpoint.
-
+   // Convert the federate services data before a checkpoint.
    time_management_service.convert_data_before_checkpoint();
    object_service.convert_data_before_checkpoint();
    interaction_service.convert_data_before_checkpoint();
    save_restore_service.convert_data_before_checkpoint();
 
-   if ( execution_config != NULL ) {
-      execution_config->convert_data_before_checkpoint();
-   }
-   if ( execution_control != NULL ) {
-      execution_control->convert_data_before_checkpoint();
-   }
+   // TODO: Convert other Federate data into data types Trick can checkpoint.
+
+   return;
 }
 
 /*! @brief Restore data structures after loading a Trick checkpoint. */
 void Federate::restore_data_after_checkpoint()
 {
-   // TODO: Restore other checkpoint data into Federate data.
+   if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      ostringstream msg;
+      msg << "Federate::restore_data_after_checkpoint():"
+          << __LINE__ << ": Restoring the federate data after checkpoint loading." << endl;
+      message_publish( MSG_NORMAL, msg.str().c_str() );
+   }
 
+   // Restore the federate services data after checkpoint load.
    time_management_service.restore_data_after_checkpoint();
    object_service.restore_data_after_checkpoint();
    interaction_service.restore_data_after_checkpoint();
    save_restore_service.restore_data_after_checkpoint();
 
-   if ( execution_config != NULL ) {
-      execution_config->restore_data_after_checkpoint();
-   }
-   if ( execution_control != NULL ) {
-      execution_control->restore_data_after_checkpoint();
-   }
+   // TODO: Restore other checkpoint data into Federate data.
+
+   return;
 }
 
 /*! @brief Clear/release the memory used for the conversion data for the checkpoint. */
 void Federate::free_converted_data_for_checkpoint()
 {
-   // TODO: Free other Federate checkpoint converted data.
+   if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      ostringstream msg;
+      msg << "Federate::free_converted_data_for_checkpoint():"
+          << __LINE__ << ": Freeing federate data allocated for checkpointing." << endl;
+      message_publish( MSG_NORMAL, msg.str().c_str() );
+   }
 
+   // Free the converted federate services data for checkpoint.
    time_management_service.free_converted_data_for_checkpoint();
    object_service.free_converted_data_for_checkpoint();
    interaction_service.free_converted_data_for_checkpoint();
    save_restore_service.free_converted_data_for_checkpoint();
 
-   if ( execution_config != NULL ) {
-      execution_config->free_converted_data_for_checkpoint();
-   }
-   if ( execution_control != NULL ) {
-      execution_control->free_converted_data_for_checkpoint();
-   }
+   // TODO: Free other Federate checkpoint converted data.
+
+   return;
 }
 
 /*!
@@ -3752,8 +3762,19 @@ void Federate::free_converted_data_for_checkpoint()
  */
 void Federate::checkpoint_before()
 {
+
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      ostringstream msg;
+      msg << "Federate::checkpoint_before():"
+          << __LINE__ << ": Preparing for a checkpoint." << endl;
+      message_publish( MSG_NORMAL, msg.str().c_str() );
+   }
+   
    // Delegate to the Execution Control specific implementation.
-   execution_control->checkpoint_before();
+   if ( execution_control != NULL ) {
+      execution_control->checkpoint_before();
+   }
+
 }
 
 /*!
@@ -3763,8 +3784,28 @@ void Federate::checkpoint_before()
  */
 void Federate::checkpoint_preload()
 {
+   // TrickHLA only supports a checkpoint load as part of an HLA Restore process.
+   if ( save_restore_service.restore_state != THLARestoreProcessEnum::RESTORE_IN_PROGRESS ) {
+      ostringstream msg;
+      msg << "Federate::checkpoint_preload():"
+          << __LINE__ << ": Checkpoint loading only supported as part of an HLA Restore process!" << endl;
+      message_publish( MSG_WARNING, msg.str().c_str() );
+      return;
+   }
+
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      ostringstream msg;
+      msg << "Federate::checkpoint_preload():"
+          << __LINE__ << ": Preparing to load and checkpoint file as part of an HLA Restore process." << endl;
+      message_publish( MSG_NORMAL, msg.str().c_str() );
+   }
+
    // Delegate to the Execution Control specific implementation.
-   execution_control->checkpoint_preload();
+   if ( execution_control != NULL ) {
+      execution_control->checkpoint_preload();
+   }
+
+   return;
 }
 
 /*!
@@ -3772,8 +3813,19 @@ void Federate::checkpoint_preload()
  */
 void Federate::checkpoint_after()
 {
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      ostringstream msg;
+      msg << "Federate::checkpoint_after():"
+          << __LINE__ << ": Cleaning up after a checkpoint." << endl;
+      message_publish( MSG_NORMAL, msg.str().c_str() );
+   }
+
    // Delegate to the Execution Control specific implementation.
-   execution_control->checkpoint_after();
+   if ( execution_control != NULL ) {
+      execution_control->checkpoint_after();
+   }
+
+   return;
 }
 
 /*!
@@ -3783,8 +3835,28 @@ void Federate::checkpoint_after()
  */
 void Federate::checkpoint_restart()
 {
+   // TrickHLA only supports a checkpoint load as part of an HLA Restore process.
+   if ( save_restore_service.restore_state != THLARestoreProcessEnum::RESTORE_IN_PROGRESS ) {
+      ostringstream msg;
+      msg << "Federate::checkpoint_restart():"
+          << __LINE__ << ": Checkpoint restart only supported as part of an HLA Restore process!" << endl;
+      message_publish( MSG_WARNING, msg.str().c_str() );
+      return;
+   }
+
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      ostringstream msg;
+      msg << "Federate::checkpoint_restart():"
+          << __LINE__ << ": Cleaning up after a checkpoint." << endl;
+      message_publish( MSG_NORMAL, msg.str().c_str() );
+   }
+
    // Delegate to the Execution Control specific implementation.
-   execution_control->checkpoint_restart();
+   if ( execution_control != NULL ) {
+      execution_control->checkpoint_restart();
+   }
+
+   return;
 }
 
 /*!

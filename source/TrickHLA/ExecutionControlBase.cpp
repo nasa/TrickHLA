@@ -134,10 +134,10 @@ ExecutionControlBase::ExecutionControlBase()
      freeze_the_federation( false ),
      late_joiner( false ),
      late_joiner_determined( false ),
-     object_service( NULL ),
      time_management_service( NULL ),
-     save_restore_service( NULL ),
-     interaction_service( NULL )
+     object_service( NULL ),
+     interaction_service( NULL ),
+     save_restore_service( NULL )
 {
    return;
 }
@@ -170,10 +170,10 @@ ExecutionControlBase::ExecutionControlBase(
      freeze_the_federation( false ),
      late_joiner( false ),
      late_joiner_determined( false ),
-     object_service( NULL ),
      time_management_service( NULL ),
-     save_restore_service( NULL ),
-     interaction_service( NULL )
+     object_service( NULL ),
+     interaction_service( NULL ),
+     save_restore_service( NULL )
 {
    return;
 }
@@ -989,23 +989,72 @@ void ExecutionControlBase::set_master( bool master_flag )
 
 void ExecutionControlBase::convert_data_before_checkpoint()
 {
+   if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      ostringstream msg;
+      msg << "ExecutionControlBase::convert_data_before_checkpoint():"
+          << __LINE__ << ": Converting data for checkpointing." << endl;
+      message_publish( MSG_NORMAL, msg.str().c_str() );
+   }
+
+   // Make sure to free resources before doing the data conversions to avoid
+   // a memory leak.
+   this->free_converted_data_for_checkpoint();
+
    // TODO: Do the Timelines need to be converted.
 
+   // Convert the synchronization point lists.
    SyncPointManagerBase::convert_data_before_checkpoint();
+
+   // Convert the ExecutionConfiguration data.
+   if ( execution_configuration != NULL ){
+      execution_configuration->convert_data_before_checkpoint();
+   }
+
+   return;
 }
 
 void ExecutionControlBase::restore_data_after_checkpoint()
 {
+   if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      ostringstream msg;
+      msg << "ExecutionControlBase::restore_data_after_checkpoint():"
+          << __LINE__ << ": Restoring data after checkpoint loading." << endl;
+      message_publish( MSG_NORMAL, msg.str().c_str() );
+   }
+
    // TODO: Do the Timelines need to be restored.
 
+   // Restoring the synchronization point lists.
    SyncPointManagerBase::restore_data_after_checkpoint();
+
+   // Restoring the ExecutionConfiguration data.
+   if ( execution_configuration != NULL ){
+      execution_configuration->restore_data_after_checkpoint();
+   }
+
+   return;
 }
 
 void ExecutionControlBase::free_converted_data_for_checkpoint()
 {
+   if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      ostringstream msg;
+      msg << "ExecutionControlBase::free_converted_data_for_checkpoint():"
+          << __LINE__ << ": Freeing data allocated for checkpointing." << endl;
+      message_publish( MSG_NORMAL, msg.str().c_str() );
+   }
+
    // TODO: Do the Timelines converted data need to be free.
 
+   // Freeing the synchronization point lists checkpoint data.
    SyncPointManagerBase::free_converted_data_for_checkpoint();
+
+   // Freeing the ExecutionConfiguration checkpoint data.
+   if ( execution_configuration != NULL ){
+      execution_configuration->free_converted_data_for_checkpoint();
+   }
+
+   return;
 }
 
 /*!
@@ -1612,43 +1661,25 @@ std::string const ExecutionControlBase::map_label_to_checkpoint_file_name(
  */
 void ExecutionControlBase::checkpoint_before()
 {
-   THLASaveProcessEnum current_save_state;
+   // Don't try to convert data while in initialization.
+   if ( exec_get_mode() == Initialization ){
+      return;
+   }
 
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream msg;
-      msg << "SaveRestoreServices::checkpoint_before():"
-          << __LINE__ << ": Checkpoint initiated." << endl;
+      msg << "ExecutionControlBase::checkpoint_before():"
+          << __LINE__ << ": Preparing for a checkpoint." << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
-   // We don't initiate a Save in either initialization or shutdown.
-   // This allows "regular" initialization and shutdown checkpoints.
-   if ( ( exec_get_mode() == Initialization ) || ( exec_get_mode() == ExitMode ) ) {
-      return;
+   // Convert the federate data.
+   if ( federate != NULL ){
+      federate->convert_data_before_checkpoint();
    }
 
-   // Check to see if Trick is in Freeze.  If not, then this is a normal
-   // checkpoint.  If it is, then we can proceed to see if a Save from the
-   // Trick Control Panel is supported.
-   if ( exec_get_mode() != Freeze ) {
-      return;
-   }
-
-   // Get the current Save state.
-   current_save_state = save_restore_service->save_get_state();
-
-   // Check to see if this checkpoint was initiated from Federate Ambassador
-   // initiateFederateSave callback.  If so, a Save has already been requested
-   // and will be handled in the freeze job save_process().
-   if ( current_save_state == THLASaveProcessEnum::SAVE_REQUESTED ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         ostringstream msg;
-         msg << "SaveRestoreServices::checkpoint_before():"
-             << __LINE__ << ": Save already requested." << endl;
-         message_publish( MSG_NORMAL, msg.str().c_str() );
-      }
-      return;
-   }
+   // Call the ExecutionControl function to prepare for a checkpoint.
+   this->convert_data_before_checkpoint();
 
    return;
 }
@@ -1658,7 +1689,15 @@ void ExecutionControlBase::checkpoint_before()
  */
 void ExecutionControlBase::checkpoint_after()
 {
-   // In base implementation, there's nothing to do after a checkpoint.
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      ostringstream msg;
+      msg << "ExecutionControlBase::checkpoint_after():"
+          << __LINE__ << ": Cleaning up after a checkpoint." << endl;
+      message_publish( MSG_NORMAL, msg.str().c_str() );
+   }
+
+   // Normally there's nothing to do after dropping a checkpoint.
+
    return;
 }
 
@@ -1667,6 +1706,24 @@ void ExecutionControlBase::checkpoint_after()
  */
 void ExecutionControlBase::checkpoint_preload()
 {
+   // TrickHLA only supports a checkpoint load as part of an HLA Restore process.
+   if ( save_restore_service->restore_state != THLARestoreProcessEnum::RESTORE_IN_PROGRESS ) {
+      ostringstream msg;
+      msg << "ExecutionControlBase::checkpoint_preload():"
+          << __LINE__ << ": Checkpoint loading only supported as part of an HLA Restore process!" << endl;
+      message_publish( MSG_WARNING, msg.str().c_str() );
+      return;
+   }
+
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      ostringstream msg;
+      msg << "ExecutionControlBase::checkpoint_preload():"
+          << __LINE__ << ": Preparing to load a checkpoint." << endl;
+      message_publish( MSG_NORMAL, msg.str().c_str() );
+   }
+
+   // Normally there's nothing to do to prepare for loading a checkpoint.
+
    return;
 }
 
@@ -1675,6 +1732,25 @@ void ExecutionControlBase::checkpoint_preload()
  */
 void ExecutionControlBase::checkpoint_restart()
 {
+   // TrickHLA only supports a checkpoint load as part of an HLA Restore process.
+   if ( save_restore_service->restore_state != THLARestoreProcessEnum::RESTORE_IN_PROGRESS ) {
+      ostringstream msg;
+      msg << "ExecutionControlBase::checkpoint_restart():"
+          << __LINE__ << ": Checkpoint restart only supported as part of an HLA Restore process!" << endl;
+      message_publish( MSG_WARNING, msg.str().c_str() );
+      return;
+   }
+
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      ostringstream msg;
+      msg << "ExecutionControlBase::checkpoint_preload():"
+          << __LINE__ << ": Preparing to load a checkpoint." << endl;
+      message_publish( MSG_NORMAL, msg.str().c_str() );
+   }
+   
+   // NOTE: We DO NOT call the restore_data_after_checkpoint() functions here.
+   // These will be handled in the HLA Restore code.
+
    return;
 }
 

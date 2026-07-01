@@ -5192,7 +5192,9 @@ void Object::convert_data_before_checkpoint()
    if ( lag_comp != NULL ) {
       lag_comp->convert_data_before_checkpoint();
    }
-   if ( packing != NULL ) {
+   // Free the Packing data as long as this isn't the same and this object.
+   // This coveres a special case where the ExCO is both Object and Packing.
+   if ( packing != NULL && this->packing != dynamic_cast<Packing*>(this) ) {
       packing->convert_data_before_checkpoint();
    }
    if ( ownership != NULL ) {
@@ -5219,7 +5221,9 @@ void Object::restore_data_after_checkpoint()
    if ( lag_comp != NULL ) {
       lag_comp->restore_data_after_checkpoint();
    }
-   if ( packing != NULL ) {
+   // Free the Packing data as long as this isn't the same and this object.
+   // This coveres a special case where the ExCO is both Object and Packing.
+   if ( packing != NULL && this->packing != dynamic_cast<Packing*>(this) ) {
       packing->restore_data_after_checkpoint();
    }
    if ( ownership != NULL ) {
@@ -5246,7 +5250,9 @@ void Object::free_converted_data_for_checkpoint()
    if ( lag_comp != NULL ) {
       lag_comp->free_converted_data_for_checkpoint();
    }
-   if ( packing != NULL ) {
+   // Free the Packing data as long as this isn't the same and this object.
+   // This coveres a special case where the ExCO is both Object and Packing.
+   if ( packing != NULL && this->packing != dynamic_cast<Packing*>(this) ) {
       packing->free_converted_data_for_checkpoint();
    }
    if ( ownership != NULL ) {

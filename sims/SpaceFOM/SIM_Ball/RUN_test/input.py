@@ -89,7 +89,7 @@ trick.checkpoint_end(True)
 trick.TMM_reduced_checkpoint(False)
 trick.TMM_hexfloat_checkpoint(True)
 
-trick.echo_jobs_on()
+#trick.echo_jobs_on()
 
 # Check point at 5 seconds.
 trick.checkpoint(5.0)
