@@ -103,8 +103,8 @@ void SpaceTimeCoordinatePacking::base_config(
    SpaceTimeCoordinateData *working,
    Object                  *mngr_object )
 {
-   string stc_name_str = string( sim_obj_name ) + "." + string( packing_name );
-   string trick_name_str;
+   string const stc_name_str = string( sim_obj_name ) + "." + string( packing_name );
+   string       trick_name_str;
 
    // Associate the instantiated Manager object with this packing object.
    if ( mngr_object == NULL ) {
@@ -405,7 +405,7 @@ void SpaceTimeCoordinatePacking::unpack_into_working_data()
  */
 void SpaceTimeCoordinatePacking::unpack_test()
 {
-   double tol = 4.0 * std::numeric_limits< double >::min();
+   double const tol = 4.0 * std::numeric_limits< double >::min();
 
    // Position
    if ( ( abs( test_stc.pos[0] - packing_data.pos[0] ) > tol )
@@ -413,12 +413,12 @@ void SpaceTimeCoordinatePacking::unpack_test()
         || ( abs( test_stc.pos[2] - packing_data.pos[2] ) > tol ) ) {
       ostringstream msg;
       msg << "SpaceTimeCoordinatePacking::unpack_test(): " << __LINE__
-          << " : Failed position test!" << std::endl;
+          << " : Failed position test!\n";
       message_publish( MSG_ERROR, msg.str().c_str() );
    } else {
       ostringstream msg;
       msg << "SpaceTimeCoordinatePacking::unpack_test(): " << __LINE__
-          << " : Passed position test!" << std::endl;
+          << " : Passed position test!\n";
       message_publish( MSG_INFO, msg.str().c_str() );
    }
 
@@ -428,12 +428,12 @@ void SpaceTimeCoordinatePacking::unpack_test()
         || ( abs( test_stc.vel[2] - packing_data.vel[2] ) > tol ) ) {
       ostringstream msg;
       msg << "SpaceTimeCoordinatePacking::unpack_test(): " << __LINE__
-          << " : Failed velocity test!" << std::endl;
+          << " : Failed velocity test!\n";
       message_publish( MSG_ERROR, msg.str().c_str() );
    } else {
       ostringstream msg;
       msg << "SpaceTimeCoordinatePacking::unpack_test(): " << __LINE__
-          << " : Passed velocity test!" << std::endl;
+          << " : Passed velocity test!\n";
       message_publish( MSG_INFO, msg.str().c_str() );
    }
 
@@ -441,12 +441,12 @@ void SpaceTimeCoordinatePacking::unpack_test()
    if ( abs( test_stc.att.scalar - packing_data.att.scalar ) > tol ) {
       ostringstream msg;
       msg << "SpaceTimeCoordinatePacking::unpack_test(): " << __LINE__
-          << " : Failed quaternion scalar test!" << std::endl;
+          << " : Failed quaternion scalar test!\n";
       message_publish( MSG_ERROR, msg.str().c_str() );
    } else {
       ostringstream msg;
       msg << "SpaceTimeCoordinatePacking::unpack_test(): " << __LINE__
-          << " : Passed quaternion scalar test!" << std::endl;
+          << " : Passed quaternion scalar test!\n";
       message_publish( MSG_INFO, msg.str().c_str() );
    }
 
@@ -456,12 +456,12 @@ void SpaceTimeCoordinatePacking::unpack_test()
         || ( abs( test_stc.att.vector[2] - packing_data.att.vector[2] ) > tol ) ) {
       ostringstream msg;
       msg << "SpaceTimeCoordinatePacking::unpack_test(): " << __LINE__
-          << " : Failed quaternion vector test!" << std::endl;
+          << " : Failed quaternion vector test!\n";
       message_publish( MSG_ERROR, msg.str().c_str() );
    } else {
       ostringstream msg;
       msg << "SpaceTimeCoordinatePacking::unpack_test(): " << __LINE__
-          << " : Passed quaternion vector test!" << std::endl;
+          << " : Passed quaternion vector test!\n";
       message_publish( MSG_INFO, msg.str().c_str() );
    }
 
@@ -471,12 +471,12 @@ void SpaceTimeCoordinatePacking::unpack_test()
         || ( abs( test_stc.ang_vel[2] - packing_data.ang_vel[2] ) > tol ) ) {
       ostringstream msg;
       msg << "SpaceTimeCoordinatePacking::unpack_test(): " << __LINE__
-          << " : Failed angular velocity test!" << std::endl;
+          << " : Failed angular velocity test!\n";
       message_publish( MSG_ERROR, msg.str().c_str() );
    } else {
       ostringstream msg;
       msg << "SpaceTimeCoordinatePacking::unpack_test(): " << __LINE__
-          << " : Passed angular velocity test!" << std::endl;
+          << " : Passed angular velocity test!\n";
       message_publish( MSG_INFO, msg.str().c_str() );
    }
 
@@ -485,13 +485,12 @@ void SpaceTimeCoordinatePacking::unpack_test()
       ostringstream msg;
       msg << "SpaceTimeCoordinatePacking::unpack_test(): " << __LINE__
           << " : Failed time test! (test_stc.time:" << test_stc.time
-          << " != packing_data.time:" << packing_data.time << ")"
-          << std::endl;
+          << " != packing_data.time:" << packing_data.time << ")\n";
       message_publish( MSG_ERROR, msg.str().c_str() );
    } else {
       ostringstream msg;
       msg << "SpaceTimeCoordinatePacking::unpack_test(): " << __LINE__
-          << " : Passed time test!" << std::endl;
+          << " : Passed time test!\n";
       message_publish( MSG_INFO, msg.str().c_str() );
    }
 

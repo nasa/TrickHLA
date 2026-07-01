@@ -1617,7 +1617,7 @@ void ExecutionControlBase::checkpoint_before()
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream msg;
       msg << "SaveRestoreServices::checkpoint_before():"
-          << __LINE__ << ": Checkpoint initiated." << std::endl;
+          << __LINE__ << ": Checkpoint initiated." << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
@@ -1644,7 +1644,7 @@ void ExecutionControlBase::checkpoint_before()
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          ostringstream msg;
          msg << "SaveRestoreServices::checkpoint_before():"
-             << __LINE__ << ": Save already requested." << std::endl;
+             << __LINE__ << ": Save already requested." << endl;
          message_publish( MSG_NORMAL, msg.str().c_str() );
       }
       return;

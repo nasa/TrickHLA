@@ -75,7 +75,7 @@ void FixedRecPacking::pack()
    if ( !initialized ) {
       ostringstream errmsg;
       errmsg << "FixedRecPacking::pack():" << __LINE__
-             << " ERROR: The initialize() function has not been called!" << endl;
+             << " ERROR: The initialize() function has not been called!\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -99,10 +99,10 @@ void FixedRecPacking::pack()
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_PACKING ) ) {
       string        obj_name = ( this->object != NULL ) ? object->get_name() : "";
       ostringstream msg;
-      msg << "FixedRecPacking::pack():" << __LINE__ << endl
-          << "Object-Name:'" << obj_name << "'" << endl
+      msg << "FixedRecPacking::pack():" << __LINE__ << "\n"
+          << "Object-Name:'" << obj_name << "'\n"
           << "\t sim_data:" << sim_data->to_string()
-          << "\t ----------" << endl
+          << "\t ----------\n"
           << "\t pack:" << to_string();
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
@@ -113,7 +113,7 @@ void FixedRecPacking::unpack()
    if ( !initialized ) {
       ostringstream errmsg;
       errmsg << "FixedRecPacking::unpack():" << __LINE__
-             << " ERROR: The initialize() function has not been called!" << endl;
+             << " ERROR: The initialize() function has not been called!\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -142,10 +142,10 @@ void FixedRecPacking::unpack()
       string obj_name = ( this->object != NULL ) ? object->get_name() : "";
 
       ostringstream msg;
-      msg << "FixedRecPacking::unpack():" << __LINE__ << endl
-          << "Object-Name:'" << obj_name << "'" << endl
+      msg << "FixedRecPacking::unpack():" << __LINE__ << "\n"
+          << "Object-Name:'" << obj_name << "'\n"
           << "\t sim_data:" << sim_data->to_string()
-          << "\t ----------" << endl
+          << "\t ----------\n"
           << "\t unpack:" << to_string();
 
       message_publish( MSG_NORMAL, msg.str().c_str() );

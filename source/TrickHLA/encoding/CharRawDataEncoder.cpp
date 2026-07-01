@@ -80,7 +80,7 @@ CharRawDataEncoder::CharRawDataEncoder(
              << "' simulation variable (type:" << attr->type_name
              << ") is not the expected type '"
              << trickTypeCharString( TRICK_CHARACTER, "UNSUPPORTED_TYPE" )
-             << "'." << endl;
+             << "'.\n";
       DebugHandler::terminate( errmsg.str() );
       return;
    }
@@ -89,7 +89,7 @@ CharRawDataEncoder::CharRawDataEncoder(
       ostringstream errmsg;
       errmsg << "CharRawDataEncoder::CharRawDataEncoder():" << __LINE__
              << " ERROR: Trick ref-attributes for '" << data_name
-             << "' the variable must be a dynamic variable array!" << endl;
+             << "' the variable must be a dynamic variable array!\n";
       DebugHandler::terminate( errmsg.str() );
       return;
    }
@@ -143,8 +143,7 @@ size_t CharRawDataEncoder::decodeFrom(
 {
    ostringstream errmsg;
    errmsg << "CharRawDataEncoder::decodeFrom():" << __LINE__
-          << " ERROR: Encoding not supported for a field of an HLA Record!"
-          << endl;
+          << " ERROR: Encoding not supported for a field of an HLA Record!\n";
    DebugHandler::terminate( errmsg.str() );
    return index;
 }

@@ -497,15 +497,15 @@ void FedAmb::federationRestored()
    }
    // FIXME:
    std::cout << "FedAmb::federationRestored():" << __LINE__
-             << ": Calling SaveRestoreServices::restore_set_state()!" << std::endl;
-             
+             << ": Calling SaveRestoreServices::restore_set_state()!" << endl;
+
    save_restore_service->restore_set_state( THLARestoreProcessEnum::RESTORE_COMPLETE );
 
    // FIXME:
    std::cout << "FedAmb::federationRestored():" << __LINE__
-             << ": Returned from SaveRestoreServices::restore_set_state()!" << std::endl;
+             << ": Returned from SaveRestoreServices::restore_set_state()!" << endl;
    std::cout << "FedAmb::federationRestored():" << __LINE__
-             << ": restore_state = " << to_string( save_restore_service->restore_get_state() ) << std::endl;
+             << ": restore_state = " << to_string( save_restore_service->restore_get_state() ) << endl;
 
    return;
 }

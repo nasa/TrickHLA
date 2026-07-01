@@ -123,7 +123,7 @@ void JEODPhysicalInterface::initialize()
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalInterface::initialize():" << __LINE__
              << " ERROR: Unexpected NULL dyn_body reference: for interface '"
-             << this->packing_data.name << "'." << endl;
+             << this->packing_data.name << "'.\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -132,7 +132,7 @@ void JEODPhysicalInterface::initialize()
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalInterface::initialize():" << __LINE__
              << " ERROR: Unexpected NULL vehicle_point_id for interface '"
-             << this->packing_data.name << "'." << endl;
+             << this->packing_data.name << "'.\n";
       // Print message and terminate.
       DebugHandler::terminate( errmsg.str() );
    }
@@ -148,7 +148,7 @@ void JEODPhysicalInterface::initialize()
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalInterface::initialize():" << __LINE__
              << " ERROR: Unexpected NULL vehicle_point_data for interface '"
-             << vehicle_point_id << "'." << endl;
+             << vehicle_point_id << "'.\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -170,13 +170,13 @@ void JEODPhysicalInterface::pack_from_working_data()
    }
 
    // Short cut to the mass point data.
-   jeod::MassPoint *mass_point_ptr = vehicle_point_data->mass_point;
+   jeod::MassPoint const *mass_point_ptr = vehicle_point_data->mass_point;
 
    // Check for initialization.
    if ( !initialized ) {
       ostringstream errmsg;
       errmsg << "JEODPhysicalInterface::pack() ERROR: The initialize() function"
-             << " has not been called!" << endl;
+             << " has not been called!\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
 
@@ -286,7 +286,7 @@ void JEODPhysicalInterface::set_data(
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalInterface::set_data():" << __LINE__
              << " ERROR: Unexpected NULL vehicle_point_id for interface "
-             << this->packing_data.name << endl;
+             << this->packing_data.name << "\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -295,7 +295,7 @@ void JEODPhysicalInterface::set_data(
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalInterface::set_data():" << __LINE__
              << " ERROR: Unexpected NULL dyn_body_ptr: for interface "
-             << this->packing_data.name << endl;
+             << this->packing_data.name << "\n";
       DebugHandler::terminate( errmsg.str() );
    } else {
       this->vehicle_point_data = dyn_body_ptr->find_vehicle_point( vehicle_point_id );
@@ -306,7 +306,7 @@ void JEODPhysicalInterface::set_data(
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalInterface::set_data():" << __LINE__
              << " ERROR: Unexpected NULL vehicle_point_data for interface "
-             << vehicle_point_id << endl;
+             << vehicle_point_id << "\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -324,7 +324,7 @@ void JEODPhysicalInterface::set_data(
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalInterface::set_data():" << __LINE__
              << " ERROR: Unexpected NULL vehicle_point_ptr: "
-             << this->packing_data.name << endl;
+             << this->packing_data.name << "\n";
       DebugHandler::terminate( errmsg.str() );
    }
    this->vehicle_point_data = vehicle_point_ptr;
@@ -344,7 +344,7 @@ void JEODPhysicalInterface::set_data(
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalInterface::set_data():" << __LINE__
              << " ERROR: Unexpected NULL dyn_body_ptr: for interface "
-             << this->packing_data.name << endl;
+             << this->packing_data.name << "\n";
       DebugHandler::terminate( errmsg.str() );
    } else {
       this->dyn_body = dyn_body_ptr;
@@ -355,7 +355,7 @@ void JEODPhysicalInterface::set_data(
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalInterface::set_data():" << __LINE__
              << " ERROR: Unexpected NULL vehicle_point_ptr: "
-             << this->packing_data.name << endl;
+             << this->packing_data.name << "\n";
       DebugHandler::terminate( errmsg.str() );
    } else {
       this->vehicle_point_data = vehicle_point_ptr;

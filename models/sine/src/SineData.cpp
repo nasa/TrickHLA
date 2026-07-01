@@ -209,9 +209,9 @@ void SineData::compute_derivative(
 
 void SineData::adjust_phase() // RETURN: -- None.
 {
-   double test_value;
-   double test_deriv;
-   double old_phase = this->phase;
+   double       test_value;
+   double       test_deriv;
+   double const old_phase = this->phase;
 
    // Compute the test_value.
    test_value = amp * sin( ( freq * time ) + phase );
@@ -263,7 +263,7 @@ int SineData::integration()
    load_deriv( &dvdt, NULL ); // cppcheck-suppress [varFuncNullUB,unmatchedSuppression]
 
    // Call the Trick integration service.
-   int ipass = integrate();
+   int const ipass = integrate();
 
    // Unload the new propagated state value.
    unload_state( &value, NULL ); // cppcheck-suppress [varFuncNullUB,unmatchedSuppression]

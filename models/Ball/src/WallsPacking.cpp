@@ -231,7 +231,7 @@ void WallsPacking::pack()
    if ( !initialized ) {
       ostringstream errmsg;
       errmsg << "WallsPacking::pack():" << __LINE__
-             << " ERROR: The initialize() function has not been called!" << endl;
+             << " ERROR: The initialize() function has not been called!\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -259,7 +259,7 @@ void WallsPacking::unpack()
    if ( !initialized ) {
       ostringstream errmsg;
       errmsg << "WallsPacking::unpack():" << __LINE__
-             << " ERROR: The initialize() function has not been called!" << endl;
+             << " ERROR: The initialize() function has not been called!\n";
       DebugHandler::terminate( errmsg.str() );
    }
 

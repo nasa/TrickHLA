@@ -88,22 +88,22 @@ bool UInt32Data::compare(
    bool equal_values = true;
 
    ostringstream msg;
-   msg << "UInt32Data::compare():" << __LINE__ << endl;
+   msg << "UInt32Data::compare():" << __LINE__ << "\n";
 
    if ( this->ui32 == data.ui32 ) {
-      msg << "this->ui32 (" << this->ui32 << ") == (" << data.ui32 << ") data.ui32" << endl;
+      msg << "this->ui32 (" << this->ui32 << ") == (" << data.ui32 << ") data.ui32\n";
    } else {
-      msg << "this->ui32 (" << this->ui32 << ") != (" << data.ui32 << ") data.ui32" << endl;
+      msg << "this->ui32 (" << this->ui32 << ") != (" << data.ui32 << ") data.ui32\n";
       equal_values = false;
    }
 
    for ( int i = 0; i < 3; ++i ) {
       if ( this->vec3_ui32[i] == data.vec3_ui32[i] ) {
          msg << "this->vec3_ui32[" << i << "] (" << this->vec3_ui32[i]
-             << ") == (" << data.vec3_ui32[i] << ") data.vec3_ui32[" << i << "]" << endl;
+             << ") == (" << data.vec3_ui32[i] << ") data.vec3_ui32[" << i << "]\n";
       } else {
          msg << "this->vec3_ui32[" << i << "] (" << this->vec3_ui32[i]
-             << ") != (" << data.vec3_ui32[i] << ") data.vec3_ui32[" << i << "]" << endl;
+             << ") != (" << data.vec3_ui32[i] << ") data.vec3_ui32[" << i << "]\n";
          equal_values = false;
       }
    }
@@ -112,32 +112,32 @@ bool UInt32Data::compare(
       for ( int col = 0; col < 3; ++col ) {
          if ( this->m3x3_ui32[row][col] == data.m3x3_ui32[row][col] ) {
             msg << "this->m3x3_ui32[" << row << "][" << col << "] (" << this->m3x3_ui32[row][col]
-                << ") == (" << data.m3x3_ui32[row][col] << ") data.m3x3_ui32[" << row << "][" << col << "]" << endl;
+                << ") == (" << data.m3x3_ui32[row][col] << ") data.m3x3_ui32[" << row << "][" << col << "]\n";
          } else {
             msg << "this->m3x3_ui32[" << row << "][" << col << "] (" << this->m3x3_ui32[row][col]
-                << ") != (" << data.m3x3_ui32[row][col] << ") data.m3x3_ui32[" << row << "][" << col << "]" << endl;
+                << ") != (" << data.m3x3_ui32[row][col] << ") data.m3x3_ui32[" << row << "][" << col << "]\n";
             equal_values = false;
          }
       }
    }
 
-   int data1_ptr_ui32_size = get_size( this->ptr_ui32 );
-   int data2_ptr_ui32_size = get_size( data.ptr_ui32 );
+   int const data1_ptr_ui32_size = get_size( this->ptr_ui32 );
+   int const data2_ptr_ui32_size = get_size( data.ptr_ui32 );
    if ( data1_ptr_ui32_size != data2_ptr_ui32_size ) {
       msg << "this->ptr_ui32 size (" << data1_ptr_ui32_size
-          << ") != (" << data2_ptr_ui32_size << ") data.ptr_ui32 size" << endl;
+          << ") != (" << data2_ptr_ui32_size << ") data.ptr_ui32 size\n";
       equal_values = false;
    } else {
       msg << "this->ptr_ui32 size (" << data1_ptr_ui32_size
-          << ") == (" << data2_ptr_ui32_size << ") data.ptr_ui32 size" << endl;
+          << ") == (" << data2_ptr_ui32_size << ") data.ptr_ui32 size\n";
 
       for ( int i = 0; i < data1_ptr_ui32_size; ++i ) {
          if ( this->ptr_ui32[i] == data.ptr_ui32[i] ) {
             msg << "this->ptr_ui32[" << i << "] (" << this->ptr_ui32[i]
-                << ") == (" << data.ptr_ui32[i] << ") data.ptr_ui32[" << i << "]" << endl;
+                << ") == (" << data.ptr_ui32[i] << ") data.ptr_ui32[" << i << "]\n";
          } else {
             msg << "this->ptr_ui32[" << i << "] (" << this->ptr_ui32[i]
-                << ") != (" << data.ptr_ui32[i] << ") data.ptr_ui32[" << i << "]" << endl;
+                << ") != (" << data.ptr_ui32[i] << ") data.ptr_ui32[" << i << "]\n";
             equal_values = false;
          }
       }
@@ -151,27 +151,27 @@ bool UInt32Data::compare(
 string UInt32Data::to_string()
 {
    ostringstream msg;
-   msg << "UInt32Data::to_string():" << __LINE__ << endl
-       << "ui32:" << ui32 << endl;
+   msg << "UInt32Data::to_string():" << __LINE__ << "\n"
+       << "ui32:" << ui32 << "\n";
 
    for ( int i = 0; i < 3; ++i ) {
       msg << "vec3_ui32[" << i << "]:" << vec3_ui32[i] << " ";
    }
-   msg << endl;
+   msg << "\n";
 
    for ( int row = 0; row < 3; ++row ) {
       for ( int col = 0; col < 3; ++col ) {
          msg << "m3x3_ui32[" << row << "][" << col << "]:" << m3x3_ui32[row][col] << " ";
       }
    }
-   msg << endl;
+   msg << "\n";
 
-   int ptr_ui32_size = get_size( ptr_ui32 );
-   msg << "ptr_ui32 size:" << ptr_ui32_size << endl;
+   int const ptr_ui32_size = get_size( ptr_ui32 );
+   msg << "ptr_ui32 size:" << ptr_ui32_size << "\n";
    for ( int i = 0; i < ptr_ui32_size; ++i ) {
       msg << "ptr_ui32[" << i << "]:" << ptr_ui32[i] << " ";
    }
-   msg << endl;
+   msg << "\n";
 
    return msg.str();
 }

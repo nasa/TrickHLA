@@ -330,7 +330,7 @@ void BallPacking::pack()
    if ( !initialized ) {
       ostringstream errmsg;
       errmsg << "BallPacking::pack():" << __LINE__
-             << " ERROR: The initialize() function has not been called!" << endl;
+             << " ERROR: The initialize() function has not been called!\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -358,7 +358,7 @@ void BallPacking::unpack()
    if ( !initialized ) {
       ostringstream errmsg;
       errmsg << "BallPacking::unpack():" << __LINE__
-             << " ERROR: The initialize() function has not been called!" << endl;
+             << " ERROR: The initialize() function has not been called!\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
