@@ -91,7 +91,10 @@ else
    TRICK_SWIG_EXCLUDE = ${RTI_INCLUDE}
 endif
 
-# Make sure the bc, cut, and grep system commands can be found.
+# Make sure the bc, cut, grep, and which system commands can be found.
+ifeq (,$(findstring which, $(shell which which)))
+   $(error ${RED_TXT}S_hla.mk:ERROR: Could not find the which system command. Please install the which command package.${RESET_TXT})
+endif
 ifeq (,$(findstring bc, $(shell which bc)))
    $(error ${RED_TXT}S_hla.mk:ERROR: Could not find the bc system command. Please install the bc arithmetic language processor command package.${RESET_TXT})
 endif
