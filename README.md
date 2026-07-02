@@ -22,7 +22,9 @@ IEEE 1516-2010 or IEEE 1516-2025 Runtime Infrastructure (RTI) in order to functi
 
 1) Install the Trick Simulation Environment by following the [Trick Install Guide](https://nasa.github.io/trick/documentation/install_guide/Install-Guide).
 
-2) Install an IEEE 1516-2010 or IEEE 1516-2025 RTI using the installer and instructions provided by the vendor.
+2) Ensure the bc, cut, and grep system commands have been installed.
+
+3) Install an IEEE 1516-2010 or IEEE 1516-2025 RTI using the installer and instructions provided by the vendor.
 
 ### Getting TrickHLA
 Clone TrickHLA from the master branch.
