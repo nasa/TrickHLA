@@ -91,6 +91,17 @@ else
    TRICK_SWIG_EXCLUDE = ${RTI_INCLUDE}
 endif
 
+# Make sure the bc, cut, and grep system commands can be found.
+ifeq (,$(findstring bc, $(shell which bc)))
+   $(error ${RED_TXT}S_hla.mk:ERROR: Could not find the bc system command. Please install the bc arithmetic language processor command package.${RESET_TXT})
+endif
+ifeq (,$(findstring cut, $(shell which cut)))
+   $(error ${RED_TXT}S_hla.mk:ERROR: Could not find the cut system command. Please install the cut command package.${RESET_TXT})
+endif
+ifeq (,$(findstring grep, $(shell which grep)))
+   $(error ${RED_TXT}S_hla.mk:ERROR: Could not find the grep system command. Please install the grep command package.${RESET_TXT})
+endif
+
 # Determine what compiler Trick is using.
 ifneq (,$(findstring trick-gte, $(shell which trick-gte)))
    CPPC_CMD = $(shell trick-gte TRICK_CXX)
