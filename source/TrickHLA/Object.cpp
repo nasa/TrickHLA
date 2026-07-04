@@ -607,8 +607,8 @@ void Object::remove()
                // Delete the object instance at a specific time if we are
                // time-regulating.
                if ( federate->in_time_regulating_state() ) {
-                  Int64Time update_time( get_federate()->get_granted_time()
-                                         + get_federate()->get_lookahead() );
+                  Int64Time const update_time( get_federate()->get_granted_time()
+                                               + get_federate()->get_lookahead() );
                   rti_amb->deleteObjectInstance( instance_handle,
                                                  TrickHLA::EMPTY_USER_SUPPLIED_TAG,
                                                  update_time.get() );
@@ -1400,7 +1400,7 @@ Waiting on reservation of Object Instance Name '%s'.\n",
       if ( !name_registered ) { // cppcheck-suppress [knownConditionTrueFalse,unmatchedSuppression]
 
          // To be more efficient, we get the time once and share it.
-         int64_t wallclock_time = sleep_timer.time();
+         int64_t const wallclock_time = sleep_timer.time();
 
          if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
@@ -1662,7 +1662,7 @@ void Object::wait_for_object_registration()
       if ( !is_instance_handle_valid() ) { // cppcheck-suppress [knownConditionTrueFalse,unmatchedSuppression]
 
          // To be more efficient, we get the time once and share it.
-         int64_t wallclock_time = sleep_timer.time();
+         int64_t const wallclock_time = sleep_timer.time();
 
          if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
@@ -2005,8 +2005,8 @@ void Object::provide_attribute_update(
 void Object::send_requested_data()
 {
    if ( attr_update_requested ) {
-      Int64Time granted_plus_lookahead( get_federate()->get_granted_time()
-                                        + get_federate()->get_lookahead() );
+      Int64Time const granted_plus_lookahead( get_federate()->get_granted_time()
+                                              + get_federate()->get_lookahead() );
       send_requested_data( granted_plus_lookahead );
    }
 }
@@ -2042,7 +2042,7 @@ void Object::send_requested_data(
 
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &send_mutex );
+   MutexProtection const auto_unlock_mutex( &send_mutex );
 
    // Do lag compensation.
    if ( lag_comp != NULL ) {
@@ -2295,7 +2295,7 @@ void Object::send_cyclic_and_requested_data(
 
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &send_mutex );
+   MutexProtection const auto_unlock_mutex( &send_mutex );
 
    // Do lag compensation.
    if ( lag_comp != NULL ) {
@@ -2547,7 +2547,7 @@ void Object::send_zero_lookahead_and_requested_data(
 
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &send_mutex );
+   MutexProtection const auto_unlock_mutex( &send_mutex );
 
    // Lag-compensation is not supported for zero-lookahead, but if specified
    // we call the bypass function.
@@ -2818,7 +2818,7 @@ void Object::send_blocking_io_data()
 
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &send_mutex );
+   MutexProtection const auto_unlock_mutex( &send_mutex );
 
    // Lag-compensation is not supported for blocking I/O (intraframe), but if
    // specified we call the bypass function.
@@ -3070,7 +3070,7 @@ void Object::receive_cyclic_data()
       // Block waiting for data if it has not arrived yet.
       if ( !is_changed() ) {
 
-         SleepTimeout sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
+         SleepTimeout const sleep_timer( THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS );
 
          // On average using "usleep()" to wait for data is faster but at the
          // cost of latency spikes every once in a while. The CPU utilization
@@ -3340,7 +3340,7 @@ void Object::send_init_data()
 
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &send_mutex );
+   MutexProtection const auto_unlock_mutex( &send_mutex );
 
    // Lag-compensation is not supported for init-data, but if
    // specified we call the bypass function.
@@ -3703,7 +3703,7 @@ void Object::enqueue_data(
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &receive_mutex );
+   MutexProtection const auto_unlock_mutex( &receive_mutex );
 
    reflected_attributes_queue.push( theAttributes );
 }
@@ -3810,7 +3810,7 @@ void Object::release_ownership()
    {
       // When auto_unlock_mutex goes out of scope it automatically unlocks the
       // mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &ownership_mutex );
+      MutexProtection const auto_unlock_mutex( &ownership_mutex );
 
       if ( ownership != NULL ) {
          if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
@@ -3859,7 +3859,7 @@ void Object::release_ownership()
 
       AttributeHandleSet::iterator divest_iter;
 
-      MutexProtection auto_unlock_mutex( &ownership_mutex );
+      MutexProtection const auto_unlock_mutex( &ownership_mutex );
 
       // For the attributes we just divested, mark them as being remotely owned.
       for ( divest_iter = attrs.begin(); divest_iter != attrs.end(); ++divest_iter ) {
@@ -3984,7 +3984,7 @@ void Object::pull_ownership()
    }
 
    // Use the simulation elapsed time for the current time.
-   double current_time = get_federate()->get_execution_control()->get_sim_time();
+   double const current_time = get_federate()->get_execution_control()->get_sim_time();
 
    THLAAttributeMap                     *attr_map;
    THLAAttributeMap::const_iterator      attr_map_iter;
@@ -3998,14 +3998,14 @@ void Object::pull_ownership()
    {
       // When auto_unlock_mutex goes out of scope it automatically unlocks the
       // mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &ownership_mutex );
+      MutexProtection const auto_unlock_mutex( &ownership_mutex );
 
       // Process the pull requests.
       pull_ownership_iter = ownership->pull_requests.begin();
       while ( pull_ownership_iter != ownership->pull_requests.end() ) {
 
          // Make the iterator value easier to work with and understand what it is.
-         double pull_time = pull_ownership_iter->first;
+         double const pull_time = pull_ownership_iter->first;
 
          if ( current_time >= pull_time ) {
 
@@ -4150,7 +4150,7 @@ void Object::pull_ownership_at_init(
    {
       // When auto_unlock_mutex goes out of scope it automatically unlocks the
       // mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &ownership_mutex );
+      MutexProtection const auto_unlock_mutex( &ownership_mutex );
 
       for ( int i = 0; i < (int)attr_name_vector.size(); ++i ) {
          Attribute const *attr = get_attribute( attr_name_vector[i] );
@@ -4247,7 +4247,7 @@ object '%s' because of error: '%s'\n",
       {
          // When auto_unlock_mutex goes out of scope it automatically unlocks
          // the mutex even if there is an exception.
-         MutexProtection auto_unlock_mutex( &ownership_mutex );
+         MutexProtection const auto_unlock_mutex( &ownership_mutex );
          acquired = this->ownership_acquired;
       }
 
@@ -4260,14 +4260,14 @@ object '%s' because of error: '%s'\n",
          sleep_timer.sleep();
 
          {
-            MutexProtection auto_unlock_mutex( &ownership_mutex );
+            MutexProtection const auto_unlock_mutex( &ownership_mutex );
             acquired = this->ownership_acquired;
          }
 
          if ( !acquired ) {
 
             // To be more efficient, we get the time once and share it.
-            int64_t wallclock_time = sleep_timer.time();
+            int64_t const wallclock_time = sleep_timer.time();
 
             if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
@@ -4294,7 +4294,7 @@ object '%s' because of error: '%s'\n",
       {
          // When auto_unlock_mutex goes out of scope it automatically unlocks
          // the mutex even if there is an exception.
-         MutexProtection auto_unlock_mutex( &ownership_mutex );
+         MutexProtection const auto_unlock_mutex( &ownership_mutex );
          this->ownership_acquired = false;
       }
    }
@@ -4320,7 +4320,7 @@ void Object::handle_pulled_ownership_at_init()
    {
       // When auto_unlock_mutex goes out of scope it automatically unlocks
       // the mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &ownership_mutex );
+      MutexProtection const auto_unlock_mutex( &ownership_mutex );
       requested = this->pull_requested;
    }
 
@@ -4333,14 +4333,14 @@ void Object::handle_pulled_ownership_at_init()
       sleep_timer.sleep();
 
       {
-         MutexProtection auto_unlock_mutex( &ownership_mutex );
+         MutexProtection const auto_unlock_mutex( &ownership_mutex );
          requested = this->pull_requested;
       }
 
       if ( !requested ) {
 
          // To be more efficient, we get the time once and share it.
-         int64_t wallclock_time = sleep_timer.time();
+         int64_t const wallclock_time = sleep_timer.time();
 
          if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
@@ -4401,7 +4401,7 @@ void Object::grant_pull_request()
    AttributeHandleSet attrs_to_divest;
 
    {
-      MutexProtection auto_unlock_mutex( &ownership_mutex );
+      MutexProtection const auto_unlock_mutex( &ownership_mutex );
 
       // Determine which attributes to grant the pull request for.
       for ( int i = 0; i < attr_count; ++i ) {
@@ -4448,7 +4448,7 @@ No attributes Divested since no federate wanted them for object '%s'.\n",
                                 __LINE__, get_name().c_str() );
             }
          } else {
-            MutexProtection auto_unlock_mutex( &ownership_mutex );
+            MutexProtection const auto_unlock_mutex( &ownership_mutex );
 
             // Process the list of attributes that were divisted by the RTI
             // and set the state of the ownership.
@@ -4490,7 +4490,7 @@ pull request for TrickHLA Object '%s'\n",
    }
 
    {
-      MutexProtection auto_unlock_mutex( &ownership_mutex );
+      MutexProtection const auto_unlock_mutex( &ownership_mutex );
 
       // Clear the flag now that the pull request has been serviced.
       this->pull_requested = false;
@@ -4521,7 +4521,7 @@ void Object::grant_push_request_pthread()
 {
    pthread_t push; // NOLINT
 
-   int ret = pthread_create( &push, NULL, grant_push_pthread_function, this );
+   int const ret = pthread_create( &push, NULL, grant_push_pthread_function, this );
 
    if ( ret ) {
       message_publish( MSG_NORMAL, "Object::grant_push_request_pthread():%d Failed to create a thread!\n",
@@ -4569,7 +4569,7 @@ void Object::grant_push_request()
    {
       // When auto_unlock_mutex goes out of scope it automatically unlocks the
       // mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &push_mutex );
+      MutexProtection const auto_unlock_mutex( &push_mutex );
 
       // Another federate is trying to push the attribute ownership to us so
       // determine which attributes we will take ownership of.
@@ -4822,7 +4822,7 @@ void Object::push_ownership()
    }
 
    // Use the simulation elapsed time for the current time.
-   double current_time = get_federate()->get_execution_control()->get_sim_time();
+   double const current_time = get_federate()->get_execution_control()->get_sim_time();
 
    THLAAttributeMap                     *attr_map;
    THLAAttributeMap::const_iterator      attr_map_iter;
@@ -4838,14 +4838,14 @@ void Object::push_ownership()
    {
       // When auto_unlock_mutex goes out of scope it automatically unlocks the
       // mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &ownership_mutex );
+      MutexProtection const auto_unlock_mutex( &ownership_mutex );
 
       // Process the push requests.
       push_ownership_iter = ownership->push_requests.begin();
       while ( push_ownership_iter != ownership->push_requests.end() ) {
 
          // Make the iterator value easier to work with and understand what it is.
-         double push_time = push_ownership_iter->first;
+         double const push_time = push_ownership_iter->first;
 
          if ( current_time >= push_time ) {
 
@@ -4927,7 +4927,7 @@ for Attributes of object '%s'.\n",
       divest_thread_args->handle_set = attr_hdl_set;
 
       pthread_t divest;
-      int       ret = pthread_create( &divest,
+      int const ret = pthread_create( &divest,
                                       NULL,
                                       ownership_divestiture_pthread_function,
                                       divest_thread_args );
@@ -4987,7 +4987,7 @@ void Object::push_ownership_at_init(
    {
       // When auto_unlock_mutex goes out of scope it automatically unlocks the
       // mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &ownership_mutex );
+      MutexProtection const auto_unlock_mutex( &ownership_mutex );
 
       for ( int i = 0; i < (int)attr_name_vector.size(); ++i ) {
          Attribute const *attr = get_attribute( attr_name_vector[i] );
@@ -5053,10 +5053,10 @@ push Attribute '%s'->'%s' of object '%s' because it is already remotely owned.\n
 
       pthread_t divest;
 
-      int ret = pthread_create( &divest,
-                                NULL,
-                                ownership_divestiture_pthread_function,
-                                divest_thread_args );
+      int const ret = pthread_create( &divest,
+                                      NULL,
+                                      ownership_divestiture_pthread_function,
+                                      divest_thread_args );
       if ( ret ) {
          ostringstream errmsg;
          errmsg << "Object::push_ownership_at_init():" << __LINE__
@@ -5073,7 +5073,7 @@ push Attribute '%s'->'%s' of object '%s' because it is already remotely owned.\n
       {
          // When auto_unlock_mutex goes out of scope it automatically unlocks the
          // mutex even if there is an exception.
-         MutexProtection auto_unlock_mutex( &ownership_mutex );
+         MutexProtection const auto_unlock_mutex( &ownership_mutex );
          divest_req_flag = this->divest_requested;
       }
 
@@ -5087,14 +5087,14 @@ push Attribute '%s'->'%s' of object '%s' because it is already remotely owned.\n
          sleep_timer.sleep();
 
          {
-            MutexProtection auto_unlock_mutex( &ownership_mutex );
+            MutexProtection const auto_unlock_mutex( &ownership_mutex );
             divest_req_flag = this->divest_requested;
          }
 
          if ( !divest_req_flag ) {
 
             // To be more efficient, we get the time once and share it.
-            int64_t wallclock_time = sleep_timer.time();
+            int64_t const wallclock_time = sleep_timer.time();
 
             if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
@@ -5148,7 +5148,7 @@ void Object::handle_pushed_ownership_at_init()
    bool         acquired;
 
    {
-      MutexProtection auto_unlock_mutex( &ownership_mutex );
+      MutexProtection const auto_unlock_mutex( &ownership_mutex );
       acquired = this->ownership_acquired;
    }
 
@@ -5161,14 +5161,14 @@ void Object::handle_pushed_ownership_at_init()
       sleep_timer.sleep();
 
       {
-         MutexProtection auto_unlock_mutex( &ownership_mutex );
+         MutexProtection const auto_unlock_mutex( &ownership_mutex );
          acquired = this->ownership_acquired;
       }
 
       if ( !acquired ) {
 
          // To be more efficient, we get the time once and share it.
-         int64_t wallclock_time = sleep_timer.time();
+         int64_t const wallclock_time = sleep_timer.time();
 
          if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
@@ -5193,7 +5193,7 @@ void Object::handle_pushed_ownership_at_init()
    }
 
    {
-      MutexProtection auto_unlock_mutex( &ownership_mutex );
+      MutexProtection const auto_unlock_mutex( &ownership_mutex );
       this->ownership_acquired = false;
    }
 }
@@ -5267,7 +5267,7 @@ Attribute *Object::get_attribute(
    AttributeHandle const &attr_handle )
 {
    // We use a map with the key being the AttributeHandle for fast lookups.
-   AttributeMap::const_iterator iter = thla_attribute_map.find( attr_handle );
+   AttributeMap::const_iterator const iter = thla_attribute_map.find( attr_handle );
    return ( ( iter != thla_attribute_map.end() ) ? iter->second : NULL );
 }
 
@@ -5360,7 +5360,7 @@ bool Object::any_locally_owned_published_cyclic_data_ready_or_requested_attribut
 
       // We must check that a sub-rate is ready for every attribute to make sure
       // all sub-rate counters get updated correctly.
-      bool data_cycle_ready = attributes[i].check_data_cycle_ready();
+      bool const data_cycle_ready = attributes[i].check_data_cycle_ready();
 
       if ( !any_ready
            && attributes[i].is_locally_owned()
@@ -5410,7 +5410,7 @@ bool Object::any_locally_owned_published_cyclic_data_ready_attribute()
 
       // We must check that a sub-rate is ready for every attribute to make sure
       // all sub-rate counters get updated correctly.
-      bool data_cycle_ready = attributes[i].check_data_cycle_ready();
+      bool const data_cycle_ready = attributes[i].check_data_cycle_ready();
 
       if ( !any_ready
            && attributes[i].is_locally_owned()
@@ -5466,13 +5466,13 @@ void Object::set_to_unblocking_cyclic_reads()
 
 void Object::set_attribute_ownership_acquired()
 {
-   MutexProtection auto_unlock_mutex( &ownership_mutex );
+   MutexProtection const auto_unlock_mutex( &ownership_mutex );
    this->ownership_acquired = true;
 }
 
 void Object::mark_changed()
 {
-   MutexProtection auto_unlock_mutex( &receive_mutex );
+   MutexProtection const auto_unlock_mutex( &receive_mutex );
    this->changed = true;
 }
 
@@ -5480,7 +5480,7 @@ void Object::mark_unchanged()
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &receive_mutex );
+   MutexProtection const auto_unlock_mutex( &receive_mutex );
    this->changed = false;
 
    // Clear the change flag for each of the attributes as well.
@@ -5520,7 +5520,7 @@ void Object::pull_ownership_upon_rejoin()
    //
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &ownership_mutex );
+   MutexProtection const auto_unlock_mutex( &ownership_mutex );
 
    // Force the pull ownership of all attributes....
    for ( int i = 0; i < attr_count; ++i ) {
@@ -5690,7 +5690,7 @@ Unable to pull ownership for the attributes of object '%s' because of error: '%s
          if ( ownership_counter < (int)attr_hdl_set.size() ) {
 
             // To be more efficient, we get the time once and share it.
-            int64_t wallclock_time = sleep_timer.time();
+            int64_t const wallclock_time = sleep_timer.time();
 
             if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();

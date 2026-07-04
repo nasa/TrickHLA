@@ -80,7 +80,7 @@ ItemQueue::~ItemQueue()
  */
 bool ItemQueue::empty()
 {
-   MutexProtection auto_unlock_mutex( &mutex );
+   MutexProtection const auto_unlock_mutex( &mutex );
    return ( head == NULL );
 }
 
@@ -90,7 +90,7 @@ bool ItemQueue::empty()
  */
 size_t ItemQueue::size()
 {
-   MutexProtection auto_unlock_mutex( &mutex );
+   MutexProtection const auto_unlock_mutex( &mutex );
    return count;
 }
 
@@ -100,7 +100,7 @@ size_t ItemQueue::size()
  */
 Item *ItemQueue::front()
 {
-   MutexProtection auto_unlock_mutex( &mutex );
+   MutexProtection const auto_unlock_mutex( &mutex );
    return head;
 }
 
@@ -110,7 +110,7 @@ Item *ItemQueue::front()
  */
 Item *ItemQueue::back()
 {
-   MutexProtection auto_unlock_mutex( &mutex );
+   MutexProtection const auto_unlock_mutex( &mutex );
    return tail;
 }
 
@@ -123,10 +123,10 @@ void ItemQueue::pop()
 
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &mutex );
+   MutexProtection const auto_unlock_mutex( &mutex );
 
    if ( head != NULL ) {
-      Item *item = head;
+      Item const *item = head;
 
       // Adjust the "head" to point to the next item in the linked-list.
       if ( head == tail ) {
@@ -154,7 +154,7 @@ void ItemQueue::push( // RETURN: -- None.
 
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &mutex );
+   MutexProtection const auto_unlock_mutex( &mutex );
 
    // Add the item to the tail-end of the linked list.
    if ( tail == NULL ) {
@@ -175,7 +175,7 @@ void ItemQueue::dump_linked_list(
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &mutex );
+   MutexProtection const auto_unlock_mutex( &mutex );
 
    ostringstream msg;
    msg << "ItemQueue::dump_linked_list(" << name << "):" << __LINE__ << " ";

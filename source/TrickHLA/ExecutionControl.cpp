@@ -505,7 +505,7 @@ void ExecutionControl::refresh_least_common_time_step()
 
 void ExecutionControl::set_time_padding( double t )
 {
-   int64_t padding_base_time = Int64BaseTime::to_base_time( t );
+   int64_t const padding_base_time = Int64BaseTime::to_base_time( t );
 
    // The Master federate padding time must be an integer multiple of 3 or
    // more times the Least Common Time Step (LCTS). This will give commands

@@ -110,7 +110,6 @@ void DynamicalEntity::set_data(
    PhysicalEntityData  *physical_data_ptr,
    DynamicalEntityData *dynamics_data_ptr )
 {
-
    // Set the reference to the reference frame.
    if ( dynamics_data_ptr == NULL ) {
       ostringstream errmsg;
@@ -134,18 +133,16 @@ void DynamicalEntity::set_data(
  */
 void DynamicalEntity::pack_from_working_data()
 {
-   int iinc, jinc;
-
    // Call the base class pack from working data function.
    PhysicalEntity::pack_from_working_data();
 
    // Set the force data.
-   for ( iinc = 0; iinc < 3; ++iinc ) {
+   for ( int iinc = 0; iinc < 3; ++iinc ) {
       de_packing_data.force[iinc] = dynamical_data->force[iinc];
    }
 
    // Set the torque data.
-   for ( iinc = 0; iinc < 3; ++iinc ) {
+   for ( int iinc = 0; iinc < 3; ++iinc ) {
       de_packing_data.torque[iinc] = dynamical_data->torque[iinc];
    }
 
@@ -154,8 +151,8 @@ void DynamicalEntity::pack_from_working_data()
    de_packing_data.mass_rate = dynamical_data->mass_rate;
 
    // Set the inertia matrix and inertia rate data.
-   for ( iinc = 0; iinc < 3; ++iinc ) {
-      for ( jinc = 0; jinc < 3; ++jinc ) {
+   for ( int iinc = 0; iinc < 3; ++iinc ) {
+      for ( int jinc = 0; jinc < 3; ++jinc ) {
          de_packing_data.inertia[iinc][jinc]      = dynamical_data->inertia[iinc][jinc];
          de_packing_data.inertia_rate[iinc][jinc] = dynamical_data->inertia_rate[iinc][jinc];
       }
@@ -169,8 +166,6 @@ void DynamicalEntity::pack_from_working_data()
  */
 void DynamicalEntity::unpack_into_working_data()
 {
-   int iinc, jinc;
-
    // Call the base class unpack into working data function.
    PhysicalEntity::unpack_into_working_data();
 
@@ -185,14 +180,14 @@ void DynamicalEntity::unpack_into_working_data()
 
    // Check for force data.
    if ( force_attr->is_received() ) {
-      for ( iinc = 0; iinc < 3; ++iinc ) {
+      for ( int iinc = 0; iinc < 3; ++iinc ) {
          dynamical_data->force[iinc] = de_packing_data.force[iinc];
       }
    }
 
    // Check for torque data.
    if ( torque_attr->is_received() ) {
-      for ( iinc = 0; iinc < 3; ++iinc ) {
+      for ( int iinc = 0; iinc < 3; ++iinc ) {
          dynamical_data->torque[iinc] = de_packing_data.torque[iinc];
       }
    }
@@ -209,8 +204,8 @@ void DynamicalEntity::unpack_into_working_data()
 
    // Check for inertia data.
    if ( inertia_attr->is_received() ) {
-      for ( iinc = 0; iinc < 3; ++iinc ) {
-         for ( jinc = 0; jinc < 3; ++jinc ) {
+      for ( int iinc = 0; iinc < 3; ++iinc ) {
+         for ( int jinc = 0; jinc < 3; ++jinc ) {
             dynamical_data->inertia[iinc][jinc] = de_packing_data.inertia[iinc][jinc];
          }
       }
@@ -218,8 +213,8 @@ void DynamicalEntity::unpack_into_working_data()
 
    // Check for inertia rate data.
    if ( inertia_rate_attr->is_received() ) {
-      for ( iinc = 0; iinc < 3; ++iinc ) {
-         for ( jinc = 0; jinc < 3; ++jinc ) {
+      for ( int iinc = 0; iinc < 3; ++iinc ) {
+         for ( int jinc = 0; jinc < 3; ++jinc ) {
             dynamical_data->inertia_rate[iinc][jinc] = de_packing_data.inertia_rate[iinc][jinc];
          }
       }

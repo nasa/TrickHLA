@@ -653,7 +653,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
          if ( !execution_configuration->is_changed() ) {
 
             // To be more efficient, we get the time once and share it.
-            int64_t wallclock_time = sleep_timer.time();
+            int64_t const wallclock_time = sleep_timer.time();
 
             if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
@@ -1053,10 +1053,10 @@ void ExecutionControlBase::setup_checkpoint()
          // When user calls start_federation_save, save_name is already set
       } else {
          // When user clicks Dump Chkpnt, we need to set the save_name here
-         string trick_filename;
-         string slash( "/" );
-         size_t found;
-         string save_name_str;
+         string       trick_filename;
+         string const slash( "/" );
+         size_t       found;
+         string       save_name_str;
 
          // get checkpoint file name specified in control panel
          trick_filename = checkpoint_get_output_file();
@@ -1065,8 +1065,8 @@ void ExecutionControlBase::setup_checkpoint()
          // need to prepend federation name to filename entered in sim control panel popup
          found = trick_filename.rfind( slash );
          if ( found != string::npos ) {
-            save_name_str              = trick_filename.substr( found + 1 );
-            string federation_name_str = federate->get_federation_name();
+            save_name_str                    = trick_filename.substr( found + 1 );
+            string const federation_name_str = federate->get_federation_name();
             if ( save_name_str.compare( 0, federation_name_str.length(), federation_name_str ) != 0 ) {
                // dir/federation_filename
                trick_filename.replace( found, slash.length(), slash + federation_name_str + "_" );
@@ -1117,7 +1117,7 @@ void ExecutionControlBase::setup_checkpoint()
             if ( !federate->is_start_to_save() ) {
 
                // To be more efficient, we get the time once and share it.
-               int64_t wallclock_time = sleep_timer.time();
+               int64_t const wallclock_time = sleep_timer.time();
 
                if ( sleep_timer.timeout( wallclock_time ) ) {
                   sleep_timer.reset();
@@ -1196,7 +1196,7 @@ void ExecutionControlBase::perform_checkpoint()
    }
 
    // Dispatch to the ExecutionControl method.
-   bool force_checkpoint = perform_save();
+   bool const force_checkpoint = perform_save();
 
    if ( federate->is_start_to_save() || force_checkpoint ) {
       // If I announced the save, sim control panel was clicked and invokes the checkpoint
@@ -1306,9 +1306,9 @@ void ExecutionControlBase::setup_restore()
 
    // if I announced the restore, must initiate federation restore
    if ( federate->is_announce_restore() ) {
-      string trick_filename;
-      string slash_fedname( "/" + federate->get_federation_name() + "_" );
-      size_t found;
+      string       trick_filename;
+      string const slash_fedname( "/" + federate->get_federation_name() + "_" );
+      size_t       found;
 
       // Otherwise set restore_name_str using trick's file name
       trick_filename = checkpoint_get_load_file();
@@ -1323,7 +1323,7 @@ void ExecutionControlBase::setup_restore()
          restore_name_str = trick_filename;
       }
       // federation_filename
-      string str_restore_label = federate->get_federation_name() + "_" + restore_name_str;
+      string const str_restore_label = federate->get_federation_name() + "_" + restore_name_str;
 
       // make sure we have a save directory specified
       federate->check_HLA_save_directory();
@@ -1357,7 +1357,7 @@ void ExecutionControlBase::setup_restore()
          if ( !federate->is_start_to_restore() ) {
 
             // To be more efficient, we get the time once and share it.
-            int64_t wallclock_time = sleep_timer.time();
+            int64_t const wallclock_time = sleep_timer.time();
 
             if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
@@ -1465,7 +1465,7 @@ void ExecutionControlBase::post_restore()
       federate->inform_RTI_of_restore_completion();
 
       // wait until we get a callback to inform us that the federation restore is complete
-      string tStr = federate->wait_for_federation_restore_to_complete();
+      string const tStr = federate->wait_for_federation_restore_to_complete();
       if ( tStr.length() ) {
          federate->wait_for_federation_restore_failed_callback_to_complete();
          ostringstream errmsg;
@@ -1498,8 +1498,8 @@ void ExecutionControlBase::post_restore()
       reinstate_logged_sync_pts();
 
       // Restore ownership transfer data for all objects
-      Object *objects   = manager->get_objects();
-      int     obj_count = manager->get_object_count();
+      Object   *objects   = manager->get_objects();
+      int const obj_count = manager->get_object_count();
       for ( int i = 0; i < obj_count; ++i ) {
          objects[i].restore_data_after_checkpoint();
       }

@@ -212,7 +212,7 @@ void ExecutionConfiguration::configure()
    ostringstream federate_list;
    int           required_federate_count = 0;
 
-   Federate *federate = manager->get_federate();
+   Federate const *federate = manager->get_federate();
    if ( federate == NULL ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionConfiguration::configure():" << __LINE__
@@ -249,7 +249,7 @@ void ExecutionConfiguration::pack()
       msg << "===================================================" << endl;
    }
 
-   double terminate_time = exec_get_terminate_time();
+   double const terminate_time = exec_get_terminate_time();
 
    // Set the stop/termination time of the Trick simulation based on the
    // run_duration setting.

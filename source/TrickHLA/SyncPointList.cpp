@@ -148,7 +148,7 @@ void SyncPointList::setup(
       return;
    }
 
-   MutexProtection auto_unlock_mutex( mutex );
+   MutexProtection const auto_unlock_mutex( mutex );
 
    set_federate( fed );
 }
@@ -187,8 +187,8 @@ void SyncPointList::set_federate(
 SyncPtStateEnum SyncPointList::get_state(
    std::wstring const &label )
 {
-   MutexProtection  auto_unlock_mutex( mutex );
-   SyncPoint const *sp = get( label );
+   MutexProtection const auto_unlock_mutex( mutex );
+   SyncPoint const      *sp = get( label );
    return ( sp != NULL ) ? sp->get_state() : TrickHLA::SYNC_PT_STATE_UNKNOWN;
 }
 
@@ -244,7 +244,7 @@ void SyncPointList::clear()
 SyncPoint *SyncPointList::get(
    wstring const &label )
 {
-   MutexProtection auto_unlock_mutex( mutex );
+   MutexProtection const auto_unlock_mutex( mutex );
 
 #if SYNC_POINT_TMM_ARRAY
    for ( int i = 0; i < list_count; ++i ) {
@@ -261,7 +261,7 @@ SyncPoint *SyncPointList::get(
 bool SyncPointList::add(
    wstring const &label )
 {
-   MutexProtection auto_unlock_mutex( mutex );
+   MutexProtection const auto_unlock_mutex( mutex );
 
    if ( contains( label ) ) {
       string label_str;
@@ -322,7 +322,7 @@ bool SyncPointList::add(
    wstring const   &label,
    Int64Time const &time )
 {
-   MutexProtection auto_unlock_mutex( mutex );
+   MutexProtection const auto_unlock_mutex( mutex );
 
    if ( contains( label ) ) {
       string label_str;
@@ -384,7 +384,7 @@ bool SyncPointList::add(
 bool SyncPointList::contains(
    wstring const &label )
 {
-   MutexProtection auto_unlock_mutex( mutex );
+   MutexProtection const auto_unlock_mutex( mutex );
 
 #if SYNC_POINT_TMM_ARRAY
    for ( int i = 0; i < list_count; ++i ) {
@@ -401,7 +401,7 @@ bool SyncPointList::contains(
 bool SyncPointList::is_registered(
    wstring const &label )
 {
-   MutexProtection auto_unlock_mutex( mutex );
+   MutexProtection const auto_unlock_mutex( mutex );
 
    SyncPoint const *sp = get( label );
    return ( ( sp != NULL ) && sp->is_registered() );
@@ -415,7 +415,7 @@ bool SyncPointList::mark_registered(
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( mutex );
+   MutexProtection const auto_unlock_mutex( mutex );
 
    SyncPoint *sp = get( label );
    if ( sp != NULL ) {
@@ -428,7 +428,7 @@ bool SyncPointList::mark_registered(
 bool SyncPointList::register_sync_point(
    wstring const &label )
 {
-   MutexProtection auto_unlock_mutex( mutex );
+   MutexProtection const auto_unlock_mutex( mutex );
 
    SyncPoint *sp = get( label );
 
@@ -450,7 +450,7 @@ bool SyncPointList::register_sync_point(
    wstring const           &label,
    FederateHandleSet const &handle_set )
 {
-   MutexProtection auto_unlock_mutex( mutex );
+   MutexProtection const auto_unlock_mutex( mutex );
 
    SyncPoint *sp = get( label );
 
@@ -471,7 +471,7 @@ bool SyncPointList::register_sync_point(
 // True if at least one sync-point is registered.
 bool SyncPointList::register_all()
 {
-   MutexProtection auto_unlock_mutex( mutex );
+   MutexProtection const auto_unlock_mutex( mutex );
 
    bool status = false;
 #if SYNC_POINT_TMM_ARRAY
@@ -489,7 +489,7 @@ bool SyncPointList::register_all()
 bool SyncPointList::register_all(
    FederateHandleSet const &handle_set )
 {
-   MutexProtection auto_unlock_mutex( mutex );
+   MutexProtection const auto_unlock_mutex( mutex );
 
    bool status = false;
 #if SYNC_POINT_TMM_ARRAY
@@ -532,7 +532,7 @@ bool SyncPointList::register_sync_point(
    try {
       // When auto_unlock_mutex goes out of scope it automatically unlocks
       // the mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( mutex );
+      MutexProtection const auto_unlock_mutex( mutex );
 
       RTI_amb->registerFederationSynchronizationPoint( sp->get_label(),
                                                        sp->encode_user_supplied_tag() );
@@ -593,7 +593,7 @@ bool SyncPointList::register_sync_point(
    try {
       // When auto_unlock_mutex goes out of scope it automatically unlocks
       // the mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( mutex );
+      MutexProtection const auto_unlock_mutex( mutex );
 
       RTI_amb->registerFederationSynchronizationPoint( sp->get_label(),
                                                        sp->encode_user_supplied_tag(),
@@ -629,7 +629,7 @@ bool SyncPointList::register_sync_point(
 bool SyncPointList::is_announced(
    wstring const &label )
 {
-   MutexProtection auto_unlock_mutex( mutex );
+   MutexProtection const auto_unlock_mutex( mutex );
 
    SyncPoint const *sp = get( label );
    return ( ( sp != NULL ) && sp->is_announced() );
@@ -644,7 +644,7 @@ bool SyncPointList::mark_announced(
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( mutex );
+   MutexProtection const auto_unlock_mutex( mutex );
 
    SyncPoint *sp = get( label );
    if ( sp != NULL ) {
@@ -662,7 +662,7 @@ bool SyncPointList::wait_for_announced(
    {
       // Scope this mutex lock because locking over the blocking wait call
       // below will cause deadlock.
-      MutexProtection auto_unlock_mutex( mutex );
+      MutexProtection const auto_unlock_mutex( mutex );
 
       sp = get( label );
 
@@ -723,7 +723,7 @@ bool SyncPointList::wait_for_announced(
    {
       // When auto_unlock_mutex goes out of scope it automatically unlocks the
       // mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( mutex );
+      MutexProtection const auto_unlock_mutex( mutex );
       announced = sp->is_announced();
 
       if ( !announced && !sp->is_valid() ) {
@@ -762,14 +762,14 @@ bool SyncPointList::wait_for_announced(
       {
          // When auto_unlock_mutex goes out of scope it automatically unlocks the
          // mutex even if there is an exception.
-         MutexProtection auto_unlock_mutex( mutex );
+         MutexProtection const auto_unlock_mutex( mutex );
          announced = sp->is_announced();
       }
 
       if ( !announced ) {
 
          // To be more efficient, we get the time once and share it.
-         int64_t wallclock_time = sleep_timer.time();
+         int64_t const wallclock_time = sleep_timer.time();
 
          // Check to make sure we're still a member of the federation execution.
          if ( sleep_timer.timeout( wallclock_time ) ) {
@@ -809,7 +809,7 @@ bool SyncPointList::wait_for_announced(
 bool SyncPointList::is_achieved(
    wstring const &label )
 {
-   MutexProtection auto_unlock_mutex( mutex );
+   MutexProtection const auto_unlock_mutex( mutex );
 
    SyncPoint const *sp = get( label );
    return ( ( sp != NULL ) && sp->is_achieved() );
@@ -818,7 +818,7 @@ bool SyncPointList::is_achieved(
 bool SyncPointList::achieve(
    wstring const &label )
 {
-   MutexProtection auto_unlock_mutex( mutex );
+   MutexProtection const auto_unlock_mutex( mutex );
 
    SyncPoint *sp = get( label );
 
@@ -839,7 +839,7 @@ bool SyncPointList::achieve(
 
 bool SyncPointList::achieve_all()
 {
-   MutexProtection auto_unlock_mutex( mutex );
+   MutexProtection const auto_unlock_mutex( mutex );
 
    bool status = false;
 #if SYNC_POINT_TMM_ARRAY
@@ -891,7 +891,7 @@ bool SyncPointList::achieve_sync_point(
       try {
          // When auto_unlock_mutex goes out of scope it automatically unlocks the
          // mutex even if there is an exception.
-         MutexProtection auto_unlock_mutex( mutex );
+         MutexProtection const auto_unlock_mutex( mutex );
 
          RTI_amb->synchronizationPointAchieved( sp->get_label() );
 
@@ -996,7 +996,7 @@ bool SyncPointList::achieve_sync_point(
 bool SyncPointList::is_synchronized(
    wstring const &label )
 {
-   MutexProtection auto_unlock_mutex( mutex );
+   MutexProtection const auto_unlock_mutex( mutex );
 
    SyncPoint const *sp = get( label );
    return ( ( sp != NULL ) && sp->is_synchronized() );
@@ -1004,7 +1004,7 @@ bool SyncPointList::is_synchronized(
 
 bool SyncPointList::is_all_synchronized()
 {
-   MutexProtection auto_unlock_mutex( mutex );
+   MutexProtection const auto_unlock_mutex( mutex );
 
 #if SYNC_POINT_TMM_ARRAY
    for ( int i = 0; i < list_count; ++i ) {
@@ -1028,7 +1028,7 @@ bool SyncPointList::mark_synchronized(
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( mutex );
+   MutexProtection const auto_unlock_mutex( mutex );
 
    SyncPoint *sp = get( label );
    if ( sp != NULL ) {
@@ -1048,7 +1048,7 @@ bool SyncPointList::wait_for_synchronized(
    {
       // Scope this mutex lock because locking over the blocking wait call
       // below will cause deadlock.
-      MutexProtection auto_unlock_mutex( mutex );
+      MutexProtection const auto_unlock_mutex( mutex );
 
       sp = get( label );
 
@@ -1124,7 +1124,7 @@ bool SyncPointList::wait_for_synchronized(
       {
          // When auto_unlock_mutex goes out of scope it automatically unlocks
          // the mutex even if there is an exception.
-         MutexProtection auto_unlock_mutex( mutex );
+         MutexProtection const auto_unlock_mutex( mutex );
          synchronized = sp->is_synchronized();
       }
 
@@ -1136,7 +1136,7 @@ bool SyncPointList::wait_for_synchronized(
          sleep_timer.sleep();
 
          // To be more efficient, we get the time once and share it.
-         int64_t wallclock_time = sleep_timer.time();
+         int64_t const wallclock_time = sleep_timer.time();
 
          // Check to make sure we're still a member of the federation execution.
          if ( sleep_timer.timeout( wallclock_time ) ) {
@@ -1169,7 +1169,7 @@ std::string SyncPointList::to_string()
 {
    // Scope this mutex lock because locking over the blocking wait call
    // below will cause deadlock.
-   MutexProtection auto_unlock_mutex( mutex );
+   MutexProtection const auto_unlock_mutex( mutex );
 
    ostringstream msg;
 
@@ -1193,7 +1193,7 @@ std::string SyncPointList::to_string(
 {
    // Scope this mutex lock because locking over the blocking wait call
    // below will cause deadlock.
-   MutexProtection auto_unlock_mutex( mutex );
+   MutexProtection const auto_unlock_mutex( mutex );
 
    SyncPoint *sp = get( label );
    if ( sp != NULL ) {

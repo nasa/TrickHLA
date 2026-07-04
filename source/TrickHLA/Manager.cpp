@@ -247,7 +247,7 @@ void Manager::restart_initialization()
 
    // The set_master() function set's additional parameter so call it again to
    // force the a complete master state.
-   bool master_flag = execution_control->is_master();
+   bool const master_flag = execution_control->is_master();
    execution_control->set_master( master_flag );
 
    // Setup all the Trick Ref-Attributes for the user specified objects,
@@ -627,7 +627,7 @@ federate so this call will be ignored.\n",
 
          // Only wait for REQUIRED received init data and do not block waiting
          // to receive init data if we are using the simple init scheme.
-         bool obj_required = objects[n].is_required() && ( execution_control->wait_for_init_data() );
+         bool const obj_required = objects[n].is_required() && ( execution_control->wait_for_init_data() );
 
          if ( obj_required ) {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
@@ -650,7 +650,7 @@ federate so this call will be ignored.\n",
                if ( !objects[n].is_changed() ) {
 
                   // To be more efficient, we get the time once and share it.
-                  int64_t wallclock_time = sleep_timer.time();
+                  int64_t const wallclock_time = sleep_timer.time();
 
                   if ( sleep_timer.timeout( wallclock_time ) ) {
                      sleep_timer.reset();
@@ -746,7 +746,7 @@ void Manager::receive_init_data(
 
       // Only wait for REQUIRED received init data and do not block waiting
       // to receive init data if we are using the simple init scheme.
-      bool obj_required = obj->is_required() && execution_control->wait_for_init_data();
+      bool const obj_required = obj->is_required() && execution_control->wait_for_init_data();
 
       if ( obj_required ) {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
@@ -769,7 +769,7 @@ void Manager::receive_init_data(
             if ( !obj->is_changed() ) {
 
                // To be more efficient, we get the time once and share it.
-               int64_t wallclock_time = sleep_timer.time();
+               int64_t const wallclock_time = sleep_timer.time();
 
                if ( sleep_timer.timeout( wallclock_time ) ) {
                   sleep_timer.reset();
@@ -1648,7 +1648,6 @@ void Manager::publish()
  */
 void Manager::unpublish()
 {
-   int  i, k;
    bool do_unpublish;
 
    if ( !is_RTI_ready( "unpublish" ) ) {
@@ -1656,12 +1655,12 @@ void Manager::unpublish()
    }
 
    // Unpublish from all attributes for all the objects.
-   for ( i = 0; i < obj_count; ++i ) {
+   for ( int i = 0; i < obj_count; ++i ) {
       // Only unpublish an object class if we had published at least
       // one attribute.
       if ( objects[i].any_attribute_published() ) {
          do_unpublish = true;
-         for ( k = 0; ( k < i ) && do_unpublish; ++k ) {
+         for ( int k = 0; ( k < i ) && do_unpublish; ++k ) {
             // Unpublish an object Class only once, so see if we have already
             // unpublished from the same object class that was published.
             if ( objects[k].any_attribute_published()
@@ -1676,11 +1675,11 @@ void Manager::unpublish()
    }
 
    // Unpublish all the interactions.
-   for ( i = 0; i < inter_count; ++i ) {
+   for ( int i = 0; i < inter_count; ++i ) {
       // Only unpublish an interaction that we publish.
       if ( interactions[i].is_publish() ) {
          do_unpublish = true;
-         for ( k = 0; ( k < i ) && do_unpublish; ++k ) {
+         for ( int k = 0; ( k < i ) && do_unpublish; ++k ) {
             // Unpublish an interaction Class only once, so see if we have
             // already unpublished the same interaction class that was published.
             if ( interactions[k].is_publish()
@@ -1726,7 +1725,6 @@ void Manager::subscribe()
  */
 void Manager::unsubscribe()
 {
-   int  i, k;
    bool do_unsubscribe;
 
    if ( !is_RTI_ready( "unsubscribe" ) ) {
@@ -1734,12 +1732,12 @@ void Manager::unsubscribe()
    }
 
    // Unsubscribe from all attributes for all the objects.
-   for ( i = 0; i < obj_count; ++i ) {
+   for ( int i = 0; i < obj_count; ++i ) {
       // Only unsubscribe from an object class if we had subscribed to at
       // least one attribute.
       if ( objects[i].any_attribute_subscribed() ) {
          do_unsubscribe = true;
-         for ( k = 0; ( k < i ) && do_unsubscribe; ++k ) {
+         for ( int k = 0; ( k < i ) && do_unsubscribe; ++k ) {
             // Unsubscribe from an object Class only once, so see if
             // we have already unsubscribed from the same object class
             // that was subscribed to.
@@ -1755,11 +1753,11 @@ void Manager::unsubscribe()
    }
 
    // Unsubscribe from all the interactions.
-   for ( i = 0; i < inter_count; ++i ) {
+   for ( int i = 0; i < inter_count; ++i ) {
       // Only unsubscribe from interactions that are subscribed to.
       if ( interactions[i].is_subscribe() ) {
          do_unsubscribe = true;
-         for ( k = 0; ( k < i ) && do_unsubscribe; ++k ) {
+         for ( int k = 0; ( k < i ) && do_unsubscribe; ++k ) {
             // Unsubscribe from an interaction Class only once, so see if
             // we have already unsubscribed from the same interaction class
             // that was subscribed to.
@@ -1949,7 +1947,7 @@ void Manager::wait_for_registration_of_required_objects()
          {
             // When auto_unlock_mutex goes out of scope it automatically unlocks
             // the mutex even if there is an exception.
-            MutexProtection auto_unlock_mutex( &obj_discovery_mutex );
+            MutexProtection const auto_unlock_mutex( &obj_discovery_mutex );
 
             if ( is_execution_configuration_used() ) {
                // Determine if the Execution-Configuration object has been
@@ -2014,7 +2012,7 @@ void Manager::wait_for_registration_of_required_objects()
          {
             // When auto_unlock_mutex goes out of scope it automatically unlocks
             // the mutex even if there is an exception.
-            MutexProtection auto_unlock_mutex( &obj_discovery_mutex );
+            MutexProtection const auto_unlock_mutex( &obj_discovery_mutex );
 
             int cnt = 1;
             if ( is_execution_configuration_used() ) {
@@ -2080,7 +2078,7 @@ void Manager::wait_for_registration_of_required_objects()
          if ( any_unregistered_required_obj ) { // cppcheck-suppress [knownConditionTrueFalse,unmatchedSuppression]
 
             // To be more efficient, we get the time once and share it.
-            int64_t wallclock_time = sleep_timer.time();
+            int64_t const wallclock_time = sleep_timer.time();
 
             // If we timeout check to see if we are still an execution member.
             if ( sleep_timer.timeout( wallclock_time ) ) {
@@ -2118,7 +2116,7 @@ void Manager::wait_for_registration_of_required_objects()
    {
       // When auto_unlock_mutex goes out of scope it automatically unlocks
       // the mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &obj_discovery_mutex );
+      MutexProtection const auto_unlock_mutex( &obj_discovery_mutex );
 
       if ( is_execution_configuration_used() ) {
          // Add the exec-config instance to the map if it is not already in it.
@@ -2211,7 +2209,7 @@ void Manager::set_object_instance_handles_by_name(
       for ( int n = 0; n < data_obj_count; ++n ) {
 
          // Create the wide-string version of the instance name.
-         string instance_name = data_objects[n].get_name();
+         string const instance_name = data_objects[n].get_name();
          StringUtilities::to_wstring( ws_instance_name, instance_name );
 
          try {
@@ -2570,7 +2568,7 @@ Object *Manager::get_trickhla_object(
    ObjectInstanceHandle const &instance_id )
 {
    // We use a map with the key being the ObjectIntanceHandle for fast lookups.
-   ObjectInstanceMap::const_iterator iter = object_map.find( instance_id );
+   ObjectInstanceMap::const_iterator const iter = object_map.find( instance_id );
    return ( ( iter != object_map.end() ) ? iter->second : NULL );
 }
 
@@ -2614,7 +2612,7 @@ bool Manager::discover_object_instance(
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &obj_discovery_mutex );
+   MutexProtection const auto_unlock_mutex( &obj_discovery_mutex );
 
    bool return_value = false;
 
@@ -2660,8 +2658,9 @@ bool Manager::discover_object_instance(
       federate->add_MOM_HLAfederate_instance_id( theObject, theObjectInstanceName );
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         string id_str, name_str;
+         string id_str;
          StringUtilities::to_string( id_str, theObject );
+         string name_str;
          StringUtilities::to_string( name_str, theObjectInstanceName );
          message_publish( MSG_NORMAL, "Manager::discover_object_instance():%d Discovered MOM HLA-Federate Object-Instance-ID:%s Name:'%s'\n",
                           __LINE__, id_str.c_str(), name_str.c_str() );
@@ -2672,8 +2671,9 @@ bool Manager::discover_object_instance(
       return_value = true;
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
-         string id_str, name_str;
+         string id_str;
          StringUtilities::to_string( id_str, theObject );
+         string name_str;
          StringUtilities::to_string( name_str, theObjectInstanceName );
          message_publish( MSG_NORMAL, "Manager::discover_object_instance():%d MOM HLA-Federation '%s' Instance-ID:%s\n",
                           __LINE__, name_str.c_str(), id_str.c_str() );
@@ -3085,7 +3085,7 @@ void Manager::convert_interactions_before_checkpoint()
 
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &interactions_queue.mutex );
+   MutexProtection const auto_unlock_mutex( &interactions_queue.mutex );
 
    if ( !interactions_queue.empty() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_MANAGER ) ) {
@@ -3163,7 +3163,7 @@ void Manager::restore_interactions_after_checkpoint()
 
       // When auto_unlock_mutex goes out of scope it automatically unlocks the
       // mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &interactions_queue.mutex );
+      MutexProtection const auto_unlock_mutex( &interactions_queue.mutex );
 
       if ( check_interactions != NULL ) {
          for ( size_t i = 0; i < check_interactions_count; ++i ) {

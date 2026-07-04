@@ -572,7 +572,7 @@ void Federate::create_RTI_ambassador_and_connect()
    // will allow the JVM to start up its threads without the SIGFPE set. See
    // Pitch RTI bug case #9704.
    // TODO: Is this still necessary?
-   bool trick_sigfpe_is_set = ( exec_get_trap_sigfpe() > 0 );
+   bool const trick_sigfpe_is_set = ( exec_get_trap_sigfpe() > 0 );
    if ( trick_sigfpe_is_set ) {
       exec_set_trap_sigfpe( false );
    }
@@ -947,7 +947,7 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
    //
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &joined_federate_mutex );
+   MutexProtection const auto_unlock_mutex( &joined_federate_mutex );
 
    // Add the federate ID (i.e. federate handle) if we don't know about it already.
    if ( !is_federate_instance_id( id ) ) {
@@ -1007,14 +1007,15 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
       }
    } else {
 
-      FederateHandle fed_handle = decode_federate_handle( attr_iter->second );
+      FederateHandle const fed_handle = decode_federate_handle( attr_iter->second );
 
       // Add this FederateHandle to the set of joined federates.
       joined_federate_handles.insert( fed_handle );
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         string id_str, fed_id;
+         string id_str;
          StringUtilities::to_string( id_str, id );
+         string fed_id;
          StringUtilities::to_string( fed_id, fed_handle );
          message_publish( MSG_NORMAL, "Federate::set_MOM_HLAfederate_instance_attributes():%d Federate-OID:%s Federate-ID:%s\n",
                           __LINE__, id_str.c_str(), fed_id.c_str() );
@@ -1110,7 +1111,7 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
                                          known_feds[i].MOM_instance_name );
 
             // Get the instance handle based on the instance name.
-            ObjectInstanceHandle fed_mom_obj_instance_hdl =
+            ObjectInstanceHandle const fed_mom_obj_instance_hdl =
                rti_amb->getObjectInstanceHandle( fed_mom_instance_name_ws );
 
             // Add the federate instance handle.
@@ -1430,7 +1431,7 @@ string Federate::wait_for_required_federates_to_join()
       {
          // When auto_unlock_mutex goes out of scope it automatically unlocks the
          // mutex even if there is an exception.
-         MutexProtection auto_unlock_mutex( &joined_federate_mutex );
+         MutexProtection const auto_unlock_mutex( &joined_federate_mutex );
 
          // Determine what federates have joined only if the joined federate
          // count has changed.
@@ -1519,7 +1520,7 @@ string Federate::wait_for_required_federates_to_join()
       if ( !this->all_federates_joined ) {
 
          // To be more efficient, we get the time once and share it.
-         int64_t wallclock_time = sleep_timer.time();
+         int64_t const wallclock_time = sleep_timer.time();
 
          if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
@@ -2133,7 +2134,7 @@ void Federate::ask_MOM_for_federate_names()
    {
       // When auto_unlock_mutex goes out of scope it automatically unlocks the
       // mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &joined_federate_mutex );
+      MutexProtection const auto_unlock_mutex( &joined_federate_mutex );
 
       // NOTE: Do not clear the joined_federate_name_map because it will cause
       // reflections to fail because lookup will not find the discovered instance.
@@ -2482,7 +2483,7 @@ void Federate::check_freeze()
       return;
    }
 
-   SIM_MODE exec_mode = exec_get_mode();
+   SIM_MODE const exec_mode = exec_get_mode();
    if ( exec_mode == Initialization ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          message_publish( MSG_NORMAL, "Federate::check_freeze():%d Pass first Time.\n",
@@ -4024,7 +4025,7 @@ void Federate::ask_MOM_for_auto_provide_setting()
       if ( this->auto_provide_setting < 0 ) {
 
          // To be more efficient, we get the time once and share it.
-         int64_t wallclock_time = sleep_timer.time();
+         int64_t const wallclock_time = sleep_timer.time();
 
          if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
@@ -4052,7 +4053,7 @@ void Federate::ask_MOM_for_auto_provide_setting()
    unsubscribe_attributes( MOM_HLAfederation_class_handle, fedMomAttributes );
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      string auto_provide_status = get_auto_provide_status_string( auto_provide_setting );
+      string const auto_provide_status = get_auto_provide_status_string( auto_provide_setting );
       message_publish( MSG_NORMAL, "Federate::ask_MOM_for_auto_provide_setting():%d Auto-Provide:%s value:%d\n",
                        __LINE__, auto_provide_status.c_str(), auto_provide_setting );
    }
@@ -4068,7 +4069,7 @@ void Federate::enable_MOM_auto_provide_setting(
    this->auto_provide_setting = enable ? 1 : 0;
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      string auto_provide_status = get_auto_provide_status_string( auto_provide_setting );
+      string const auto_provide_status = get_auto_provide_status_string( auto_provide_setting );
       message_publish( MSG_NORMAL, "Federate::enable_MOM_auto_provide_setting():%d Auto-Provide:%s\n",
                        __LINE__, auto_provide_status.c_str() );
    }
@@ -4078,7 +4079,7 @@ void Federate::enable_MOM_auto_provide_setting(
    ParameterHandleValueMap param_values_map;
    try {
       // HLAautoProvide attribute is an HLAswitch, which is an HLAinteger32BE.
-      HLAinteger32BE auto_provide_encoder( auto_provide_setting );
+      HLAinteger32BE const auto_provide_encoder( auto_provide_setting );
 
       param_values_map[MOM_HLAautoProvide_param_handle] = auto_provide_encoder.encode();
 
@@ -4122,7 +4123,7 @@ void Federate::restore_orig_MOM_auto_provide_setting()
    // match the current setting.
    if ( auto_provide_setting != orig_auto_provide_setting ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         string auto_provide_status = get_auto_provide_status_string( orig_auto_provide_setting );
+         string const auto_provide_status = get_auto_provide_status_string( orig_auto_provide_setting );
          message_publish( MSG_NORMAL, "Federate::restore_orig_MOM_auto_provide_setting():%d Auto-Provide:%s value:%d\n",
                           __LINE__, auto_provide_status.c_str(),
                           orig_auto_provide_setting );
@@ -4177,7 +4178,7 @@ void Federate::remove_MOM_HLAfederate_instance_id(
    string tFedName  = "";
    bool   foundName = false;
 
-   TrickHLAObjInstanceNameMap::iterator iter = MOM_HLAfederate_instance_name_map.find( instance_hndl );
+   TrickHLAObjInstanceNameMap::iterator const iter = MOM_HLAfederate_instance_name_map.find( instance_hndl );
    if ( iter != MOM_HLAfederate_instance_name_map.end() ) {
       StringUtilities::to_string( tMOMName, iter->second );
       foundName = true;
@@ -4347,7 +4348,7 @@ void Federate::set_MOM_HLAfederation_instance_attributes(
             DebugHandler::terminate( errmsg.str() );
          }
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-            string auto_provide_status = get_auto_provide_status_string( auto_provide_setting );
+            string const auto_provide_status = get_auto_provide_status_string( auto_provide_setting );
             message_publish( MSG_NORMAL, "Federate::set_federation_instance_attributes():%d Auto-Provide:%s value:%d\n",
                              __LINE__, auto_provide_status.c_str(),
                              auto_provide_setting );
@@ -4360,9 +4361,9 @@ void Federate::set_MOM_HLAfederation_instance_attributes(
          // HLAfederateReference is a HLAfederateHandle representation that is
          // an HLAvariableArray of HLAbyte elements.
          try {
-            HLAbyte          byte_proto;
-            HLAvariableArray fed_handle_proto( byte_proto );
-            HLAvariableArray feds_list( fed_handle_proto );
+            HLAbyte const          byte_proto;
+            HLAvariableArray const fed_handle_proto( byte_proto );
+            HLAvariableArray       feds_list( fed_handle_proto );
 
             feds_list.decode( attr_iter->second );
 
@@ -4409,7 +4410,7 @@ void Federate::restore_federate_handles_from_MOM()
    {
       // When auto_unlock_mutex goes out of scope it automatically unlocks the
       // mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &joined_federate_mutex );
+      MutexProtection const auto_unlock_mutex( &joined_federate_mutex );
 
       // Note: Since we are doing reset we can safely clear the joined federate
       // name map. If we were not resetting, clearing the map will cause reflections
@@ -4448,7 +4449,7 @@ void Federate::restore_federate_handles_from_MOM()
       {
          // When auto_unlock_mutex goes out of scope it automatically unlocks the
          // mutex even if there is an exception.
-         MutexProtection auto_unlock_mutex( &joined_federate_mutex );
+         MutexProtection const auto_unlock_mutex( &joined_federate_mutex );
 
          // Determine if all the federate handles have been found.
          all_found = ( joined_federate_handles.size() >= running_feds_count );
@@ -4462,7 +4463,7 @@ void Federate::restore_federate_handles_from_MOM()
          sleep_timer.sleep();
 
          // To be more efficient, we get the time once and share it.
-         int64_t wallclock_time = sleep_timer.time();
+         int64_t const wallclock_time = sleep_timer.time();
 
          if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
@@ -4505,7 +4506,7 @@ void Federate::rebuild_federate_handles(
    // Loop through all federate handles
    for ( attr_iter = values.begin(); attr_iter != values.end(); ++attr_iter ) {
 
-      FederateHandle fed_handle = decode_federate_handle( attr_iter->second );
+      FederateHandle const fed_handle = decode_federate_handle( attr_iter->second );
 
       // Concurrency critical code section because joined-federate state is changed
       // by FedAmb callback to the Federate::set_MOM_HLAfederate_instance_attributes()
@@ -4513,15 +4514,16 @@ void Federate::rebuild_federate_handles(
       {
          // When auto_unlock_mutex goes out of scope it automatically unlocks the
          // mutex even if there is an exception.
-         MutexProtection auto_unlock_mutex( &joined_federate_mutex );
+         MutexProtection const auto_unlock_mutex( &joined_federate_mutex );
 
          // Add this FederateHandle to the set of joined federates.
          joined_federate_handles.insert( fed_handle );
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         string id_str, fed_id;
+         string id_str;
          StringUtilities::to_string( id_str, instance_hndl );
+         string fed_id;
          StringUtilities::to_string( fed_id, fed_handle );
          message_publish( MSG_NORMAL, "Federate::rebuild_federate_handles():%d Federate OID:%s Federate-ID:%s\n",
                           __LINE__, id_str.c_str(), fed_id.c_str() );
@@ -4549,7 +4551,7 @@ bool Federate::is_a_required_startup_federate(
             // look for instance attributes of a required object. to do this,
             // check if the "required federate name" is found inside the supplied
             // federate name.
-            size_t found = fed_name.find( required_fed_name );
+            size_t const found = fed_name.find( required_fed_name );
             if ( found != wstring::npos ) {
                // found the "required federate name" inside the supplied federate name
                return true;

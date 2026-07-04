@@ -110,7 +110,8 @@ short Utilities::byteswap_short(
          break;
       }
       default: {
-         size_t i, k;
+         size_t i;
+         size_t k;
          for ( i = 0, k = size - 1; i < size; ++i, --k ) {
             out[i] = in[k];
          }
@@ -143,7 +144,8 @@ unsigned short Utilities::byteswap_unsigned_short(
          break;
       }
       default: {
-         size_t i, k;
+         size_t i;
+         size_t k;
          for ( i = 0, k = size - 1; i < size; ++i, --k ) {
             out[i] = in[k];
          }
@@ -171,7 +173,8 @@ int Utilities::byteswap_int( // RETURN: -- Byteswap value.
          break;
       }
       default: {
-         size_t i, k;
+         size_t i;
+         size_t k;
          for ( i = 0, k = size - 1; i < size; ++i, --k ) {
             out[i] = in[k];
          }
@@ -199,7 +202,8 @@ unsigned int Utilities::byteswap_unsigned_int(
          break;
       }
       default: {
-         size_t i, k;
+         size_t i;
+         size_t k;
          for ( i = 0, k = size - 1; i < size; ++i, --k ) {
             out[i] = in[k];
          }
@@ -238,7 +242,8 @@ long Utilities::byteswap_long(
          break;
       }
       default: {
-         size_t i, k;
+         size_t i;
+         size_t k;
          for ( i = 0, k = size - 1; i < size; ++i, --k ) {
             out[i] = in[k];
          }
@@ -277,7 +282,8 @@ unsigned long Utilities::byteswap_unsigned_long(
          break;
       }
       default: {
-         size_t i, k;
+         size_t i;
+         size_t k;
          for ( i = 0, k = size - 1; i < size; ++i, --k ) {
             out[i] = in[k];
          }
@@ -310,7 +316,8 @@ long long Utilities::byteswap_long_long(
          break;
       }
       default: {
-         size_t i, k;
+         size_t i;
+         size_t k;
          for ( i = 0, k = size - 1; i < size; ++i, --k ) {
             out[i] = in[k];
          }
@@ -343,7 +350,8 @@ unsigned long long Utilities::byteswap_unsigned_long_long(
          break;
       }
       default: {
-         size_t i, k;
+         size_t i;
+         size_t k;
          for ( i = 0, k = size - 1; i < size; ++i, --k ) {
             out[i] = in[k];
          }
@@ -381,7 +389,8 @@ float Utilities::byteswap_float(
          break;
       }
       default: {
-         size_t i, k;
+         size_t i;
+         size_t k;
          for ( i = 0, k = size - 1; i < size; ++i, --k ) {
             out[i] = in[k];
          }
@@ -412,7 +421,8 @@ double Utilities::byteswap_double(
          break;
       }
       default: {
-         size_t i, k;
+         size_t i;
+         size_t k;
          for ( i = 0, k = size - 1; i < size; ++i, --k ) {
             out[i] = in[k];
          }

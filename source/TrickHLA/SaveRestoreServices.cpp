@@ -498,7 +498,7 @@ void SaveRestoreServices::add_a_single_entry_into_running_feds()
          temp_feds[i].required          = running_feds[i].required;
       }
 
-      TrickHLAObjInstanceNameMap::const_iterator map_iter = federate->joined_federate_name_map.begin();
+      TrickHLAObjInstanceNameMap::const_iterator const map_iter = federate->joined_federate_name_map.begin();
       StringUtilities::to_string( temp_feds[running_feds_count].MOM_instance_name,
                                   federate->MOM_HLAfederate_instance_name_map[map_iter->first] );
       StringUtilities::to_string( temp_feds[running_feds_count].name, map_iter->second );
@@ -611,7 +611,7 @@ void SaveRestoreServices::restore_checkpoint(
 {
    string trick_filename = file_name;
    // Prepend federation name to the filename (if it's not already prepended)
-   string federation_name_str = federate->get_federation_name();
+   string const federation_name_str = federate->get_federation_name();
    if ( trick_filename.compare( 0, federation_name_str.length(), federation_name_str ) != 0 ) {
       trick_filename = federation_name_str + "_" + file_name;
    }
@@ -734,7 +734,7 @@ void SaveRestoreServices::read_running_feds_file(
    ifstream file;
 
    // Prepend federation name to the filename (if it's not already prepended)
-   string federation_name_str = federate->get_federation_name();
+   string const federation_name_str = federate->get_federation_name();
    if ( file_name.compare( 0, federation_name_str.length(), federation_name_str ) == 0 ) {
       // Already prepended
       full_path = this->HLA_save_directory + "/" + file_name + ".running_feds";
@@ -917,7 +917,7 @@ void SaveRestoreServices::wait_for_federation_restore_begun()
       if ( !this->restore_begun ) { // cppcheck-suppress [knownConditionTrueFalse]
 
          // To be more efficient, we get the time once and share it.
-         int64_t wallclock_time = sleep_timer.time();
+         int64_t const wallclock_time = sleep_timer.time();
 
          if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
@@ -966,7 +966,7 @@ void SaveRestoreServices::wait_until_federation_is_ready_to_restore()
       if ( !this->start_to_restore ) { // cppcheck-suppress [knownConditionTrueFalse]
 
          // To be more efficient, we get the time once and share it.
-         int64_t wallclock_time = sleep_timer.time();
+         int64_t const wallclock_time = sleep_timer.time();
 
          if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
@@ -1050,7 +1050,7 @@ string SaveRestoreServices::wait_for_federation_restore_to_complete()
          if ( !this->restore_completed ) { // cppcheck-suppress [knownConditionTrueFalse]
 
             // To be more efficient, we get the time once and share it.
-            int64_t wallclock_time = sleep_timer.time();
+            int64_t const wallclock_time = sleep_timer.time();
 
             if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
@@ -1113,7 +1113,7 @@ void SaveRestoreServices::wait_for_restore_request_callback()
       if ( !has_restore_process_restore_request_failed() && !has_restore_process_restore_request_succeeded() ) { // cppcheck-suppress [knownConditionTrueFalse]
 
          // To be more efficient, we get the time once and share it.
-         int64_t wallclock_time = sleep_timer.time();
+         int64_t const wallclock_time = sleep_timer.time();
 
          if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
@@ -1162,7 +1162,7 @@ void SaveRestoreServices::wait_for_restore_status_to_complete()
       if ( !this->restore_request_complete ) { // cppcheck-suppress [knownConditionTrueFalse]
 
          // To be more efficient, we get the time once and share it.
-         int64_t wallclock_time = sleep_timer.time();
+         int64_t const wallclock_time = sleep_timer.time();
 
          if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
@@ -1211,7 +1211,7 @@ void SaveRestoreServices::wait_for_save_status_to_complete()
       if ( !this->save_request_complete ) { // cppcheck-suppress [knownConditionTrueFalse]
 
          // To be more efficient, we get the time once and share it.
-         int64_t wallclock_time = sleep_timer.time();
+         int64_t const wallclock_time = sleep_timer.time();
 
          if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
@@ -1269,7 +1269,7 @@ void SaveRestoreServices::wait_for_federation_restore_failed_callback_to_complet
       if ( !this->federation_restore_failed_callback_complete ) { // cppcheck-suppress [knownConditionTrueFalse]
 
          // To be more efficient, we get the time once and share it.
-         int64_t wallclock_time = sleep_timer.time();
+         int64_t const wallclock_time = sleep_timer.time();
 
          if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
@@ -1720,8 +1720,8 @@ void SaveRestoreServices::check_HLA_save_directory()
    // If the save directory is not specified, set it to the current RUN directory
    if ( HLA_save_directory.empty() ) {
 
-      string run_dir = command_line_args_get_output_dir();
-      string def_dir = command_line_args_get_default_dir();
+      string const run_dir = command_line_args_get_output_dir();
+      string const def_dir = command_line_args_get_default_dir();
 
       // build a absolute path to the RUN directory by combining default_dir
       // and run_dir from the EXECUTIVE.
