@@ -347,7 +347,7 @@ else
 
       ifdef LD_LIBRARY_PATH
          ifneq (,$(findstring ${RTI_LIB_PATH}, $(LD_LIBRARY_PATH)))
-            export LD_LIBRARY_PATH += :${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}
+            export LD_LIBRARY_PATH = $(LD_LIBRARY_PATH):${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}
          endif
       else
          export LD_LIBRARY_PATH = ${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}
@@ -405,7 +405,7 @@ else
 
       ifdef LD_LIBRARY_PATH
          ifneq (,$(findstring ${RTI_LIB_PATH}, $(LD_LIBRARY_PATH)))
-            export LD_LIBRARY_PATH += :${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}
+            export LD_LIBRARY_PATH = $(LD_LIBRARY_PATH):${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}
          endif
       else
          export LD_LIBRARY_PATH = ${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}
