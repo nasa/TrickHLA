@@ -348,6 +348,8 @@ else
       ifdef LD_LIBRARY_PATH
          ifeq (,$(findstring ${RTI_LIB_PATH}, $(LD_LIBRARY_PATH)))
             export LD_LIBRARY_PATH += :${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}
+         else
+            RTI_LIB_ALREADY_SET_IN_LD_LIB_PATH = 1
          endif
       else
          export LD_LIBRARY_PATH = ${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}
@@ -355,7 +357,7 @@ else
 
       # On Ubuntu, the user needs to add the LD_LIBRARY_PATH shown below to
       # their environment so the HLA simulation can run,
-      ifdef LD_LIBRARY_PATH
+      ifndef RTI_LIB_ALREADY_SET_IN_LD_LIB_PATH
          ifneq ("$(wildcard /etc/lsb-release)","")
            $(info ${GREEN_TXT}S_hla.mk:INFO: Add this to your .bashrc file: export LD_LIBRARY_PATH=$(LD_LIBRARY_PATH)${RESET_TXT})
          endif
@@ -406,6 +408,8 @@ else
       ifdef LD_LIBRARY_PATH
          ifeq (,$(findstring ${RTI_LIB_PATH}, $(LD_LIBRARY_PATH)))
             export LD_LIBRARY_PATH += :${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}
+         else
+            RTI_LIB_ALREADY_SET_IN_LD_LIB_PATH = 1
          endif
       else
          export LD_LIBRARY_PATH = ${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}
@@ -413,7 +417,7 @@ else
 
       # On Ubuntu, the user needs to add the LD_LIBRARY_PATH shown below to
       # their environment so the HLA simulation can run,
-      ifdef LD_LIBRARY_PATH
+      ifndef RTI_LIB_ALREADY_SET_IN_LD_LIB_PATH
          ifneq ("$(wildcard /etc/lsb-release)","")
            $(info ${GREEN_TXT}S_hla.mk:INFO: Add this to your .bashrc file: export LD_LIBRARY_PATH=$(LD_LIBRARY_PATH)${RESET_TXT})
          endif
