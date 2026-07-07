@@ -347,12 +347,10 @@ else
 
       ifdef LD_LIBRARY_PATH
          ifneq (,$(findstring ${RTI_LIB_PATH}, $(LD_LIBRARY_PATH)))
-            export LD_LIBRARY_PATH += ${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}
-            $(info ${GREEN_TXT}S_hla.mk:INFO: Overriding LD_LIBRARY_PATH = $(LD_LIBRARY_PATH)${RESET_TXT})
+            export LD_LIBRARY_PATH += :${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}
          endif
       else
          export LD_LIBRARY_PATH = ${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}
-         $(info ${GREEN_TXT}S_hla.mk:INFO: Overriding LD_LIBRARY_PATH = $(LD_LIBRARY_PATH)${RESET_TXT})
       endif
 
       # On Ubuntu, the user needs to add the LD_LIBRARY_PATH shown below to
@@ -407,12 +405,10 @@ else
 
       ifdef LD_LIBRARY_PATH
          ifneq (,$(findstring ${RTI_LIB_PATH}, $(LD_LIBRARY_PATH)))
-            export LD_LIBRARY_PATH += ${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}
-            $(info ${GREEN_TXT}S_hla.mk:INFO: Overriding LD_LIBRARY_PATH = $(LD_LIBRARY_PATH)${RESET_TXT})
+            export LD_LIBRARY_PATH += :${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}
          endif
       else
          export LD_LIBRARY_PATH = ${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}
-         $(info ${GREEN_TXT}S_hla.mk:INFO: Overriding LD_LIBRARY_PATH = $(LD_LIBRARY_PATH)${RESET_TXT})
       endif
 
       # On Ubuntu, the user needs to add the LD_LIBRARY_PATH shown below to
