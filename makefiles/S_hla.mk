@@ -346,8 +346,8 @@ else
       TRICK_USER_LINK_LIBS += -L${RTI_LIB_PATH} -lrti1516_2025gcc7 -lfedtime1516_2025gcc7 -Wl,-rpath,${RTI_LIB_PATH}
 
       ifdef LD_LIBRARY_PATH
-         ifneq (,$(findstring ${RTI_LIB_PATH}, $(LD_LIBRARY_PATH)))
-            export LD_LIBRARY_PATH = $(LD_LIBRARY_PATH):${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}
+         ifeq (,$(findstring ${RTI_LIB_PATH}, $(LD_LIBRARY_PATH)))
+            export LD_LIBRARY_PATH += :${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}
          endif
       else
          export LD_LIBRARY_PATH = ${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}
@@ -404,8 +404,8 @@ else
       TRICK_USER_LINK_LIBS += -L${RTI_LIB_PATH} -lrti1516e64 -lfedtime1516e64 -Wl,-rpath,${RTI_LIB_PATH}
 
       ifdef LD_LIBRARY_PATH
-         ifneq (,$(findstring ${RTI_LIB_PATH}, $(LD_LIBRARY_PATH)))
-            export LD_LIBRARY_PATH = $(LD_LIBRARY_PATH):${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}
+         ifeq (,$(findstring ${RTI_LIB_PATH}, $(LD_LIBRARY_PATH)))
+            export LD_LIBRARY_PATH += :${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}
          endif
       else
          export LD_LIBRARY_PATH = ${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}
