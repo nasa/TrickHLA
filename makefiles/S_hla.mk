@@ -356,7 +356,8 @@ else
       endif
 
       # On Ubuntu, the user needs to add the LD_LIBRARY_PATH shown below to
-      # their environment so the HLA simulation can run,
+      # their environment so the HLA simulation can run, and only show the
+      # message if LD_LIBRARY_PATH is not already set correctly.
       ifndef RTI_LIB_ALREADY_SET_IN_LD_LIB_PATH
          ifdef LD_LIBRARY_PATH
             ifneq ("$(wildcard /etc/lsb-release)","")
@@ -418,7 +419,8 @@ else
       endif
 
       # On Ubuntu, the user needs to add the LD_LIBRARY_PATH shown below to
-      # their environment so the HLA simulation can run,
+      # their environment so the HLA simulation can run, and only show the
+      # message if LD_LIBRARY_PATH is not already set correctly.
       ifndef RTI_LIB_ALREADY_SET_IN_LD_LIB_PATH
          ifdef LD_LIBRARY_PATH
             ifneq ("$(wildcard /etc/lsb-release)","")
