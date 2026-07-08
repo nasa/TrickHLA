@@ -164,7 +164,7 @@ void OpaqueBuffer::push_to_buffer(
    // Determine if we need to add pad bytes to achieve the desired
    // byte alignment.
    if ( alignment > 1 ) {
-      size_t pad_size = push_pos % alignment;
+      size_t const pad_size = push_pos % alignment;
       if ( pad_size > 0 ) {
          push_pad_to_buffer( pad_size );
       }
@@ -220,7 +220,7 @@ void OpaqueBuffer::pull_from_buffer(
    // Determine if we need to remove pad bytes which were added to achieve the
    // desired byte alignment.
    if ( alignment > 1 ) {
-      size_t pad_size = pull_pos % alignment;
+      size_t const pad_size = pull_pos % alignment;
       if ( pad_size > 0 ) {
          pull_pad_from_buffer( pad_size );
       }

@@ -226,8 +226,8 @@ bool SaveRestoreServices::set_HLA_save_directory( std::string const &path )
    if ( path.empty() ) {
 
       // Get the Trick provided RUN directory path information.
-      string run_dir = command_line_args_get_output_dir();
-      string def_dir = command_line_args_get_default_dir();
+      string const run_dir = command_line_args_get_output_dir();
+      string const def_dir = command_line_args_get_default_dir();
 
       // Build an absolute path to the RUN directory by combining default_dir
       // and run_dir from the EXECUTIVE.
@@ -327,7 +327,7 @@ void SaveRestoreServices::save_set_time(
    }
 
    // Check to make sure the time hasn't already passed.
-   Int64Time granted_time = time_management_service->get_granted_time();
+   Int64Time const granted_time = time_management_service->get_granted_time();
    if ( time < granted_time ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
@@ -1585,8 +1585,8 @@ void SaveRestoreServices::restore_initiated(
    this->restore_label = label;
 
    // Map the Restore label to the associated Trick checkpoint file names.
-   checkpoint_file_name        = execution_control->map_label_to_checkpoint_file_name( label );
-   string checkpoint_full_path = this->HLA_save_directory + "/" + checkpoint_file_name;
+   checkpoint_file_name              = execution_control->map_label_to_checkpoint_file_name( label );
+   string const checkpoint_full_path = this->HLA_save_directory + "/" + checkpoint_file_name;
 
    // Make sure that the checkpoint file exists.
    if ( stat( checkpoint_full_path.c_str(), &temp_buf ) != 0 ) {
@@ -1712,9 +1712,9 @@ void SaveRestoreServices::restore_after_checkpoint_load()
 
       // FIXME: This should have already been done.
       // Restore ownership transfer data for all objects
-      //Object *objects   = object_service->get_objects();
-      //int     obj_count = object_service->get_object_count();
-      //for ( int i = 0; i < obj_count; ++i ) {
+      // Object *objects   = object_service->get_objects();
+      // int     obj_count = object_service->get_object_count();
+      // for ( int i = 0; i < obj_count; ++i ) {
       //   objects[i].restore_data_after_checkpoint();
       //}
 
@@ -2014,7 +2014,7 @@ void SaveRestoreServices::restore_checkpoint(
 {
    string trick_filename = file_name;
    // Prepend federation name to the filename (if it's not already prepended)
-   string federation_name_str = federate->get_federation_name();
+   string const federation_name_str = federate->get_federation_name();
    if ( trick_filename.compare( 0, federation_name_str.length(), federation_name_str ) != 0 ) {
       trick_filename = federation_name_str + "_" + file_name;
    }

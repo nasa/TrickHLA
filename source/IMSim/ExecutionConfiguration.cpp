@@ -182,8 +182,8 @@ void ExecutionConfiguration::configure_attributes()
       DebugHandler::terminate( errmsg.str() );
    }
 
-   string simconfig_name_str = string( S_define_name );
-   string trick_name_str;
+   string const simconfig_name_str = string( S_define_name );
+   string       trick_name_str;
 
    //---------------------------------------------------------
    // Set up the execution configuration HLA object mappings.
@@ -461,7 +461,7 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
          if ( !is_changed() ) {
 
             // To be more efficient, we get the time once and share it.
-            int64_t wallclock_time = sleep_timer.time();
+            int64_t const wallclock_time = sleep_timer.time();
 
             if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();

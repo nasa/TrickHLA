@@ -127,7 +127,7 @@ void InteractionServices::restart_initialization()
 
    // The set_master() function set's additional parameter so call it again to
    // force the a complete master state.
-   bool master_flag = federate->execution_control->is_master();
+   bool const master_flag = federate->execution_control->is_master();
    federate->execution_control->set_master( master_flag );
 
    // Setup all the Trick Ref-Attributes for the user specified objects,
@@ -751,7 +751,7 @@ void InteractionServices::convert_data_before_checkpoint()
 
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &interactions_queue.mutex );
+   MutexProtection const auto_unlock_mutex( &interactions_queue.mutex );
 
    if ( !interactions_queue.empty() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTER_SERVICES ) ) {
@@ -833,7 +833,7 @@ void InteractionServices::restore_data_after_checkpoint()
 
       // When auto_unlock_mutex goes out of scope it automatically unlocks the
       // mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &interactions_queue.mutex );
+      MutexProtection const auto_unlock_mutex( &interactions_queue.mutex );
 
       if ( check_interactions != NULL ) {
          for ( size_t i = 0; i < check_interactions_count; ++i ) {

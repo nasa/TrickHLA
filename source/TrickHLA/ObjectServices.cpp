@@ -355,7 +355,7 @@ federate so this call will be ignored.\n",
 
          // Only wait for REQUIRED received init data and do not block waiting
          // to receive init data if we are using the simple init scheme.
-         bool obj_required = objects[n].is_required() && ( federate->execution_control->wait_for_init_data() );
+         bool const obj_required = objects[n].is_required() && ( federate->execution_control->wait_for_init_data() );
 
          if ( obj_required ) {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
@@ -378,7 +378,7 @@ federate so this call will be ignored.\n",
                if ( !objects[n].is_changed() ) {
 
                   // To be more efficient, we get the time once and share it.
-                  int64_t wallclock_time = sleep_timer.time();
+                  int64_t const wallclock_time = sleep_timer.time();
 
                   if ( sleep_timer.timeout( wallclock_time ) ) {
                      sleep_timer.reset();
@@ -474,7 +474,7 @@ void ObjectServices::receive_init_data(
 
       // Only wait for REQUIRED received init data and do not block waiting
       // to receive init data if we are using the simple init scheme.
-      bool obj_required = obj->is_required() && federate->execution_control->wait_for_init_data();
+      bool const obj_required = obj->is_required() && federate->execution_control->wait_for_init_data();
 
       if ( obj_required ) {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
@@ -497,7 +497,7 @@ void ObjectServices::receive_init_data(
             if ( !obj->is_changed() ) {
 
                // To be more efficient, we get the time once and share it.
-               int64_t wallclock_time = sleep_timer.time();
+               int64_t const wallclock_time = sleep_timer.time();
 
                if ( sleep_timer.timeout( wallclock_time ) ) {
                   sleep_timer.reset();
@@ -1235,7 +1235,7 @@ void ObjectServices::wait_for_registration_of_required_objects()
          {
             // When auto_unlock_mutex goes out of scope it automatically unlocks
             // the mutex even if there is an exception.
-            MutexProtection auto_unlock_mutex( &obj_discovery_mutex );
+            MutexProtection const auto_unlock_mutex( &obj_discovery_mutex );
 
             if ( federate->is_execution_configuration_used() ) {
                // Determine if the Execution-Configuration object has been
@@ -1300,7 +1300,7 @@ void ObjectServices::wait_for_registration_of_required_objects()
          {
             // When auto_unlock_mutex goes out of scope it automatically unlocks
             // the mutex even if there is an exception.
-            MutexProtection auto_unlock_mutex( &obj_discovery_mutex );
+            MutexProtection const auto_unlock_mutex( &obj_discovery_mutex );
 
             int cnt = 1;
             if ( federate->is_execution_configuration_used() ) {
@@ -1366,7 +1366,7 @@ void ObjectServices::wait_for_registration_of_required_objects()
          if ( any_unregistered_required_obj ) { // cppcheck-suppress [knownConditionTrueFalse,unmatchedSuppression]
 
             // To be more efficient, we get the time once and share it.
-            int64_t wallclock_time = sleep_timer.time();
+            int64_t const wallclock_time = sleep_timer.time();
 
             // If we timeout check to see if we are still an execution member.
             if ( sleep_timer.timeout( wallclock_time ) ) {
@@ -1404,7 +1404,7 @@ void ObjectServices::wait_for_registration_of_required_objects()
    {
       // When auto_unlock_mutex goes out of scope it automatically unlocks
       // the mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &obj_discovery_mutex );
+      MutexProtection const auto_unlock_mutex( &obj_discovery_mutex );
 
       if ( federate->is_execution_configuration_used() ) {
          // Add the exec-config instance to the map if it is not already in it.
@@ -1483,7 +1483,7 @@ void ObjectServices::set_object_instance_handles_by_name(
       for ( int n = 0; n < data_obj_count; ++n ) {
 
          // Create the wide-string version of the instance name.
-         string instance_name = data_objects[n].get_name();
+         string const instance_name = data_objects[n].get_name();
          StringUtilities::to_wstring( ws_instance_name, instance_name );
 
          try {
@@ -1713,7 +1713,7 @@ Object *ObjectServices::get_trickhla_object(
    ObjectInstanceHandle const &instance_id )
 {
    // We use a map with the key being the ObjectIntanceHandle for fast lookups.
-   ObjectInstanceMap::const_iterator iter = object_map.find( instance_id );
+   ObjectInstanceMap::const_iterator const iter = object_map.find( instance_id );
    return ( ( iter != object_map.end() ) ? iter->second : NULL );
 }
 
@@ -1757,7 +1757,7 @@ bool ObjectServices::discover_object_instance(
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &obj_discovery_mutex );
+   MutexProtection const auto_unlock_mutex( &obj_discovery_mutex );
 
    bool return_value = false;
 
@@ -1803,8 +1803,9 @@ bool ObjectServices::discover_object_instance(
       return_value = true;
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
-         string id_str, name_str;
+         string id_str;
          StringUtilities::to_string( id_str, theObject );
+         string name_str;
          StringUtilities::to_string( name_str, theObjectInstanceName );
          message_publish( MSG_NORMAL, "ObjectServices::discover_object_instance():%d Discovered MOM HLA-Federate Object-Instance-ID:%s Name:'%s'\n",
                           __LINE__, id_str.c_str(), name_str.c_str() );
@@ -1816,8 +1817,9 @@ bool ObjectServices::discover_object_instance(
       return_value = true;
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
-         string id_str, name_str;
+         string id_str;
          StringUtilities::to_string( id_str, theObject );
+         string name_str;
          StringUtilities::to_string( name_str, theObjectInstanceName );
          message_publish( MSG_NORMAL, "ObjectServices::discover_object_instance():%d MOM HLA-Federation '%s' Instance-ID:%s\n",
                           __LINE__, name_str.c_str(), id_str.c_str() );

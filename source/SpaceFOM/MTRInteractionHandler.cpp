@@ -160,7 +160,7 @@ void MTRInteractionHandler::send_interaction(
 
    // Notify the parent interaction handler to send the interaction using
    // Receive Order (RO).
-   bool was_sent = InteractionHandler::send_interaction( rti_user_supplied_tag );
+   bool const was_sent = InteractionHandler::send_interaction( rti_user_supplied_tag );
 
    if ( was_sent ) {
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_INTERACTION ) ) {

@@ -682,7 +682,7 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
          if ( !is_changed() ) {
 
             // To be more efficient, we get the time once and share it.
-            int64_t wallclock_time = sleep_timer.time();
+            int64_t const wallclock_time = sleep_timer.time();
 
             if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();

@@ -46,6 +46,7 @@ NASA, Johnson Space Center\n
 // System includes.
 #include <cstdlib>
 #include <cstring>
+#include <iostream>
 #include <map>
 #include <ostream>
 #include <set>
@@ -263,8 +264,10 @@ void FedAmb::federationSynchronized(
 
    if ( !failedToSyncSet.empty() ) {
       FederateHandleSet::const_iterator iter;
-      string                            strIds, id;
+
+      string strIds;
       for ( iter = failedToSyncSet.begin(); iter != failedToSyncSet.end(); ++iter ) {
+         string id;
          StringUtilities::to_string( id, *iter );
          strIds += id;
          strIds += " ";
@@ -694,8 +697,9 @@ void FedAmb::discoverObjectInstance(
    wstring const       &objectInstanceName ) throw( FederateInternalError )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      string id_str, name_str;
+      string id_str;
       StringUtilities::to_string( id_str, objectInstance );
+      string name_str;
       StringUtilities::to_string( name_str, objectInstanceName );
       message_publish( MSG_NORMAL, "FedAmb::discoverObjectInstance():%d DISCOVERED '%s' Instance-ID:%s\n",
                        __LINE__, name_str.c_str(), id_str.c_str() );
@@ -703,8 +707,9 @@ void FedAmb::discoverObjectInstance(
 
    if ( object_service == NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-         string id_str, name_str;
+         string id_str;
          StringUtilities::to_string( id_str, objectInstance );
+         string name_str;
          StringUtilities::to_string( name_str, objectInstanceName );
          message_publish( MSG_NORMAL, "FedAmb::discoverObjectInstance():%d Unexpected \
 NULL ObjectServices! Can't do anything with discovered object '%s' Instance-ID:%s\n",
@@ -712,8 +717,9 @@ NULL ObjectServices! Can't do anything with discovered object '%s' Instance-ID:%
       }
    } else if ( !object_service->discover_object_instance( objectInstance, objectClass, objectInstanceName ) ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-         string id_str, name_str;
+         string id_str;
          StringUtilities::to_string( id_str, objectInstance );
+         string name_str;
          StringUtilities::to_string( name_str, objectInstanceName );
          message_publish( MSG_WARNING, "FedAmb::discoverObjectInstance():%d Object '%s' with Instance-ID:%s is UNKNOWN to me!\n",
                           __LINE__, name_str.c_str(), id_str.c_str() );
@@ -745,8 +751,9 @@ federate '%s'):%d calling 'discoverObjectInstance' to finish the discovery.\n",
 
    if ( object_service == NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-         string id_str, name_str;
+         string id_str;
          StringUtilities::to_string( id_str, objectInstance );
+         string name_str;
          StringUtilities::to_string( name_str, objectInstanceName );
          message_publish( MSG_NORMAL, "FedAmb::discoverObjectInstance():%d Unexpected \
 NULL ObjectServices! Can't do anything with discovered object '%s' Instance-ID:%s\n",
@@ -754,8 +761,9 @@ NULL ObjectServices! Can't do anything with discovered object '%s' Instance-ID:%
       }
    } else if ( !object_service->discover_object_instance( objectInstance, objectClass, objectInstanceName ) ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-         string id_str, name_str;
+         string id_str;
          StringUtilities::to_string( id_str, objectInstance );
+         string name_str;
          StringUtilities::to_string( name_str, objectInstanceName );
          message_publish( MSG_WARNING, "FedAmb::discoverObjectInstance():%d Object '%s' with Instance-ID:%s is UNKNOWN to me!\n",
                           __LINE__, name_str.c_str(), id_str.c_str() );
@@ -979,7 +987,7 @@ void FedAmb::receiveInteraction(
       message_publish( MSG_WARNING, "FedAmb::receiveInteraction():%d NULL ObjectServices!\n",
                        __LINE__ );
    } else {
-      Int64Time dummyTime;
+      Int64Time const dummyTime;
 
       if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          message_publish( MSG_WARNING, "FedAmb::receiveInteraction():%d\n",
@@ -1404,7 +1412,7 @@ void FedAmb::requestAttributeOwnershipAssumption(
       {
          // When auto_unlock_mutex goes out of scope it automatically unlocks the
          // mutex even if there is an exception.
-         MutexProtection auto_unlock_mutex( &trickhla_obj->push_mutex );
+         MutexProtection const auto_unlock_mutex( &trickhla_obj->push_mutex );
 
          // Mark which attributes we can accept ownership of.
          for ( iter = offeredAttributes.begin(); iter != offeredAttributes.end(); ++iter ) {

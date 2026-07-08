@@ -103,7 +103,7 @@ void PhysicalInterfaceBase::base_config(
    bool const         publish,
    bool const         subscribe )
 {
-   string interface_full_name_str = sim_obj_name + "." + interface_pkg_name;
+   string const interface_full_name_str = sim_obj_name + "." + interface_pkg_name;
 
    // Make sure that the TrickHLA::Object pointer is not NULL.
    // If NULL, this it means this object has not been allocated yet.

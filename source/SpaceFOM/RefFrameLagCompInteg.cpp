@@ -110,12 +110,10 @@ void RefFrameLagCompInteg::send_lag_compensation()
 #endif
    }
 
-   double begin_t = get_scenario_time();
-   double end_t;
-
    // Save the compensation time step.
-   this->compensate_dt = get_lookahead().get_time_in_seconds();
-   end_t               = begin_t + this->compensate_dt;
+   this->compensate_dt  = get_lookahead().get_time_in_seconds();
+   double const begin_t = get_scenario_time();
+   double const end_t   = begin_t + this->compensate_dt;
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
@@ -175,8 +173,8 @@ void RefFrameLagCompInteg::receive_lag_compensation()
 #endif
    }
 
-   double end_t  = get_scenario_time();
-   double data_t = ref_frame.get_time();
+   double const end_t  = get_scenario_time();
+   double const data_t = ref_frame.get_time();
 
    // Save the compensation time step.
    this->compensate_dt = end_t - data_t;

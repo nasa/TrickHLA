@@ -50,7 +50,6 @@ NASA, Johnson Space Center\n
 
 // Trick includes.
 #include "trick/CheckPointRestart.hh"
-#include "trick/CheckPointRestart_c_intf.hh"
 #include "trick/Clock.hh"
 #include "trick/exec_proto.h"
 #include "trick/message_proto.h"
@@ -650,7 +649,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
          if ( !execution_configuration->is_changed() ) {
 
             // To be more efficient, we get the time once and share it.
-            int64_t wallclock_time = sleep_timer.time();
+            int64_t const wallclock_time = sleep_timer.time();
 
             if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
@@ -1006,7 +1005,7 @@ void ExecutionControlBase::convert_data_before_checkpoint()
    SyncPointManagerBase::convert_data_before_checkpoint();
 
    // Convert the ExecutionConfiguration data.
-   if ( execution_configuration != NULL ){
+   if ( execution_configuration != NULL ) {
       execution_configuration->convert_data_before_checkpoint();
    }
 
@@ -1028,7 +1027,7 @@ void ExecutionControlBase::restore_data_after_checkpoint()
    SyncPointManagerBase::restore_data_after_checkpoint();
 
    // Restoring the ExecutionConfiguration data.
-   if ( execution_configuration != NULL ){
+   if ( execution_configuration != NULL ) {
       execution_configuration->restore_data_after_checkpoint();
    }
 
@@ -1050,7 +1049,7 @@ void ExecutionControlBase::free_converted_data_for_checkpoint()
    SyncPointManagerBase::free_converted_data_for_checkpoint();
 
    // Freeing the ExecutionConfiguration checkpoint data.
-   if ( execution_configuration != NULL ){
+   if ( execution_configuration != NULL ) {
       execution_configuration->free_converted_data_for_checkpoint();
    }
 
@@ -1068,11 +1067,11 @@ wstring ExecutionControlBase::generate_save_label()
    // FIXME: Check for time management to insure that there is a granted time.
 
    // Get the current HLA Logical Time.
-   int64_t granted_time = time_management_service->get_granted_time().get_base_time();
+   int64_t const granted_time = time_management_service->get_granted_time().get_base_time();
 
    // Formulate the save label based on the Federation Execution name and the
    // current HLA logical time.
-   std::string save_label_str = std::to_string( granted_time );
+   std::string const save_label_str = std::to_string( granted_time );
 
    // Convert the label to a wide string.
    wstring save_label_wstr;
@@ -1331,8 +1330,9 @@ void ExecutionControlBase::save_at_HLT(
    // If Federation SaveRestore is not supported then return without action.
    if ( !is_save_and_restore_supported() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         string label_str, time_str;
+         string label_str;
          StringUtilities::to_string( label_str, label );
+         string time_str;
          StringUtilities::to_string( time_str, time.toString() );
          ostringstream errmsg;
          errmsg << "ExecutionControlBase::save_at_HLT():" << __LINE__
@@ -1662,7 +1662,7 @@ std::string const ExecutionControlBase::map_label_to_checkpoint_file_name(
 void ExecutionControlBase::checkpoint_before()
 {
    // Don't try to convert data while in initialization.
-   if ( exec_get_mode() == Initialization ){
+   if ( exec_get_mode() == Initialization ) {
       return;
    }
 
@@ -1674,7 +1674,7 @@ void ExecutionControlBase::checkpoint_before()
    }
 
    // Convert the federate data.
-   if ( federate != NULL ){
+   if ( federate != NULL ) {
       federate->convert_data_before_checkpoint();
    }
 
@@ -1747,7 +1747,7 @@ void ExecutionControlBase::checkpoint_restart()
           << __LINE__ << ": Preparing to load a checkpoint." << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
-   
+
    // NOTE: We DO NOT call the restore_data_after_checkpoint() functions here.
    // These will be handled in the HLA Restore code.
 

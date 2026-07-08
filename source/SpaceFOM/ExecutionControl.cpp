@@ -746,7 +746,7 @@ void ExecutionControl::role_determination_process()
             if ( !this->late_joiner_determined ) { // cppcheck-suppress [knownConditionTrueFalse]
 
                // To be more efficient, we get the time once and share it.
-               int64_t wallclock_time = sleep_timer.time();
+               int64_t const wallclock_time = sleep_timer.time();
 
                if ( sleep_timer.timeout( wallclock_time ) ) {
                   sleep_timer.reset();
@@ -935,7 +935,7 @@ void ExecutionControl::designated_late_joiner_init_process()
       if ( !is_sync_point_announced( SpaceFOM::INIT_COMPLETED_SYNC_POINT ) ) {
 
          // To be more efficient, we get the time once and share it.
-         int64_t wallclock_time = sleep_timer.time();
+         int64_t const wallclock_time = sleep_timer.time();
 
          if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
@@ -1917,9 +1917,9 @@ bool ExecutionControl::process_execution_control_updates()
    }
 
    // Translate the native ExCO mode values into ExecutionModeEnum.
-   ExecutionModeEnum exco_cem              = execution_mode_int16_to_enum( ExCO->current_execution_mode );
-   ExecutionModeEnum exco_nem              = execution_mode_int16_to_enum( ExCO->next_execution_mode );
-   ExecutionModeEnum current_exection_mode = from_execution_control_enum( this->current_execution_control_mode );
+   ExecutionModeEnum const exco_cem              = execution_mode_int16_to_enum( ExCO->current_execution_mode );
+   ExecutionModeEnum const exco_nem              = execution_mode_int16_to_enum( ExCO->next_execution_mode );
+   ExecutionModeEnum const current_exection_mode = from_execution_control_enum( this->current_execution_control_mode );
 
    // Check for consistency between ExecutionControl and ExCO ExecutionMode.
    if ( exco_cem != current_exection_mode ) {
@@ -3044,7 +3044,7 @@ void ExecutionControl::receive_root_ref_frame()
          if ( !rrf_object->is_changed() ) {
 
             // To be more efficient, we get the time once and share it.
-            int64_t wallclock_time = sleep_timer.time();
+            int64_t const wallclock_time = sleep_timer.time();
 
             if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
@@ -3168,7 +3168,7 @@ void ExecutionControl::set_time_padding(
       DebugHandler::terminate( errmsg.str() );
    }
 
-   int64_t padding_base_time = Int64BaseTime::to_base_time( t );
+   int64_t const padding_base_time = Int64BaseTime::to_base_time( t );
 
    // At a minimum the Padding time must be >= LCTS.
    if ( padding_base_time < this->least_common_time_step ) {

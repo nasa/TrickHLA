@@ -47,7 +47,7 @@ def main():
                                      formatter_class = argparse.RawDescriptionHelpFormatter, \
                                      description = 'Scan the TrickHLA source code using clang-tidy.', \
                                      epilog = textwrap.dedent( '''\n
-Examples:\n  clang_tidy_code --TrickHLA --SpaceFOM -v --check-includes --hla4\n  clang_tidy_code --TrickHLA --SpaceFOM -v --check-includes --check-recommended --hla4''' ) )
+Examples:\n  clang_tidy_code --TrickHLA --SpaceFOM -v --check-includes --check-const-correctness --hla4\n  clang_tidy_code --TrickHLA --SpaceFOM -v --check-includes --check-recommended --hla4''' ) )
 
    parser.add_argument( '--apply-fixes', \
                         help = 'Apply fixes.', \
@@ -85,6 +85,9 @@ Examples:\n  clang_tidy_code --TrickHLA --SpaceFOM -v --check-includes --hla4\n 
    parser.add_argument( '--check-bugprone', \
                         help = 'Check for bugprone.', \
                         action = 'store_true', dest = 'check_bugprone' )
+   parser.add_argument( '--check-const-correctness', \
+                        help = 'Check for const-correctness.', \
+                        action = 'store_true', dest = 'check_const_correctness' )
    parser.add_argument( '--check-cppcoreguidelines', \
                         help = 'Check for cppcoreguidelines.', \
                         action = 'store_true', dest = 'check_cppcoreguidelines' )
@@ -320,15 +323,15 @@ Examples:\n  clang_tidy_code --TrickHLA --SpaceFOM -v --check-includes --hla4\n 
 
    # TrickHLA Encoding
    if args.process_all or args.process_TrickHLA_encoding:
-      source_dirs.extend ( ['./source/TrickHLA/encoding'] )
+      source_dirs.extend ( ['./source/TrickHLA/encoding/'] )
 
    # TrickHLA Time
    if args.process_all or args.process_TrickHLA_time:
-      source_dirs.extend ( ['./source/TrickHLA/time'] )
+      source_dirs.extend ( ['./source/TrickHLA/time/'] )
 
    # TrickHLA Utils
    if args.process_all or args.process_TrickHLA_utils:
-      source_dirs.extend ( ['./source/TrickHLA/utils'] )
+      source_dirs.extend ( ['./source/TrickHLA/utils/'] )
 
    # Add usr local include path if it exists.
    if os.path.isdir( '/usr/local/include' ):
@@ -340,6 +343,8 @@ Examples:\n  clang_tidy_code --TrickHLA --SpaceFOM -v --check-includes --hla4\n 
    checks = '--checks=\'-*,clang-diagnostic-*'
    if args.check_bugprone or args.check_all:
       checks += ',bugprone-*'
+   if args.check_const_correctness or args.check_all:
+      checks += ',misc-const-correctness,readability-isolate-declaration'
    if args.check_cppcoreguidelines or args.check_all:
       checks += ',cppcoreguidelines-*'
    if args.check_includes or args.check_all:
@@ -352,7 +357,7 @@ Examples:\n  clang_tidy_code --TrickHLA --SpaceFOM -v --check-includes --hla4\n 
       checks += ',performance-*,misc-*,-misc-no-recursion,-misc-unused-parameters,readability-duplicate-include,readability-misleading-indentation,bugprone-assert-side-effect,bugprone-macro-repeated-side-effects,bugprone-infinite-loop,bugprone-macro-parentheses,bugprone-posix-return,bugprone-reserved-identifier,bugprone-signal-handler,bugprone-signed-char-misuse,bugprone-sizeof-expression,bugprone-branch-clone'
    if args.check_default or args.check_all:
       checks += ',performance-*,clang-analyzer-*,-clang-analyzer-security.insecureAPI.*'
-   if not ( args.check_bugprone or args.check_cppcoreguidelines or args.check_includes or args.check_misc or args.check_portability or args.check_default ):
+   if not ( args.check_bugprone or args.check_const_correctness or args.check_cppcoreguidelines or args.check_includes or args.check_misc or args.check_portability or args.check_default ):
       checks += ',performance-*,clang-analyzer-*,-clang-analyzer-security.insecureAPI.*'
    if args.disable_performance_avoid_endl:
       checks += ',-performance-avoid-endl'

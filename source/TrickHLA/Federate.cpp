@@ -619,7 +619,7 @@ void Federate::create_RTI_ambassador_and_connect()
    // will allow the JVM to start up its threads without the SIGFPE set. See
    // Pitch RTI bug case #9704.
    // TODO: Is this still necessary?
-   bool trick_sigfpe_is_set = ( exec_get_trap_sigfpe() > 0 );
+   bool const trick_sigfpe_is_set = ( exec_get_trap_sigfpe() > 0 );
    if ( trick_sigfpe_is_set ) {
       exec_set_trap_sigfpe( false );
    }
@@ -892,7 +892,7 @@ void Federate::remove_joined_federate(
    {
       // When auto_unlock_mutex goes out of scope it automatically unlocks the
       // mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &joined_federate_mutex );
+      MutexProtection const auto_unlock_mutex( &joined_federate_mutex );
 
       // Find the federate in the joined federate map and remove it.
       KnownFederateMap::iterator iter;
@@ -1124,7 +1124,7 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
    //
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &joined_federate_mutex );
+   MutexProtection const auto_unlock_mutex( &joined_federate_mutex );
 
    // Add the federate handle if we don't know about it already.
    if ( !is_joined_federate_by_object_handle( handle ) ) {
@@ -1223,8 +1223,9 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
       joined_federate.federate_handle = decode_federate_handle( attr_iter->second );
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         string handle_str, fed_handle;
+         string handle_str;
          StringUtilities::to_string( handle_str, handle );
+         string fed_handle;
          StringUtilities::to_string( fed_handle, joined_federate.federate_handle );
          message_publish( MSG_NORMAL, "Federate::set_MOM_HLAfederate_instance_attributes():%d Federate-OID:%s Federate-ID:%s\n",
                           __LINE__, handle_str.c_str(), fed_handle.c_str() );
@@ -1243,7 +1244,7 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
    {
       // When auto_unlock_mutex goes out of scope it automatically unlocks the
       // mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &joined_federate_mutex );
+      MutexProtection const auto_unlock_mutex( &joined_federate_mutex );
 
       // Clear the list of joined federates.
       joined_federates_map.clear();
@@ -1279,17 +1280,20 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
             fed_mom_instance_name_ws = known_fed.MOM_instance_name;
 
             // Get the instance handle based on the instance name.
-            ObjectInstanceHandle fed_mom_obj_instance_hdl =
+            ObjectInstanceHandle const fed_mom_obj_instance_hdl =
                rti_amb->getObjectInstanceHandle( known_fed.MOM_instance_name );
 
             // Add the federate instance handle.
             add_joined_federate( fed_mom_obj_instance_hdl );
 
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-               string id_str, mom_str, name_str, type_str;
+               string id_str;
                StringUtilities::to_string( id_str, fed_mom_obj_instance_hdl );
+               string mom_str;
                StringUtilities::to_string( mom_str, known_fed.MOM_instance_name );
+               string name_str;
                StringUtilities::to_string( name_str, known_fed.name );
+               string type_str;
                StringUtilities::to_string( type_str, known_fed.type );
                summary << endl
                        << "    Federate:'" << name_str
@@ -1526,7 +1530,7 @@ bool Federate::check_joined_federates_match()
    {
       // When auto_unlock_mutex goes out of scope it automatically unlocks the
       // mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &joined_federate_mutex );
+      MutexProtection const auto_unlock_mutex( &joined_federate_mutex );
 
       // Iterate through the joined federates map checking for a match.
       for ( auto const &map_entry : joined_federates_map ) {
@@ -1544,7 +1548,7 @@ bool Federate::check_joined_federates_match()
          }
 
          // Iterate through the federates in Federation list.
-         for ( FederateHandle federate_handle : federate_handles ) {
+         for ( FederateHandle federate_handle : federate_handles ) { // NOLINT(misc-const-correctness)
 
             // Check for matching federate handle.
             if ( federate_handle == joined_federate.federate_handle ) { // cppcheck-suppress [useStlAlgorithm]
@@ -1589,7 +1593,7 @@ bool Federate::verify_joined_federates()
    {
       // When auto_unlock_mutex goes out of scope it automatically unlocks the
       // mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &joined_federate_mutex );
+      MutexProtection const auto_unlock_mutex( &joined_federate_mutex );
 
       // Initial check is that the number of federates is the same.
       if ( federate_handles.size() != joined_federates_map.size() ) {
@@ -1606,7 +1610,7 @@ bool Federate::verify_joined_federates()
       }
 
       // Iterate through the federates in Federation list.
-      for ( FederateHandle federate_handle : federate_handles ) {
+      for ( FederateHandle federate_handle : federate_handles ) { // NOLINT(misc-const-correctness)
 
          bool found = false;
 
@@ -1797,7 +1801,7 @@ void Federate::update_joined_federates()
 
       // Iterate through the federates in Federation set to see if they have a
       // counterpart in the joined federates map.
-      for ( FederateHandle fed_handle : federate_handles ) {
+      for ( FederateHandle fed_handle : federate_handles ) { // NOLINT(misc-const-correctness)
          if ( !is_joined_federate_by_federate_handle( fed_handle ) ) {
             all_found = false;
          }
@@ -2013,7 +2017,7 @@ string Federate::wait_for_required_federates_to_join()
       {
          // When auto_unlock_mutex goes out of scope it automatically unlocks the
          // mutex even if there is an exception.
-         MutexProtection auto_unlock_mutex( &joined_federate_mutex );
+         MutexProtection const auto_unlock_mutex( &joined_federate_mutex );
 
          // Check for the possibility that a matched federate may have resigned.
          for ( RTI1516_NAMESPACE::ObjectInstanceHandle const &oih : matched_federates ) {
@@ -2108,7 +2112,7 @@ string Federate::wait_for_required_federates_to_join()
 
             // Summarize the required federates first.
             int cnt = 0;
-            for ( KnownFederate &known_fed : known_federates ) {
+            for ( KnownFederate &known_fed : known_federates ) { // NOLINT(misc-const-correctness)
                ++cnt;
                std::string know_fed_str;
                StringUtilities::to_string( know_fed_str, known_fed.name );
@@ -2161,7 +2165,7 @@ string Federate::wait_for_required_federates_to_join()
       if ( !this->all_federates_joined ) {
 
          // To be more efficient, we get the time once and share it.
-         int64_t wallclock_time = sleep_timer.time();
+         int64_t const wallclock_time = sleep_timer.time();
 
          if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
@@ -2407,7 +2411,7 @@ void Federate::get_joined_federate_handle_set( RTI1516_NAMESPACE::FederateHandle
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &joined_federate_mutex );
+   MutexProtection const auto_unlock_mutex( &joined_federate_mutex );
 
    // Clear the set of federate handles for the joined federates.
    handle_set.clear();
@@ -2420,7 +2424,7 @@ void Federate::get_joined_federate_handle_set( RTI1516_NAMESPACE::FederateHandle
          map_iter != joined_federates_map.end(); ++map_iter ) {
 
       // Get the associate joined federate reference.
-      KnownFederate &joined_federate = static_cast< KnownFederate & >( map_iter->second );
+      KnownFederate const &joined_federate = static_cast< KnownFederate & >( map_iter->second );
 
       // Grab the federate handle from the joined federate entry.
       handle_set.insert( joined_federate.federate_handle );
@@ -3056,7 +3060,7 @@ void Federate::ask_MOM_for_federation_info()
    {
       // When auto_unlock_mutex goes out of scope it automatically unlocks the
       // mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &federate_update_mutex );
+      MutexProtection const auto_unlock_mutex( &federate_update_mutex );
 
       // Clear the list of federates.
       federate_handles.clear();
@@ -3472,7 +3476,7 @@ void Federate::freeze_check_mode()
       return;
    }
 
-   SIM_MODE exec_mode = exec_get_mode();
+   SIM_MODE const exec_mode = exec_get_mode();
    if ( exec_mode == Initialization ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          message_publish( MSG_NORMAL, "Federate::check_freeze():%d Pass first Time.\n",
@@ -3635,8 +3639,9 @@ void Federate::save_at_HLT(
    wstring const                        &label,
    RTI1516_NAMESPACE::LogicalTime const &time )
 {
-   string label_str, time_str;
+   string label_str;
    StringUtilities::to_string( label_str, label );
+   string time_str;
    StringUtilities::to_string( time_str, time.toString() );
 
    // FIXME: Need implementation!
@@ -3769,12 +3774,11 @@ void Federate::checkpoint_before()
           << __LINE__ << ": Preparing for a checkpoint." << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
-   
+
    // Delegate to the Execution Control specific implementation.
    if ( execution_control != NULL ) {
       execution_control->checkpoint_before();
    }
-
 }
 
 /*!
@@ -5324,7 +5328,7 @@ void Federate::ask_MOM_for_auto_provide_setting()
       if ( this->auto_provide_setting < 0 ) {
 
          // To be more efficient, we get the time once and share it.
-         int64_t wallclock_time = sleep_timer.time();
+         int64_t const wallclock_time = sleep_timer.time();
 
          if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
@@ -5352,7 +5356,7 @@ void Federate::ask_MOM_for_auto_provide_setting()
    unsubscribe_attributes( MOM_HLAfederation_class_handle, fedMomAttributes );
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      string auto_provide_status = get_auto_provide_status_string( auto_provide_setting );
+      string const auto_provide_status = get_auto_provide_status_string( auto_provide_setting );
       message_publish( MSG_NORMAL, "Federate::ask_MOM_for_auto_provide_setting():%d Auto-Provide:%s value:%d\n",
                        __LINE__, auto_provide_status.c_str(), auto_provide_setting );
    }
@@ -5368,7 +5372,7 @@ void Federate::enable_MOM_auto_provide_setting(
    this->auto_provide_setting = enable ? 1 : 0;
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      string auto_provide_status = get_auto_provide_status_string( auto_provide_setting );
+      string const auto_provide_status = get_auto_provide_status_string( auto_provide_setting );
       message_publish( MSG_NORMAL, "Federate::enable_MOM_auto_provide_setting():%d Auto-Provide:%s\n",
                        __LINE__, auto_provide_status.c_str() );
    }
@@ -5378,7 +5382,7 @@ void Federate::enable_MOM_auto_provide_setting(
    ParameterHandleValueMap param_values_map;
    try {
       // HLAautoProvide attribute is an HLAswitch, which is an HLAinteger32BE.
-      HLAinteger32BE auto_provide_encoder( auto_provide_setting );
+      HLAinteger32BE const auto_provide_encoder( auto_provide_setting );
 
       param_values_map[MOM_HLAautoProvide_param_handle] = auto_provide_encoder.encode();
 
@@ -5422,7 +5426,7 @@ void Federate::restore_orig_MOM_auto_provide_setting()
    // match the current setting.
    if ( auto_provide_setting != orig_auto_provide_setting ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         string auto_provide_status = get_auto_provide_status_string( orig_auto_provide_setting );
+         string const auto_provide_status = get_auto_provide_status_string( orig_auto_provide_setting );
          message_publish( MSG_NORMAL, "Federate::restore_orig_MOM_auto_provide_setting():%d Auto-Provide:%s value:%d\n",
                           __LINE__, auto_provide_status.c_str(),
                           orig_auto_provide_setting );
@@ -5515,7 +5519,7 @@ void Federate::set_MOM_HLAfederation_instance_attributes(
             DebugHandler::terminate( errmsg.str() );
          }
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-            string auto_provide_status = get_auto_provide_status_string( auto_provide_setting );
+            string const auto_provide_status = get_auto_provide_status_string( auto_provide_setting );
             message_publish( MSG_NORMAL, "Federate::set_MOM_HLAfederation_instance_attributes():%d Auto-Provide:%s value:%d\n",
                              __LINE__, auto_provide_status.c_str(),
                              auto_provide_setting );
@@ -5528,9 +5532,9 @@ void Federate::set_MOM_HLAfederation_instance_attributes(
          // HLAhandle is an HLAvariableArray encoding of element type HLAbyte.
          try {
 
-            HLAopaqueData      fed_handle_proto;
-            HLAvariableArray   feds_list( fed_handle_proto );
-            VariableLengthData encoded_fed_handle;
+            HLAopaqueData const      fed_handle_proto;
+            HLAvariableArray         feds_list( fed_handle_proto );
+            VariableLengthData const encoded_fed_handle;
 
             // Clear the federates in federation list.
             federate_handles.clear();
@@ -5542,8 +5546,8 @@ void Federate::set_MOM_HLAfederation_instance_attributes(
             for ( unsigned int iinc = 0; iinc < feds_list.size(); iinc++ ) {
 
                // Place the encoded federate handle data into a VariableLengthData.
-               HLAopaqueData const &opaqueData = dynamic_cast< HLAopaqueData const & >( feds_list.get( iinc ) );
-               VariableLengthData   encoded_fed_data( opaqueData.get(), opaqueData.dataLength() );
+               HLAopaqueData const     &opaqueData = dynamic_cast< HLAopaqueData const & >( feds_list.get( iinc ) );
+               VariableLengthData const encoded_fed_data( opaqueData.get(), opaqueData.dataLength() );
 
                // Decode the federate handle and insert it into the federates
                // in Federation handle set.
@@ -5597,7 +5601,7 @@ void Federate::restore_federate_handles_from_MOM()
    {
       // When auto_unlock_mutex goes out of scope it automatically unlocks the
       // mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &joined_federate_mutex );
+      MutexProtection const auto_unlock_mutex( &joined_federate_mutex );
 
       // Clear the list of joined federates.
       joined_federates_map.clear();
@@ -5616,7 +5620,7 @@ void Federate::restore_federate_handles_from_MOM()
    requestedAttributes.insert( MOM_HLAfederate_handle );
    request_attribute_update( MOM_HLAfederate_class_handle, requestedAttributes );
 
-   bool         all_found = false;
+   bool const   all_found = false;
    SleepTimeout print_timer;
    SleepTimeout sleep_timer;
 
@@ -5628,7 +5632,7 @@ void Federate::restore_federate_handles_from_MOM()
       {
          // When auto_unlock_mutex goes out of scope it automatically unlocks the
          // mutex even if there is an exception.
-         MutexProtection auto_unlock_mutex( &joined_federate_mutex );
+         MutexProtection const auto_unlock_mutex( &joined_federate_mutex );
 
          // FIXME: Is this sufficient?  Do we need to check for the needed federates?
          // We should probably be using the update_joined_federates here.
@@ -5636,7 +5640,7 @@ void Federate::restore_federate_handles_from_MOM()
          // all_found = ( joined_federates_map.size() >= save_restore_service.running_feds_count );
       }
 
-      if ( !all_found ) { // cppcheck-suppress [knownConditionTrueFalse]
+      if ( !all_found ) {
 
          // Check for shutdown.
          check_for_shutdown_with_termination();
@@ -5644,7 +5648,7 @@ void Federate::restore_federate_handles_from_MOM()
          sleep_timer.sleep();
 
          // To be more efficient, we get the time once and share it.
-         int64_t wallclock_time = sleep_timer.time();
+         int64_t const wallclock_time = sleep_timer.time();
 
          if ( sleep_timer.timeout( wallclock_time ) ) {
             sleep_timer.reset();
@@ -5666,7 +5670,7 @@ void Federate::restore_federate_handles_from_MOM()
                              __LINE__ );
          }
       }
-   } while ( !all_found ); // cppcheck-suppress [knownConditionTrueFalse]
+   } while ( !all_found );
 
    // Only unsubscribe from the attributes we subscribed to in this function.
    unsubscribe_attributes( MOM_HLAfederate_class_handle, fedMomAttributes );
@@ -5702,7 +5706,7 @@ void Federate::rebuild_federate_handles(
 
       VariableLengthData const &encoded_federate_handle = static_cast< VariableLengthData const & >( attr_iter->second );
 
-      FederateHandle fed_handle = decode_federate_handle( encoded_federate_handle );
+      FederateHandle const fed_handle = decode_federate_handle( encoded_federate_handle );
 
       // Concurrency critical code section because joined-federate state is changed
       // by FedAmb callback to the Federate::set_MOM_HLAfederate_instance_attributes()
@@ -5710,15 +5714,16 @@ void Federate::rebuild_federate_handles(
       {
          // When auto_unlock_mutex goes out of scope it automatically unlocks the
          // mutex even if there is an exception.
-         MutexProtection auto_unlock_mutex( &joined_federate_mutex );
+         MutexProtection const auto_unlock_mutex( &joined_federate_mutex );
 
          // Add this FederateHandle to the set of joined federates.
          joined_federate.federate_handle = fed_handle;
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         string id_str, fed_id;
+         string id_str;
          StringUtilities::to_string( id_str, instance_hndl );
+         string fed_id;
          StringUtilities::to_string( fed_id, fed_handle );
          message_publish( MSG_NORMAL, "Federate::rebuild_federate_handles():%d Federate OID:%s Federate-ID:%s\n",
                           __LINE__, id_str.c_str(), fed_id.c_str() );
@@ -5738,7 +5743,7 @@ void Federate::rebuild_federate_handles(
 bool Federate::is_a_required_startup_federate(
    wstring const &fed_name )
 {
-   wstring required_fed_name;
+   wstring const required_fed_name;
    for ( size_t i = 0; i < this->known_federates.size(); ++i ) {
       if ( known_federates[i].required ) {
          if ( fed_name == known_federates[i].name ) { // found an exact match
@@ -5747,7 +5752,7 @@ bool Federate::is_a_required_startup_federate(
             // look for instance attributes of a required object. to do this,
             // check if the "required federate name" is found inside the supplied
             // federate name.
-            size_t found = fed_name.find( required_fed_name );
+            size_t const found = fed_name.find( required_fed_name );
             if ( found != wstring::npos ) {
                // found the "required federate name" inside the supplied federate name
                return true;

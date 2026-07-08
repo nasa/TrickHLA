@@ -241,7 +241,7 @@ void ExecutionConfiguration::pack()
       msg << "===================================================" << endl;
    }
 
-   double terminate_time = exec_get_terminate_time();
+   double const terminate_time = exec_get_terminate_time();
 
    // Set the stop/termination time of the Trick simulation based on the
    // run_duration setting.
@@ -271,8 +271,9 @@ void ExecutionConfiguration::pack()
    this->run_duration_base_time = Int64BaseTime::to_base_time( this->run_duration );
 
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-      string owner_str, required_feds_str;
+      string owner_str;
       StringUtilities::to_string( owner_str, owner );
+      string required_feds_str;
       StringUtilities::to_string( required_feds_str, required_federates );
       msg << "TrickHLA::ExecutionConfiguration::pack():" << __LINE__ << endl
           << "\tObject-Name:'" << object->get_name() << "'" << endl
@@ -311,8 +312,9 @@ void ExecutionConfiguration::unpack()
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-      string owner_str, required_feds_str;
+      string owner_str;
       StringUtilities::to_string( owner_str, owner );
+      string required_feds_str;
       StringUtilities::to_string( required_feds_str, required_federates );
       msg << "TrickHLA::ExecutionConfiguration::unpack():" << __LINE__ << endl
           << "\tObject-Name:'" << object->get_name() << "'" << endl
@@ -344,8 +346,9 @@ void ExecutionConfiguration::setup_ref_attributes(
 void ExecutionConfiguration::print_execution_configuration() const
 {
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-      string owner_str, required_feds_str;
+      string owner_str;
       StringUtilities::to_string( owner_str, owner );
+      string required_feds_str;
       StringUtilities::to_string( required_feds_str, required_federates );
       ostringstream msg;
       msg << endl

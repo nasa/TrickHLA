@@ -266,7 +266,7 @@ void ExecutionControl::initialize()
       // The software frame is set from the Least Common Time Step.
       // For the Master federate the Trick simulation software frame must
       // match the Least Common Time Step (LCTS).
-      double software_frame_time = Int64BaseTime::to_seconds( this->least_common_time_step );
+      double const software_frame_time = Int64BaseTime::to_seconds( this->least_common_time_step );
       exec_set_software_frame( software_frame_time );
    }
 
@@ -926,7 +926,7 @@ FederateJoinConstraintsEnum ExecutionControl::determine_if_late_joining_or_resto
          if ( !late_joiner_determined && !is_restore_determined() ) { // cppcheck-suppress [knownConditionTrueFalse]
 
             // To be more efficient, we get the time once and share it.
-            int64_t wallclock_time = sleep_timer.time();
+            int64_t const wallclock_time = sleep_timer.time();
 
             if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
@@ -1761,8 +1761,8 @@ bool ExecutionControl::process_execution_control_updates()
    }
 
    // Translate the native ExCO mode values into ExecutionModeEnum.
-   ExecutionModeEnum exco_cem = execution_mode_int16_to_enum( this->current_execution_mode );
-   ExecutionModeEnum exco_nem = execution_mode_int16_to_enum( this->next_execution_mode );
+   ExecutionModeEnum const exco_cem = execution_mode_int16_to_enum( this->current_execution_mode );
+   ExecutionModeEnum const exco_nem = execution_mode_int16_to_enum( this->next_execution_mode );
 
    // Check for consistency between ExecutionControl and ExCO.
    if ( exco_cem != execution_control_enum_to_int16( this->current_execution_control_mode ) ) {
@@ -2392,7 +2392,7 @@ void ExecutionControl::trigger_freeze_interaction(
  */
 bool ExecutionControl::check_freeze_time()
 {
-   bool do_immediate_freeze = check_scenario_freeze_time();
+   bool const do_immediate_freeze = check_scenario_freeze_time();
 
    if ( do_immediate_freeze ) {
       // Go to FREEZE at top of next frame.
@@ -2434,15 +2434,15 @@ bool ExecutionControl::check_scenario_freeze_time()
          // freeze-sim-time = current-sim-time + (freeze-scenario-time - current-scenario-time)
          // freeze-hla-time = granted-hla-time + (freeze-scenario-time - current-scenario-time)
 
-         FreezeTimeSet::const_iterator iter = freeze_scenario_times.begin();
+         FreezeTimeSet::const_iterator const iter = freeze_scenario_times.begin();
 
-         double freeze_time = *iter;
+         double const freeze_time = *iter;
 
          // Get the current Trick sim-time.
-         double curr_sim_time = get_sim_time();
+         double const curr_sim_time = get_sim_time();
 
          // Get the current scenario-time.
-         double curr_scenario_time = get_scenario_time();
+         double const curr_scenario_time = get_scenario_time();
 
          // Jump to Trick Freeze mode if the current scenario time is greater
          // than or equal to the requested freeze scenario time.
@@ -2455,7 +2455,7 @@ bool ExecutionControl::check_scenario_freeze_time()
             if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                // Determine the freeze simulation-time for the equivalent freeze
                // scenario-time.
-               double freeze_sim_time = curr_sim_time + ( freeze_time - curr_scenario_time );
+               double const freeze_sim_time = curr_sim_time + ( freeze_time - curr_scenario_time );
 
                ostringstream infomsg;
                infomsg << "IMSim::ExecutionControl::check_scenario_freeze_time():" << __LINE__
@@ -2508,7 +2508,7 @@ bool ExecutionControl::is_save_initiated()
          if ( !save_sync_point ) { // cppcheck-suppress [identicalInnerCondition]
 
             // To be more efficient, we get the time once and share it.
-            int64_t wallclock_time = sleep_timer.time();
+            int64_t const wallclock_time = sleep_timer.time();
 
             if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();

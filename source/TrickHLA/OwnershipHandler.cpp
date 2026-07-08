@@ -96,7 +96,7 @@ void OwnershipHandler::convert_data_before_checkpoint()
    // Lock the ownership mutex since we are processing the ownership list.
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &object->ownership_mutex );
+   MutexProtection const auto_unlock_mutex( &object->ownership_mutex );
 
    AttributeOwnershipMap::const_iterator owner_map_iter;
    THLAAttributeMap::const_iterator      attrib_iter;
@@ -131,7 +131,7 @@ void OwnershipHandler::convert_data_before_checkpoint()
       // Now, encode them to get checkpointed.
       int count = 0;
       for ( owner_map_iter = pull_requests.begin(); owner_map_iter != pull_requests.end(); ++owner_map_iter ) {
-         double            curr_time = owner_map_iter->first;
+         double const      curr_time = owner_map_iter->first;
          THLAAttributeMap *tMap      = owner_map_iter->second;
          for ( attrib_iter = tMap->begin(); attrib_iter != tMap->end(); ++attrib_iter ) {
             pull_items[count].time     = curr_time;
@@ -168,7 +168,7 @@ void OwnershipHandler::convert_data_before_checkpoint()
       // Now, encode them to get checkpointed.
       int count = 0;
       for ( owner_map_iter = push_requests.begin(); owner_map_iter != push_requests.end(); ++owner_map_iter ) {
-         double            curr_time = owner_map_iter->first;
+         double const      curr_time = owner_map_iter->first;
          THLAAttributeMap *tMap      = owner_map_iter->second;
          for ( attrib_iter = tMap->begin(); attrib_iter != tMap->end(); ++attrib_iter ) {
             push_items[count].time     = curr_time;
@@ -187,15 +187,15 @@ void OwnershipHandler::restore_data_after_checkpoint()
    // Lock the ownership mutex since we are processing the ownership list.
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &object->ownership_mutex );
+   MutexProtection const auto_unlock_mutex( &object->ownership_mutex );
 
    // Decode all the ownership-items in the pull_items.
    if ( pull_items_cnt > 0 ) {
 
       for ( int count = 0; count < pull_items_cnt; ++count ) {
 
-         double time    = pull_items[count].time;
-         ownership_iter = pull_requests.find( time );
+         double const time = pull_items[count].time;
+         ownership_iter    = pull_requests.find( time );
 
          // Determine if there is an existing attribute map for the time. If not, add one.
          if ( ownership_iter == pull_requests.end() ) {
@@ -223,8 +223,8 @@ void OwnershipHandler::restore_data_after_checkpoint()
 
       for ( int count = 0; count < push_items_cnt; ++count ) {
 
-         double time    = push_items[count].time;
-         ownership_iter = push_requests.find( time );
+         double const time = push_items[count].time;
+         ownership_iter    = push_requests.find( time );
 
          // Determine if there is an existing attribute map for the time. If not, add one.
          if ( ownership_iter == push_requests.end() ) {
@@ -361,10 +361,10 @@ void OwnershipHandler::pull_ownership(
    // Lock the ownership mutex since we are processing the ownership list.
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &object->ownership_mutex );
+   MutexProtection const auto_unlock_mutex( &object->ownership_mutex );
 
    // Find the attribute map for the specified time.
-   AttributeOwnershipMap::const_iterator attr_map_iter = pull_requests.find( time );
+   AttributeOwnershipMap::const_iterator const attr_map_iter = pull_requests.find( time );
 
    // Determine if there is an existing attribute map for the time, if not add one.
    if ( attr_map_iter == pull_requests.end() ) {
@@ -374,7 +374,7 @@ void OwnershipHandler::pull_ownership(
       attr_map = attr_map_iter->second;
    }
 
-   int        attr_cnt   = object->get_attribute_count();
+   int const  attr_cnt   = object->get_attribute_count();
    Attribute *attributes = object->get_attributes();
 
    // The user has requested to pull the ownership of all the attributes.
@@ -382,7 +382,7 @@ void OwnershipHandler::pull_ownership(
 
       // Use the Attribute FOM name as the key instead of the AttributeHandle
       // because the handle may not have been initialized yet.
-      string key( attributes[i].get_FOM_name() );
+      string const key( attributes[i].get_FOM_name() );
 
       // Add the attribute to the map.
       attr_map->insert( make_pair( key, &attributes[i] ) );
@@ -419,10 +419,10 @@ void OwnershipHandler::pull_ownership(
    // Lock the ownership mutex since we are processing the ownership list.
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &object->ownership_mutex );
+   MutexProtection const auto_unlock_mutex( &object->ownership_mutex );
 
    // Find the attribute map for the specified time.
-   AttributeOwnershipMap::const_iterator attr_map_iter = pull_requests.find( time );
+   AttributeOwnershipMap::const_iterator const attr_map_iter = pull_requests.find( time );
 
    // Determine if there is an existing attribute map for the time, if not add one.
    if ( attr_map_iter == pull_requests.end() ) {
@@ -434,7 +434,7 @@ void OwnershipHandler::pull_ownership(
 
    // Use the Attribute FOM name as the key instead of the AttributeHandle
    // because it may not have been initialized yet.
-   string key( attribute->get_FOM_name() );
+   string const key( attribute->get_FOM_name() );
 
    // Add the attribute to the map.
    attr_map->insert( make_pair( key, attribute ) );
@@ -464,10 +464,10 @@ void OwnershipHandler::push_ownership(
    // Lock the ownership mutex since we are processing the ownership list.
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &object->ownership_mutex );
+   MutexProtection const auto_unlock_mutex( &object->ownership_mutex );
 
    // Find the attribute map for the specified time.
-   AttributeOwnershipMap::const_iterator attr_map_iter = push_requests.find( time );
+   AttributeOwnershipMap::const_iterator const attr_map_iter = push_requests.find( time );
 
    // Determine if there is an existing attribute map for the time, if not add one.
    if ( attr_map_iter == push_requests.end() ) {
@@ -477,7 +477,7 @@ void OwnershipHandler::push_ownership(
       attr_map = attr_map_iter->second;
    }
 
-   int        attr_cnt   = object->get_attribute_count();
+   int const  attr_cnt   = object->get_attribute_count();
    Attribute *attributes = object->get_attributes();
 
    // The user has requested to push the ownership of all the attributes.
@@ -485,7 +485,7 @@ void OwnershipHandler::push_ownership(
 
       // Use the Attribute FOM name as the key instead of the AttribyteHandle
       // because it may not have been initialized yet.
-      string key( attributes[i].get_FOM_name() );
+      string const key( attributes[i].get_FOM_name() );
 
       // Add the attribute to the map.
       attr_map->insert( make_pair( key, &attributes[i] ) );
@@ -522,10 +522,10 @@ void OwnershipHandler::push_ownership(
    // Lock the ownership mutex since we are processing the ownership list.
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &object->ownership_mutex );
+   MutexProtection const auto_unlock_mutex( &object->ownership_mutex );
 
    // Find the attribute map for the specified time.
-   AttributeOwnershipMap::const_iterator attr_map_iter = push_requests.find( time );
+   AttributeOwnershipMap::const_iterator const attr_map_iter = push_requests.find( time );
 
    // Determine if there is an existing attribute map for the time, if not add one.
    if ( attr_map_iter == push_requests.end() ) {
@@ -537,7 +537,7 @@ void OwnershipHandler::push_ownership(
 
    // Use the Attribute FOM name as the key instead of the AttributeHandle
    // because it may not have been initialized yet.
-   string key( attribute->get_FOM_name() );
+   string const key( attribute->get_FOM_name() );
 
    // Add the attribute to the map.
    attr_map->insert( make_pair( key, attribute ) );

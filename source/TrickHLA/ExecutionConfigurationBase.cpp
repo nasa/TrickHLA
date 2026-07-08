@@ -168,7 +168,7 @@ void ExecutionConfigurationBase::reset_ownership_states()
          // All the simulation configuration attributes must be configured
          // for initialization.
          if ( ( attributes[i].get_configuration() & CONFIG_INITIALIZE ) != CONFIG_INITIALIZE ) {
-            int config = attributes[i].get_configuration() + CONFIG_INITIALIZE;
+            int const config = attributes[i].get_configuration() + CONFIG_INITIALIZE;
             attributes[i].set_configuration( (DataUpdateEnum)config );
          }
 
@@ -226,10 +226,10 @@ void ExecutionConfigurationBase::wait_for_registration()
 
    Federate *federate = get_federate();
 
-   int  obj_reg_cnt   = 0;
-   bool print_summary = DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG );
-   bool any_unregistered_obj;
-   int  total_obj_cnt = 1;
+   int       obj_reg_cnt   = 0;
+   bool      print_summary = DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG );
+   bool      any_unregistered_obj;
+   int const total_obj_cnt = 1;
 
    SleepTimeout print_timer;
    SleepTimeout sleep_timer;
@@ -290,16 +290,16 @@ void ExecutionConfigurationBase::wait_for_registration()
       any_unregistered_obj = ( obj_reg_cnt < total_obj_cnt );
 
       // Wait a little while to allow the objects to be registered.
-      if ( any_unregistered_obj ) { // cppcheck-suppress [knownConditionTrueFalse]
+      if ( any_unregistered_obj ) {
          sleep_timer.sleep();
 
          // Check again to determine if we have any unregistered objects.
-         any_unregistered_obj = ( obj_reg_cnt < total_obj_cnt ); // cppcheck-suppress [redundantAssignment]
+         any_unregistered_obj = ( obj_reg_cnt < total_obj_cnt ); // cppcheck-suppress [redundantAssignment,knownConditionTrueFalse]
 
-         if ( any_unregistered_obj ) { // cppcheck-suppress [knownConditionTrueFalse,unmatchedSuppression]
+         if ( any_unregistered_obj ) { // cppcheck-suppress [knownConditionTrueFalse]
 
             // To be more efficient, we get the time once and share it.
-            int64_t wallclock_time = sleep_timer.time();
+            int64_t const wallclock_time = sleep_timer.time();
 
             if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();
@@ -355,7 +355,7 @@ bool ExecutionConfigurationBase::wait_for_update() // RETURN: -- None.
          if ( !is_changed() ) {
 
             // To be more efficient, we get the time once and share it.
-            int64_t wallclock_time = sleep_timer.time();
+            int64_t const wallclock_time = sleep_timer.time();
 
             if ( sleep_timer.timeout( wallclock_time ) ) {
                sleep_timer.reset();

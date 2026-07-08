@@ -104,7 +104,7 @@ void RefFrameBase::base_config(
    bool const         publish_attr,
    bool const         subscribe_attr )
 {
-   string ref_frame_full_name = sim_obj_name + "." + ref_frame_pkg_name;
+   string const ref_frame_full_name = sim_obj_name + "." + ref_frame_pkg_name;
 
    // Make sure that the TrickHLA::Object pointer is not NULL.
    // If NULL, this it means this object has not been allocated yet.
@@ -208,8 +208,8 @@ void RefFrameBase::initialize()
    if ( this->packing_data.name.empty() ) {
       ostringstream errmsg;
 
-      string trick_name = ( name_attr != NULL ) ? name_attr->get_trick_name() : "";
-      string fom_name   = ( name_attr != NULL ) ? name_attr->get_FOM_name() : "";
+      string const trick_name = ( name_attr != NULL ) ? name_attr->get_trick_name() : "";
+      string const fom_name   = ( name_attr != NULL ) ? name_attr->get_FOM_name() : "";
 
       errmsg << "SpaceFOM::RefFrameBase::initialize():" << __LINE__
              << " ERROR: For RefFrame object '"
@@ -231,8 +231,8 @@ void RefFrameBase::initialize()
 
          ostringstream errmsg;
 
-         string trick_name = ( name_attr != NULL ) ? name_attr->get_trick_name() : "";
-         string fom_name   = ( name_attr != NULL ) ? name_attr->get_FOM_name() : "";
+         string const trick_name = ( name_attr != NULL ) ? name_attr->get_trick_name() : "";
+         string const fom_name   = ( name_attr != NULL ) ? name_attr->get_FOM_name() : "";
 
          errmsg << "SpaceFOM::RefFrameBase::initialize():" << __LINE__
                 << " WARNING: For RefFrame '" << this->packing_data.name
@@ -259,8 +259,8 @@ void RefFrameBase::initialize()
    if ( !this->packing_data.parent_name.empty() && ( this->parent_frame == NULL ) ) {
       ostringstream errmsg;
 
-      string trick_name = ( name_attr != NULL ) ? name_attr->get_trick_name() : "";
-      string fom_name   = ( name_attr != NULL ) ? name_attr->get_FOM_name() : "";
+      string const trick_name = ( name_attr != NULL ) ? name_attr->get_trick_name() : "";
+      string const fom_name   = ( name_attr != NULL ) ? name_attr->get_FOM_name() : "";
 
       errmsg << "SpaceFOM::RefFrameBase::initialize():" << __LINE__
              << " ERROR: For RefFrame object '"
