@@ -149,35 +149,40 @@ Examples:\n  check_code -s -o -v --exhaustive --hla4\n  check_code -i -o -v --ex
       arg_error = True
       TrickHLAMessage.warning( 'The \'-a\' and \'-x\' options are incompatible!' )
 
-   # User must specify one of -a, -c, -e, -i, -s, -u, or -x.
+	# Determine the HLA version to use for the output directory name.
+   if args.hla4:
+      hla_ver = 'hla4'
+   else:
+      hla_ver = 'hla3'
+
    required_arg_cnt = 0
    if args.autogen:
       # -a
       required_arg_cnt += 1
-      cppcheck_build_dir = cppcheck_output_dir + '/build_autogen'
+      cppcheck_build_dir = cppcheck_output_dir + '/build_autogen_' + hla_ver 
    if args.clean_gen_files:
       # -c
       required_arg_cnt += 1
    if args.check_errors_only:
       # -e
       required_arg_cnt += 1
-      cppcheck_build_dir = cppcheck_output_dir + '/build_check_errors_only'
+      cppcheck_build_dir = cppcheck_output_dir + '/build_check_errors_only_' + hla_ver
    if args.check_includes:
       # -i
       required_arg_cnt += 1
-      cppcheck_build_dir = cppcheck_output_dir + '/build_check_includes'
+      cppcheck_build_dir = cppcheck_output_dir + '/build_check_includes_' + hla_ver
    if args.check_all:
       # -s
       required_arg_cnt += 1
-      cppcheck_build_dir = cppcheck_output_dir + '/build_check_all'
+      cppcheck_build_dir = cppcheck_output_dir + '/build_check_all_' + hla_ver
    if args.check_for_unused:
       # -u
       required_arg_cnt += 1
-      cppcheck_build_dir = cppcheck_output_dir + '/build_check_unused'
+      cppcheck_build_dir = cppcheck_output_dir + '/build_check_unused_' + hla_ver
    if args.generate_xml:
       # -x
       required_arg_cnt += 1
-      cppcheck_build_dir = cppcheck_output_dir + '/build_generate_xml'
+      cppcheck_build_dir = cppcheck_output_dir + '/build_generate_xml_' + hla_ver
    if required_arg_cnt == 0:
       arg_error = True
       TrickHLAMessage.warning( 'You must specify one of \'-a\', \'-c\', \'-e\', \'-i\', \'-s\', \'-u\' or \'-x\'!' )
