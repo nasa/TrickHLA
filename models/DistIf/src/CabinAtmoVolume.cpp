@@ -200,9 +200,9 @@ void CabinAtmoVolume::convertNameForTmm(
    tokFrom = ".";
    tokTo   = "__";
    if ( !name.empty() ) {
-      std::string::size_type toLen = tokTo.length();
-      std::string::size_type frLen = tokFrom.length();
-      std::string::size_type loc   = 0;
+      std::string::size_type const toLen = tokTo.length();
+      std::string::size_type const frLen = tokFrom.length();
+      std::string::size_type       loc   = 0;
       while ( std::string::npos != ( loc = name.find( tokFrom, loc ) ) ) {
          name.replace( loc, frLen, tokTo );
          loc += toLen;
@@ -352,15 +352,15 @@ void CabinAtmoVolume::addMixture(
    double const  enthalpy,
    double const *moleFractions )
 {
-   double addedEnergy = moles * enthalpy;
+   double const addedEnergy = moles * enthalpy;
 
    if ( mIfDataValid and mIf.isInDemandRole() ) {
-      double previousEnergy = mIfInflowN * mIfInflowH;
+      double const previousEnergy = mIfInflowN * mIfInflowH;
       mIfMixOut.mix( mIfInflowN, moles, moleFractions );
       mIfInflowN += moles;
       mIfInflowH = ( previousEnergy + addedEnergy ) / std::max( mIfInflowN, DBL_EPSILON );
    } else {
-      double previousEnergy = mMoles * mEnthalpy;
+      double const previousEnergy = mMoles * mEnthalpy;
       mMixture.mix( mMoles, moles, moleFractions );
       mMoles += moles;
       limitMoles();

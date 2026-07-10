@@ -186,7 +186,7 @@ int EntityDynamics::integrate()
  */
 void EntityDynamics::load()
 {
-   int istep = trick_curr_integ->intermediate_step;
+   int const istep = trick_curr_integ->intermediate_step;
 
    // Load state array: position and velocity.
    // Translational position
@@ -235,7 +235,7 @@ void EntityDynamics::load()
  */
 void EntityDynamics::unload()
 {
-   int istep = trick_curr_integ->intermediate_step;
+   int const istep = trick_curr_integ->intermediate_step;
 
    // Translational position
    pe_data.state.pos[0] = trick_curr_integ->state_ws[istep][0];

@@ -928,7 +928,7 @@ bool Interaction::send(
    {
       // When auto_unlock_mutex goes out of scope it automatically unlocks the
       // mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &mutex );
+      MutexProtection const auto_unlock_mutex( &mutex );
 
       // Add all the parameter values to the map.
       for ( int i = 0; i < param_count; ++i ) {
@@ -1000,7 +1000,7 @@ bool Interaction::send(
    {
       // When auto_unlock_mutex goes out of scope it automatically unlocks the
       // mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &mutex );
+      MutexProtection const auto_unlock_mutex( &mutex );
 
       // Add all the parameter values to the map.
       for ( int i = 0; i < param_count; ++i ) {
@@ -1113,7 +1113,7 @@ void Interaction::process_interaction()
    {
       // When auto_unlock_mutex goes out of scope it automatically unlocks the
       // mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &mutex );
+      MutexProtection const auto_unlock_mutex( &mutex );
 
       // Check the change flag again now that we have the lock on the mutex.
       if ( !is_changed() ) {
@@ -1169,7 +1169,7 @@ bool Interaction::decode(
 
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &mutex );
+   MutexProtection const auto_unlock_mutex( &mutex );
 
    if ( interaction_item->is_timestamp_order() ) {
       // Update the timestamp.

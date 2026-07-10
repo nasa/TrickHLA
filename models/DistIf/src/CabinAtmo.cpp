@@ -299,9 +299,9 @@ void CabinAtmo::buildSOE()
    ///   here we compute the C/dt term, which goes into [A], and C/dt * P(t-1) goes into {b}, then
    ///   the new P(t0) will be solved for by {x} = [A]^-1 * {b}.  In matrix form for the SOE:
    ///     [ C/dt ] * { P(t0) } = { P(t-1)*C/dt }   (volume's row)
-   double C0dt = mCabin.computeCapacitance() / mTimestep;
-   double C1dt = mVestibule.computeCapacitance() / mTimestep;
-   double C2dt = mImvDuct.computeCapacitance() / mTimestep;
+   double const C0dt = mCabin.computeCapacitance() / mTimestep;
+   double       C1dt = mVestibule.computeCapacitance() / mTimestep;
+   double       C2dt = mImvDuct.computeCapacitance() / mTimestep;
 
    /// - Interfaces in Demand role have their pressure constrained, so we replace the local volume
    ///   capacitance with the capacitance value from the Supply model.
@@ -392,9 +392,9 @@ void CabinAtmo::invertMatrix()
    mAinv[1][2] = mA[0][1] * mA[0][2] - mA[0][0] * mA[1][2];
    mAinv[2][2] = mA[0][0] * mA[1][1] - mA[0][1] * mA[0][1];
 
-   double det = mA[0][0] * mAinv[0][0]
-                + mA[0][1] * mAinv[0][1]
-                + mA[0][2] * mAinv[0][2];
+   double const det = mA[0][0] * mAinv[0][0]
+                      + mA[0][1] * mAinv[0][1]
+                      + mA[0][2] * mAinv[0][2];
 
    mAinv[0][0] /= det;
    mAinv[0][1] /= det;

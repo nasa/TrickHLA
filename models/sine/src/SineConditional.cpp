@@ -99,7 +99,7 @@ void SineConditional::initialize()
    if ( this->sim_data == NULL ) {
       ostringstream errmsg;
       errmsg << "SineConditional::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL sim_data!" << endl;
+             << " ERROR: Unexpected NULL sim_data!\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -153,7 +153,7 @@ bool SineConditional::should_send(
    if ( !initialized ) {
       ostringstream errmsg;
       errmsg << "SineConditional::should_send():" << __LINE__
-             << " ERROR: The initialize() function has not been called!" << endl;
+             << " ERROR: The initialize() function has not been called!\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -163,7 +163,7 @@ bool SineConditional::should_send(
    if ( this->sim_data == NULL ) {
       ostringstream errmsg;
       errmsg << "SineConditional::should_send('" << attr->get_FOM_name() << "):" << __LINE__
-             << " ERROR: Unexpected NULL sim_data!" << endl;
+             << " ERROR: Unexpected NULL sim_data!\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -211,8 +211,7 @@ bool SineConditional::should_send(
    } else {
       ostringstream errmsg;
       errmsg << "SineConditional::should_send('" << attr->get_FOM_name() << "):" << __LINE__
-             << " ERROR: Could not find the data for the specified FOM attribute!"
-             << endl;
+             << " ERROR: Could not find the data for the specified FOM attribute!\n";
       DebugHandler::terminate( errmsg.str() );
    }
 

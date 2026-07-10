@@ -69,14 +69,14 @@ Enum64Data::Enum64Data(
       }
    }
 
-   int ptr_enum64_size = (int)( 5 + ( ( offset < 10 ) ? offset : 10 ) );
+   int const ptr_enum64_size = (int)( 5 + ( ( offset < 10 ) ? offset : 10 ) );
 
    ptr_enum64 = static_cast< TrickHLAModel::Int64Enum * >(
       TMM_declare_var_1d( "TrickHLAModel::Int64Enum", ptr_enum64_size ) );
    if ( ptr_enum64 == NULL ) {
       ostringstream errmsg;
       errmsg << "Enum64Data::Enum64Data():" << __LINE__
-             << " ERROR: Failed to allocate memory for ptr_enum64!" << endl;
+             << " ERROR: Failed to allocate memory for ptr_enum64!\n";
       TrickHLA::DebugHandler::terminate( errmsg.str() );
       return;
    }
@@ -100,22 +100,22 @@ bool Enum64Data::compare(
    bool equal_values = true;
 
    ostringstream msg;
-   msg << "Enum64Data::compare():" << __LINE__ << endl;
+   msg << "Enum64Data::compare():" << __LINE__ << "\n";
 
    if ( this->enum64 == data.enum64 ) {
-      msg << "this->enum64 (" << (long long)this->enum64 << ") == (" << (long long)data.enum64 << ") data.enum64" << endl;
+      msg << "this->enum64 (" << (long long)this->enum64 << ") == (" << (long long)data.enum64 << ") data.enum64\n";
    } else {
-      msg << "this->enum64 (" << (long long)this->enum64 << ") != (" << (long long)data.enum64 << ") data.enum64" << endl;
+      msg << "this->enum64 (" << (long long)this->enum64 << ") != (" << (long long)data.enum64 << ") data.enum64\n";
       equal_values = false;
    }
 
    for ( int i = 0; i < 3; ++i ) {
       if ( this->vec3_enum64[i] == data.vec3_enum64[i] ) {
          msg << "this->vec3_enum64[" << i << "] (" << (long long)this->vec3_enum64[i]
-             << ") == (" << (long long)data.vec3_enum64[i] << ") data.vec3_enum64[" << i << "]" << endl;
+             << ") == (" << (long long)data.vec3_enum64[i] << ") data.vec3_enum64[" << i << "]\n";
       } else {
          msg << "this->vec3_enum64[" << i << "] (" << (long long)this->vec3_enum64[i]
-             << ") != (" << (long long)data.vec3_enum64[i] << ") data.vec3_enum64[" << i << "]" << endl;
+             << ") != (" << (long long)data.vec3_enum64[i] << ") data.vec3_enum64[" << i << "]\n";
          equal_values = false;
       }
    }
@@ -124,32 +124,32 @@ bool Enum64Data::compare(
       for ( int col = 0; col < 3; ++col ) {
          if ( this->m3x3_enum64[row][col] == data.m3x3_enum64[row][col] ) {
             msg << "this->m3x3_enum64[" << row << "][" << col << "] (" << (long long)this->m3x3_enum64[row][col]
-                << ") == (" << (long long)data.m3x3_enum64[row][col] << ") data.m3x3_enum64[" << row << "][" << col << "]" << endl;
+                << ") == (" << (long long)data.m3x3_enum64[row][col] << ") data.m3x3_enum64[" << row << "][" << col << "]\n";
          } else {
             msg << "this->m3x3_enum64[" << row << "][" << col << "] (" << (long long)this->m3x3_enum64[row][col]
-                << ") != (" << (long long)data.m3x3_enum64[row][col] << ") data.m3x3_enum64[" << row << "][" << col << "]" << endl;
+                << ") != (" << (long long)data.m3x3_enum64[row][col] << ") data.m3x3_enum64[" << row << "][" << col << "]\n";
             equal_values = false;
          }
       }
    }
 
-   int data1_ptr_enum64_size = get_size( this->ptr_enum64 );
-   int data2_ptr_enum64_size = get_size( data.ptr_enum64 );
+   int const data1_ptr_enum64_size = get_size( this->ptr_enum64 );
+   int const data2_ptr_enum64_size = get_size( data.ptr_enum64 );
    if ( data1_ptr_enum64_size != data2_ptr_enum64_size ) {
       msg << "this->ptr_enum64 size (" << data1_ptr_enum64_size
-          << ") != (" << data2_ptr_enum64_size << ") data.ptr_enum64 size" << endl;
+          << ") != (" << data2_ptr_enum64_size << ") data.ptr_enum64 size\n";
       equal_values = false;
    } else {
       msg << "this->ptr_enum64 size (" << data1_ptr_enum64_size
-          << ") == (" << data2_ptr_enum64_size << ") data.ptr_enum64 size" << endl;
+          << ") == (" << data2_ptr_enum64_size << ") data.ptr_enum64 size\n";
 
       for ( int i = 0; i < data1_ptr_enum64_size; ++i ) {
          if ( this->ptr_enum64[i] == data.ptr_enum64[i] ) {
             msg << "this->ptr_enum64[" << i << "] (" << (long long)this->ptr_enum64[i]
-                << ") == (" << (long long)data.ptr_enum64[i] << ") data.ptr_enum64[" << i << "]" << endl;
+                << ") == (" << (long long)data.ptr_enum64[i] << ") data.ptr_enum64[" << i << "]\n";
          } else {
             msg << "this->ptr_enum64[" << i << "] (" << (long long)this->ptr_enum64[i]
-                << ") != (" << (long long)data.ptr_enum64[i] << ") data.ptr_enum64[" << i << "]" << endl;
+                << ") != (" << (long long)data.ptr_enum64[i] << ") data.ptr_enum64[" << i << "]\n";
             equal_values = false;
          }
       }
@@ -163,27 +163,27 @@ bool Enum64Data::compare(
 string Enum64Data::to_string()
 {
    ostringstream msg;
-   msg << "Enum64Data::to_string():" << __LINE__ << endl
-       << "enum64:" << (long long)enum64 << endl;
+   msg << "Enum64Data::to_string():" << __LINE__ << "\n"
+       << "enum64:" << (long long)enum64 << "\n";
 
    for ( int i = 0; i < 3; ++i ) {
       msg << "vec3_enum64[" << i << "]:" << (long long)vec3_enum64[i] << " ";
    }
-   msg << endl;
+   msg << "\n";
 
    for ( int row = 0; row < 3; ++row ) {
       for ( int col = 0; col < 3; ++col ) {
          msg << "m3x3_enum64[" << row << "][" << col << "]:" << (long long)m3x3_enum64[row][col] << " ";
       }
    }
-   msg << endl;
+   msg << "\n";
 
-   int ptr_enum64_size = get_size( ptr_enum64 );
-   msg << "ptr_enum64 size:" << ptr_enum64_size << endl;
+   int const ptr_enum64_size = get_size( ptr_enum64 );
+   msg << "ptr_enum64 size:" << ptr_enum64_size << "\n";
    for ( int i = 0; i < ptr_enum64_size; ++i ) {
       msg << "ptr_enum64[" << i << "]:" << (long long)ptr_enum64[i] << " ";
    }
-   msg << endl;
+   msg << "\n";
 
    return msg.str();
 }

@@ -107,7 +107,7 @@ void DynamicalEntityBase::base_config(
    bool const         publish,
    bool const         subscribe )
 {
-   string entity_full_name_str = sim_obj_name + "." + entity_pkg_name;
+   string const entity_full_name_str = sim_obj_name + "." + entity_pkg_name;
 
    // Make sure that the TrickHLA::Object pointer is not NULL.
    // If NULL, this it means this object has not been allocated yet.

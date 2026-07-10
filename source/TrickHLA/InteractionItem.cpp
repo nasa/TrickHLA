@@ -154,7 +154,7 @@ InteractionItem::InteractionItem(
 
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &parameter_queue.mutex );
+   MutexProtection const auto_unlock_mutex( &parameter_queue.mutex );
 
    if ( parm_items != NULL ) {
       for ( size_t i = 0; i < parm_items_count; ++i ) {
@@ -195,7 +195,7 @@ void InteractionItem::initialize(
    {
       // When auto_unlock_mutex goes out of scope it automatically unlocks the
       // mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &parameter_queue.mutex );
+      MutexProtection const auto_unlock_mutex( &parameter_queue.mutex );
 
       if ( parameters != NULL ) {
          // Decode all the parameters from the map.
@@ -236,7 +236,7 @@ void InteractionItem::checkpoint_queue()
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &parameter_queue.mutex );
+   MutexProtection const auto_unlock_mutex( &parameter_queue.mutex );
 
    if ( !parameter_queue.empty() ) {
 

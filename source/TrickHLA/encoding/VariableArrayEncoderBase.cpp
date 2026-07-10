@@ -71,7 +71,7 @@ VariableArrayEncoderBase::VariableArrayEncoderBase(
       errmsg << "VariableArrayEncoderBase::VariableArrayEncoderBase():" << __LINE__
              << " ERROR: The variable address is NULL for variable '"
              << data_name << "'. Please make sure the Trick variable"
-             << " is allocated memory by the Trick Memory Manager." << endl;
+             << " is allocated memory by the Trick Memory Manager.\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -79,8 +79,7 @@ VariableArrayEncoderBase::VariableArrayEncoderBase(
       ostringstream errmsg;
       errmsg << "VariableArrayEncoderBase::VariableArrayEncoderBase():" << __LINE__
              << " ERROR: Unexpected NULL Trick attributes. Please make sure the"
-             << " variable is allocated memory by the Trick Memory Manager."
-             << endl;
+             << " variable is allocated memory by the Trick Memory Manager.\n";
       DebugHandler::terminate( errmsg.str() );
       return;
    }
@@ -128,7 +127,7 @@ size_t VariableArrayEncoderBase::get_data_size()
       switch ( type ) {
          case TRICK_STRING: {
             if ( is_dynamic_array() ) {
-               string *str_array = *static_cast< std::string ** >( address );
+               string const *str_array = *static_cast< std::string ** >( address );
                for ( size_t i = 0; i < var_element_count; ++i ) {
                   byte_count += str_array[i].size(); // cppcheck-suppress [useStlAlgorithm]
                }
@@ -139,8 +138,8 @@ size_t VariableArrayEncoderBase::get_data_size()
          }
          case TRICK_WSTRING: {
             if ( is_dynamic_array() ) {
-               size_t const wchar_size = sizeof( wchar_t );
-               wstring     *wstr_array = *static_cast< std::wstring ** >( address );
+               size_t const   wchar_size = sizeof( wchar_t );
+               wstring const *wstr_array = *static_cast< std::wstring ** >( address );
                for ( size_t i = 0; i < var_element_count; ++i ) {
                   byte_count += ( wchar_size * wstr_array[i].size() ); // cppcheck-suppress [useStlAlgorithm]
                }
@@ -225,7 +224,7 @@ void VariableArrayEncoderBase::resize_trick_var(
                 << " '" << data_name << "' of Trick determined type (name:'"
                 << trickTypeCharString( type, type_name.c_str() )
                 << "', type:" << type << ") for user defined type '"
-                << type_name << "' for " << new_size << " elements!" << endl;
+                << type_name << "' for " << new_size << " elements!\n";
          DebugHandler::terminate( errmsg.str() );
       }
    }

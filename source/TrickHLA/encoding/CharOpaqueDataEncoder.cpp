@@ -80,7 +80,7 @@ CharOpaqueDataEncoder::CharOpaqueDataEncoder(
              << "' simulation variable (type:" << attr->type_name
              << ") is not the expected type '"
              << trickTypeCharString( TRICK_CHARACTER, "UNSUPPORTED_TYPE" )
-             << "'." << endl;
+             << "'.\n";
       DebugHandler::terminate( errmsg.str() );
       return;
    }
@@ -89,7 +89,7 @@ CharOpaqueDataEncoder::CharOpaqueDataEncoder(
       ostringstream errmsg;
       errmsg << "CharOpaqueDataEncoder::CharOpaqueDataEncoder():" << __LINE__
              << " ERROR: Trick ref-attributes for '" << data_name
-             << "' the variable must be a dynamic variable array!" << endl;
+             << "' the variable must be a dynamic variable array!\n";
       DebugHandler::terminate( errmsg.str() );
       return;
    }

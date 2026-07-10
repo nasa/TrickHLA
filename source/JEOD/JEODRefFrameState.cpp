@@ -108,7 +108,7 @@ void JEODRefFrameState::initialize()
    if ( this->ref_frame_state == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODRefFrameState::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL reference frame data: " << this->packing_data.name << endl;
+             << " ERROR: Unexpected NULL reference frame data: " << this->packing_data.name << "\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -116,7 +116,7 @@ void JEODRefFrameState::initialize()
    if ( this->time_tt == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODRefFrameState::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL time reference: " << this->packing_data.name << endl;
+             << " ERROR: Unexpected NULL time reference: " << this->packing_data.name << "\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -162,16 +162,16 @@ void JEODRefFrameState::pack_from_working_data()
 
    if ( debug ) {
       ostringstream msg;
-      msg << "JEODRefFrameState::pack_from_working_data():" << __LINE__ << endl
-          << "\tSim Sec: " << exec_get_sim_time() << endl
-          << "\tSeconds: " << ( time_tt->trunc_julian_time * 86400.0 ) << endl
+      msg << "JEODRefFrameState::pack_from_working_data():" << __LINE__ << "\n"
+          << "\tSim Sec: " << exec_get_sim_time() << "\n"
+          << "\tSeconds: " << ( time_tt->trunc_julian_time * 86400.0 ) << "\n"
           << "\tDate: " << time_tt->calendar_year
           << "-" << time_tt->calendar_month
           << "-" << time_tt->calendar_day
           << "::" << time_tt->calendar_hour
           << ":" << time_tt->calendar_minute
-          << ":" << time_tt->calendar_second << endl
-          << endl;
+          << ":" << time_tt->calendar_second << "\n"
+          << "\n";
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 }
@@ -222,16 +222,16 @@ void JEODRefFrameState::unpack_into_working_data()
 
    if ( debug ) {
       ostringstream msg;
-      msg << "JEODRefFrameState::unpack_into_working_data():" << __LINE__ << endl
-          << "\tSim Sec: " << exec_get_sim_time() << endl
-          << "\tSeconds: " << ( time_tt->trunc_julian_time * 86400.0 ) << endl
+      msg << "JEODRefFrameState::unpack_into_working_data():" << __LINE__ << "\n"
+          << "\tSim Sec: " << exec_get_sim_time() << "\n"
+          << "\tSeconds: " << ( time_tt->trunc_julian_time * 86400.0 ) << "\n"
           << "\tDate: " << time_tt->calendar_year
           << "-" << time_tt->calendar_month
           << "-" << time_tt->calendar_day
           << "::" << time_tt->calendar_hour
           << ":" << time_tt->calendar_minute
-          << ":" << time_tt->calendar_second << endl
-          << endl;
+          << ":" << time_tt->calendar_second << "\n"
+          << "\n";
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 }
@@ -248,7 +248,7 @@ void JEODRefFrameState::set_data(
    if ( ref_frame_state_ptr == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODRefFrameState::pre_initialize():" << __LINE__
-             << " ERROR: Unexpected NULL reference frame: " << this->packing_data.name << endl;
+             << " ERROR: Unexpected NULL reference frame: " << this->packing_data.name << "\n";
       DebugHandler::terminate( errmsg.str() );
    }
    this->ref_frame_state = ref_frame_state_ptr;
@@ -257,7 +257,7 @@ void JEODRefFrameState::set_data(
    if ( time_tt_in == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODRefFrameState::pre_initialize():" << __LINE__
-             << " ERROR: Unexpected NULL time reference: " << this->packing_data.name << endl;
+             << " ERROR: Unexpected NULL time reference: " << this->packing_data.name << "\n";
       DebugHandler::terminate( errmsg.str() );
    }
    time_tt = time_tt_in;

@@ -88,22 +88,22 @@ bool UInt16Data::compare(
    bool equal_values = true;
 
    ostringstream msg;
-   msg << "UInt16Data::compare():" << __LINE__ << endl;
+   msg << "UInt16Data::compare():" << __LINE__ << "\n";
 
    if ( this->ui16 == data.ui16 ) {
-      msg << "this->ui16 (" << this->ui16 << ") == (" << data.ui16 << ") data.ui16" << endl;
+      msg << "this->ui16 (" << this->ui16 << ") == (" << data.ui16 << ") data.ui16\n";
    } else {
-      msg << "this->ui16 (" << this->ui16 << ") != (" << data.ui16 << ") data.ui16" << endl;
+      msg << "this->ui16 (" << this->ui16 << ") != (" << data.ui16 << ") data.ui16\n";
       equal_values = false;
    }
 
    for ( int i = 0; i < 3; ++i ) {
       if ( this->vec3_ui16[i] == data.vec3_ui16[i] ) {
          msg << "this->vec3_ui16[" << i << "] (" << this->vec3_ui16[i]
-             << ") == (" << data.vec3_ui16[i] << ") data.vec3_ui16[" << i << "]" << endl;
+             << ") == (" << data.vec3_ui16[i] << ") data.vec3_ui16[" << i << "]\n";
       } else {
          msg << "this->vec3_ui16[" << i << "] (" << this->vec3_ui16[i]
-             << ") != (" << data.vec3_ui16[i] << ") data.vec3_ui16[" << i << "]" << endl;
+             << ") != (" << data.vec3_ui16[i] << ") data.vec3_ui16[" << i << "]\n";
          equal_values = false;
       }
    }
@@ -112,32 +112,32 @@ bool UInt16Data::compare(
       for ( int col = 0; col < 3; ++col ) {
          if ( this->m3x3_ui16[row][col] == data.m3x3_ui16[row][col] ) {
             msg << "this->m3x3_ui16[" << row << "][" << col << "] (" << this->m3x3_ui16[row][col]
-                << ") == (" << data.m3x3_ui16[row][col] << ") data.m3x3_ui16[" << row << "][" << col << "]" << endl;
+                << ") == (" << data.m3x3_ui16[row][col] << ") data.m3x3_ui16[" << row << "][" << col << "]\n";
          } else {
             msg << "this->m3x3_ui16[" << row << "][" << col << "] (" << this->m3x3_ui16[row][col]
-                << ") != (" << data.m3x3_ui16[row][col] << ") data.m3x3_ui16[" << row << "][" << col << "]" << endl;
+                << ") != (" << data.m3x3_ui16[row][col] << ") data.m3x3_ui16[" << row << "][" << col << "]\n";
             equal_values = false;
          }
       }
    }
 
-   int data1_ptr_ui16_size = get_size( this->ptr_ui16 );
-   int data2_ptr_ui16_size = get_size( data.ptr_ui16 );
+   int const data1_ptr_ui16_size = get_size( this->ptr_ui16 );
+   int const data2_ptr_ui16_size = get_size( data.ptr_ui16 );
    if ( data1_ptr_ui16_size != data2_ptr_ui16_size ) {
       msg << "this->ptr_ui16 size (" << data1_ptr_ui16_size
-          << ") != (" << data2_ptr_ui16_size << ") data.ptr_ui16 size" << endl;
+          << ") != (" << data2_ptr_ui16_size << ") data.ptr_ui16 size\n";
       equal_values = false;
    } else {
       msg << "this->ptr_ui16 size (" << data1_ptr_ui16_size
-          << ") == (" << data2_ptr_ui16_size << ") data.ptr_ui16 size" << endl;
+          << ") == (" << data2_ptr_ui16_size << ") data.ptr_ui16 size\n";
 
       for ( int i = 0; i < data1_ptr_ui16_size; ++i ) {
          if ( this->ptr_ui16[i] == data.ptr_ui16[i] ) {
             msg << "this->ptr_ui16[" << i << "] (" << this->ptr_ui16[i]
-                << ") == (" << data.ptr_ui16[i] << ") data.ptr_ui16[" << i << "]" << endl;
+                << ") == (" << data.ptr_ui16[i] << ") data.ptr_ui16[" << i << "]\n";
          } else {
             msg << "this->ptr_ui16[" << i << "] (" << this->ptr_ui16[i]
-                << ") != (" << data.ptr_ui16[i] << ") data.ptr_ui16[" << i << "]" << endl;
+                << ") != (" << data.ptr_ui16[i] << ") data.ptr_ui16[" << i << "]\n";
             equal_values = false;
          }
       }
@@ -151,27 +151,27 @@ bool UInt16Data::compare(
 string UInt16Data::to_string()
 {
    ostringstream msg;
-   msg << "UInt16Data::to_string():" << __LINE__ << endl
-       << "ui16:" << ui16 << endl;
+   msg << "UInt16Data::to_string():" << __LINE__ << "\n"
+       << "ui16:" << ui16 << "\n";
 
    for ( int i = 0; i < 3; ++i ) {
       msg << "vec3_ui16[" << i << "]:" << vec3_ui16[i] << " ";
    }
-   msg << endl;
+   msg << "\n";
 
    for ( int row = 0; row < 3; ++row ) {
       for ( int col = 0; col < 3; ++col ) {
          msg << "m3x3_ui16[" << row << "][" << col << "]:" << m3x3_ui16[row][col] << " ";
       }
    }
-   msg << endl;
+   msg << "\n";
 
-   int ptr_ui16_size = get_size( ptr_ui16 );
-   msg << "ptr_ui16 size:" << ptr_ui16_size << endl;
+   int const ptr_ui16_size = get_size( ptr_ui16 );
+   msg << "ptr_ui16 size:" << ptr_ui16_size << "\n";
    for ( int i = 0; i < ptr_ui16_size; ++i ) {
       msg << "ptr_ui16[" << i << "]:" << ptr_ui16[i] << " ";
    }
-   msg << endl;
+   msg << "\n";
 
    return msg.str();
 }
