@@ -136,7 +136,7 @@ int FrameDynamics::integrate()
  */
 void FrameDynamics::load()
 {
-   int istep = trick_curr_integ->intermediate_step;
+   int const istep = trick_curr_integ->intermediate_step;
 
    // Load state array: position and velocity.
    // Translational position
@@ -185,7 +185,7 @@ void FrameDynamics::load()
  */
 void FrameDynamics::unload()
 {
-   int istep = trick_curr_integ->intermediate_step;
+   int const istep = trick_curr_integ->intermediate_step;
 
    // Translational position
    data.state.pos[0] = trick_curr_integ->state_ws[istep][0];

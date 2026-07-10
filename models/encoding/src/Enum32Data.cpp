@@ -69,14 +69,14 @@ Enum32Data::Enum32Data(
       }
    }
 
-   int ptr_enum32_size = (int)( 5 + ( ( offset < 10 ) ? offset : 10 ) );
+   int const ptr_enum32_size = (int)( 5 + ( ( offset < 10 ) ? offset : 10 ) );
 
    ptr_enum32 = static_cast< TrickHLAModel::Int32Enum * >(
       TMM_declare_var_1d( "TrickHLAModel::Int32Enum", ptr_enum32_size ) );
    if ( ptr_enum32 == NULL ) {
       ostringstream errmsg;
       errmsg << "Enum32Data::Enum32Data():" << __LINE__
-             << " ERROR: Failed to allocate memory for ptr_enum32!" << endl;
+             << " ERROR: Failed to allocate memory for ptr_enum32!\n";
       TrickHLA::DebugHandler::terminate( errmsg.str() );
       return;
    }
@@ -100,22 +100,22 @@ bool Enum32Data::compare(
    bool equal_values = true;
 
    ostringstream msg;
-   msg << "Enum32Data::compare():" << __LINE__ << endl;
+   msg << "Enum32Data::compare():" << __LINE__ << "\n";
 
    if ( this->enum32 == data.enum32 ) {
-      msg << "this->enum32 (" << (long long)this->enum32 << ") == (" << (long long)data.enum32 << ") data.enum32" << endl;
+      msg << "this->enum32 (" << (long long)this->enum32 << ") == (" << (long long)data.enum32 << ") data.enum32\n";
    } else {
-      msg << "this->enum32 (" << (long long)this->enum32 << ") != (" << (long long)data.enum32 << ") data.enum32" << endl;
+      msg << "this->enum32 (" << (long long)this->enum32 << ") != (" << (long long)data.enum32 << ") data.enum32\n";
       equal_values = false;
    }
 
    for ( int i = 0; i < 3; ++i ) {
       if ( this->vec3_enum32[i] == data.vec3_enum32[i] ) {
          msg << "this->vec3_enum32[" << i << "] (" << (long long)this->vec3_enum32[i]
-             << ") == (" << (long long)data.vec3_enum32[i] << ") data.vec3_enum32[" << i << "]" << endl;
+             << ") == (" << (long long)data.vec3_enum32[i] << ") data.vec3_enum32[" << i << "]\n";
       } else {
          msg << "this->vec3_enum32[" << i << "] (" << (long long)this->vec3_enum32[i]
-             << ") != (" << (long long)data.vec3_enum32[i] << ") data.vec3_enum32[" << i << "]" << endl;
+             << ") != (" << (long long)data.vec3_enum32[i] << ") data.vec3_enum32[" << i << "]\n";
          equal_values = false;
       }
    }
@@ -124,32 +124,32 @@ bool Enum32Data::compare(
       for ( int col = 0; col < 3; ++col ) {
          if ( this->m3x3_enum32[row][col] == data.m3x3_enum32[row][col] ) {
             msg << "this->m3x3_enum32[" << row << "][" << col << "] (" << (long long)this->m3x3_enum32[row][col]
-                << ") == (" << (long long)data.m3x3_enum32[row][col] << ") data.m3x3_enum32[" << row << "][" << col << "]" << endl;
+                << ") == (" << (long long)data.m3x3_enum32[row][col] << ") data.m3x3_enum32[" << row << "][" << col << "]\n";
          } else {
             msg << "this->m3x3_enum32[" << row << "][" << col << "] (" << (long long)this->m3x3_enum32[row][col]
-                << ") != (" << (long long)data.m3x3_enum32[row][col] << ") data.m3x3_enum32[" << row << "][" << col << "]" << endl;
+                << ") != (" << (long long)data.m3x3_enum32[row][col] << ") data.m3x3_enum32[" << row << "][" << col << "]\n";
             equal_values = false;
          }
       }
    }
 
-   int data1_ptr_enum32_size = get_size( this->ptr_enum32 );
-   int data2_ptr_enum32_size = get_size( data.ptr_enum32 );
+   int const data1_ptr_enum32_size = get_size( this->ptr_enum32 );
+   int const data2_ptr_enum32_size = get_size( data.ptr_enum32 );
    if ( data1_ptr_enum32_size != data2_ptr_enum32_size ) {
       msg << "this->ptr_enum32 size (" << data1_ptr_enum32_size
-          << ") != (" << data2_ptr_enum32_size << ") data.ptr_enum32 size" << endl;
+          << ") != (" << data2_ptr_enum32_size << ") data.ptr_enum32 size\n";
       equal_values = false;
    } else {
       msg << "this->ptr_enum32 size (" << data1_ptr_enum32_size
-          << ") == (" << data2_ptr_enum32_size << ") data.ptr_enum32 size" << endl;
+          << ") == (" << data2_ptr_enum32_size << ") data.ptr_enum32 size\n";
 
       for ( int i = 0; i < data1_ptr_enum32_size; ++i ) {
          if ( this->ptr_enum32[i] == data.ptr_enum32[i] ) {
             msg << "this->ptr_enum32[" << i << "] (" << (long long)this->ptr_enum32[i]
-                << ") == (" << (long long)data.ptr_enum32[i] << ") data.ptr_enum32[" << i << "]" << endl;
+                << ") == (" << (long long)data.ptr_enum32[i] << ") data.ptr_enum32[" << i << "]\n";
          } else {
             msg << "this->ptr_enum32[" << i << "] (" << (long long)this->ptr_enum32[i]
-                << ") != (" << (long long)data.ptr_enum32[i] << ") data.ptr_enum32[" << i << "]" << endl;
+                << ") != (" << (long long)data.ptr_enum32[i] << ") data.ptr_enum32[" << i << "]\n";
             equal_values = false;
          }
       }
@@ -163,27 +163,27 @@ bool Enum32Data::compare(
 string Enum32Data::to_string()
 {
    ostringstream msg;
-   msg << "Enum32Data::to_string():" << __LINE__ << endl
-       << "enum32:" << (long long)enum32 << endl;
+   msg << "Enum32Data::to_string():" << __LINE__ << "\n"
+       << "enum32:" << (long long)enum32 << "\n";
 
    for ( int i = 0; i < 3; ++i ) {
       msg << "vec3_enum32[" << i << "]:" << (long long)vec3_enum32[i] << " ";
    }
-   msg << endl;
+   msg << "\n";
 
    for ( int row = 0; row < 3; ++row ) {
       for ( int col = 0; col < 3; ++col ) {
          msg << "m3x3_enum32[" << row << "][" << col << "]:" << (long long)m3x3_enum32[row][col] << " ";
       }
    }
-   msg << endl;
+   msg << "\n";
 
-   int ptr_enum32_size = get_size( ptr_enum32 );
-   msg << "ptr_enum32 size:" << ptr_enum32_size << endl;
+   int const ptr_enum32_size = get_size( ptr_enum32 );
+   msg << "ptr_enum32 size:" << ptr_enum32_size << "\n";
    for ( int i = 0; i < ptr_enum32_size; ++i ) {
       msg << "ptr_enum32[" << i << "]:" << (long long)ptr_enum32[i] << " ";
    }
-   msg << endl;
+   msg << "\n";
 
    return msg.str();
 }

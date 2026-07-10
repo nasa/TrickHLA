@@ -95,22 +95,22 @@ bool WStringData::compare(
    bool equal_values = true;
 
    wstringstream msg;
-   msg << "WStringData::compare():" << __LINE__ << endl;
+   msg << "WStringData::compare():" << __LINE__ << "\n";
 
    if ( this->_wstring == data._wstring ) {
-      msg << "this->wstring (" << this->_wstring << ") == (" << data._wstring << ") data.wstring" << endl;
+      msg << "this->wstring (" << this->_wstring << ") == (" << data._wstring << ") data.wstring\n";
    } else {
-      msg << "this->wstring (" << this->_wstring << ") != (" << data._wstring << ") data.wstring" << endl;
+      msg << "this->wstring (" << this->_wstring << ") != (" << data._wstring << ") data.wstring\n";
       equal_values = false;
    }
 
    for ( int i = 0; i < 3; ++i ) {
       if ( this->vec3_wstring[i] == data.vec3_wstring[i] ) {
          msg << "this->vec3_wstring[" << i << "] (" << this->vec3_wstring[i]
-             << ") == (" << data.vec3_wstring[i] << ") data.vec3_wstring[" << i << "]" << endl;
+             << ") == (" << data.vec3_wstring[i] << ") data.vec3_wstring[" << i << "]\n";
       } else {
          msg << "this->vec3_wstring[" << i << "] (" << this->vec3_wstring[i]
-             << ") != (" << data.vec3_wstring[i] << ") data.vec3_wstring[" << i << "]" << endl;
+             << ") != (" << data.vec3_wstring[i] << ") data.vec3_wstring[" << i << "]\n";
          equal_values = false;
       }
    }
@@ -119,35 +119,35 @@ bool WStringData::compare(
       for ( int col = 0; col < 3; ++col ) {
          if ( this->m3x3_wstring[row][col] == data.m3x3_wstring[row][col] ) {
             msg << "this->m3x3_wstring[" << row << "][" << col << "] (" << this->m3x3_wstring[row][col]
-                << ") == (" << data.m3x3_wstring[row][col] << ") data.m3x3_wstring[" << row << "][" << col << "]" << endl;
+                << ") == (" << data.m3x3_wstring[row][col] << ") data.m3x3_wstring[" << row << "][" << col << "]\n";
          } else {
             msg << "this->m3x3_wstring[" << row << "][" << col << "] (" << this->m3x3_wstring[row][col]
-                << ") != (" << data.m3x3_wstring[row][col] << ") data.m3x3_wstring[" << row << "][" << col << "]" << endl;
+                << ") != (" << data.m3x3_wstring[row][col] << ") data.m3x3_wstring[" << row << "][" << col << "]\n";
             equal_values = false;
          }
       }
    }
 
-   int data1_ptr_wstring_size = get_size( this->ptr_wstring );
-   int data2_ptr_wstring_size = get_size( data.ptr_wstring );
-   int min_ptr_wstring_size   = ( data1_ptr_wstring_size <= data2_ptr_wstring_size )
-                                   ? data1_ptr_wstring_size
-                                   : data2_ptr_wstring_size;
+   int const data1_ptr_wstring_size = get_size( this->ptr_wstring );
+   int const data2_ptr_wstring_size = get_size( data.ptr_wstring );
+   int const min_ptr_wstring_size   = ( data1_ptr_wstring_size <= data2_ptr_wstring_size )
+                                         ? data1_ptr_wstring_size
+                                         : data2_ptr_wstring_size;
    if ( data1_ptr_wstring_size != data2_ptr_wstring_size ) {
       msg << "this->ptr_wstring size (" << data1_ptr_wstring_size
-          << ") != (" << data2_ptr_wstring_size << ") data.ptr_wstring size" << endl;
+          << ") != (" << data2_ptr_wstring_size << ") data.ptr_wstring size\n";
       equal_values = false;
    } else {
       msg << "this->ptr_wstring size (" << data1_ptr_wstring_size
-          << ") == (" << data2_ptr_wstring_size << ") data.ptr_wstring size" << endl;
+          << ") == (" << data2_ptr_wstring_size << ") data.ptr_wstring size\n";
    }
    for ( int i = 0; i < min_ptr_wstring_size; ++i ) {
       if ( this->ptr_wstring[i] == data.ptr_wstring[i] ) {
          msg << "this->ptr_wstring[" << i << "] (" << this->ptr_wstring[i]
-             << ") == (" << data.ptr_wstring[i] << ") data.ptr_wstring[" << i << "]" << endl;
+             << ") == (" << data.ptr_wstring[i] << ") data.ptr_wstring[" << i << "]\n";
       } else {
          msg << "this->ptr_wstring[" << i << "] (" << this->ptr_wstring[i]
-             << ") != (" << data.ptr_wstring[i] << ") data.ptr_wstring[" << i << "]" << endl;
+             << ") != (" << data.ptr_wstring[i] << ") data.ptr_wstring[" << i << "]\n";
          equal_values = false;
       }
    }
@@ -168,27 +168,27 @@ string WStringData::to_string()
 wstring WStringData::to_wstring()
 {
    wstringstream msg;
-   msg << "WStringData::to_wstring():" << __LINE__ << endl
-       << "wstring:" << _wstring << endl;
+   msg << "WStringData::to_wstring():" << __LINE__ << "\n"
+       << "wstring:" << _wstring << "\n";
 
    for ( int i = 0; i < 3; ++i ) {
       msg << "vec3_wstring[" << i << "]:" << vec3_wstring[i] << " ";
    }
-   msg << endl;
+   msg << "\n";
 
    for ( int row = 0; row < 3; ++row ) {
       for ( int col = 0; col < 3; ++col ) {
          msg << "m3x3_wstring[" << row << "][" << col << "]:" << m3x3_wstring[row][col] << " ";
       }
    }
-   msg << endl;
+   msg << "\n";
 
-   int ptr_wstring_size = get_size( ptr_wstring );
-   msg << "ptr_wstring size:" << ptr_wstring_size << endl;
+   int const ptr_wstring_size = get_size( ptr_wstring );
+   msg << "ptr_wstring size:" << ptr_wstring_size << "\n";
    for ( int i = 0; i < ptr_wstring_size; ++i ) {
       msg << "ptr_wstring[" << i << "]:" << ptr_wstring[i] << " ";
    }
-   msg << endl;
+   msg << "\n";
 
    return msg.str();
 }

@@ -69,14 +69,14 @@ Enum8Data::Enum8Data(
       }
    }
 
-   int ptr_enum8_size = (int)( 5 + ( ( offset < 10 ) ? offset : 10 ) );
+   int const ptr_enum8_size = (int)( 5 + ( ( offset < 10 ) ? offset : 10 ) );
 
    ptr_enum8 = static_cast< TrickHLAModel::Int8Enum * >(
       TMM_declare_var_1d( "TrickHLAModel::Int8Enum", ptr_enum8_size ) );
    if ( ptr_enum8 == NULL ) {
       ostringstream errmsg;
       errmsg << "Enum8Data::Enum8Data():" << __LINE__
-             << " ERROR: Failed to allocate memory for ptr_enum8!" << endl;
+             << " ERROR: Failed to allocate memory for ptr_enum8!\n";
       TrickHLA::DebugHandler::terminate( errmsg.str() );
       return;
    }
@@ -100,22 +100,22 @@ bool Enum8Data::compare(
    bool equal_values = true;
 
    ostringstream msg;
-   msg << "Enum8Data::compare():" << __LINE__ << endl;
+   msg << "Enum8Data::compare():" << __LINE__ << "\n";
 
    if ( this->enum8 == data.enum8 ) {
-      msg << "this->enum8 (" << (long long)this->enum8 << ") == (" << (long long)data.enum8 << ") data.enum8" << endl;
+      msg << "this->enum8 (" << (long long)this->enum8 << ") == (" << (long long)data.enum8 << ") data.enum8\n";
    } else {
-      msg << "this->enum8 (" << (long long)this->enum8 << ") != (" << (long long)data.enum8 << ") data.enum8" << endl;
+      msg << "this->enum8 (" << (long long)this->enum8 << ") != (" << (long long)data.enum8 << ") data.enum8\n";
       equal_values = false;
    }
 
    for ( int i = 0; i < 3; ++i ) {
       if ( this->vec3_enum8[i] == data.vec3_enum8[i] ) {
          msg << "this->vec3_enum8[" << i << "] (" << (long long)this->vec3_enum8[i]
-             << ") == (" << (long long)data.vec3_enum8[i] << ") data.vec3_enum8[" << i << "]" << endl;
+             << ") == (" << (long long)data.vec3_enum8[i] << ") data.vec3_enum8[" << i << "]\n";
       } else {
          msg << "this->vec3_enum8[" << i << "] (" << (long long)this->vec3_enum8[i]
-             << ") != (" << (long long)data.vec3_enum8[i] << ") data.vec3_enum8[" << i << "]" << endl;
+             << ") != (" << (long long)data.vec3_enum8[i] << ") data.vec3_enum8[" << i << "]\n";
          equal_values = false;
       }
    }
@@ -124,32 +124,32 @@ bool Enum8Data::compare(
       for ( int col = 0; col < 3; ++col ) {
          if ( this->m3x3_enum8[row][col] == data.m3x3_enum8[row][col] ) {
             msg << "this->m3x3_enum8[" << row << "][" << col << "] (" << (long long)this->m3x3_enum8[row][col]
-                << ") == (" << (long long)data.m3x3_enum8[row][col] << ") data.m3x3_enum8[" << row << "][" << col << "]" << endl;
+                << ") == (" << (long long)data.m3x3_enum8[row][col] << ") data.m3x3_enum8[" << row << "][" << col << "]\n";
          } else {
             msg << "this->m3x3_enum8[" << row << "][" << col << "] (" << (long long)this->m3x3_enum8[row][col]
-                << ") != (" << (long long)data.m3x3_enum8[row][col] << ") data.m3x3_enum8[" << row << "][" << col << "]" << endl;
+                << ") != (" << (long long)data.m3x3_enum8[row][col] << ") data.m3x3_enum8[" << row << "][" << col << "]\n";
             equal_values = false;
          }
       }
    }
 
-   int data1_ptr_enum8_size = get_size( this->ptr_enum8 );
-   int data2_ptr_enum8_size = get_size( data.ptr_enum8 );
+   int const data1_ptr_enum8_size = get_size( this->ptr_enum8 );
+   int const data2_ptr_enum8_size = get_size( data.ptr_enum8 );
    if ( data1_ptr_enum8_size != data2_ptr_enum8_size ) {
       msg << "this->ptr_enum8 size (" << data1_ptr_enum8_size
-          << ") != (" << data2_ptr_enum8_size << ") data.ptr_enum8 size" << endl;
+          << ") != (" << data2_ptr_enum8_size << ") data.ptr_enum8 size\n";
       equal_values = false;
    } else {
       msg << "this->ptr_enum8 size (" << data1_ptr_enum8_size
-          << ") == (" << data2_ptr_enum8_size << ") data.ptr_enum8 size" << endl;
+          << ") == (" << data2_ptr_enum8_size << ") data.ptr_enum8 size\n";
 
       for ( int i = 0; i < data1_ptr_enum8_size; ++i ) {
          if ( this->ptr_enum8[i] == data.ptr_enum8[i] ) {
             msg << "this->ptr_enum8[" << i << "] (" << (long long)this->ptr_enum8[i]
-                << ") == (" << (long long)data.ptr_enum8[i] << ") data.ptr_enum8[" << i << "]" << endl;
+                << ") == (" << (long long)data.ptr_enum8[i] << ") data.ptr_enum8[" << i << "]\n";
          } else {
             msg << "this->ptr_enum8[" << i << "] (" << (long long)this->ptr_enum8[i]
-                << ") != (" << (long long)data.ptr_enum8[i] << ") data.ptr_enum8[" << i << "]" << endl;
+                << ") != (" << (long long)data.ptr_enum8[i] << ") data.ptr_enum8[" << i << "]\n";
             equal_values = false;
          }
       }
@@ -163,27 +163,27 @@ bool Enum8Data::compare(
 string Enum8Data::to_string()
 {
    ostringstream msg;
-   msg << "Enum8Data::to_string():" << __LINE__ << endl
-       << "enum8:" << (long long)enum8 << endl;
+   msg << "Enum8Data::to_string():" << __LINE__ << "\n"
+       << "enum8:" << (long long)enum8 << "\n";
 
    for ( int i = 0; i < 3; ++i ) {
       msg << "vec3_enum8[" << i << "]:" << (long long)vec3_enum8[i] << " ";
    }
-   msg << endl;
+   msg << "\n";
 
    for ( int row = 0; row < 3; ++row ) {
       for ( int col = 0; col < 3; ++col ) {
          msg << "m3x3_enum8[" << row << "][" << col << "]:" << (long long)m3x3_enum8[row][col] << " ";
       }
    }
-   msg << endl;
+   msg << "\n";
 
-   int ptr_enum8_size = get_size( ptr_enum8 );
-   msg << "ptr_enum8 size:" << ptr_enum8_size << endl;
+   int const ptr_enum8_size = get_size( ptr_enum8 );
+   msg << "ptr_enum8 size:" << ptr_enum8_size << "\n";
    for ( int i = 0; i < ptr_enum8_size; ++i ) {
       msg << "ptr_enum8[" << i << "]:" << (long long)ptr_enum8[i] << " ";
    }
-   msg << endl;
+   msg << "\n";
 
    return msg.str();
 }

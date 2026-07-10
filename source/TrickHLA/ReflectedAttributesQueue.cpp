@@ -80,7 +80,7 @@ bool ReflectedAttributesQueue::empty()
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &queue_mutex );
+   MutexProtection const auto_unlock_mutex( &queue_mutex );
 
    return attribute_map_queue.empty();
 }
@@ -90,7 +90,7 @@ void ReflectedAttributesQueue::push(
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &queue_mutex );
+   MutexProtection const auto_unlock_mutex( &queue_mutex );
 
    attribute_map_queue.push( theAttributes );
 }
@@ -99,7 +99,7 @@ void ReflectedAttributesQueue::pop()
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &queue_mutex );
+   MutexProtection const auto_unlock_mutex( &queue_mutex );
 
    attribute_map_queue.pop();
 }
@@ -108,7 +108,7 @@ AttributeHandleValueMap &ReflectedAttributesQueue::front()
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &queue_mutex );
+   MutexProtection const auto_unlock_mutex( &queue_mutex );
 
    return attribute_map_queue.front();
 }
@@ -117,7 +117,7 @@ void ReflectedAttributesQueue::clear()
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &queue_mutex );
+   MutexProtection const auto_unlock_mutex( &queue_mutex );
 
    while ( !attribute_map_queue.empty() ) {
       attribute_map_queue.pop();

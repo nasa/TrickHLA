@@ -211,7 +211,7 @@ bool LRTreeBase::check_tree()
    for ( size_t iinc = 0; iinc < nodes.size(); ++iinc ) {
 
       // Get the reference to the node in the vector.
-      LRTreeNodeBase *node_ptr = this->nodes[iinc];
+      LRTreeNodeBase const *node_ptr = this->nodes[iinc];
 
       // Check for node ID consistency.
       if ( node_ptr->node_id != iinc ) {
@@ -431,7 +431,7 @@ void LRTreeBase::print_path(
    size_t        end,
    std::ostream &stream ) const
 {
-   size_t num_nodes = nodes.size();
+   size_t const num_nodes = nodes.size();
 
    // Perform a few sanity checks.
    if ( ( start >= num_nodes ) || ( end >= num_nodes ) ) {
@@ -444,7 +444,7 @@ void LRTreeBase::print_path(
    if ( paths != NULL ) {
 
       // Get the size of the path.
-      size_t path_size = paths[start][end].size();
+      size_t const path_size = paths[start][end].size();
 
       // Print out header tag.
       stream << "[" << start << "][" << end << "]: ";
@@ -483,7 +483,7 @@ void LRTreeBase::print_paths( std::ostream &stream ) const
    if ( paths != NULL ) {
 
       // Get the size of the path matrix.
-      size_t num_nodes = nodes.size();
+      size_t const num_nodes = nodes.size();
 
       // Print out header tag.
       stream << "LRTreeBase::print_paths: " << endl;
@@ -497,7 +497,7 @@ void LRTreeBase::print_paths( std::ostream &stream ) const
             // Iterate through the columns.
             for ( size_t jinc = 0; jinc < num_nodes; ++jinc ) {
 
-               size_t path_size = paths[iinc][jinc].size();
+               size_t const path_size = paths[iinc][jinc].size();
 
                stream << "paths[" << iinc << "][" << jinc << "]: ";
 
@@ -544,7 +544,7 @@ bool LRTreeBase::allocate_paths()
    free_paths();
 
    // Size the path matrix.
-   size_t num_nodes = nodes.size();
+   size_t const num_nodes = nodes.size();
 
    // Allocate the rows of the matrix.
    this->paths = new LRTreeNodeVector *[num_nodes];
@@ -587,7 +587,7 @@ void LRTreeBase::free_paths()
    if ( paths != NULL ) {
 
       // Size the path matrix.
-      size_t num_nodes = nodes.size();
+      size_t const num_nodes = nodes.size();
 
       // Iterate through and free the path matrix.
       // Iterate through the rows.

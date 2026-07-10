@@ -135,7 +135,7 @@ void DynamicalEntityLagComp::update_time()
  */
 void DynamicalEntityLagComp::load()
 {
-   int istep = integrator->intermediate_step;
+   int const istep = integrator->intermediate_step;
 
    // Load state array: position and velocity.
    for ( int iinc = 0; iinc < 13; ++iinc ) {

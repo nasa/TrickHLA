@@ -2,45 +2,77 @@
 # Set up HLA and TrickHLA environment.
 # Note the developer should check out the latest TrickHLA tag to the location
 # defined below in $TRICKHLA_HOME
+#
+# DEPENDENCIES:
+# 1) You must set the TRICKHLA_HOME, RTI_HOME, and RTI_VENDOR environment
+#    variables because this makefile depends on them.
+# 2) The bc, cut, grep, and which system command packages must be installed.
 #=============================================================================
-TRICKHLA_HOME ?= ${MODEL_PACKAGE_HOME}/TrickHLA
-RTI_VENDOR    ?= Pitch_HLA_Evolved
-RTI_HOME      ?= ${HOME}/rti/pRTI1516e
-
 # Info and error message text colors.
 RED_TXT   =[31m
 GREEN_TXT =[32m
 RESET_TXT =[00m
 
-# Make sure the critical environment variable paths we depend on are valid.
+# Make sure the bc, cut, grep, and which system commands can be found.
+ifeq (,$(findstring which, $(shell which which)))
+   $(error ${RED_TXT}S_hla.mk:ERROR: Could not find the which system command. Please ensure your PATH is correct or install the which command package.${RESET_TXT})
+endif
+ifeq (,$(findstring bc, $(shell which bc)))
+   $(error ${RED_TXT}S_hla.mk:ERROR: Could not find the bc system command. Please ensure your PATH is correct or install the bc arithmetic language processor command package.${RESET_TXT})
+endif
+ifeq (,$(findstring cut, $(shell which cut)))
+   $(error ${RED_TXT}S_hla.mk:ERROR: Could not find the cut system command. Please ensure your PATH is correct or install the cut command package.${RESET_TXT})
+endif
+ifeq (,$(findstring grep, $(shell which grep)))
+   $(error ${RED_TXT}S_hla.mk:ERROR: Could not find the grep system command. Please ensure your PATH is correct or install the grep command package.${RESET_TXT})
+endif
+
+# Verify the TRICKHLA_HOME environment variables is set and the path is valid.
+ifndef TRICKHLA_HOME
+   ifdef MODEL_PACKAGE_HOME
+      export TRICKHLA_HOME = ${MODEL_PACKAGE_HOME}/TrickHLA
+      $(info ${GREEN_TXT}S_hla.mk:INFO: Overriding TRICKHLA_HOME = ${TRICKHLA_HOME}${RESET_TXT})
+   else
+      $(error ${RED_TXT}S_hla.mk:ERROR: The TRICKHLA_HOME environment variable is not set.${RESET_TXT})
+   endif
+endif
 ifeq ("$(wildcard ${TRICKHLA_HOME})","")
    $(error ${RED_TXT}S_hla.mk:ERROR: Must specify a valid TRICKHLA_HOME environment variable, which is currently set to invalid path ${TRICKHLA_HOME}${RESET_TXT})
+endif
+
+# Verify the RTI_HOME environment variables is set and the path is valid.
+ifndef RTI_HOME
+   $(error ${RED_TXT}S_hla.mk:ERROR: The RTI_HOME environment variable is not set.${RESET_TXT})
 endif
 ifeq ("$(wildcard ${RTI_HOME})","")
    $(error ${RED_TXT}S_hla.mk:ERROR: Must specify a valid RTI_HOME environment variable, which is currently set to invalid path ${RTI_HOME}${RESET_TXT})
 endif
 
-# Set the IEEE-1516 standard and RTI include paths based on the
+# Verify the RTI_HOME environment variables is set and is valid.
+# Also set the IEEE-1516 standard and RTI include paths based on the
 # RTI vendor and version specified.
+ifndef RTI_VENDOR
+   $(error ${RED_TXT}S_hla.mk:ERROR: The RTI_VENDOR environment variable is not set.${RESET_TXT})
+endif
 IS_PITCH_RTI = 0
 ifeq ($(RTI_VENDOR),Pitch_HLA_4)
-   IS_PITCH_RTI   = 1
-   HLA_STANDARD   =  IEEE_1516_2025
-   RTI_INCLUDE    =  ${RTI_HOME}/api/cpp/HLA_1516-2025
+   IS_PITCH_RTI    = 1
+   HLA_STANDARD    = IEEE_1516_2025
+   RTI_INCLUDE     = ${RTI_HOME}/api/cpp/HLA_1516-2025
    TRICK_CFLAGS   += -I${RTI_INCLUDE}
    TRICK_CXXFLAGS += -I${RTI_INCLUDE}
 else ifeq ($(RTI_VENDOR),Pitch_HLA_Evolved)
-   IS_PITCH_RTI = 1
-   HLA_STANDARD = IEEE_1516_2010
-   RTI_INCLUDE  = ${RTI_HOME}/api/cpp/HLA_1516-2010
+   IS_PITCH_RTI    = 1
+   HLA_STANDARD    = IEEE_1516_2010
+   RTI_INCLUDE     = ${RTI_HOME}/api/cpp/HLA_1516-2010
    ifeq ("$(wildcard ${RTI_INCLUDE})","")
-      RTI_INCLUDE = ${RTI_HOME}/include
+      RTI_INCLUDE  = ${RTI_HOME}/include
    endif
    TRICK_CFLAGS   += -I${RTI_INCLUDE}
    TRICK_CXXFLAGS += -I${RTI_INCLUDE}
 else ifeq ($(RTI_VENDOR),MAK_HLA_Evolved)
-   HLA_STANDARD   =  IEEE_1516_2010
-   RTI_INCLUDE    =  ${RTI_HOME}/include/HLA1516E
+   HLA_STANDARD    = IEEE_1516_2010
+   RTI_INCLUDE     = ${RTI_HOME}/include/HLA1516E
    TRICK_CFLAGS   += -DRTI_VENDOR=MAK_HLA_Evolved -I${RTI_INCLUDE}
    TRICK_CXXFLAGS += -DRTI_VENDOR=MAK_HLA_Evolved -I${RTI_INCLUDE}
 else
@@ -282,12 +314,18 @@ else
          $(info ${GREEN_TXT}S_hla.mk:INFO: User defined RTI_JAVA_HOME = ${RTI_JAVA_HOME}${RESET_TXT})
       endif
       RTI_JAVA_HOME ?= ${RTI_HOME}/jre
-      ifneq ("$(wildcard ${RTI_JAVA_HOME}/jre/lib/amd64/server)","")
+      ifneq ("$(wildcard ${RTI_JAVA_HOME}/lib/server)","")
+         RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/lib/server
+      else ifneq ("$(wildcard ${RTI_JAVA_HOME}/lib/amd64/server)","")
+         RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/lib/amd64/server
+      else ifneq ("$(wildcard ${RTI_JAVA_HOME}/lib/aarch64/server)","")
+         RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/lib/aarch64/server
+      else ifneq ("$(wildcard ${RTI_JAVA_HOME}/jre/lib/server)","")
+         RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/jre/lib/server
+      else ifneq ("$(wildcard ${RTI_JAVA_HOME}/jre/lib/amd64/server)","")
          RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/jre/lib/amd64/server
       else ifneq ("$(wildcard ${RTI_JAVA_HOME}/jre/lib/aarch64/server)","")
          RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/jre/lib/aarch64/server
-      else ifneq ("$(wildcard ${RTI_JAVA_HOME}/lib/server)","")
-         RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/lib/server
       else
          # Default to JRE that came with the Pitch RTI if needed.
          RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/lib/amd64/server
@@ -313,10 +351,25 @@ else
       endif
       TRICK_USER_LINK_LIBS += -L${RTI_LIB_PATH} -lrti1516_2025gcc7 -lfedtime1516_2025gcc7 -Wl,-rpath,${RTI_LIB_PATH}
 
+      ifdef LD_LIBRARY_PATH
+         ifneq (,$(findstring ${RTI_LIB_PATH}, $(LD_LIBRARY_PATH)))
+            RTI_LIB_ALREADY_SET_IN_LD_LIB_PATH = 1
+         else
+            export LD_LIBRARY_PATH += :${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}
+         endif
+      else
+         export LD_LIBRARY_PATH = ${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}
+      endif
+
       # On Ubuntu, the user needs to add the LD_LIBRARY_PATH shown below to
-      # their environment.
-      ifneq ("$(wildcard /etc/lsb-release)","")
-        $(info ${GREEN_TXT}S_hla.mk:INFO: Add this to your .bashrc file: export LD_LIBRARY_PATH=${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}${RESET_TXT})
+      # their environment so the HLA simulation can run, and only show the
+      # message if LD_LIBRARY_PATH is not already set correctly.
+      ifndef RTI_LIB_ALREADY_SET_IN_LD_LIB_PATH
+         ifdef LD_LIBRARY_PATH
+            ifneq ("$(wildcard /etc/lsb-release)","")
+              $(info ${GREEN_TXT}S_hla.mk:INFO: Add this to your .bashrc file: export LD_LIBRARY_PATH=$(LD_LIBRARY_PATH)${RESET_TXT})
+            endif
+         endif
       endif
 
    else ifeq ($(RTI_VENDOR),Pitch_HLA_Evolved)
@@ -326,12 +379,18 @@ else
          $(info ${GREEN_TXT}S_hla.mk:INFO: User defined RTI_JAVA_HOME = ${RTI_JAVA_HOME}${RESET_TXT})
       endif
       RTI_JAVA_HOME ?= ${RTI_HOME}/jre
-      ifneq ("$(wildcard ${RTI_JAVA_HOME}/jre/lib/amd64/server)","")
+      ifneq ("$(wildcard ${RTI_JAVA_HOME}/lib/server)","")
+         RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/lib/server
+      else ifneq ("$(wildcard ${RTI_JAVA_HOME}/lib/amd64/server)","")
+         RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/lib/amd64/server
+      else ifneq ("$(wildcard ${RTI_JAVA_HOME}/lib/aarch64/server)","")
+         RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/lib/aarch64/server
+      else ifneq ("$(wildcard ${RTI_JAVA_HOME}/jre/lib/server)","")
+         RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/jre/lib/server
+      else ifneq ("$(wildcard ${RTI_JAVA_HOME}/jre/lib/amd64/server)","")
          RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/jre/lib/amd64/server
       else ifneq ("$(wildcard ${RTI_JAVA_HOME}/jre/lib/aarch64/server)","")
          RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/jre/lib/aarch64/server
-      else ifneq ("$(wildcard ${RTI_JAVA_HOME}/lib/server)","")
-         RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/lib/server
       else
          # Default to JRE that came with the Pitch RTI if needed.
          RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/lib/amd64/server
@@ -361,10 +420,25 @@ else
       endif
       TRICK_USER_LINK_LIBS += -L${RTI_LIB_PATH} -lrti1516e64 -lfedtime1516e64 -Wl,-rpath,${RTI_LIB_PATH}
 
+      ifdef LD_LIBRARY_PATH
+         ifneq (,$(findstring ${RTI_LIB_PATH}, $(LD_LIBRARY_PATH)))
+            RTI_LIB_ALREADY_SET_IN_LD_LIB_PATH = 1
+         else
+            export LD_LIBRARY_PATH += :${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}
+         endif
+      else
+         export LD_LIBRARY_PATH = ${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}
+      endif
+
       # On Ubuntu, the user needs to add the LD_LIBRARY_PATH shown below to
-      # their environment.
-      ifneq ("$(wildcard /etc/lsb-release)","")
-        $(info ${GREEN_TXT}S_hla.mk:INFO: Add this to your .bashrc file: export LD_LIBRARY_PATH=${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}${RESET_TXT})
+      # their environment so the HLA simulation can run, and only show the
+      # message if LD_LIBRARY_PATH is not already set correctly.
+      ifndef RTI_LIB_ALREADY_SET_IN_LD_LIB_PATH
+         ifdef LD_LIBRARY_PATH
+            ifneq ("$(wildcard /etc/lsb-release)","")
+              $(info ${GREEN_TXT}S_hla.mk:INFO: Add this to your .bashrc file: export LD_LIBRARY_PATH=$(LD_LIBRARY_PATH)${RESET_TXT})
+            endif
+         endif
       endif
 
    else ifeq ($(RTI_VENDOR),MAK_HLA_Evolved)

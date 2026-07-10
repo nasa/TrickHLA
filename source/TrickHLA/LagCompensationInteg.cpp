@@ -71,9 +71,9 @@ int LagCompensationInteg::integrate(
    double const t_begin,
    double const t_end )
 {
-   int    ipass;
-   double compensate_dt = t_end - t_begin;
-   double dt_go         = compensate_dt;
+   int          ipass;
+   double const compensate_dt = t_end - t_begin;
+   double       dt_go         = compensate_dt;
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.

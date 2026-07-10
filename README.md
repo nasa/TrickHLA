@@ -22,7 +22,9 @@ IEEE 1516-2010 or IEEE 1516-2025 Runtime Infrastructure (RTI) in order to functi
 
 1) Install the Trick Simulation Environment by following the [Trick Install Guide](https://nasa.github.io/trick/documentation/install_guide/Install-Guide).
 
-2) Install an IEEE 1516-2010 or IEEE 1516-2025 RTI using the installer and instructions provided by the vendor.
+2) Ensure the <i>bc</i>, <i>cut</i>, <i>grep</i>, and <i>which</i> system commands have been installed.
+
+3) Install an IEEE 1516-2010 or IEEE 1516-2025 RTI using the installer and instructions provided by the vendor.
 
 ### Getting TrickHLA
 Clone TrickHLA from the master branch.
@@ -42,6 +44,9 @@ git clone https://github.com/nasa/TrickHLA.git
 5) Define $RTI_VENDOR to be one of either <i>Pitch_HLA_4</i>, <i>Pitch_HLA_Evolved</i>, or <i>MAK_HLA_Evolved</i> depending on the RTI you are using.
 
 6) Optionally, define $RTI_JAVA_HOME to override the Java Runtime Environment (JRE) used by the RTI if it uses one.
+
+7) On Ubuntu, you will need to define the $LD_LIBRARY_PATH to run the simulation. When you compile a simulation that uses TrickHLA, a recommended LD_LIBRARY_PATH setting will be displayed to the console as part of the first few lines of output. For the Pitch RTI, the LD_LIBRARY_PATH setting in the ~/.bashrc file is typically something like this:<br>
+export LD_LIBRARY_PATH=${RTI_HOME}/jre/lib:${RTI_HOME}/jre/lib/server:${RTI_HOME}/lib/gcc73_64
 
 ### Building an Example Simulation
 

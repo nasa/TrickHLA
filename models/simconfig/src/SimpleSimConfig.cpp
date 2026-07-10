@@ -153,17 +153,17 @@ void SimpleSimConfig::pack()
    if ( !initialized ) {
       ostringstream errmsg;
       errmsg << "SimpleSimConfig::pack():" << __LINE__
-             << " ERROR: The initialize() function has not been called!" << endl;
+             << " ERROR: The initialize() function has not been called!\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
    ostringstream msg;
 
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
-      msg << "===================================================" << endl;
+      msg << "===================================================\n";
    }
 
-   double terminate_time = exec_get_terminate_time();
+   double const terminate_time = exec_get_terminate_time();
 
    // Set the stop/termination time of the Trick simulation based on the
    // run_duration setting.
@@ -171,7 +171,7 @@ void SimpleSimConfig::pack()
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
          msg << "SimpleSimConfig::pack():" << __LINE__
              << " Setting simulation termination time to "
-             << run_duration << " seconds." << endl;
+             << run_duration << " seconds.\n";
       }
       exec_set_terminate_time( this->run_duration );
    } else {
@@ -185,7 +185,7 @@ void SimpleSimConfig::pack()
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
          msg << "SimpleSimConfig::pack(:" << __LINE__
              << " Setting simulation duration to "
-             << run_duration << " seconds." << endl;
+             << run_duration << " seconds.\n";
       }
    }
 
@@ -193,15 +193,15 @@ void SimpleSimConfig::pack()
    this->run_duration_base_time = Int64BaseTime::to_base_time( this->run_duration );
 
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
-      msg << "SimpleSimConfig::pack():" << __LINE__ << endl
-          << "\t Object-Name:'" << object->get_name() << "'" << endl
-          << "\t owner:'" << ( owner != NULL ? owner : "" ) << "'" << endl
-          << "\t run_duration:" << run_duration << " seconds" << endl
+      msg << "SimpleSimConfig::pack():" << __LINE__ << "\n"
+          << "\t Object-Name:'" << object->get_name() << "'\n"
+          << "\t owner:'" << ( owner != NULL ? owner : "" ) << "'\n"
+          << "\t run_duration:" << run_duration << " seconds\n"
           << "\t run_duration_base_time:" << run_duration_base_time << " "
-          << Int64BaseTime::get_base_unit() << endl
-          << "\t num_federates:" << num_federates << endl
-          << "\t required_federates:'" << ( required_federates != NULL ? required_federates : "" ) << "'" << endl
-          << "===================================================" << endl;
+          << Int64BaseTime::get_base_unit() << "\n"
+          << "\t num_federates:" << num_federates << "\n"
+          << "\t required_federates:'" << ( required_federates != NULL ? required_federates : "" ) << "'\n"
+          << "===================================================\n";
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 }
@@ -211,13 +211,13 @@ void SimpleSimConfig::unpack()
    if ( !initialized ) {
       ostringstream errmsg;
       errmsg << "SimpleSimConfig::unpack():" << __LINE__
-             << " ERROR: The initialize() function has not been called!" << endl;
+             << " ERROR: The initialize() function has not been called!\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
    ostringstream msg;
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
-      msg << "===================================================" << endl;
+      msg << "===================================================\n";
    }
 
    // Decode the run duration from a 64 bit integer in the base time.
@@ -229,21 +229,21 @@ void SimpleSimConfig::unpack()
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
          msg << "SimpleSimConfig::unpack():" << __LINE__
              << " Setting simulation duration to "
-             << run_duration << " seconds." << endl;
+             << run_duration << " seconds.\n";
       }
       exec_set_terminate_time( this->run_duration );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
-      msg << "SimpleSimConfig::unpack():" << __LINE__ << endl
-          << "\t Object-Name:'" << object->get_name() << "'" << endl
-          << "\t owner:'" << ( owner != NULL ? owner : "" ) << "'" << endl
-          << "\t run_duration:" << run_duration << " seconds" << endl
+      msg << "SimpleSimConfig::unpack():" << __LINE__ << "\n"
+          << "\t Object-Name:'" << object->get_name() << "'\n"
+          << "\t owner:'" << ( owner != NULL ? owner : "" ) << "'\n"
+          << "\t run_duration:" << run_duration << " seconds\n"
           << "\t run_duration_base_time:" << run_duration_base_time << " "
-          << Int64BaseTime::get_base_unit() << endl
-          << "\t num_federates:" << num_federates << endl
-          << "\t required_federates:'" << ( required_federates != NULL ? required_federates : "" ) << "'" << endl
-          << "===================================================" << endl;
+          << Int64BaseTime::get_base_unit() << "\n"
+          << "\t num_federates:" << num_federates << "\n"
+          << "\t required_federates:'" << ( required_federates != NULL ? required_federates : "" ) << "'\n"
+          << "===================================================\n";
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 }

@@ -88,22 +88,22 @@ bool Int16Data::compare(
    bool equal_values = true;
 
    ostringstream msg;
-   msg << "Int16Data::compare():" << __LINE__ << endl;
+   msg << "Int16Data::compare():" << __LINE__ << "\n";
 
    if ( this->i16 == data.i16 ) {
-      msg << "this->i16 (" << this->i16 << ") == (" << data.i16 << ") data.i16" << endl;
+      msg << "this->i16 (" << this->i16 << ") == (" << data.i16 << ") data.i16\n";
    } else {
-      msg << "this->i16 (" << this->i16 << ") != (" << data.i16 << ") data.i16" << endl;
+      msg << "this->i16 (" << this->i16 << ") != (" << data.i16 << ") data.i16\n";
       equal_values = false;
    }
 
    for ( int i = 0; i < 3; ++i ) {
       if ( this->vec3_i16[i] == data.vec3_i16[i] ) {
          msg << "this->vec3_i16[" << i << "] (" << this->vec3_i16[i]
-             << ") == (" << data.vec3_i16[i] << ") data.vec3_i16[" << i << "]" << endl;
+             << ") == (" << data.vec3_i16[i] << ") data.vec3_i16[" << i << "]\n";
       } else {
          msg << "this->vec3_i16[" << i << "] (" << this->vec3_i16[i]
-             << ") != (" << data.vec3_i16[i] << ") data.vec3_i16[" << i << "]" << endl;
+             << ") != (" << data.vec3_i16[i] << ") data.vec3_i16[" << i << "]\n";
          equal_values = false;
       }
    }
@@ -112,32 +112,32 @@ bool Int16Data::compare(
       for ( int col = 0; col < 3; ++col ) {
          if ( this->m3x3_i16[row][col] == data.m3x3_i16[row][col] ) {
             msg << "this->m3x3_i16[" << row << "][" << col << "] (" << this->m3x3_i16[row][col]
-                << ") == (" << data.m3x3_i16[row][col] << ") data.m3x3_i16[" << row << "][" << col << "]" << endl;
+                << ") == (" << data.m3x3_i16[row][col] << ") data.m3x3_i16[" << row << "][" << col << "]\n";
          } else {
             msg << "this->m3x3_i16[" << row << "][" << col << "] (" << this->m3x3_i16[row][col]
-                << ") != (" << data.m3x3_i16[row][col] << ") data.m3x3_i16[" << row << "][" << col << "]" << endl;
+                << ") != (" << data.m3x3_i16[row][col] << ") data.m3x3_i16[" << row << "][" << col << "]\n";
             equal_values = false;
          }
       }
    }
 
-   int data1_ptr_i16_size = get_size( this->ptr_i16 );
-   int data2_ptr_i16_size = get_size( data.ptr_i16 );
+   int const data1_ptr_i16_size = get_size( this->ptr_i16 );
+   int const data2_ptr_i16_size = get_size( data.ptr_i16 );
    if ( data1_ptr_i16_size != data2_ptr_i16_size ) {
       msg << "this->ptr_i16 size (" << data1_ptr_i16_size
-          << ") != (" << data2_ptr_i16_size << ") data.ptr_i16 size" << endl;
+          << ") != (" << data2_ptr_i16_size << ") data.ptr_i16 size\n";
       equal_values = false;
    } else {
       msg << "this->ptr_i16 size (" << data1_ptr_i16_size
-          << ") == (" << data2_ptr_i16_size << ") data.ptr_i16 size" << endl;
+          << ") == (" << data2_ptr_i16_size << ") data.ptr_i16 size\n";
 
       for ( int i = 0; i < data1_ptr_i16_size; ++i ) {
          if ( this->ptr_i16[i] == data.ptr_i16[i] ) {
             msg << "this->ptr_i16[" << i << "] (" << this->ptr_i16[i]
-                << ") == (" << data.ptr_i16[i] << ") data.ptr_i16[" << i << "]" << endl;
+                << ") == (" << data.ptr_i16[i] << ") data.ptr_i16[" << i << "]\n";
          } else {
             msg << "this->ptr_i16[" << i << "] (" << this->ptr_i16[i]
-                << ") != (" << data.ptr_i16[i] << ") data.ptr_i16[" << i << "]" << endl;
+                << ") != (" << data.ptr_i16[i] << ") data.ptr_i16[" << i << "]\n";
             equal_values = false;
          }
       }
@@ -151,27 +151,27 @@ bool Int16Data::compare(
 string Int16Data::to_string()
 {
    ostringstream msg;
-   msg << "Int16Data::to_string():" << __LINE__ << endl
-       << "i16:" << i16 << endl;
+   msg << "Int16Data::to_string():" << __LINE__ << "\n"
+       << "i16:" << i16 << "\n";
 
    for ( int i = 0; i < 3; ++i ) {
       msg << "vec3_i16[" << i << "]:" << vec3_i16[i] << " ";
    }
-   msg << endl;
+   msg << "\n";
 
    for ( int row = 0; row < 3; ++row ) {
       for ( int col = 0; col < 3; ++col ) {
          msg << "m3x3_i16[" << row << "][" << col << "]:" << m3x3_i16[row][col] << " ";
       }
    }
-   msg << endl;
+   msg << "\n";
 
-   int ptr_i16_size = get_size( ptr_i16 );
-   msg << "ptr_i16 size:" << ptr_i16_size << endl;
+   int const ptr_i16_size = get_size( ptr_i16 );
+   msg << "ptr_i16 size:" << ptr_i16_size << "\n";
    for ( int i = 0; i < ptr_i16_size; ++i ) {
       msg << "ptr_i16[" << i << "]:" << ptr_i16[i] << " ";
    }
-   msg << endl;
+   msg << "\n";
 
    return msg.str();
 }

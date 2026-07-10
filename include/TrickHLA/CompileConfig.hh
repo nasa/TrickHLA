@@ -91,6 +91,11 @@ NASA, Johnson Space Center\n
 #   define FPU_CW_PROTECTION
 #endif
 
+// The FPU code word protection is only supported for i386/x86 CPUs.
+#if ( defined( FPU_CW_PROTECTION ) && !defined( __i386__ ) && !defined( __x86_64__ ) )
+#   undef FPU_CW_PROTECTION
+#endif
+
 // Define TRICKHLA_ENABLE_FPU_CONTROL_WORD_VALIDATION to enabled FPU control
 // word tests that have been sprinkled throughout the TrickHLA code. This only
 // has an effect if FPU_CW_PROTECTION is defined as well.

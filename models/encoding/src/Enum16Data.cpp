@@ -69,14 +69,14 @@ Enum16Data::Enum16Data(
       }
    }
 
-   int ptr_enum16_size = (int)( 5 + ( ( offset < 10 ) ? offset : 10 ) );
+   int const ptr_enum16_size = (int)( 5 + ( ( offset < 10 ) ? offset : 10 ) );
 
    ptr_enum16 = static_cast< TrickHLAModel::Int16Enum * >(
       TMM_declare_var_1d( "TrickHLAModel::Int16Enum", ptr_enum16_size ) );
    if ( ptr_enum16 == NULL ) {
       ostringstream errmsg;
       errmsg << "Enum16Data::Enum16Data():" << __LINE__
-             << " ERROR: Failed to allocate memory for ptr_enum16!" << endl;
+             << " ERROR: Failed to allocate memory for ptr_enum16!\n";
       TrickHLA::DebugHandler::terminate( errmsg.str() );
       return;
    }
@@ -100,22 +100,22 @@ bool Enum16Data::compare(
    bool equal_values = true;
 
    ostringstream msg;
-   msg << "Enum16Data::compare():" << __LINE__ << endl;
+   msg << "Enum16Data::compare():" << __LINE__ << "\n";
 
    if ( this->enum16 == data.enum16 ) {
-      msg << "this->enum16 (" << (long long)this->enum16 << ") == (" << (long long)data.enum16 << ") data.enum16" << endl;
+      msg << "this->enum16 (" << (long long)this->enum16 << ") == (" << (long long)data.enum16 << ") data.enum16\n";
    } else {
-      msg << "this->enum16 (" << (long long)this->enum16 << ") != (" << (long long)data.enum16 << ") data.enum16" << endl;
+      msg << "this->enum16 (" << (long long)this->enum16 << ") != (" << (long long)data.enum16 << ") data.enum16\n";
       equal_values = false;
    }
 
    for ( int i = 0; i < 3; ++i ) {
       if ( this->vec3_enum16[i] == data.vec3_enum16[i] ) {
          msg << "this->vec3_enum16[" << i << "] (" << (long long)this->vec3_enum16[i]
-             << ") == (" << (long long)data.vec3_enum16[i] << ") data.vec3_enum16[" << i << "]" << endl;
+             << ") == (" << (long long)data.vec3_enum16[i] << ") data.vec3_enum16[" << i << "]\n";
       } else {
          msg << "this->vec3_enum16[" << i << "] (" << (long long)this->vec3_enum16[i]
-             << ") != (" << (long long)data.vec3_enum16[i] << ") data.vec3_enum16[" << i << "]" << endl;
+             << ") != (" << (long long)data.vec3_enum16[i] << ") data.vec3_enum16[" << i << "]\n";
          equal_values = false;
       }
    }
@@ -124,32 +124,32 @@ bool Enum16Data::compare(
       for ( int col = 0; col < 3; ++col ) {
          if ( this->m3x3_enum16[row][col] == data.m3x3_enum16[row][col] ) {
             msg << "this->m3x3_enum16[" << row << "][" << col << "] (" << (long long)this->m3x3_enum16[row][col]
-                << ") == (" << (long long)data.m3x3_enum16[row][col] << ") data.m3x3_enum16[" << row << "][" << col << "]" << endl;
+                << ") == (" << (long long)data.m3x3_enum16[row][col] << ") data.m3x3_enum16[" << row << "][" << col << "]\n";
          } else {
             msg << "this->m3x3_enum16[" << row << "][" << col << "] (" << (long long)this->m3x3_enum16[row][col]
-                << ") != (" << (long long)data.m3x3_enum16[row][col] << ") data.m3x3_enum16[" << row << "][" << col << "]" << endl;
+                << ") != (" << (long long)data.m3x3_enum16[row][col] << ") data.m3x3_enum16[" << row << "][" << col << "]\n";
             equal_values = false;
          }
       }
    }
 
-   int data1_ptr_enum16_size = get_size( this->ptr_enum16 );
-   int data2_ptr_enum16_size = get_size( data.ptr_enum16 );
+   int const data1_ptr_enum16_size = get_size( this->ptr_enum16 );
+   int const data2_ptr_enum16_size = get_size( data.ptr_enum16 );
    if ( data1_ptr_enum16_size != data2_ptr_enum16_size ) {
       msg << "this->ptr_enum16 size (" << data1_ptr_enum16_size
-          << ") != (" << data2_ptr_enum16_size << ") data.ptr_enum16 size" << endl;
+          << ") != (" << data2_ptr_enum16_size << ") data.ptr_enum16 size\n";
       equal_values = false;
    } else {
       msg << "this->ptr_enum16 size (" << data1_ptr_enum16_size
-          << ") == (" << data2_ptr_enum16_size << ") data.ptr_enum16 size" << endl;
+          << ") == (" << data2_ptr_enum16_size << ") data.ptr_enum16 size\n";
 
       for ( int i = 0; i < data1_ptr_enum16_size; ++i ) {
          if ( this->ptr_enum16[i] == data.ptr_enum16[i] ) {
             msg << "this->ptr_enum16[" << i << "] (" << (long long)this->ptr_enum16[i]
-                << ") == (" << (long long)data.ptr_enum16[i] << ") data.ptr_enum16[" << i << "]" << endl;
+                << ") == (" << (long long)data.ptr_enum16[i] << ") data.ptr_enum16[" << i << "]\n";
          } else {
             msg << "this->ptr_enum16[" << i << "] (" << (long long)this->ptr_enum16[i]
-                << ") != (" << (long long)data.ptr_enum16[i] << ") data.ptr_enum16[" << i << "]" << endl;
+                << ") != (" << (long long)data.ptr_enum16[i] << ") data.ptr_enum16[" << i << "]\n";
             equal_values = false;
          }
       }
@@ -163,27 +163,27 @@ bool Enum16Data::compare(
 string Enum16Data::to_string()
 {
    ostringstream msg;
-   msg << "Enum16Data::to_string():" << __LINE__ << endl
-       << "enum16:" << (long long)enum16 << endl;
+   msg << "Enum16Data::to_string():" << __LINE__ << "\n"
+       << "enum16:" << (long long)enum16 << "\n";
 
    for ( int i = 0; i < 3; ++i ) {
       msg << "vec3_enum16[" << i << "]:" << (long long)vec3_enum16[i] << " ";
    }
-   msg << endl;
+   msg << "\n";
 
    for ( int row = 0; row < 3; ++row ) {
       for ( int col = 0; col < 3; ++col ) {
          msg << "m3x3_enum16[" << row << "][" << col << "]:" << (long long)m3x3_enum16[row][col] << " ";
       }
    }
-   msg << endl;
+   msg << "\n";
 
-   int ptr_enum16_size = get_size( ptr_enum16 );
-   msg << "ptr_enum16 size:" << ptr_enum16_size << endl;
+   int const ptr_enum16_size = get_size( ptr_enum16 );
+   msg << "ptr_enum16 size:" << ptr_enum16_size << "\n";
    for ( int i = 0; i < ptr_enum16_size; ++i ) {
       msg << "ptr_enum16[" << i << "]:" << (long long)ptr_enum16[i] << " ";
    }
-   msg << endl;
+   msg << "\n";
 
    return msg.str();
 }
