@@ -322,7 +322,7 @@ else
          RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/jre/lib/aarch64/server
       else
          # Default to JRE that came with the Pitch RTI if needed.
-         RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/lib/amd64/server
+         RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/lib/server
       endif
       # Verify the RTI Java Home and Lib paths.
       ifeq ("$(wildcard ${RTI_JAVA_HOME})","")
@@ -387,7 +387,7 @@ else
          RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/jre/lib/aarch64/server
       else
          # Default to JRE that came with the Pitch RTI if needed.
-         RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/lib/amd64/server
+         RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/lib/server
       endif
       # Verify the RTI Java Home and Lib paths.
       ifeq ("$(wildcard ${RTI_JAVA_HOME})","")
