@@ -308,12 +308,18 @@ else
          $(info ${GREEN_TXT}S_hla.mk:INFO: User defined RTI_JAVA_HOME = ${RTI_JAVA_HOME}${RESET_TXT})
       endif
       RTI_JAVA_HOME ?= ${RTI_HOME}/jre
-      ifneq ("$(wildcard ${RTI_JAVA_HOME}/jre/lib/amd64/server)","")
+      ifneq ("$(wildcard ${RTI_JAVA_HOME}/lib/server)","")
+         RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/lib/server
+      else ifneq ("$(wildcard ${RTI_JAVA_HOME}/lib/amd64/server)","")
+         RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/lib/amd64/server
+      else ifneq ("$(wildcard ${RTI_JAVA_HOME}/lib/aarch64/server)","")
+         RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/lib/aarch64/server
+      else ifneq ("$(wildcard ${RTI_JAVA_HOME}/jre/lib/server)","")
+         RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/jre/lib/server
+      else ifneq ("$(wildcard ${RTI_JAVA_HOME}/jre/lib/amd64/server)","")
          RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/jre/lib/amd64/server
       else ifneq ("$(wildcard ${RTI_JAVA_HOME}/jre/lib/aarch64/server)","")
          RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/jre/lib/aarch64/server
-      else ifneq ("$(wildcard ${RTI_JAVA_HOME}/lib/server)","")
-         RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/lib/server
       else
          # Default to JRE that came with the Pitch RTI if needed.
          RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/lib/amd64/server
@@ -367,12 +373,18 @@ else
          $(info ${GREEN_TXT}S_hla.mk:INFO: User defined RTI_JAVA_HOME = ${RTI_JAVA_HOME}${RESET_TXT})
       endif
       RTI_JAVA_HOME ?= ${RTI_HOME}/jre
-      ifneq ("$(wildcard ${RTI_JAVA_HOME}/jre/lib/amd64/server)","")
+      ifneq ("$(wildcard ${RTI_JAVA_HOME}/lib/server)","")
+         RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/lib/server
+      else ifneq ("$(wildcard ${RTI_JAVA_HOME}/lib/amd64/server)","")
+         RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/lib/amd64/server
+      else ifneq ("$(wildcard ${RTI_JAVA_HOME}/lib/aarch64/server)","")
+         RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/lib/aarch64/server
+      else ifneq ("$(wildcard ${RTI_JAVA_HOME}/jre/lib/server)","")
+         RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/jre/lib/server
+      else ifneq ("$(wildcard ${RTI_JAVA_HOME}/jre/lib/amd64/server)","")
          RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/jre/lib/amd64/server
       else ifneq ("$(wildcard ${RTI_JAVA_HOME}/jre/lib/aarch64/server)","")
          RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/jre/lib/aarch64/server
-      else ifneq ("$(wildcard ${RTI_JAVA_HOME}/lib/server)","")
-         RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/lib/server
       else
          # Default to JRE that came with the Pitch RTI if needed.
          RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/lib/amd64/server
