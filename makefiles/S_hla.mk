@@ -26,6 +26,9 @@ endif
 ifeq (,$(findstring grep, $(shell which grep)))
    $(error ${RED_TXT}S_hla.mk:ERROR: Could not find the grep system command. Please ensure your PATH is correct or install the grep command package.${RESET_TXT})
 endif
+ifeq (,$(findstring grep, $(shell which readlink)))
+   $(error ${RED_TXT}S_hla.mk:ERROR: Could not find the readlink system command. Please ensure your PATH is correct or install the readlink command package.${RESET_TXT})
+endif
 
 # Verify the TRICKHLA_HOME environment variables is set and the path is valid.
 ifndef TRICKHLA_HOME
@@ -345,7 +348,7 @@ else
 
       # Determine which gcc library version to use.
       ifeq ($(shell echo $(COMPILER_VERSION)\>=7 | bc),1)
-         RTI_LIB_PATH = ${RTI_HOME}/lib
+         RTI_LIB_PATH = $(shell readlink -f ${RTI_HOME}/lib)
       else
          $(error ${RED_TXT}S_hla.mk:ERROR: Pitch RTI libraries require at least gcc 7 for Linux.${RESET_TXT})
       endif
@@ -410,13 +413,13 @@ else
 
       # Determine which gcc library version to use.
       ifeq ($(shell echo $(COMPILER_VERSION)\>=7 | bc),1)
-         RTI_LIB_PATH = ${RTI_HOME}/lib/gcc73_64
+         RTI_LIB_PATH = $(shell readlink -f ${RTI_HOME}/lib/gcc73_64)
       else ifeq ($(shell echo $(COMPILER_VERSION)\>=5 | bc),1)
-         RTI_LIB_PATH = ${RTI_HOME}/lib/gcc52_64
+         RTI_LIB_PATH = $(shell readlink -f ${RTI_HOME}/lib/gcc52_64)
       else ifeq ($(shell echo $(COMPILER_VERSION)\>=4 | bc),1)
-         RTI_LIB_PATH = ${RTI_HOME}/lib/gcc41_64
+         RTI_LIB_PATH = $(shell readlink -f ${RTI_HOME}/lib/gcc41_64)
       else
-         RTI_LIB_PATH = ${RTI_HOME}/lib/gcc34_64
+         RTI_LIB_PATH = $(shell readlink -f ${RTI_HOME}/lib/gcc34_64)
       endif
       TRICK_USER_LINK_LIBS += -L${RTI_LIB_PATH} -Wl,-rpath,${RTI_LIB_PATH} -lrti1516e64 -lfedtime1516e64
 
