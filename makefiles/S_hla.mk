@@ -337,7 +337,7 @@ else
       ifeq ("$(wildcard ${RTI_JAVA_LIB_PATH})","")
          $(error ${RED_TXT}S_hla.mk:ERROR: The path specified by RTI_JAVA_LIB_PATH is invalid for ${RTI_JAVA_LIB_PATH}${RESET_TXT})
       endif
-      TRICK_USER_LINK_LIBS += -L${RTI_JAVA_LIB_PATH}/.. -L${RTI_JAVA_LIB_PATH} -ljava -ljvm -lverify -Wl,-rpath,${RTI_JAVA_LIB_PATH}/.. -Wl,-rpath,${RTI_JAVA_LIB_PATH}
+      TRICK_USER_LINK_LIBS += -L${RTI_JAVA_LIB_PATH}/.. -L${RTI_JAVA_LIB_PATH} -Wl,-rpath,${RTI_JAVA_LIB_PATH}/.. -Wl,-rpath,${RTI_JAVA_LIB_PATH} -ljava -ljvm -lverify
 
       # Add the CLASSPATH environment variable to the simulation executable.
       export CLASSPATH     += ${RTI_HOME}/lib/prti1516_hla4.jar
@@ -349,7 +349,7 @@ else
       else
          $(error ${RED_TXT}S_hla.mk:ERROR: Pitch RTI libraries require at least gcc 7 for Linux.${RESET_TXT})
       endif
-      TRICK_USER_LINK_LIBS += -L${RTI_LIB_PATH} -lrti1516_2025gcc7 -lfedtime1516_2025gcc7 -Wl,-rpath,${RTI_LIB_PATH}
+      TRICK_USER_LINK_LIBS += -L${RTI_LIB_PATH} -Wl,-rpath,${RTI_LIB_PATH} -lrti1516_2025gcc7 -lfedtime1516_2025gcc7
 
       ifdef LD_LIBRARY_PATH
          ifneq (,$(findstring ${RTI_LIB_PATH}, $(LD_LIBRARY_PATH)))
@@ -402,7 +402,7 @@ else
       ifeq ("$(wildcard ${RTI_JAVA_LIB_PATH})","")
          $(error ${RED_TXT}S_hla.mk:ERROR: The path specified by RTI_JAVA_LIB_PATH is invalid for ${RTI_JAVA_LIB_PATH}${RESET_TXT})
       endif
-      TRICK_USER_LINK_LIBS += -L${RTI_JAVA_LIB_PATH}/.. -L${RTI_JAVA_LIB_PATH} -ljava -ljvm -lverify -Wl,-rpath,${RTI_JAVA_LIB_PATH}/.. -Wl,-rpath,${RTI_JAVA_LIB_PATH}
+      TRICK_USER_LINK_LIBS += -L${RTI_JAVA_LIB_PATH}/.. -L${RTI_JAVA_LIB_PATH} -Wl,-rpath,${RTI_JAVA_LIB_PATH}/.. -Wl,-rpath,${RTI_JAVA_LIB_PATH} -ljava -ljvm -lverify
 
       # Add the CLASSPATH environment variable to the simulation executable.
       export CLASSPATH     += ${RTI_HOME}/lib/prti1516e.jar
@@ -418,7 +418,7 @@ else
       else
          RTI_LIB_PATH = ${RTI_HOME}/lib/gcc34_64
       endif
-      TRICK_USER_LINK_LIBS += -L${RTI_LIB_PATH} -lrti1516e64 -lfedtime1516e64 -Wl,-rpath,${RTI_LIB_PATH}
+      TRICK_USER_LINK_LIBS += -L${RTI_LIB_PATH} -Wl,-rpath,${RTI_LIB_PATH} -lrti1516e64 -lfedtime1516e64
 
       ifdef LD_LIBRARY_PATH
          ifneq (,$(findstring ${RTI_LIB_PATH}, $(LD_LIBRARY_PATH)))
