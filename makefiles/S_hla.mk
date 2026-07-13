@@ -26,7 +26,7 @@ endif
 ifeq (,$(findstring grep, $(shell which grep)))
    $(error ${RED_TXT}S_hla.mk:ERROR: Could not find the grep system command. Please ensure your PATH is correct or install the grep command package.${RESET_TXT})
 endif
-ifeq (,$(findstring grep, $(shell which readlink)))
+ifeq (,$(findstring readlink, $(shell which readlink)))
    $(error ${RED_TXT}S_hla.mk:ERROR: Could not find the readlink system command. Please ensure your PATH is correct or install the readlink command package.${RESET_TXT})
 endif
 
