@@ -421,7 +421,7 @@ else
       else
          RTI_LIB_PATH = $(shell readlink -f ${RTI_HOME}/lib/gcc34_64)
       endif
-      TRICK_USER_LINK_LIBS += -L${RTI_LIB_PATH} -Wl,-rpath,${RTI_LIB_PATH} -lrti1516e64 -lfedtime1516e64
+      TRICK_USER_LINK_LIBS += -L${RTI_LIB_PATH} -Wl,-rpath,${RTI_LIB_PATH} -lrti1516e64 -L${RTI_LIB_PATH} -Wl,-rpath,${RTI_LIB_PATH} -lfedtime1516e64
 
       ifdef LD_LIBRARY_PATH
          ifneq (,$(findstring ${RTI_LIB_PATH}, $(LD_LIBRARY_PATH)))
