@@ -359,7 +359,7 @@ else
          export LD_LIBRARY_PATH = ${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}
       endif
 
-      # On Ubuntu, disable the new dtags so RPATH is used and not RUNPATH.
+      # On Ubuntu, disable the new dtags to ensure RPATH is used and not RUNPATH.
       ifneq ("$(wildcard /etc/lsb-release)","")
          TRICK_USER_LINK_LIBS += -Wl,--disable-new-dtags
       endif
@@ -421,7 +421,7 @@ else
          export LD_LIBRARY_PATH = ${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}
       endif
 
-      # On Ubuntu, disable the new dtags so RPATH is used and not RUNPATH.
+      # On Ubuntu, disable the new dtags to ensure RPATH is used and not RUNPATH.
       ifneq ("$(wildcard /etc/lsb-release)","")
          TRICK_USER_LINK_LIBS += -Wl,--disable-new-dtags
       endif

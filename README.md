@@ -45,9 +45,6 @@ git clone https://github.com/nasa/TrickHLA.git
 
 6) Optionally, define $RTI_JAVA_HOME to override the Java Runtime Environment (JRE) used by the RTI if it uses one.
 
-7) On Ubuntu, you will need to define the $LD_LIBRARY_PATH to run the simulation. When you compile a simulation that uses TrickHLA, a recommended LD_LIBRARY_PATH setting will be displayed to the console as part of the first few lines of output. For the Pitch RTI, the LD_LIBRARY_PATH setting in the ~/.bashrc file is typically something like this:<br>
-export LD_LIBRARY_PATH=${RTI_HOME}/jre/lib:${RTI_HOME}/jre/lib/server:${RTI_HOME}/lib/gcc73_64
-
 ### Building an Example Simulation
 
 1) cd $TRICKHLA_HOME/sims/SpaceFOM/SIM_sine
