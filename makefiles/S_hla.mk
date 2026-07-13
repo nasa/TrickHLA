@@ -340,7 +340,8 @@ else
       ifeq ("$(wildcard ${RTI_JAVA_LIB_PATH})","")
          $(error ${RED_TXT}S_hla.mk:ERROR: The path specified by RTI_JAVA_LIB_PATH is invalid for ${RTI_JAVA_LIB_PATH}${RESET_TXT})
       endif
-      TRICK_USER_LINK_LIBS += -L${RTI_JAVA_LIB_PATH}/.. -L${RTI_JAVA_LIB_PATH} -Wl,-rpath,${RTI_JAVA_LIB_PATH}/.. -Wl,-rpath,${RTI_JAVA_LIB_PATH} -ljava -ljvm -lverify
+      RTI_JAVA_LIB_PARENT_PATH = $(shell readlink -f ${RTI_JAVA_LIB_PATH}/..)
+      TRICK_USER_LINK_LIBS += -L${RTI_JAVA_LIB_PARENT_PATH} -L${RTI_JAVA_LIB_PATH} -Wl,-rpath,${RTI_JAVA_LIB_PARENT_PATH} -Wl,-rpath,${RTI_JAVA_LIB_PATH} -ljava -ljvm -lverify
 
       # Add the CLASSPATH environment variable to the simulation executable.
       export CLASSPATH     += ${RTI_HOME}/lib/prti1516_hla4.jar
@@ -358,10 +359,10 @@ else
          ifneq (,$(findstring ${RTI_LIB_PATH}, $(LD_LIBRARY_PATH)))
             RTI_LIB_ALREADY_SET_IN_LD_LIB_PATH = 1
          else
-            export LD_LIBRARY_PATH += :${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}
+            export LD_LIBRARY_PATH += :${RTI_JAVA_LIB_PARENT_PATH}:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}
          endif
       else
-         export LD_LIBRARY_PATH = ${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}
+         export LD_LIBRARY_PATH = ${RTI_JAVA_LIB_PARENT_PATH}:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}
       endif
 
       # On Ubuntu, the user needs to add the LD_LIBRARY_PATH shown below to
@@ -398,6 +399,7 @@ else
          # Default to JRE that came with the Pitch RTI if needed.
          RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/lib/server
       endif
+
       # Verify the RTI Java Home and Lib paths.
       ifeq ("$(wildcard ${RTI_JAVA_HOME})","")
          $(error ${RED_TXT}S_hla.mk:ERROR: The path specified by RTI_JAVA_HOME is invalid for ${RTI_JAVA_HOME}${RESET_TXT})
@@ -405,7 +407,8 @@ else
       ifeq ("$(wildcard ${RTI_JAVA_LIB_PATH})","")
          $(error ${RED_TXT}S_hla.mk:ERROR: The path specified by RTI_JAVA_LIB_PATH is invalid for ${RTI_JAVA_LIB_PATH}${RESET_TXT})
       endif
-      TRICK_USER_LINK_LIBS += -L${RTI_JAVA_LIB_PATH}/.. -L${RTI_JAVA_LIB_PATH} -Wl,-rpath,${RTI_JAVA_LIB_PATH}/.. -Wl,-rpath,${RTI_JAVA_LIB_PATH} -ljava -ljvm -lverify
+      RTI_JAVA_LIB_PARENT_PATH = $(shell readlink -f ${RTI_JAVA_LIB_PATH}/..)
+      TRICK_USER_LINK_LIBS += -L${RTI_JAVA_LIB_PARENT_PATH} -L${RTI_JAVA_LIB_PATH} -Wl,-rpath,${RTI_JAVA_LIB_PARENT_PATH} -Wl,-rpath,${RTI_JAVA_LIB_PATH} -ljava -ljvm -lverify
 
       # Add the CLASSPATH environment variable to the simulation executable.
       export CLASSPATH     += ${RTI_HOME}/lib/prti1516e.jar
