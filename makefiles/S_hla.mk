@@ -368,9 +368,10 @@ else
       # On Ubuntu, the user needs to add the LD_LIBRARY_PATH shown below to
       # their environment so the HLA simulation can run, and only show the
       # message if LD_LIBRARY_PATH is not already set correctly.
-      ifndef RTI_LIB_ALREADY_SET_IN_LD_LIB_PATH
-         ifdef LD_LIBRARY_PATH
-            ifneq ("$(wildcard /etc/lsb-release)","")
+      ifneq ("$(wildcard /etc/lsb-release)","")
+         TRICK_USER_LINK_LIBS += -Wl,--disable-new-dtags
+         ifndef RTI_LIB_ALREADY_SET_IN_LD_LIB_PATH
+            ifdef LD_LIBRARY_PATH
               $(info ${GREEN_TXT}S_hla.mk:INFO: Add this to your .bashrc file: export LD_LIBRARY_PATH=$(LD_LIBRARY_PATH)${RESET_TXT})
             endif
          endif
@@ -439,9 +440,10 @@ else
       # On Ubuntu, the user needs to add the LD_LIBRARY_PATH shown below to
       # their environment so the HLA simulation can run, and only show the
       # message if LD_LIBRARY_PATH is not already set correctly.
-      ifndef RTI_LIB_ALREADY_SET_IN_LD_LIB_PATH
-         ifdef LD_LIBRARY_PATH
-            ifneq ("$(wildcard /etc/lsb-release)","")
+      ifneq ("$(wildcard /etc/lsb-release)","")
+         TRICK_USER_LINK_LIBS += -Wl,--disable-new-dtags
+         ifndef RTI_LIB_ALREADY_SET_IN_LD_LIB_PATH
+            ifdef LD_LIBRARY_PATH
               $(info ${GREEN_TXT}S_hla.mk:INFO: Add this to your .bashrc file: export LD_LIBRARY_PATH=$(LD_LIBRARY_PATH)${RESET_TXT})
             endif
          endif
