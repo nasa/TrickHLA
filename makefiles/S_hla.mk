@@ -331,7 +331,7 @@ else
       ifeq ("$(wildcard ${RTI_JAVA_LIB_PATH})","")
          $(error ${RED_TXT}S_hla.mk:ERROR: The path specified by RTI_JAVA_LIB_PATH is invalid for ${RTI_JAVA_LIB_PATH}${RESET_TXT})
       endif
-      TRICK_USER_LINK_LIBS += -L${RTI_JAVA_LIB_PATH}/.. -L${RTI_JAVA_LIB_PATH} -ljava -ljvm -lverify -Wl,-rpath,${RTI_JAVA_LIB_PATH}/.. -Wl,-rpath,${RTI_JAVA_LIB_PATH}
+      TRICK_USER_LINK_LIBS += -L${RTI_JAVA_LIB_PATH}/.. -L${RTI_JAVA_LIB_PATH} -Wl,-rpath,${RTI_JAVA_LIB_PATH}/.. -Wl,-rpath,${RTI_JAVA_LIB_PATH} -ljava -ljvm -lverify
 
       # Add the CLASSPATH environment variable to the simulation executable.
       export CLASSPATH     += ${RTI_HOME}/lib/prti1516_hla4.jar
@@ -343,26 +343,20 @@ else
       else
          $(error ${RED_TXT}S_hla.mk:ERROR: Pitch RTI libraries require at least gcc 7 for Linux.${RESET_TXT})
       endif
-      TRICK_USER_LINK_LIBS += -L${RTI_LIB_PATH} -lrti1516_2025gcc7 -lfedtime1516_2025gcc7 -Wl,-rpath,${RTI_LIB_PATH}
+      TRICK_USER_LINK_LIBS += -L${RTI_LIB_PATH} -Wl,-rpath,${RTI_LIB_PATH} -lrti1516_2025gcc7 -lfedtime1516_2025gcc7
 
       ifdef LD_LIBRARY_PATH
-         ifneq (,$(findstring ${RTI_LIB_PATH}, $(LD_LIBRARY_PATH)))
-            RTI_LIB_ALREADY_SET_IN_LD_LIB_PATH = 1
-         else
+         ifeq (,$(findstring ${RTI_LIB_PATH}, $(LD_LIBRARY_PATH)))
             export LD_LIBRARY_PATH += :${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}
          endif
       else
          export LD_LIBRARY_PATH = ${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}
       endif
 
-      # On Ubuntu, the user needs to add the LD_LIBRARY_PATH shown below to
-      # their environment so the HLA simulation can run, and only show the
-      # message if LD_LIBRARY_PATH is not already set correctly.
-      ifndef RTI_LIB_ALREADY_SET_IN_LD_LIB_PATH
-         ifdef LD_LIBRARY_PATH
-            ifneq ("$(wildcard /etc/lsb-release)","")
-              $(info ${GREEN_TXT}S_hla.mk:INFO: Add this to your .bashrc file: export LD_LIBRARY_PATH=$(LD_LIBRARY_PATH)${RESET_TXT})
-            endif
+      # On Ubuntu, disable the new dtags to ensure RPATH is used and not RUNPATH.
+      ifneq ("$(wildcard /etc/lsb-release)","")
+         ifneq (,$(findstring Ubuntu, $(shell grep DISTRIB_ID /etc/lsb-release | cut -d= -f2)))
+            TRICK_USER_LINK_LIBS += -Wl,--disable-new-dtags
          endif
       endif
 
@@ -389,6 +383,7 @@ else
          # Default to JRE that came with the Pitch RTI if needed.
          RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/lib/server
       endif
+
       # Verify the RTI Java Home and Lib paths.
       ifeq ("$(wildcard ${RTI_JAVA_HOME})","")
          $(error ${RED_TXT}S_hla.mk:ERROR: The path specified by RTI_JAVA_HOME is invalid for ${RTI_JAVA_HOME}${RESET_TXT})
@@ -396,7 +391,7 @@ else
       ifeq ("$(wildcard ${RTI_JAVA_LIB_PATH})","")
          $(error ${RED_TXT}S_hla.mk:ERROR: The path specified by RTI_JAVA_LIB_PATH is invalid for ${RTI_JAVA_LIB_PATH}${RESET_TXT})
       endif
-      TRICK_USER_LINK_LIBS += -L${RTI_JAVA_LIB_PATH}/.. -L${RTI_JAVA_LIB_PATH} -ljava -ljvm -lverify -Wl,-rpath,${RTI_JAVA_LIB_PATH}/.. -Wl,-rpath,${RTI_JAVA_LIB_PATH}
+      TRICK_USER_LINK_LIBS += -L${RTI_JAVA_LIB_PATH}/.. -L${RTI_JAVA_LIB_PATH} -Wl,-rpath,${RTI_JAVA_LIB_PATH}/.. -Wl,-rpath,${RTI_JAVA_LIB_PATH} -ljava -ljvm -lverify
 
       # Add the CLASSPATH environment variable to the simulation executable.
       export CLASSPATH     += ${RTI_HOME}/lib/prti1516e.jar
@@ -412,26 +407,20 @@ else
       else
          RTI_LIB_PATH = ${RTI_HOME}/lib/gcc34_64
       endif
-      TRICK_USER_LINK_LIBS += -L${RTI_LIB_PATH} -lrti1516e64 -lfedtime1516e64 -Wl,-rpath,${RTI_LIB_PATH}
+      TRICK_USER_LINK_LIBS += -L${RTI_LIB_PATH} -Wl,-rpath,${RTI_LIB_PATH} -lrti1516e64 -lfedtime1516e64
 
       ifdef LD_LIBRARY_PATH
-         ifneq (,$(findstring ${RTI_LIB_PATH}, $(LD_LIBRARY_PATH)))
-            RTI_LIB_ALREADY_SET_IN_LD_LIB_PATH = 1
-         else
+         ifeq (,$(findstring ${RTI_LIB_PATH}, $(LD_LIBRARY_PATH)))
             export LD_LIBRARY_PATH += :${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}
          endif
       else
          export LD_LIBRARY_PATH = ${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}
       endif
 
-      # On Ubuntu, the user needs to add the LD_LIBRARY_PATH shown below to
-      # their environment so the HLA simulation can run, and only show the
-      # message if LD_LIBRARY_PATH is not already set correctly.
-      ifndef RTI_LIB_ALREADY_SET_IN_LD_LIB_PATH
-         ifdef LD_LIBRARY_PATH
-            ifneq ("$(wildcard /etc/lsb-release)","")
-              $(info ${GREEN_TXT}S_hla.mk:INFO: Add this to your .bashrc file: export LD_LIBRARY_PATH=$(LD_LIBRARY_PATH)${RESET_TXT})
-            endif
+      # On Ubuntu, disable the new dtags to ensure RPATH is used and not RUNPATH.
+      ifneq ("$(wildcard /etc/lsb-release)","")
+         ifneq (,$(findstring Ubuntu, $(shell grep DISTRIB_ID /etc/lsb-release | cut -d= -f2)))
+            TRICK_USER_LINK_LIBS += -Wl,--disable-new-dtags
          endif
       endif
 
