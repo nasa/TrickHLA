@@ -252,12 +252,15 @@ Examples:\n  check_code -s -o -v --exhaustive --hla4\n  check_code -i -o -v --ex
    # Determine the path to the HLA RTI include directory.
    if args.hla4:
       rti_include = rti_home + '/api/cpp/HLA_1516-2025'
+      if os.path.isdir( rti_include ) is False:
+         TrickHLAMessage.failure( 'Could not find the HLA 4 RTI include directory: ' + rti_include )
    else:
       rti_include = rti_home + '/api/cpp/HLA_1516-2010'
-   if os.path.isdir( rti_include ) is False:
-      rti_include = rti_home + '/include'
       if os.path.isdir( rti_include ) is False:
-         TrickHLAMessage.failure( 'Could not find the HLA RTI include directory: ' + rti_include )
+         # Try the include directory for older Pitch RTI versions.
+         rti_include = rti_home + '/include'
+         if os.path.isdir( rti_include ) is False:
+            TrickHLAMessage.failure( 'Could not find the HLA Evolved RTI include directory: ' + rti_include )
    if args.very_verbose:
       TrickHLAMessage.status( 'Path to HLA RTI include directory: ' + rti_include )
 
