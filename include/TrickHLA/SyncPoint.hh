@@ -175,7 +175,7 @@ class SyncPoint : public CheckpointConversionBase
    virtual void free_converted_data_for_checkpoint() override;
 
   protected:
-   std::wstring    label; ///< @trick_io{**} Sync-point name.
+   std::wstring    label; ///< @trick_units{--} Sync-point name.
    SyncPtStateEnum state; ///< @trick_units{--} Sync-point state.
 
    RTI1516_NAMESPACE::VariableLengthData user_supplied_tag; ///< @trick_io{**} Sync-point user supplied data.

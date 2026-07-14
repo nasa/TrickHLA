@@ -228,7 +228,9 @@ bool SyncPointList::add(
 
    // Add the sync-point to the corresponding named list.
    //
-   list.push_back( new SyncPoint( label ) );
+   SyncPoint * sync_pnt = (SyncPoint *)TMM_declare_var_1d( "TrickHLA::SyncPoint", 1 );
+   sync_pnt->set_label(label);
+   list.push_back( sync_pnt );
 
    return true;
 }

@@ -194,7 +194,12 @@ bool SyncPointManagerBase::add_sync_point_list(
    // Create the named list only if it does not already exist.
    if ( !contains_sync_point_list_name( list_name ) ) {
 
-      sync_pnt_lists.push_back( new SyncPointList( list_name, this->mutex, this->federate ) );
+      // Allocate a new sync point list and add it to the sync_pnt_lists.
+      SyncPointList * list = (SyncPointList *)TMM_declare_var_1d( "TrickHLA::SyncPointList", 1 );
+      list->set_list_name( list_name );
+      list->set_federate( this->federate );
+      list->set_mutex(this->mutex);
+      sync_pnt_lists.push_back( list );
 
       return true;
    }

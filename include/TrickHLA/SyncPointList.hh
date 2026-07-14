@@ -198,14 +198,15 @@ class SyncPointList : public CheckpointConversionBase
    virtual void free_converted_data_for_checkpoint() override;
 
   protected:
-   SyncPointVector list; ///< @trick_io{**} Vector of sync-points objects
+   SyncPointVector list; ///< @trick_units{--} Vector of sync-points objects
 
-   std::string list_name; ///< @trick_io{**} Name of this sync-point list.
+   std::string list_name; ///< @trick_units{--} Name of this sync-point list.
 
    MutexLock *mutex; ///< @trick_io{**} Mutex to lock thread over critical code sections.
 
    Federate *federate; ///< @trick_units{--} Associated TrickHLA Federate.
 
+   // FIXME: Possibly deprecated.
    char *list_name_chkpt; ///< @trick_units{--} Trick checkpointable list name.
 
   private:
