@@ -82,12 +82,7 @@ using namespace TrickHLA;
  */
 SyncPointManagerBase::SyncPointManagerBase()
    : mutex(),
-#if SYNC_POINT_LIST_TMM_ARRAY
-     sync_pnt_lists( NULL ),
-     sync_pnt_lists_count( 0 ),
-#else
      sync_pnt_lists(),
-#endif
      federate( NULL )
 {
    return;
@@ -99,12 +94,7 @@ SyncPointManagerBase::SyncPointManagerBase()
 SyncPointManagerBase::SyncPointManagerBase(
    Federate *fed )
    : mutex(),
-#if SYNC_POINT_LIST_TMM_ARRAY
-     sync_pnt_lists( NULL ),
-     sync_pnt_lists_count( 0 ),
-#else
      sync_pnt_lists(),
-#endif
      federate( fed )
 {
    return;
@@ -136,31 +126,16 @@ void SyncPointManagerBase::setup(
       return;
    }
 
-#if SYNC_POINT_LIST_TMM_ARRAY
-   for ( int index = 0; index < sync_pnt_lists_count; ++index ) {
-#else
-   for ( int index = 0; index < sync_pnt_lists.size(); ++index ) {
-#endif
-      sync_pnt_lists[index]->setup( this->federate );
+   // Register the Federate with the syncronization point lists.
+   for ( SyncPointList * sync_pnt_list : sync_pnt_lists ){
+      sync_pnt_list->setup( this->federate );
    }
+
+   return;
 }
 
 void SyncPointManagerBase::clear()
 {
-#if SYNC_POINT_LIST_TMM_ARRAY
-   if ( sync_pnt_lists != NULL ) {
-      for ( int index = 0; index < sync_pnt_lists_count; ++index ) {
-         if ( sync_pnt_lists[index] != NULL ) {
-            sync_pnt_lists[index]->clear();
-            TMM_delete_var_a( sync_pnt_lists[index] );
-            sync_pnt_lists[index] = NULL;
-         }
-      }
-      TMM_delete_var_a( sync_pnt_lists );
-      sync_pnt_lists_count = 0;
-      sync_pnt_lists       = NULL;
-   }
-#else
    // Clear/remove everything from the list.
    while ( !sync_pnt_lists.empty() ) {
       if ( *sync_pnt_lists.begin() != NULL ) {
@@ -169,7 +144,8 @@ void SyncPointManagerBase::clear()
       }
    }
    sync_pnt_lists.clear();
-#endif
+
+   return;
 }
 
 int SyncPointManagerBase::get_list_index_for_sync_point(
@@ -177,11 +153,7 @@ int SyncPointManagerBase::get_list_index_for_sync_point(
 {
    MutexProtection const auto_unlock_mutex( &mutex );
 
-#if SYNC_POINT_LIST_TMM_ARRAY
-   for ( int index = 0; index < sync_pnt_lists_count; ++index ) {
-#else
    for ( int index = 0; index < sync_pnt_lists.size(); ++index ) {
-#endif
       if ( sync_pnt_lists[index]->contains( label ) ) {
          return index;
       }
@@ -194,11 +166,7 @@ int SyncPointManagerBase::get_list_index_for_list_name(
 {
    MutexProtection const auto_unlock_mutex( &mutex );
 
-#if SYNC_POINT_LIST_TMM_ARRAY
-   for ( int index = 0; index < sync_pnt_lists_count; ++index ) {
-#else
    for ( int index = 0; index < sync_pnt_lists.size(); ++index ) {
-#endif
       if ( list_name.compare( sync_pnt_lists[index]->get_list_name() ) == 0 ) {
          return index;
       }
@@ -209,16 +177,13 @@ int SyncPointManagerBase::get_list_index_for_list_name(
 SyncPtStateEnum SyncPointManagerBase::get_sync_point_state(
    wstring const &label )
 {
-#if SYNC_POINT_LIST_TMM_ARRAY
-   for ( int index = 0; index < sync_pnt_lists_count; ++index ) {
-#else
-   for ( int index = 0; index < sync_pnt_lists.size(); ++index ) {
-#endif
-      if ( sync_pnt_lists[index]->contains( label ) ) {
-         return sync_pnt_lists[index]->get_state( label );
+   //for ( int index = 0; index < sync_pnt_lists.size(); ++index ) {
+   for ( SyncPointList * sync_pnt_list : sync_pnt_lists ){
+      if ( sync_pnt_list->contains( label ) ) {
+         return( sync_pnt_list->get_state( label ) );
       }
    }
-   return TrickHLA::SYNC_PT_STATE_UNKNOWN;
+   return( TrickHLA::SYNC_PT_STATE_UNKNOWN );
 }
 
 bool SyncPointManagerBase::add_sync_point_list(
@@ -229,47 +194,11 @@ bool SyncPointManagerBase::add_sync_point_list(
    // Create the named list only if it does not already exist.
    if ( !contains_sync_point_list_name( list_name ) ) {
 
-#if SYNC_POINT_LIST_TMM_ARRAY
-      // Use a Trick memory managed allocation so we can checkpoint it.
-      if ( sync_pnt_lists == NULL ) {
-         // Allocate the list.
-         sync_pnt_lists = static_cast< SyncPointList ** >( TMM_declare_var_1d( "TrickHLA::SyncPointList *", 1 ) );
-      } else {
-         // Resize the list.
-         sync_pnt_lists = static_cast< SyncPointList ** >( TMM_resize_array_1d_a( sync_pnt_lists, ( sync_pnt_lists_count + 1 ) ) );
-      }
-      if ( sync_pnt_lists == NULL ) {
-         ostringstream errmsg;
-         errmsg << "SyncPointManagerBase::add_sync_point_list():" << __LINE__
-                << " ERROR: Could not allocate memory for the sync-point lists!" << endl;
-         DebugHandler::terminate( errmsg.str() );
-         return false;
-      }
-
-      // Allocate the new Sync-Point List and add it to the end of the array.
-      sync_pnt_lists[sync_pnt_lists_count] = static_cast< SyncPointList * >( TMM_declare_var_1d( "TrickHLA::SyncPointList", 1 ) );
-      if ( sync_pnt_lists[sync_pnt_lists_count] == NULL ) {
-         ostringstream errmsg;
-         errmsg << "SyncPointManagerBase::add_sync_point_list():" << __LINE__
-                << " ERROR: Could not allocate memory for the sync-point list at array index:"
-                << sync_pnt_lists_count << " for sync-point list '"
-                << list_name << "'!" << endl;
-         DebugHandler::terminate( errmsg.str() );
-         return false;
-      }
-      sync_pnt_lists[sync_pnt_lists_count]->set_list_name( list_name );
-      sync_pnt_lists[sync_pnt_lists_count]->set_mutex( this->mutex );
-      sync_pnt_lists[sync_pnt_lists_count]->set_federate( this->federate );
-
-      // Update the count to match the successful new array allocation.
-      ++sync_pnt_lists_count;
-
-#else
       sync_pnt_lists.push_back( new SyncPointList( list_name, this->mutex, this->federate ) );
-#endif
 
       return true;
    }
+
    return false;
 }
 
@@ -373,12 +302,8 @@ bool SyncPointManagerBase::contains_sync_point(
 {
    MutexProtection const auto_unlock_mutex( &mutex );
 
-#if SYNC_POINT_LIST_TMM_ARRAY
-   for ( int index = 0; index < sync_pnt_lists_count; ++index ) {
-#else
-   for ( int index = 0; index < sync_pnt_lists.size(); ++index ) {
-#endif
-      if ( sync_pnt_lists[index]->contains( label ) ) {
+   for ( SyncPointList * sync_pnt_list : sync_pnt_lists ){
+      if ( sync_pnt_list->contains( label ) ) {
          return true;
       }
    }
@@ -749,18 +674,11 @@ string SyncPointManagerBase::to_string()
       // mutex even if there is an exception.
       MutexProtection const auto_unlock_mutex( &mutex );
 
-#if SYNC_POINT_LIST_TMM_ARRAY
-      msg << "SyncPointManagerBase::to_string():" << __LINE__
-          << " Number of Sync-Point Lists:" << sync_pnt_lists_count << endl;
-
-      for ( int index = 0; index < sync_pnt_lists_count; ++index ) {
-#else
       msg << "SyncPointManagerBase::to_string():" << __LINE__
           << " Number of Sync-Point Lists:" << sync_pnt_lists.size() << endl;
 
-      for ( int index = 0; index < sync_pnt_lists.size(); ++index ) {
-#endif
-         msg << sync_pnt_lists[index]->to_string();
+      for ( SyncPointList * sync_pnt_list : sync_pnt_lists ){
+         msg << sync_pnt_list->to_string();
       }
    }
    return msg.str();
@@ -961,35 +879,23 @@ void SyncPointManagerBase::sync_point_federation_synchronized(
 /*! @brief Encode the variables to a form Trick can checkpoint. */
 void SyncPointManagerBase::convert_data_before_checkpoint()
 {
-#if SYNC_POINT_LIST_TMM_ARRAY
-   for ( int index = 0; index < sync_pnt_lists_count; ++index ) {
-#else
-   for ( int index = 0; index < sync_pnt_lists.size(); ++index ) {
-#endif
-      sync_pnt_lists[index]->convert_data_before_checkpoint();
+   for ( SyncPointList * sync_pnt_list : sync_pnt_lists ){
+      sync_pnt_list->convert_data_before_checkpoint();
    }
 }
 
 /*! @brief Decode the state of this class from the Trick checkpoint. */
 void SyncPointManagerBase::restore_data_after_checkpoint()
 {
-#if SYNC_POINT_LIST_TMM_ARRAY
-   for ( int index = 0; index < sync_pnt_lists_count; ++index ) {
-#else
-   for ( int index = 0; index < sync_pnt_lists.size(); ++index ) {
-#endif
-      sync_pnt_lists[index]->restore_data_after_checkpoint();
+   for ( SyncPointList * sync_pnt_list : sync_pnt_lists ){
+      sync_pnt_list->restore_data_after_checkpoint();
    }
 }
 
 /*! @brief Free/release the memory used for the checkpoint data structures. */
 void SyncPointManagerBase::free_converted_data_for_checkpoint()
 {
-#if SYNC_POINT_LIST_TMM_ARRAY
-   for ( int index = 0; index < sync_pnt_lists_count; ++index ) {
-#else
-   for ( int index = 0; index < sync_pnt_lists.size(); ++index ) {
-#endif
-      sync_pnt_lists[index]->free_converted_data_for_checkpoint();
+   for ( SyncPointList * sync_pnt_list : sync_pnt_lists ){
+      sync_pnt_list->free_converted_data_for_checkpoint();
    }
 }

@@ -90,12 +90,7 @@ using namespace TrickHLA;
  */
 SyncPointList::SyncPointList()
    :
-#if SYNC_POINT_TMM_ARRAY
-     list( NULL ),
-     list_count( 0 ),
-#else
      list(),
-#endif
      list_name(),
      mutex( NULL ),
      federate( NULL ),
@@ -112,12 +107,7 @@ SyncPointList::SyncPointList(
    MutexLock         &mtx,
    Federate          *fed )
    :
-#if SYNC_POINT_TMM_ARRAY
-     list( NULL ),
-     list_count( 0 ),
-#else
      list(),
-#endif
      list_name( name ),
      mutex( &mtx ),
      federate( fed ),
@@ -132,7 +122,9 @@ SyncPointList::SyncPointList(
  */
 SyncPointList::~SyncPointList()
 {
-   clear();
+   // FIXME: There seems to be a race condition between this
+   // destructor and the Trick memory manager reset function.
+   //clear();
 }
 
 void SyncPointList::setup(
@@ -194,30 +186,6 @@ SyncPtStateEnum SyncPointList::get_state(
 
 void SyncPointList::clear()
 {
-#if SYNC_POINT_TMM_ARRAY
-   if ( list != NULL ) {
-      for ( int i = 0; i < list_count; ++i ) {
-         if ( list[i] != NULL ) {
-            list[i]->free_converted_data_for_checkpoint();
-            TMM_delete_var_a( list[i] );
-            list[i] = NULL;
-         }
-      }
-      TMM_delete_var_a( list );
-      list_count = 0;
-      list       = NULL;
-   }
-#else
-
-#   if 1
-#      if 0
-   // Clear/remove everything from the list.
-   for ( size_t i = 0; i < list.size(); ++i ) {
-      delete list[i];
-      list[i] = NULL;
-   }
-   list.clear();
-#      else
 
    // Clear/remove everything from the list.
    while ( !list.empty() ) {
@@ -225,20 +193,8 @@ void SyncPointList::clear()
       list.back() = NULL;
       list.pop_back();
    }
-#      endif
-#   else
 
-   // Clear/remove everything from the list.
-   while ( !list.empty() ) {
-      if ( *list.begin() != NULL ) {
-         delete ( *list.begin() );
-         list.erase( list.begin() );
-      }
-   }
-   list.clear();
-#   endif
-
-#endif
+   return;
 }
 
 SyncPoint *SyncPointList::get(
@@ -246,13 +202,9 @@ SyncPoint *SyncPointList::get(
 {
    MutexProtection const auto_unlock_mutex( mutex );
 
-#if SYNC_POINT_TMM_ARRAY
-   for ( int i = 0; i < list_count; ++i ) {
-#else
-   for ( int i = 0; i < list.size(); ++i ) {
-#endif
-      if ( label.compare( list[i]->get_label() ) == 0 ) {
-         return list[i];
+   for( SyncPoint * sync_pnt : list ){
+      if ( label.compare( sync_pnt->get_label() ) == 0 ) {
+         return sync_pnt;
       }
    }
    return NULL;
@@ -276,44 +228,7 @@ bool SyncPointList::add(
 
    // Add the sync-point to the corresponding named list.
    //
-#if SYNC_POINT_TMM_ARRAY
-   // Use a Trick memory managed allocation so we can checkpoint it.
-   if ( list == NULL ) {
-      // Allocate the list.
-      list = static_cast< SyncPoint ** >( TMM_declare_var_1d( "TrickHLA::SyncPoint *", 1 ) );
-   } else {
-      // Resize the list.
-      list = static_cast< SyncPoint ** >( TMM_resize_array_1d_a( list, ( list_count + 1 ) ) );
-   }
-   if ( list == NULL ) {
-      ostringstream errmsg;
-      errmsg << "SyncPointList::add():" << __LINE__
-             << " ERROR: Could not allocate memory for the sync-point list!" << endl;
-      DebugHandler::terminate( errmsg.str() );
-      return false;
-   }
-
-   // Allocate the new Sync-Point and add it to the end of the list array.
-   list[list_count] = static_cast< SyncPoint * >( TMM_declare_var_1d( "TrickHLA::SyncPoint", 1 ) );
-   if ( list[list_count] == NULL ) {
-      string label_str;
-      StringUtilities::to_string( label_str, label );
-      ostringstream errmsg;
-      errmsg << "SyncPointList::add():" << __LINE__
-             << " ERROR: Could not allocate memory for the sync-point list entry at array index:"
-             << list_count << " for sync-point label '"
-             << label_str << "'!" << endl;
-      DebugHandler::terminate( errmsg.str() );
-      return false;
-   }
-   list[list_count]->set_label( label );
-
-   // Update the count to match the successful new array allocation.
-   ++list_count;
-
-#else
    list.push_back( new SyncPoint( label ) );
-#endif
 
    return true;
 }
@@ -337,46 +252,7 @@ bool SyncPointList::add(
 
    // Add the sync-point to the corresponding named list.
    //
-#if SYNC_POINT_TMM_ARRAY
-   // Use a Trick memory managed allocation so we can checkpoint it.
-   if ( list == NULL ) {
-      // Allocate the list.
-      list = static_cast< SyncPoint ** >( TMM_declare_var_1d( "TrickHLA::SyncPoint *", 1 ) );
-   } else {
-      // Resize the list.
-      list = static_cast< SyncPoint ** >( TMM_resize_array_1d_a( list, ( list_count + 1 ) ) );
-   }
-   if ( list == NULL ) {
-      ostringstream errmsg;
-      errmsg << "SyncPointList::add():" << __LINE__
-             << " ERROR: Could not allocate memory for the sync-point list!" << endl;
-      DebugHandler::terminate( errmsg.str() );
-      return false;
-   }
-
-   // Allocate the new Sync-Point-Timed and add it to the end of the list array.
-   list[list_count] = static_cast< SyncPoint * >( TMM_declare_var_1d( "TrickHLA::SyncPointTimed", 1 ) );
-   if ( list[list_count] == NULL ) {
-      string label_str;
-      StringUtilities::to_string( label_str, label );
-      ostringstream errmsg;
-      errmsg << "SyncPointList::add():" << __LINE__
-             << " ERROR: Could not allocate memory for the sync-point list entry at array index:"
-             << list_count << " for sync-point-timed label '"
-             << label_str << "' with time " << time.get_time_in_seconds()
-             << " seconds!" << endl;
-      DebugHandler::terminate( errmsg.str() );
-      return false;
-   }
-   static_cast< SyncPointTimed * >( list[list_count] )->set_label( label );
-   static_cast< SyncPointTimed * >( list[list_count] )->set_time( time );
-
-   // Update the count to match the successful new array allocation.
-   ++list_count;
-
-#else
    list.push_back( new SyncPointTimed( label, time ) );
-#endif
 
    return true;
 }
@@ -386,12 +262,8 @@ bool SyncPointList::contains(
 {
    MutexProtection const auto_unlock_mutex( mutex );
 
-#if SYNC_POINT_TMM_ARRAY
-   for ( int i = 0; i < list_count; ++i ) {
-#else
-   for ( int i = 0; i < list.size(); ++i ) {
-#endif
-      if ( label.compare( list[i]->get_label() ) == 0 ) {
+   for ( SyncPoint * sync_pnt : list ){
+      if ( label.compare( sync_pnt->get_label() ) == 0 ) {
          return true;
       }
    }
@@ -474,12 +346,8 @@ bool SyncPointList::register_all()
    MutexProtection const auto_unlock_mutex( mutex );
 
    bool status = false;
-#if SYNC_POINT_TMM_ARRAY
-   for ( int i = 0; i < list_count; ++i ) {
-#else
-   for ( int i = 0; i < list.size(); ++i ) {
-#endif
-      if ( register_sync_point( list[i] ) ) {
+   for ( SyncPoint * sync_pnt : list ){
+      if ( register_sync_point( sync_pnt ) ) {
          status = true;
       }
    }
@@ -492,12 +360,8 @@ bool SyncPointList::register_all(
    MutexProtection const auto_unlock_mutex( mutex );
 
    bool status = false;
-#if SYNC_POINT_TMM_ARRAY
-   for ( int i = 0; i < list_count; ++i ) {
-#else
-   for ( int i = 0; i < list.size(); ++i ) {
-#endif
-      if ( register_sync_point( list[i], handle_set ) ) {
+   for ( SyncPoint * sync_pnt : list ){
+      if ( register_sync_point( sync_pnt, handle_set ) ) {
          status = true;
       }
    }
@@ -687,12 +551,8 @@ bool SyncPointList::wait_for_all_announced()
    // NOTE: Locking the mutex while waiting can cause deadlock for callbacks.
 
    bool status = false;
-#if SYNC_POINT_TMM_ARRAY
-   for ( int i = 0; i < list_count; ++i ) {
-#else
-   for ( int i = 0; i < list.size(); ++i ) {
-#endif
-      if ( wait_for_announced( list[i] ) ) {
+   for ( SyncPoint * sync_pnt : list ){
+      if ( wait_for_announced( sync_pnt ) ) {
          status = true;
       }
    }
@@ -842,12 +702,8 @@ bool SyncPointList::achieve_all()
    MutexProtection const auto_unlock_mutex( mutex );
 
    bool status = false;
-#if SYNC_POINT_TMM_ARRAY
-   for ( int i = 0; i < list_count; ++i ) {
-#else
-   for ( int i = 0; i < list.size(); ++i ) {
-#endif
-      if ( achieve( list[i]->get_label() ) ) {
+   for ( SyncPoint * sync_pnt : list ){
+      if ( achieve( sync_pnt->get_label() ) ) {
          status = true;
       }
    }
@@ -1006,12 +862,8 @@ bool SyncPointList::is_all_synchronized()
 {
    MutexProtection const auto_unlock_mutex( mutex );
 
-#if SYNC_POINT_TMM_ARRAY
-   for ( int i = 0; i < list_count; ++i ) {
-#else
-   for ( int i = 0; i < list.size(); ++i ) {
-#endif
-      if ( !list[i]->is_synchronized() ) {
+   for ( SyncPoint * sync_pnt : list ){
+      if ( !sync_pnt->is_synchronized() ) {
          return false;
       }
    }
@@ -1073,12 +925,8 @@ bool SyncPointList::wait_for_all_synchronized()
    // NOTE: Locking the mutex while waiting can cause deadlock for callbacks.
 
    bool status = false;
-#if SYNC_POINT_TMM_ARRAY
-   for ( int i = 0; i < list_count; ++i ) {
-#else
-   for ( int i = 0; i < list.size(); ++i ) {
-#endif
-      if ( wait_for_synchronized( list[i] ) ) {
+   for ( SyncPoint * sync_pnt : list ){
+      if ( wait_for_synchronized( sync_pnt ) ) {
          status = true;
       }
    }
@@ -1167,23 +1015,19 @@ bool SyncPointList::wait_for_synchronized(
 
 std::string SyncPointList::to_string()
 {
+   unsigned int list_index = 0;
+
    // Scope this mutex lock because locking over the blocking wait call
    // below will cause deadlock.
    MutexProtection const auto_unlock_mutex( mutex );
 
    ostringstream msg;
 
-#if SYNC_POINT_TMM_ARRAY
-   msg << "SyncPointList::to_string():" << __LINE__
-       << " List:'" << get_list_name() << "' List-size:" << list_count << endl;
-   for ( int i = 0; i < list_count; ++i ) {
-#else
    msg << "SyncPointList::to_string():" << __LINE__
        << " List:'" << get_list_name() << "' List-size:" << list.size() << endl;
-   for ( int i = 0; i < list.size(); ++i ) {
-#endif
-      msg << i << ":'" << get_list_name() << "' Sync-point:"
-          << list[i]->to_string() << endl;
+   for ( SyncPoint * sync_pnt : list ){
+      msg << list_index++ << ":'" << get_list_name() << "' Sync-point:"
+          << sync_pnt->to_string() << endl;
    }
    return msg.str();
 }
@@ -1214,12 +1058,8 @@ void SyncPointList::convert_data_before_checkpoint()
    // Checkpointable copy of the list name.
    this->list_name_chkpt = StringUtilities::mm_strdup_string( this->list_name );
 
-#if SYNC_POINT_TMM_ARRAY
-   for ( int i = 0; i < list_count; ++i ) {
-#else
-   for ( int i = 0; i < list.size(); ++i ) {
-#endif
-      list[i]->convert_data_before_checkpoint();
+   for ( SyncPoint * sync_pnt : list ){
+      sync_pnt->convert_data_before_checkpoint();
    }
 }
 
@@ -1229,12 +1069,8 @@ void SyncPointList::restore_data_after_checkpoint()
    // Update the list_name from the checkpointable c-string.
    this->list_name = this->list_name_chkpt;
 
-#if SYNC_POINT_TMM_ARRAY
-   for ( int i = 0; i < list_count; ++i ) {
-#else
-   for ( int i = 0; i < list.size(); ++i ) {
-#endif
-      list[i]->restore_data_after_checkpoint();
+   for ( SyncPoint * sync_pnt : list ){
+      sync_pnt->restore_data_after_checkpoint();
    }
 }
 
@@ -1248,11 +1084,7 @@ void SyncPointList::free_converted_data_for_checkpoint()
       this->list_name_chkpt = NULL;
    }
 
-#if SYNC_POINT_TMM_ARRAY
-   for ( int i = 0; i < list_count; ++i ) {
-#else
-   for ( int i = 0; i < list.size(); ++i ) {
-#endif
-      list[i]->free_converted_data_for_checkpoint();
+   for ( SyncPoint * sync_pnt : list ){
+      sync_pnt->free_converted_data_for_checkpoint();
    }
 }

@@ -65,16 +65,10 @@ NASA, Johnson Space Center\n
 #   pragma GCC diagnostic pop
 #endif
 
-#define SYNC_POINT_TMM_ARRAY 1
-
 namespace TrickHLA
 {
 
-#if SYNC_POINT_TMM_ARRAY
-typedef SyncPointTimed *SyncPointTimesPtr; // Needed so that Trick will ICG SyncPointTimed.
-#else
 typedef std::vector< SyncPoint * > SyncPointVector;
-#endif
 
 // Forward Declared Classes:  Since these classes are only used as references
 // through pointers, these classes are included as forward declarations. This
@@ -125,20 +119,12 @@ class SyncPointList : public CheckpointConversionBase
 
    bool empty()
    {
-#if SYNC_POINT_TMM_ARRAY
-      return ( list_count <= 0 );
-#else
       return list.empty();
-#endif
    }
 
    int size()
    {
-#if SYNC_POINT_TMM_ARRAY
-      return ( ( list_count > 0 ) ? list_count : 0 );
-#else
       return list.size();
-#endif
    }
 
    SyncPoint *get( std::wstring const &label ); // Search all lists for the unique sync-point label.
@@ -212,12 +198,7 @@ class SyncPointList : public CheckpointConversionBase
    virtual void free_converted_data_for_checkpoint() override;
 
   protected:
-#if SYNC_POINT_TMM_ARRAY
-   SyncPoint **list;       ///< @trick_units{--} Vector of sync-points objects.
-   int         list_count; ///< @trick_units{--} Number of sync-points objects in the list.
-#else
-   SyncPointVector list; ///< @trick_io{**} Vector of sync-points objects.
-#endif
+   SyncPointVector list; ///< @trick_io{**} Vector of sync-points objects
 
    std::string list_name; ///< @trick_io{**} Name of this sync-point list.
 

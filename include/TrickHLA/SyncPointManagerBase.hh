@@ -64,16 +64,10 @@ NASA, Johnson Space Center\n
 #   pragma GCC diagnostic pop
 #endif
 
-#define SYNC_POINT_LIST_TMM_ARRAY 1
-
 namespace TrickHLA
 {
 
-#if SYNC_POINT_LIST_TMM_ARRAY
-// typedef SyncPointList **SyncPointList2DArray;
-#else
 typedef std::vector< SyncPointList * > SyncPointListVector;
-#endif
 
 static std::string const UNKNOWN_SYNC_POINT_LIST = "Unknown";
 
@@ -209,12 +203,7 @@ class SyncPointManagerBase : public CheckpointConversionBase
   protected:
    MutexLock mutex; ///< @trick_io{**} Mutex to lock thread over critical code sections.
 
-#if SYNC_POINT_LIST_TMM_ARRAY
-   SyncPointList **sync_pnt_lists;       ///< @trick_units{--} Array of named sync-point lists.
-   int             sync_pnt_lists_count; ///< @trick_units{--} Size of the sync-point lists.
-#else
    SyncPointListVector sync_pnt_lists; ///< @trick_units{--} Array of named sync-point lists.
-#endif
 
    Federate *federate; ///< @trick_units{--} Associated TrickHLA Federate.
 

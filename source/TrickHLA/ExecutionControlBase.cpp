@@ -1743,8 +1743,8 @@ void ExecutionControlBase::checkpoint_restart()
 
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream msg;
-      msg << "ExecutionControlBase::checkpoint_preload():"
-          << __LINE__ << ": Preparing to load a checkpoint." << endl;
+      msg << "ExecutionControlBase::checkpoint_restart():"
+          << __LINE__ << ": Restarting after checkpoint load." << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
