@@ -1748,6 +1748,9 @@ void ExecutionControlBase::checkpoint_restart()
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
+   // Tell the Save and Restore services that the load checkpoint process is complete.
+   save_restore_service->restore_checkpoint_pending = false;
+
    // NOTE: We DO NOT call the restore_data_after_checkpoint() functions here.
    // These will be handled in the HLA Restore code.
 

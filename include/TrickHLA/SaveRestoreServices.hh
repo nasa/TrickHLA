@@ -374,12 +374,12 @@ class SaveRestoreServices : public CheckpointConversionBase
       RTI1516_NAMESPACE::FederateHandle new_federate_handle );
 #endif // IEEE_1516_2025
 
-   /*! @brief Rebuild the HLA state after a checkpoint load. */
-   void restore_after_checkpoint_load();
-
    /*! @brief Function called cyclicly checking on Restore process progress.
     *  @return Returns true if the Restore has been initiated. */
    bool restore_waiting_for_completion();
+
+   /*! @brief Rebuild the HLA state after a checkpoint load. */
+   void restore_after_checkpoint_load();
 
    /*! @brief Function called to inform the Federation that this federate has
     *  successfully completed a Trick checkpoint Restore. */
@@ -464,6 +464,8 @@ class SaveRestoreServices : public CheckpointConversionBase
    RTI1516_NAMESPACE::FederateHandle restore_handle; ///< @trick_io{**} Restored federate handle.
 
    RTI1516_NAMESPACE::FederateRestoreStatusVector restore_status_response; ///< @trick_io{**} Federation Restore status vector.
+
+   bool restore_checkpoint_pending; ///< @trick_io{**} Flag indicating Trick load checkpoint status.
 
   private:
    // Do not allow the copy constructor or assignment operator.
