@@ -1744,15 +1744,20 @@ void ExecutionControlBase::checkpoint_restart()
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream msg;
       msg << "ExecutionControlBase::checkpoint_restart():"
-          << __LINE__ << ": Restarting after checkpoint load." << endl;
+          << __LINE__ << ": Restarting after loading a checkpoint." << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
    // Tell the Save and Restore services that the load checkpoint process is complete.
    save_restore_service->restore_checkpoint_pending = false;
 
-   // NOTE: We DO NOT call the restore_data_after_checkpoint() functions here.
-   // These will be handled in the HLA Restore code.
+   // Restore the federate data.
+   if ( federate != NULL ) {
+      federate->restore_data_after_checkpoint();
+   }
+
+   // Call the ExecutionControl function to restore the execution control data.
+   this->restore_data_after_checkpoint();
 
    return;
 }

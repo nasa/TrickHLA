@@ -54,8 +54,7 @@ using namespace TrickHLA;
 SyncPoint::SyncPoint()
    : label(),
      state( TrickHLA::SYNC_PT_STATE_KNOWN ),
-     user_supplied_tag( NULL, 0 ),
-     label_chkpt( NULL )
+     user_supplied_tag( NULL, 0 )
 {
    return;
 }
@@ -67,8 +66,7 @@ SyncPoint::SyncPoint(
    wstring const &lbl )
    : label( lbl ),
      state( TrickHLA::SYNC_PT_STATE_KNOWN ),
-     user_supplied_tag( NULL, 0 ),
-     label_chkpt( NULL )
+     user_supplied_tag( NULL, 0 )
 {
    return;
 }
@@ -176,22 +174,18 @@ std::string SyncPoint::to_string()
 
 void SyncPoint::convert_data_before_checkpoint()
 {
-   // Checkpointable copy of the label.
-   this->label_chkpt = StringUtilities::mm_strdup_wstring( this->label );
+   // Nothing to do here.
+   return;
 }
 
 void SyncPoint::restore_data_after_checkpoint()
 {
-   // Update the label from the checkpointable c-string.
-   StringUtilities::to_wstring( this->label, this->label_chkpt );
+   // Nothing to do here.
+   return;
 }
 
 void SyncPoint::free_converted_data_for_checkpoint()
 {
-   if ( this->label_chkpt != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->label_chkpt ) ) ) {
-         message_publish( MSG_WARNING, "SyncPoint::free_converted_data_for_checkpoint():%d WARNING failed to delete Trick Memory for 'label_chkpt'\n", __LINE__ );
-      }
-      this->label_chkpt = NULL;
-   }
+   // Nothing to do here.
+   return;
 }

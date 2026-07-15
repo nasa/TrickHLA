@@ -3726,7 +3726,7 @@ void Federate::restore_data_after_checkpoint()
    if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream msg;
       msg << "Federate::restore_data_after_checkpoint():"
-          << __LINE__ << ": Restoring the federate data after checkpoint loading." << endl;
+          << __LINE__ << ": Restoring the federate data after loading a checkpoint." << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
@@ -3851,7 +3851,7 @@ void Federate::checkpoint_restart()
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream msg;
       msg << "Federate::checkpoint_restart():"
-          << __LINE__ << ": Cleaning up after a checkpoint." << endl;
+          << __LINE__ << ": Restarting after loading a checkpoint." << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 

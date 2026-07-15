@@ -1735,10 +1735,25 @@ void SaveRestoreServices::restore_after_checkpoint_load()
       return;
    }
 
+   // Make sure to reset the Save state.
+   if ( save_state != THLASaveProcessEnum::SAVE_NONE ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+         string label_str;
+         StringUtilities::to_string( label_str, restore_label );
+         ostringstream errmsg;
+         errmsg << "SaveRestoreServices::restore_after_checkpoint_load():" << __LINE__
+                << ": WARNING: Resetting Save state to THLASaveProcessEnum::SAVE_NONE!" << endl
+                << " Label: '" << label_str << "'" << endl
+                << " State: '" << TrickHLA::to_string( save_state ) << "'" << endl;
+         message_publish( MSG_WARNING, errmsg.str().c_str() );
+      }
+      save_state = THLASaveProcessEnum::SAVE_NONE;
+   }
+
    // Make sure we are in an appropriate Restore state.
    if ( restore_state == THLARestoreProcessEnum::RESTORE_IN_PROGRESS ) {
 
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
          message_publish( MSG_NORMAL, "SaveRestoreServices::restore_after_checkpoint_load():%d: Rebuilding HLA Handles.\n",
                           __LINE__ );
       }
@@ -1777,14 +1792,14 @@ void SaveRestoreServices::restore_after_checkpoint_load()
       //   objects[i].restore_data_after_checkpoint();
       //}
 
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
          message_publish( MSG_NORMAL, "SaveRestoreServices::restore_after_checkpoint_load():%d: Rebuilt HLA federate state.\n",
                           __LINE__ );
       }
 
    } else {
 
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
          message_publish( MSG_WARNING, "SaveRestoreServices::restore_after_checkpoint_load():%d: Restore NOT in progress!\n",
                           __LINE__ );
       }

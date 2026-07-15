@@ -93,8 +93,7 @@ SyncPointList::SyncPointList()
      list(),
      list_name(),
      mutex( NULL ),
-     federate( NULL ),
-     list_name_chkpt( NULL )
+     federate( NULL )
 {
    return;
 }
@@ -110,8 +109,7 @@ SyncPointList::SyncPointList(
      list(),
      list_name( name ),
      mutex( &mtx ),
-     federate( fed ),
-     list_name_chkpt( NULL )
+     federate( fed )
 {
    return;
 }
@@ -189,7 +187,7 @@ void SyncPointList::clear()
 
    // Clear/remove everything from the list.
    while ( !list.empty() ) {
-      delete list.back();
+      TMM_delete_var_a( list.back() );
       list.back() = NULL;
       list.pop_back();
    }
@@ -254,7 +252,10 @@ bool SyncPointList::add(
 
    // Add the sync-point to the corresponding named list.
    //
-   list.push_back( new SyncPointTimed( label, time ) );
+   SyncPointTimed * sync_pnt = (SyncPointTimed *)TMM_declare_var_1d( "TrickHLA::SyncPointTimed", 1 );
+   sync_pnt->set_label(label);
+   sync_pnt->set_time(time);
+   list.push_back( sync_pnt );
 
    return true;
 }
@@ -1057,9 +1058,6 @@ std::string SyncPointList::to_string(
 /*! @brief Encode the variables to a form Trick can checkpoint. */
 void SyncPointList::convert_data_before_checkpoint()
 {
-   // Checkpointable copy of the list name.
-   this->list_name_chkpt = StringUtilities::mm_strdup_string( this->list_name );
-
    for ( SyncPoint * sync_pnt : list ){
       sync_pnt->convert_data_before_checkpoint();
    }
@@ -1068,9 +1066,6 @@ void SyncPointList::convert_data_before_checkpoint()
 /*! @brief Decode the state of this class from the Trick checkpoint. */
 void SyncPointList::restore_data_after_checkpoint()
 {
-   // Update the list_name from the checkpointable c-string.
-   this->list_name = this->list_name_chkpt;
-
    for ( SyncPoint * sync_pnt : list ){
       sync_pnt->restore_data_after_checkpoint();
    }
@@ -1079,13 +1074,6 @@ void SyncPointList::restore_data_after_checkpoint()
 /*! @brief Free/release the memory used for the checkpoint data structures. */
 void SyncPointList::free_converted_data_for_checkpoint()
 {
-   if ( this->list_name_chkpt != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->list_name_chkpt ) ) ) {
-         message_publish( MSG_WARNING, "SyncPointList::free_converted_data_for_checkpoint():%d WARNING failed to delete Trick Memory for 'list_name_chkpt'\n", __LINE__ );
-      }
-      this->list_name_chkpt = NULL;
-   }
-
    for ( SyncPoint * sync_pnt : list ){
       sync_pnt->free_converted_data_for_checkpoint();
    }

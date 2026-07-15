@@ -893,6 +893,7 @@ void SyncPointManagerBase::convert_data_before_checkpoint()
 void SyncPointManagerBase::restore_data_after_checkpoint()
 {
    for ( SyncPointList * sync_pnt_list : sync_pnt_lists ){
+      sync_pnt_list->set_mutex( this->mutex );
       sync_pnt_list->restore_data_after_checkpoint();
    }
 }

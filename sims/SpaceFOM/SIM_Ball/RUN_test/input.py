@@ -82,9 +82,9 @@ ball_sim_config.start_in_freeze()
 #---------------------------------------------------------------------------
 # Set the Trick check point information.
 #---------------------------------------------------------------------------
-trick.checkpoint_pre_init(True)
-trick.checkpoint_post_init(True)
-trick.checkpoint_end(True)
+#trick.checkpoint_pre_init(True)
+#trick.checkpoint_post_init(True)
+#trick.checkpoint_end(True)
 
 trick.TMM_reduced_checkpoint(False)
 #trick.TMM_hexfloat_checkpoint(True)
@@ -179,7 +179,7 @@ ball_fed_config = BallFederateConfig(
 # Set the TrickHLA debug reporting level.
 #federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )
 #ball_fed_config.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_10_TRACE )
-ball_fed_config.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_4_TRACE )
+ball_fed_config.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_8_TRACE )
 
 # Configure this federate SpaceFOM roles for this federate.
 ball_fed_config.set_master_role( True )  # This is the Master federate.

@@ -206,9 +206,6 @@ class SyncPointList : public CheckpointConversionBase
 
    Federate *federate; ///< @trick_units{--} Associated TrickHLA Federate.
 
-   // FIXME: Possibly deprecated.
-   char *list_name_chkpt; ///< @trick_units{--} Trick checkpointable list name.
-
   private:
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for SyncPointList class.

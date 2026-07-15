@@ -179,8 +179,7 @@ class SyncPoint : public CheckpointConversionBase
    SyncPtStateEnum state; ///< @trick_units{--} Sync-point state.
 
    RTI1516_NAMESPACE::VariableLengthData user_supplied_tag; ///< @trick_io{**} Sync-point user supplied data.
-
-   char *label_chkpt; ///< @trick_units{--} Trick memory allocated label that is checkpointable.
+   
 };
 
 } // namespace TrickHLA
