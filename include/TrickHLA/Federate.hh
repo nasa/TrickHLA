@@ -697,13 +697,6 @@ class Federate : public CheckpointConversionBase
    void rebuild_federate_handles( RTI1516_NAMESPACE::ObjectInstanceHandle const    &instance_hndl,
                                   RTI1516_NAMESPACE::AttributeHandleValueMap const &values );
 
-   /*! @brief Set federate execution startup state.
-    *  @param flag True for federate started; False otherwise. */
-   void set_startup( bool const flag )
-   {
-      this->got_startup_sync_point = flag;
-   }
-
    //=======================================================================
 
    //-------------------------------------------------------------------------
@@ -1130,7 +1123,6 @@ class Federate : public CheckpointConversionBase
    bool shutdown_called; ///< @trick_units{--} Flag to indicate shutdown has been called.
 
   private:
-   bool got_startup_sync_point; ///< @trick_units{--} "startup" Sync-Point has been created. For DIS compatibility
    bool publish_data;           /**< @trick_io{**} Default true. indicates if this federate's data & interactions should be processed. */
 
    RTI1516_NAMESPACE::ObjectClassHandle MOM_HLAfederation_class_handle;      ///< @trick_io{**} MOM Federation class handle.

@@ -18,9 +18,9 @@ endif
 TRICK_CFLAGS   += -I.
 TRICK_CXXFLAGS += -I.
 
-TRICK_USER_LINK_LIBS += -fsanitize=address -fno-omit-frame-pointer
-TRICK_CFLAGS   += -g -O2 -fsanitize=address -fno-omit-frame-pointer
-TRICK_CXXFLAGS += -g -O2 -fsanitize=address -fno-omit-frame-pointer
+#TRICK_USER_LINK_LIBS += -fsanitize=address -fno-omit-frame-pointer
+#TRICK_CFLAGS   += -g -O2 -fsanitize=address -fno-omit-frame-pointer
+#TRICK_CXXFLAGS += -g -O2 -fsanitize=address -fno-omit-frame-pointer
 
 TRICK_DP_FILES = \
  DP_rt_frame.xml\

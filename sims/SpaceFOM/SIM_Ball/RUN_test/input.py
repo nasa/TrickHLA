@@ -92,7 +92,7 @@ trick.TMM_reduced_checkpoint(False)
 #trick.echo_jobs_on()
 
 # Check point at 5 seconds.
-trick.checkpoint(5.0)
+#trick.checkpoint(5.0)
 
 
 #---------------------------------------------------------------------------
@@ -179,7 +179,7 @@ ball_fed_config = BallFederateConfig(
 # Set the TrickHLA debug reporting level.
 #federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )
 #ball_fed_config.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_10_TRACE )
-ball_fed_config.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_8_TRACE )
+ball_fed_config.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_4_TRACE )
 
 # Configure this federate SpaceFOM roles for this federate.
 ball_fed_config.set_master_role( True )  # This is the Master federate.

@@ -120,9 +120,7 @@ SyncPointList::SyncPointList(
  */
 SyncPointList::~SyncPointList()
 {
-   // FIXME: There seems to be a race condition between this
-   // destructor and the Trick memory manager reset function.
-   //clear();
+   clear();
 }
 
 void SyncPointList::setup(

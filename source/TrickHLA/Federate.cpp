@@ -178,7 +178,6 @@ Federate::Federate()
      all_federates_joined( false ),
      connected( false ),
      shutdown_called( false ),
-     got_startup_sync_point( false ),
      publish_data( true ),
      MOM_HLAfederation_class_handle(),
      MOM_HLAfederatesInFederation_handle(),
