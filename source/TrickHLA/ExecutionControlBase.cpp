@@ -1767,21 +1767,13 @@ void ExecutionControlBase::checkpoint_restart()
       save_restore_service->save_state = THLASaveProcessEnum::SAVE_NONE;
    }
 
+   // Restore the mutex for the sync point lists.
    for ( SyncPointList * sync_pnt_list : sync_pnt_lists ){
       sync_pnt_list->set_mutex( this->mutex );
    }
 
    // Tell the Save and Restore services that the load checkpoint process is complete.
    save_restore_service->restore_checkpoint_pending = false;
-
-   // FIXME: Move these to the restore_process job sequencer.
-   // Restore the federate data.
-   //if ( federate != NULL ) {
-   //   federate->restore_data_after_checkpoint();
-   //}
-
-   // Call the ExecutionControl function to restore the execution control data.
-   //this->restore_data_after_checkpoint();
 
    return;
 }

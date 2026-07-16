@@ -84,7 +84,7 @@ ball_sim_config.start_in_freeze()
 #---------------------------------------------------------------------------
 #trick.checkpoint_pre_init(True)
 #trick.checkpoint_post_init(True)
-#trick.checkpoint_end(True)
+trick.checkpoint_end(True)
 
 trick.TMM_reduced_checkpoint(False)
 #trick.TMM_hexfloat_checkpoint(True)
@@ -92,7 +92,7 @@ trick.TMM_reduced_checkpoint(False)
 #trick.echo_jobs_on()
 
 # Check point at 5 seconds.
-#trick.checkpoint(5.0)
+trick.checkpoint(5.0)
 
 
 #---------------------------------------------------------------------------

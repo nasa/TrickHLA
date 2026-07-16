@@ -138,10 +138,9 @@ void SyncPointManagerBase::clear()
 {
    // Clear/remove everything from the list.
    while ( !sync_pnt_lists.empty() ) {
-      if ( *sync_pnt_lists.begin() != NULL ) {
-         delete ( *sync_pnt_lists.begin() );
-         sync_pnt_lists.erase( sync_pnt_lists.begin() );
-      }
+      TMM_delete_var_a( sync_pnt_lists.back() );
+      sync_pnt_lists.back() = NULL;
+      sync_pnt_lists.pop_back();
    }
    sync_pnt_lists.clear();
 

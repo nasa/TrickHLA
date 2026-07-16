@@ -1775,22 +1775,8 @@ void SaveRestoreServices::restore_after_checkpoint_load()
       interaction_service->setup_interaction_RTI_handles();
       object_service->set_all_object_instance_handles_by_name();
 
-      // FIXME: This will never be true with the current logic.
-      if ( restore_state == THLARestoreProcessEnum::RESTORE_ACTIVATE ) {
-         federate->set_all_federate_MOM_instance_handles_by_name();
-         federate->restore_federate_handles_from_MOM();
-      }
-
       // Restore interactions and sync points
       reinstate_logged_sync_pts();
-
-      // FIXME: This should have already been done.
-      // Restore ownership transfer data for all objects
-      // Object *objects   = object_service->get_objects();
-      // int     obj_count = object_service->get_object_count();
-      // for ( int i = 0; i < obj_count; ++i ) {
-      //   objects[i].restore_data_after_checkpoint();
-      //}
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
          message_publish( MSG_NORMAL, "SaveRestoreServices::restore_after_checkpoint_load():%d: Rebuilt HLA federate state.\n",
@@ -2098,7 +2084,7 @@ void SaveRestoreServices::restore_checkpoint(
 }
 
 //--------------------------------------------------------------------------
-// Potentially deprecated SaveRestoreService functions.
+// FIXME: Potentially deprecated SaveRestoreService functions.
 //--------------------------------------------------------------------------
 
 /*!
