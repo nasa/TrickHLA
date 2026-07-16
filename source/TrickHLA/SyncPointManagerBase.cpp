@@ -893,7 +893,10 @@ void SyncPointManagerBase::convert_data_before_checkpoint()
 void SyncPointManagerBase::restore_data_after_checkpoint()
 {
    for ( SyncPointList * sync_pnt_list : sync_pnt_lists ){
-      sync_pnt_list->set_mutex( this->mutex );
+      // The mutex should already be set.  But, incase it's not, set it.
+      if ( sync_pnt_list->mutex == NULL ){
+         sync_pnt_list->set_mutex( this->mutex );
+      }
       sync_pnt_list->restore_data_after_checkpoint();
    }
 }

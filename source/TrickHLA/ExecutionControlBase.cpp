@@ -1732,6 +1732,8 @@ void ExecutionControlBase::checkpoint_preload()
  */
 void ExecutionControlBase::checkpoint_restart()
 {
+
+   // FIXME: Is this always the case?
    // TrickHLA only supports a checkpoint load as part of an HLA Restore process.
    if ( save_restore_service->restore_state != THLARestoreProcessEnum::RESTORE_IN_PROGRESS ) {
       ostringstream msg;
@@ -1748,16 +1750,38 @@ void ExecutionControlBase::checkpoint_restart()
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
+   // Make sure to reset the Save state.  Otherwise, the Freeze loop
+   // SaveRestoreServices::save_process routine will pickup wherever the Save
+   // process was when the checkpoint file was generateed.
+   if ( save_restore_service->save_state != THLASaveProcessEnum::SAVE_NONE ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+         string label_str;
+         StringUtilities::to_string( label_str, save_restore_service->restore_label );
+         ostringstream errmsg;
+         errmsg << "ExecutionControlBase::checkpoint_restart():" << __LINE__
+                << ": WARNING: Resetting Save state to THLASaveProcessEnum::SAVE_NONE!" << endl
+                << " Label: '" << label_str << "'" << endl
+                << " State: '" << TrickHLA::to_string( save_restore_service->save_state ) << "'" << endl;
+         message_publish( MSG_WARNING, errmsg.str().c_str() );
+      }
+      save_restore_service->save_state = THLASaveProcessEnum::SAVE_NONE;
+   }
+
+   for ( SyncPointList * sync_pnt_list : sync_pnt_lists ){
+      sync_pnt_list->set_mutex( this->mutex );
+   }
+
    // Tell the Save and Restore services that the load checkpoint process is complete.
    save_restore_service->restore_checkpoint_pending = false;
 
+   // FIXME: Move these to the restore_process job sequencer.
    // Restore the federate data.
-   if ( federate != NULL ) {
-      federate->restore_data_after_checkpoint();
-   }
+   //if ( federate != NULL ) {
+   //   federate->restore_data_after_checkpoint();
+   //}
 
    // Call the ExecutionControl function to restore the execution control data.
-   this->restore_data_after_checkpoint();
+   //this->restore_data_after_checkpoint();
 
    return;
 }

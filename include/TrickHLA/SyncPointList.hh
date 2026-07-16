@@ -87,6 +87,10 @@ class SyncPointList : public CheckpointConversionBase
    // Syntax: friend void init_attr<namespace>__<class name>();
    friend void init_attrTrickHLA__SyncPointList();
 
+   // Allow the TrickHLA core classes to have direct access to protected
+   // and private data.
+   friend class SyncPointManagerBase;
+
   public:
    //
    // Public constructors and destructor.
