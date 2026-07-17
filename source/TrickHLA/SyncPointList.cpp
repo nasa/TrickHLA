@@ -43,7 +43,6 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick includes.
-#include "trick/MemoryManager.hh"
 #include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
 #include "trick/message_type.h"
@@ -89,8 +88,7 @@ using namespace TrickHLA;
  * @job_class{initialization}
  */
 SyncPointList::SyncPointList()
-   :
-     list(),
+   : list(),
      list_name(),
      mutex( NULL ),
      federate( NULL )
@@ -105,8 +103,7 @@ SyncPointList::SyncPointList(
    std::string const &name,
    MutexLock         &mtx,
    Federate          *fed )
-   :
-     list(),
+   : list(),
      list_name( name ),
      mutex( &mtx ),
      federate( fed )
@@ -198,7 +195,7 @@ SyncPoint *SyncPointList::get(
 {
    MutexProtection const auto_unlock_mutex( mutex );
 
-   for( SyncPoint * sync_pnt : list ){
+   for ( SyncPoint *sync_pnt : list ) {
       if ( label.compare( sync_pnt->get_label() ) == 0 ) {
          return sync_pnt;
       }
@@ -224,8 +221,8 @@ bool SyncPointList::add(
 
    // Add the sync-point to the corresponding named list.
    //
-   SyncPoint * sync_pnt = (SyncPoint *)TMM_declare_var_1d( "TrickHLA::SyncPoint", 1 );
-   sync_pnt->set_label(label);
+   SyncPoint *sync_pnt = (SyncPoint *)TMM_declare_var_1d( "TrickHLA::SyncPoint", 1 );
+   sync_pnt->set_label( label );
    list.push_back( sync_pnt );
 
    return true;
@@ -250,9 +247,9 @@ bool SyncPointList::add(
 
    // Add the sync-point to the corresponding named list.
    //
-   SyncPointTimed * sync_pnt = (SyncPointTimed *)TMM_declare_var_1d( "TrickHLA::SyncPointTimed", 1 );
-   sync_pnt->set_label(label);
-   sync_pnt->set_time(time);
+   SyncPointTimed *sync_pnt = (SyncPointTimed *)TMM_declare_var_1d( "TrickHLA::SyncPointTimed", 1 );
+   sync_pnt->set_label( label );
+   sync_pnt->set_time( time );
    list.push_back( sync_pnt );
 
    return true;
@@ -263,7 +260,7 @@ bool SyncPointList::contains(
 {
    MutexProtection const auto_unlock_mutex( mutex );
 
-   for ( SyncPoint * sync_pnt : list ){
+   for ( SyncPoint const *sync_pnt : list ) {
       if ( label.compare( sync_pnt->get_label() ) == 0 ) {
          return true;
       }
@@ -347,7 +344,7 @@ bool SyncPointList::register_all()
    MutexProtection const auto_unlock_mutex( mutex );
 
    bool status = false;
-   for ( SyncPoint * sync_pnt : list ){
+   for ( SyncPoint *sync_pnt : list ) {
       if ( register_sync_point( sync_pnt ) ) {
          status = true;
       }
@@ -361,7 +358,7 @@ bool SyncPointList::register_all(
    MutexProtection const auto_unlock_mutex( mutex );
 
    bool status = false;
-   for ( SyncPoint * sync_pnt : list ){
+   for ( SyncPoint *sync_pnt : list ) {
       if ( register_sync_point( sync_pnt, handle_set ) ) {
          status = true;
       }
@@ -552,7 +549,7 @@ bool SyncPointList::wait_for_all_announced()
    // NOTE: Locking the mutex while waiting can cause deadlock for callbacks.
 
    bool status = false;
-   for ( SyncPoint * sync_pnt : list ){
+   for ( SyncPoint *sync_pnt : list ) {
       if ( wait_for_announced( sync_pnt ) ) {
          status = true;
       }
@@ -703,7 +700,7 @@ bool SyncPointList::achieve_all()
    MutexProtection const auto_unlock_mutex( mutex );
 
    bool status = false;
-   for ( SyncPoint * sync_pnt : list ){
+   for ( SyncPoint const *sync_pnt : list ) {
       if ( achieve( sync_pnt->get_label() ) ) {
          status = true;
       }
@@ -863,7 +860,7 @@ bool SyncPointList::is_all_synchronized()
 {
    MutexProtection const auto_unlock_mutex( mutex );
 
-   for ( SyncPoint * sync_pnt : list ){
+   for ( SyncPoint const *sync_pnt : list ) {
       if ( !sync_pnt->is_synchronized() ) {
          return false;
       }
@@ -926,7 +923,7 @@ bool SyncPointList::wait_for_all_synchronized()
    // NOTE: Locking the mutex while waiting can cause deadlock for callbacks.
 
    bool status = false;
-   for ( SyncPoint * sync_pnt : list ){
+   for ( SyncPoint const *sync_pnt : list ) {
       if ( wait_for_synchronized( sync_pnt ) ) {
          status = true;
       }
@@ -1026,7 +1023,7 @@ std::string SyncPointList::to_string()
 
    msg << "SyncPointList::to_string():" << __LINE__
        << " List:'" << get_list_name() << "' List-size:" << list.size() << endl;
-   for ( SyncPoint * sync_pnt : list ){
+   for ( SyncPoint *sync_pnt : list ) {
       msg << list_index++ << ":'" << get_list_name() << "' Sync-point:"
           << sync_pnt->to_string() << endl;
    }
@@ -1056,7 +1053,7 @@ std::string SyncPointList::to_string(
 /*! @brief Encode the variables to a form Trick can checkpoint. */
 void SyncPointList::convert_data_before_checkpoint()
 {
-   for ( SyncPoint * sync_pnt : list ){
+   for ( SyncPoint *sync_pnt : list ) {
       sync_pnt->convert_data_before_checkpoint();
    }
 }
@@ -1064,7 +1061,7 @@ void SyncPointList::convert_data_before_checkpoint()
 /*! @brief Decode the state of this class from the Trick checkpoint. */
 void SyncPointList::restore_data_after_checkpoint()
 {
-   for ( SyncPoint * sync_pnt : list ){
+   for ( SyncPoint *sync_pnt : list ) {
       sync_pnt->restore_data_after_checkpoint();
    }
 }
@@ -1072,7 +1069,7 @@ void SyncPointList::restore_data_after_checkpoint()
 /*! @brief Free/release the memory used for the checkpoint data structures. */
 void SyncPointList::free_converted_data_for_checkpoint()
 {
-   for ( SyncPoint * sync_pnt : list ){
+   for ( SyncPoint *sync_pnt : list ) {
       sync_pnt->free_converted_data_for_checkpoint();
    }
 }

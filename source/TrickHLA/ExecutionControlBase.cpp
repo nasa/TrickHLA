@@ -66,6 +66,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/ObjectServices.hh"
 #include "TrickHLA/SaveRestoreServices.hh"
+#include "TrickHLA/SyncPointList.hh"
 #include "TrickHLA/SyncPointManagerBase.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/CTETimelineBase.hh"
@@ -1768,7 +1769,7 @@ void ExecutionControlBase::checkpoint_restart()
    }
 
    // Restore the mutex for the sync point lists.
-   for ( SyncPointList * sync_pnt_list : sync_pnt_lists ){
+   for ( SyncPointList *sync_pnt_list : sync_pnt_lists ) {
       sync_pnt_list->set_mutex( this->mutex );
    }
 

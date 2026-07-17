@@ -1641,7 +1641,7 @@ void SaveRestoreServices::restore_initiated(
    // directly.  However, that is not the case here.  So we mark the state above and leave
    // it to Trick to call.
 
-   // NOTE: Once the TrickHLA checkpoint_restart job is called, this will reset the 
+   // NOTE: Once the TrickHLA checkpoint_restart job is called, this will reset the
    // this->restore_checkpoint_pending to false and allow the Restore process to
    // proceed.
 
@@ -1678,7 +1678,7 @@ bool SaveRestoreServices::restore_waiting_for_completion()
       // Notify the Federation that we could not complete the Restore.
       restore_failed_notification();
 
-      return( false );
+      return ( false );
    }
 
    // Check to see if we are still waiting for the Trick checkpoint to load.
@@ -1691,8 +1691,7 @@ bool SaveRestoreServices::restore_waiting_for_completion()
                        "SaveRestoreServices::restore_failed_notification():%d: Unexpected Restore state for label: \'%s\'!\n",
                        __LINE__, restore_label_str.c_str() );
 
-      return( false );
-
+      return ( false );
    }
 
    // Check for completion of the load_checkpoint_job call by Trick.
@@ -1708,8 +1707,7 @@ bool SaveRestoreServices::restore_waiting_for_completion()
          }
       }
 
-      return( true );
-
+      return ( true );
    }
 
    // Rebuild HLA state after the checkpoint load.
