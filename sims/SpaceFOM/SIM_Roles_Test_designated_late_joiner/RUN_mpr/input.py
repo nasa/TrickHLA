@@ -209,7 +209,7 @@ federate.add_known_federate( True, 'Other' )
 # Configure the CRC.
 #--------------------------------------------------------------------------
 # Pitch specific local settings designator:
-THLA.federate.local_settings = 'crcHost = localhost\:8989'
+THLA.federate.local_settings = 'crcHost = localhost:8989'
 
 #--------------------------------------------------------------------------
 # Set up federate time related parameters.

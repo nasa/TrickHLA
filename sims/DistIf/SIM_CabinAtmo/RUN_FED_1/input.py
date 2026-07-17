@@ -96,7 +96,7 @@ crc_port = 8989
 
 # Default: local settings string:
 override_settings = False
-local_settings = 'crcHost = ' + crc_host + '\n crcPort = ' + str( crc_port )
+local_settings = 'crcHost = ' + crc_host + ':' + str( crc_port )
 
 # Parse the command line.
 parse_command_line()
@@ -104,7 +104,7 @@ parse_command_line()
 # Check to see if setting were overridden.
 # If not, then form the local_settings string since host and port may have been set.
 if not override_settings:
-   local_settings = 'crcHost = ' + crc_host + '\n crcPort = ' + str( crc_port )
+   local_settings = 'crcHost = ' + crc_host + ':' + str( crc_port )
 
 if ( print_usage == True ):
    print_usage_message()
@@ -206,7 +206,7 @@ cabinAtmo.conservation.isBsideHla = True
 
 # Configure the CRC, the default is the local host but can be overridden
 # with command line arguments --crcHost and --crcPort or --settings.
-# THLA.federate.local_settings = 'crcHost = localhost\:8989'
+# THLA.federate.local_settings = 'crcHost = localhost:8989'
 THLA.federate.local_settings = local_settings
 
 # Configure the federate
