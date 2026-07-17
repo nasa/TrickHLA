@@ -145,8 +145,14 @@ std::string TrickHLA::to_string( THLARestoreProcessEnum restore_state )
       case THLARestoreProcessEnum::RESTORE_BEGUN:
          return ( "RESTORE_BEGUN" );
          break;
-      case THLARestoreProcessEnum::RESTORE_IN_PROGRESS:
-         return ( "RESTORE_IN_PROGRESS" );
+      case THLARestoreProcessEnum::RESTORE_INITIATED:
+         return ( "RESTORE_INITIATED" );
+         break;
+      case THLARestoreProcessEnum::RESTORE_CHECKPOINT:
+         return ( "RESTORE_CHECKPOINT" );
+         break;
+      case THLARestoreProcessEnum::RESTORE_WAITING_COMPLETION:
+         return ( "RESTORE_WAITING_COMPLETION" );
          break;
       case THLARestoreProcessEnum::RESTORE_COMPLETE:
          return ( "RESTORE_COMPLETE" );
@@ -1577,7 +1583,14 @@ void SaveRestoreServices::restore_initiated(
    }
 
    // Just return if we are not in the proper restore state.
-   if ( restore_state != THLARestoreProcessEnum::RESTORE_IN_PROGRESS ) {
+   if ( restore_state != THLARestoreProcessEnum::RESTORE_INITIATED ) {
+      ostringstream errmsg;
+      StringUtilities::to_string( restore_label_str, restore_label );
+      errmsg << "SaveRestoreServices::restore_initiated():" << __LINE__
+             << ": ERROR: Unexpected Restore state for label: " << restore_label_str << endl
+             << "   Expected state: RESTORE_INITIATED" << endl
+             << "   Current state : " << TrickHLA::to_string( restore_state ) << endl;
+      message_publish( MSG_ERROR, errmsg.str().c_str() );
       return;
    }
 
@@ -1610,15 +1623,18 @@ void SaveRestoreServices::restore_initiated(
    }
 
    // Report status to the user.
-   message_publish( MSG_NORMAL, "SaveRestoreServices::restore_initiated():%d: Restoring from checkpoint file %s\n",
-                    __LINE__, checkpoint_file_name.c_str() );
+   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+      message_publish( MSG_NORMAL, "SaveRestoreServices::restore_initiated():%d: Restoring from checkpoint file %s\n",
+                       __LINE__, checkpoint_file_name.c_str() );
+   }
 
-   // Mark the Trick load_checkpoint process as pending completion.  We need to do this
-   // because the Trick checkpoint process is not thread safe.  This routine is triggered
-   // from the FedAmbassador call back on a separate thread.  Once the checkpoint file
-   // name is set below,  Trick will automatically start the load checkpoint process at
-   // the top of the next Run or Freeze frame.
-   this->restore_checkpoint_pending = true;
+   // Mark the Retore state as initiated.  We need to do this because the Trick checkpoint
+   // process is not thread safe.  This routine is triggered from the FedAmbassador call
+   // back on a separate thread.  Once the checkpoint file name is set below,  Trick will
+   // automatically start the load checkpoint process at the top of the next Run or Freeze
+   // frame.  The checkpoint preload routine will transition the state to RESTORE_CHECKPOINT
+   // while Trick is loading the checkpoint file.
+   restore_state = THLARestoreProcessEnum::RESTORE_INITIATED;
 
    // Set the checkpoint file name.
    the_cpr->load_checkpoint( checkpoint_full_path, true );
@@ -1640,18 +1656,21 @@ void SaveRestoreServices::restore_initiated(
    // If this job where in the main Trick thread, we could call the the_cpr->load_checkpoint_job()
    // directly.  However, that is not the case here.  So we mark the state above and leave
    // it to Trick to call.
-
-   // NOTE: Once the TrickHLA checkpoint_restart job is called, this will reset the 
-   // this->restore_checkpoint_pending to false and allow the Restore process to
-   // proceed.
+   //
+   // We need to do this because the Trick checkpoint process is not thread safe.
+   // This routine is triggered from the FedAmbassador call back on a separate
+   // thread.  Once the checkpoint file name is set below,  Trick will
+   // automatically start the load checkpoint process at the top of the next Run
+   // or Freeze frame.  The checkpoint preload routine will transition the state
+   // to RESTORE_CHECKPOINT while Trick is loading the checkpoint file.
 
    return;
 }
 
 /*!
- *  @job_class{scheduled}
+ *  @job_class{freeze}
  */
-bool SaveRestoreServices::restore_waiting_for_completion()
+void SaveRestoreServices::restore_waiting_for_checkpoint_load()
 {
    std::string restore_label_str;
 
@@ -1661,64 +1680,54 @@ bool SaveRestoreServices::restore_waiting_for_completion()
          message_publish( MSG_WARNING, "SaveRestoreServices::restore_waiting_for_completion():%d: HLA SaveRestore NOT supported!\n",
                           __LINE__ );
       }
-      return ( false );
+      return;
    }
 
    // Check to see that the checkpoint_restart jobs ran successfully.
-   // If so, the restore_state should be THLARestoreProcessEnum::RESTORE_IN_PROGRESS.
+   // If so, the restore_state should be THLARestoreProcessEnum::RESTORE_CHECKPOINT.
    // If the restore_state is THLARestoreProcessEnum::RESTORE_FAILED then
    // something went wrong and we need to notify the Federation.
    if ( this->restore_state == THLARestoreProcessEnum::RESTORE_FAILED ) {
 
       StringUtilities::to_string( restore_label_str, restore_label );
       message_publish( MSG_ERROR,
-                       "SaveRestoreServices::restore_failed_notification():%d: Restore failed for label: \'%s\'!\n",
+                       "SaveRestoreServices::restore_waiting_for_checkpoint_load():%d: Restore failed for label: \'%s\'!\n",
                        __LINE__, restore_label_str.c_str() );
 
       // Notify the Federation that we could not complete the Restore.
       restore_failed_notification();
 
-      return( false );
+      return;
    }
 
    // Check to see if we are still waiting for the Trick checkpoint to load.
-   // If so, the restore_state should be THLARestoreProcessEnum::RESTORE_IN_PROGRESS.
+   // If so, the restore_state should be THLARestoreProcessEnum::RESTORE_INITIATED.
    // If not, then we are not in the Restore state we think we should be in.
-   if ( this->restore_state != THLARestoreProcessEnum::RESTORE_IN_PROGRESS ) {
-
-      StringUtilities::to_string( restore_label_str, restore_label );
-      message_publish( MSG_ERROR,
-                       "SaveRestoreServices::restore_failed_notification():%d: Unexpected Restore state for label: \'%s\'!\n",
-                       __LINE__, restore_label_str.c_str() );
-
-      return( false );
-
-   }
-
-   // Check for completion of the load_checkpoint_job call by Trick.
-   if ( this->restore_checkpoint_pending ) {
-
+   if ( this->restore_state == THLARestoreProcessEnum::RESTORE_INITIATED ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
          if ( execution_control->process_timer.timeout( execution_control->process_timer.time() ) ) {
             execution_control->process_timer.reset();
             StringUtilities::to_string( restore_label_str, restore_label );
             message_publish( MSG_NORMAL,
-                             "SaveRestoreServices::restore_waiting_for_completion():%d: HLA Restore in progress for label \'%s\'!\n",
+                             "SaveRestoreServices::restore_waiting_for_checkpoint_load():%d: HLA Restore label \'%s\'!\n",
                              __LINE__, restore_label_str.c_str() );
          }
       }
-
-      return( true );
-
+   }
+   else {
+      ostringstream errmsg;
+      StringUtilities::to_string( restore_label_str, restore_label );
+      errmsg << "SaveRestoreServices::restore_waiting_for_checkpoint_load():" << __LINE__
+             << ": ERROR: Unexpected Restore state for label: " << restore_label_str << endl
+             << "   Expected state: RESTORE_INITIATED" << endl
+             << "   Current state : " << TrickHLA::to_string( restore_state ) << endl;
+      message_publish( MSG_ERROR, errmsg.str().c_str() );
    }
 
-   // Rebuild HLA state after the checkpoint load.
-   restore_after_checkpoint_load();
-
-   // Notify the Federation that we successfully completed the Restore.
-   restore_success_notification();
-
-   return ( false );
+   // NOTE: The Restore state will transition from RESTORE_INITIATED to
+   // RESTORE_CHECKPOINT one the Federate::checkpoint_preload job is called.
+   
+   return;
 }
 
 /*!
@@ -1750,46 +1759,57 @@ void SaveRestoreServices::restore_after_checkpoint_load()
       save_state = THLASaveProcessEnum::SAVE_NONE;
    }
 
-   // Make sure we are in an appropriate Restore state.
-   if ( restore_state == THLARestoreProcessEnum::RESTORE_IN_PROGRESS ) {
+   // Check to see if we are still waiting for the Trick checkpoint to load.
+   // If so, the restore_state should be THLARestoreProcessEnum::RESTORE_CHECKPOINT.
+   // If not, then we are not in the Restore state we think we should be in.
+   if ( this->restore_state != THLARestoreProcessEnum::RESTORE_CHECKPOINT ) {
+      ostringstream errmsg;
+      string restore_label_str;
+      StringUtilities::to_string( restore_label_str, restore_label );
+      errmsg << "SaveRestoreServices::restore_after_checkpoint_load():" << __LINE__
+             << ": WARNING: Unexpected Restore state for label: " << restore_label_str << endl
+             << "   Expected state: RESTORE_CHECKPOINT" << endl
+             << "   Current state:  " << TrickHLA::to_string( restore_state ) << endl;
+      message_publish( MSG_ERROR, errmsg.str().c_str() );
 
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
-         message_publish( MSG_NORMAL, "SaveRestoreServices::restore_after_checkpoint_load():%d: Rebuilding HLA Handles.\n",
-                          __LINE__ );
-      }
-
-      // Restore the data constructs from loading the checkpoint file.
-      federate->restore_data_after_checkpoint();
-      if ( execution_control != NULL ) {
-         execution_control->restore_data_after_checkpoint();
-      }
-
-      //
-      // Get us restarted again...
-      //
-
-      // Reset RTI data to the state it was in when checkpointed
-      object_service->setup_object_ref_attributes();
-      interaction_service->setup_interaction_ref_attributes();
-      object_service->setup_object_RTI_handles();
-      interaction_service->setup_interaction_RTI_handles();
-      object_service->set_all_object_instance_handles_by_name();
-
-      // Restore interactions and sync points
-      reinstate_logged_sync_pts();
-
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
-         message_publish( MSG_NORMAL, "SaveRestoreServices::restore_after_checkpoint_load():%d: Rebuilt HLA federate state.\n",
-                          __LINE__ );
-      }
-
-   } else {
-
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
-         message_publish( MSG_WARNING, "SaveRestoreServices::restore_after_checkpoint_load():%d: Restore NOT in progress!\n",
-                          __LINE__ );
-      }
+      return;
    }
+
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+      message_publish( MSG_NORMAL, "SaveRestoreServices::restore_after_checkpoint_load():%d: Rebuilding HLA Handles.\n",
+                        __LINE__ );
+   }
+
+   // Restore the data constructs from loading the checkpoint file.
+   federate->restore_data_after_checkpoint();
+   if ( execution_control != NULL ) {
+      execution_control->restore_data_after_checkpoint();
+   }
+
+   //
+   // Get us restarted again...
+   //
+
+   // Reset RTI data to the state it was in when checkpointed
+   object_service->setup_object_ref_attributes();
+   interaction_service->setup_interaction_ref_attributes();
+   object_service->setup_object_RTI_handles();
+   interaction_service->setup_interaction_RTI_handles();
+   object_service->set_all_object_instance_handles_by_name();
+
+   // Restore interactions and sync points
+   reinstate_logged_sync_pts();
+
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+      message_publish( MSG_NORMAL, "SaveRestoreServices::restore_after_checkpoint_load():%d: Rebuilt HLA federate state.\n",
+                        __LINE__ );
+   }
+   
+   // Notify the Federation that we successfully completed the Restore.
+   restore_success_notification();
+
+   // Set the Restore state to RESTORE_WAITING_COMPLETION.
+   restore_state = THLARestoreProcessEnum::RESTORE_WAITING_COMPLETION;
 
    return;
 }
@@ -1888,6 +1908,67 @@ void SaveRestoreServices::restore_failed_notification()
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
    return;
+}
+
+/*!
+ *  @job_class{scheduled}
+ */
+bool SaveRestoreServices::restore_waiting_for_completion()
+{
+   std::string restore_label_str;
+
+   // If Federation SaveRestore is not supported then return without action.
+   if ( this->restore_state == THLARestoreProcessEnum::RESTORE_UNSUPPORTED ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+         message_publish( MSG_WARNING, "SaveRestoreServices::restore_waiting_for_completion():%d: HLA SaveRestore NOT supported!\n",
+                          __LINE__ );
+      }
+      return ( false );
+   }
+
+   // If the restore_state is THLARestoreProcessEnum::RESTORE_FAILED then
+   // something went wrong and we need to notify the Federation.
+   if ( this->restore_state == THLARestoreProcessEnum::RESTORE_FAILED ) {
+
+      StringUtilities::to_string( restore_label_str, restore_label );
+      message_publish( MSG_ERROR,
+                       "SaveRestoreServices::restore_waiting_for_completion():%d: Restore failed for label: \'%s\'!\n",
+                       __LINE__, restore_label_str.c_str() );
+
+      // Notify the Federation that we could not complete the Restore.
+      restore_failed_notification();
+
+      return( false );
+   }
+
+   // Check to see that the restore_after_checkpoint_load jobs ran successfully.
+   // If so, the restore_state should be THLARestoreProcessEnum::RESTORE_WAITING_COMPLETION.
+   // If not, then we are not in the Restore state we think we should be in.
+   if ( this->restore_state != THLARestoreProcessEnum::RESTORE_WAITING_COMPLETION ) {
+      ostringstream errmsg;
+      string restore_label_str;
+      StringUtilities::to_string( restore_label_str, restore_label );
+      errmsg << "SaveRestoreServices::restore_waiting_for_completion():" << __LINE__
+             << ": WARNING: Unexpected Restore state for label: " << restore_label_str << endl
+             << "   Expected state: RESTORE_WAITING_COMPLETION" << endl
+             << "   Current state:  " << TrickHLA::to_string( restore_state ) << endl;
+      message_publish( MSG_ERROR, errmsg.str().c_str() );
+
+      return( false );
+
+   }
+
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+      if ( execution_control->process_timer.timeout( execution_control->process_timer.time() ) ) {
+         execution_control->process_timer.reset();
+         StringUtilities::to_string( restore_label_str, restore_label );
+         message_publish( MSG_NORMAL,
+                           "SaveRestoreServices::restore_waiting_for_completion():%d: HLA Restore in progress for label \'%s\'!\n",
+                           __LINE__, restore_label_str.c_str() );
+      }
+   }
+
+   return ( true );
 }
 
 /*!

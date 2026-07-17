@@ -1409,7 +1409,19 @@ void ExecutionControlBase::restore_process()
          this->restore_waiting_for_initiated();
          break;
 
-      case THLARestoreProcessEnum::RESTORE_IN_PROGRESS:
+      case THLARestoreProcessEnum::RESTORE_INITIATED:
+         // The federate Restore has been initiated and we are now waiting for
+         // the Trick load checkpoint process to complete.
+         this->restore_waiting_for_checkpoint_load();
+         break;
+
+      case THLARestoreProcessEnum::RESTORE_CHECKPOINT:
+         // The federate Restore has been initiated and we are now waiting for
+         // the Trick checkpoint process to complete.
+         this->restore_after_checkpoint_load();
+         break;
+
+      case THLARestoreProcessEnum::RESTORE_WAITING_COMPLETION:
          // The federate Restore is in progress.  This routine checks status
          // while waiting for the restore to complete.  This phase is entered
          // upon receiveing the FedAmb::initiateFederateRestore() callback and
@@ -1544,6 +1556,15 @@ void ExecutionControlBase::restore_initiated(
 #endif // IEEE_1516_2025
 {
    save_restore_service->restore_initiated( label, federate_name, new_federate_handle );
+   return;
+}
+
+/*!
+ *  @job_class{freeze}
+ */
+void ExecutionControlBase::restore_waiting_for_checkpoint_load()
+{
+   save_restore_service->restore_waiting_for_checkpoint_load();
    return;
 }
 
@@ -1706,12 +1727,17 @@ void ExecutionControlBase::checkpoint_after()
  */
 void ExecutionControlBase::checkpoint_preload()
 {
+
    // TrickHLA only supports a checkpoint load as part of an HLA Restore process.
-   if ( save_restore_service->restore_state != THLARestoreProcessEnum::RESTORE_IN_PROGRESS ) {
-      ostringstream msg;
-      msg << "ExecutionControlBase::checkpoint_preload():"
-          << __LINE__ << ": Checkpoint loading only supported as part of an HLA Restore process!" << endl;
-      message_publish( MSG_WARNING, msg.str().c_str() );
+   if ( save_restore_service->restore_state != THLARestoreProcessEnum::RESTORE_INITIATED ) {
+      std::string restore_label_str;
+      ostringstream errmsg;
+      StringUtilities::to_string( restore_label_str, save_restore_service->restore_label );
+      errmsg << "ExecutionControlBase::checkpoint_preload():" << __LINE__
+             << ": ERROR: Unexpected Restore state for label: " << restore_label_str << endl
+             << "   Expected state: RESTORE_INITIATED" << endl
+             << "   Current state : " << TrickHLA::to_string( save_restore_service->restore_state ) << endl;
+      message_publish( MSG_WARNING, errmsg.str().c_str() );
       return;
    }
 
@@ -1722,7 +1748,8 @@ void ExecutionControlBase::checkpoint_preload()
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
-   // Normally there's nothing to do to prepare for loading a checkpoint.
+   // Move the Restore state to indicate that the checkpoint has started.
+   save_restore_service->restore_state = THLARestoreProcessEnum::RESTORE_CHECKPOINT;
 
    return;
 }
@@ -1735,11 +1762,15 @@ void ExecutionControlBase::checkpoint_restart()
 
    // FIXME: Is this always the case?
    // TrickHLA only supports a checkpoint load as part of an HLA Restore process.
-   if ( save_restore_service->restore_state != THLARestoreProcessEnum::RESTORE_IN_PROGRESS ) {
-      ostringstream msg;
-      msg << "ExecutionControlBase::checkpoint_restart():"
-          << __LINE__ << ": Checkpoint restart only supported as part of an HLA Restore process!" << endl;
-      message_publish( MSG_WARNING, msg.str().c_str() );
+   if ( save_restore_service->restore_state != THLARestoreProcessEnum::RESTORE_CHECKPOINT ) {
+      std::string restore_label_str;
+      ostringstream errmsg;
+      StringUtilities::to_string( restore_label_str, save_restore_service->restore_label );
+      errmsg << "ExecutionControlBase::checkpoint_restart():" << __LINE__
+             << ": ERROR: Unexpected Restore state for label: " << restore_label_str << endl
+             << "   Expected state: RESTORE_INITIATED" << endl
+             << "   Current state : " << TrickHLA::to_string( save_restore_service->restore_state ) << endl;
+      message_publish( MSG_WARNING, errmsg.str().c_str() );
       return;
    }
 
@@ -1761,19 +1792,19 @@ void ExecutionControlBase::checkpoint_restart()
          errmsg << "ExecutionControlBase::checkpoint_restart():" << __LINE__
                 << ": WARNING: Resetting Save state to THLASaveProcessEnum::SAVE_NONE!" << endl
                 << " Label: '" << label_str << "'" << endl
-                << " State: '" << TrickHLA::to_string( save_restore_service->save_state ) << "'" << endl;
+                << " State: '" << TrickHLA::to_string( save_restore_service->restore_state ) << "'" << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
       save_restore_service->save_state = THLASaveProcessEnum::SAVE_NONE;
    }
 
+   // FIXME: We may want to move all code like this into call specific extensions to
+   // the CheckpointConversionBase class.  This would separate the Trick checkpoint
+   // activities from the TrickHLA Save/Restore activities.
    // Restore the mutex for the sync point lists.
    for ( SyncPointList * sync_pnt_list : sync_pnt_lists ){
       sync_pnt_list->set_mutex( this->mutex );
    }
-
-   // Tell the Save and Restore services that the load checkpoint process is complete.
-   save_restore_service->restore_checkpoint_pending = false;
 
    return;
 }

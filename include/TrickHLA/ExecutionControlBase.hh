@@ -800,6 +800,10 @@ class ExecutionControlBase : public SyncPointManagerBase
       RTI1516_NAMESPACE::FederateHandle new_federate_handle );
 #endif // IEEE_1516_2025
 
+   /*! @brief Function called cyclicly while waiting for Trick to complete loading
+    *  the checkpoint file associated with a Restore label. */
+   virtual void restore_waiting_for_checkpoint_load();
+
    /*! @brief Rebuild the HLA state after a checkpoint load. */
    virtual void restore_after_checkpoint_load();
 

@@ -95,18 +95,20 @@ std::string to_string( THLASaveProcessEnum save_state );
  * Enumerated type used to step through the Restore process.
  */
 enum class THLARestoreProcessEnum : uint8_t {
-   RESTORE_NONE              = 0,
-   RESTORE_ACTIVATE          = 1,
-   RESTORE_REQUEST_STATUS    = 2,
-   RESTORE_STATUS_COMPLETE   = 3,
-   RESTORE_REQUESTED         = 4,
-   RESTORE_REQUEST_FAILED    = 5,
-   RESTORE_REQUEST_SUCCEEDED = 6,
-   RESTORE_BEGUN             = 7,
-   RESTORE_IN_PROGRESS       = 8,
-   RESTORE_COMPLETE          = 9,
-   RESTORE_FAILED            = 10,
-   RESTORE_UNSUPPORTED       = 0xff
+   RESTORE_NONE               = 0,
+   RESTORE_ACTIVATE           = 1,
+   RESTORE_REQUEST_STATUS     = 2,
+   RESTORE_STATUS_COMPLETE    = 3,
+   RESTORE_REQUESTED          = 4,
+   RESTORE_REQUEST_FAILED     = 5,
+   RESTORE_REQUEST_SUCCEEDED  = 6,
+   RESTORE_BEGUN              = 7,
+   RESTORE_INITIATED          = 8,
+   RESTORE_CHECKPOINT         = 9,
+   RESTORE_WAITING_COMPLETION = 10,
+   RESTORE_COMPLETE           = 11,
+   RESTORE_FAILED             = 12,
+   RESTORE_UNSUPPORTED        = 0xff
 };
 
 /*! @brief Convert a THLARestoreProcessEnum value into a string representation.
@@ -374,9 +376,9 @@ class SaveRestoreServices : public CheckpointConversionBase
       RTI1516_NAMESPACE::FederateHandle new_federate_handle );
 #endif // IEEE_1516_2025
 
-   /*! @brief Function called cyclicly checking on Restore process progress.
-    *  @return Returns true if the Restore has been initiated. */
-   bool restore_waiting_for_completion();
+   /*! @brief Function called cyclicly while waiting for Trick to complete loading
+    *  the checkpoint file associated with a Restore label. */
+   virtual void restore_waiting_for_checkpoint_load();
 
    /*! @brief Rebuild the HLA state after a checkpoint load. */
    void restore_after_checkpoint_load();
@@ -388,6 +390,10 @@ class SaveRestoreServices : public CheckpointConversionBase
    /*! @brief Function called to inform the Federation that this federate has
     *  failed to complete a Trick checkpoint Restore. */
    void restore_failed_notification();
+
+   /*! @brief Function called cyclicly checking on Restore process progress.
+    *  @return Returns true if the Restore has been initiated. */
+   bool restore_waiting_for_completion();
 
    /*! @brief Function called when a Restore process succeeds. */
    void restore_succeded();
@@ -464,8 +470,6 @@ class SaveRestoreServices : public CheckpointConversionBase
    RTI1516_NAMESPACE::FederateHandle restore_handle; ///< @trick_io{**} Restored federate handle.
 
    RTI1516_NAMESPACE::FederateRestoreStatusVector restore_status_response; ///< @trick_io{**} Federation Restore status vector.
-
-   bool restore_checkpoint_pending; ///< @trick_io{**} Flag indicating Trick load checkpoint status.
 
   private:
    // Do not allow the copy constructor or assignment operator.

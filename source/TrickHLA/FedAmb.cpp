@@ -451,7 +451,7 @@ void FedAmb::initiateFederateRestore(
 #endif // IEEE_1516_2025
 {
    save_restore_service->restore_label = label;
-   save_restore_service->restore_set_state( THLARestoreProcessEnum::RESTORE_IN_PROGRESS );
+   save_restore_service->restore_set_state( THLARestoreProcessEnum::RESTORE_INITIATED );
 
    // Convert federate name to string.
    string new_federate_name_str;
@@ -814,7 +814,7 @@ void FedAmb::reflectAttributeValues(
    // instance.  We use these to process joined federate data.
    if ( ( federate != NULL ) && federate->is_joined_federate_by_object_handle( objectInstance ) ) {
 
-      if ( save_restore_service->restore_state == THLARestoreProcessEnum::RESTORE_IN_PROGRESS ) {
+      if ( save_restore_service->restore_state == THLARestoreProcessEnum::RESTORE_CHECKPOINT ) {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
             string id_str;
             StringUtilities::to_string( id_str, objectInstance );

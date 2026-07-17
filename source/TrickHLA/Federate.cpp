@@ -3788,11 +3788,19 @@ void Federate::checkpoint_before()
 void Federate::checkpoint_preload()
 {
    // TrickHLA only supports a checkpoint load as part of an HLA Restore process.
-   if ( save_restore_service.restore_state != THLARestoreProcessEnum::RESTORE_IN_PROGRESS ) {
+   if ( save_restore_service.restore_state != THLARestoreProcessEnum::RESTORE_INITIATED ) {
       ostringstream msg;
       msg << "Federate::checkpoint_preload():"
           << __LINE__ << ": Checkpoint loading only supported as part of an HLA Restore process!" << endl;
       message_publish( MSG_WARNING, msg.str().c_str() );
+      std::string restore_label_str;
+      ostringstream errmsg;
+      StringUtilities::to_string( restore_label_str, save_restore_service.restore_label );
+      errmsg << "Federate::checkpoint_preload():" << __LINE__
+             << ": ERROR: Unexpected Restore state for label: " << restore_label_str << endl
+             << "   Expected state: RESTORE_INITIATED" << endl
+             << "   Current state : " << TrickHLA::to_string( save_restore_service.restore_state ) << endl;
+      message_publish( MSG_WARNING, errmsg.str().c_str() );
       return;
    }
 
@@ -3839,7 +3847,7 @@ void Federate::checkpoint_after()
 void Federate::checkpoint_restart()
 {
    // TrickHLA only supports a checkpoint load as part of an HLA Restore process.
-   if ( save_restore_service.restore_state != THLARestoreProcessEnum::RESTORE_IN_PROGRESS ) {
+   if ( save_restore_service.restore_state != THLARestoreProcessEnum::RESTORE_CHECKPOINT ) {
       ostringstream msg;
       msg << "Federate::checkpoint_restart():"
           << __LINE__ << ": Checkpoint restart only supported as part of an HLA Restore process!" << endl;
@@ -5579,6 +5587,7 @@ void Federate::set_MOM_HLAfederation_instance_attributes(
    return;
 }
 
+// FIXME: Should this code be deprecated.  It only appears to be use in the IMSim code.
 void Federate::restore_federate_handles_from_MOM()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
@@ -5587,7 +5596,7 @@ void Federate::restore_federate_handles_from_MOM()
    }
 
    // Check to insure that we are in the correct Restore state.
-   if ( save_restore_service.restore_state != THLARestoreProcessEnum::RESTORE_IN_PROGRESS ) {
+   if ( save_restore_service.restore_state != THLARestoreProcessEnum::RESTORE_CHECKPOINT ) {
       message_publish( MSG_WARNING,
                        "Federate::restore_federate_handles_from_MOM:%d : Invalid Restore state: \'%s\'!\n",
                        __LINE__, TrickHLA::to_string( save_restore_service.restore_state ).c_str() );

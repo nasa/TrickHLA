@@ -688,6 +688,7 @@ class Federate : public CheckpointConversionBase
    /*! @brief Restore the backed up "auto-provide" state to the MOM. */
    void restore_orig_MOM_auto_provide_setting();
 
+   // FIXME: Should this code be deprecated.  It only appears to be use in the IMSim code.
    /*! @brief Ask for all federate handles from MOM after a checkpoint reload. */
    void restore_federate_handles_from_MOM();
 
