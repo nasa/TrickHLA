@@ -1656,7 +1656,6 @@ void SaveRestoreServices::restore_initiated(
    // If this job where in the main Trick thread, we could call the the_cpr->load_checkpoint_job()
    // directly.  However, that is not the case here.  So we mark the state above and leave
    // it to Trick to call.
-<<<<<<< HEAD
    //
    // We need to do this because the Trick checkpoint process is not thread safe.
    // This routine is triggered from the FedAmbassador call back on a separate
@@ -1664,12 +1663,6 @@ void SaveRestoreServices::restore_initiated(
    // automatically start the load checkpoint process at the top of the next Run
    // or Freeze frame.  The checkpoint preload routine will transition the state
    // to RESTORE_CHECKPOINT while Trick is loading the checkpoint file.
-=======
-
-   // NOTE: Once the TrickHLA checkpoint_restart job is called, this will reset the
-   // this->restore_checkpoint_pending to false and allow the Restore process to
-   // proceed.
->>>>>>> 4601f1223e9b4dc62a4c360e192c18a02481afb3
 
    return;
 }
@@ -1704,33 +1697,13 @@ void SaveRestoreServices::restore_waiting_for_checkpoint_load()
       // Notify the Federation that we could not complete the Restore.
       restore_failed_notification();
 
-<<<<<<< HEAD
       return;
-=======
-      return ( false );
->>>>>>> 4601f1223e9b4dc62a4c360e192c18a02481afb3
    }
 
    // Check to see if we are still waiting for the Trick checkpoint to load.
    // If so, the restore_state should be THLARestoreProcessEnum::RESTORE_INITIATED.
    // If not, then we are not in the Restore state we think we should be in.
-<<<<<<< HEAD
    if ( this->restore_state == THLARestoreProcessEnum::RESTORE_INITIATED ) {
-=======
-   if ( this->restore_state != THLARestoreProcessEnum::RESTORE_IN_PROGRESS ) {
-
-      StringUtilities::to_string( restore_label_str, restore_label );
-      message_publish( MSG_ERROR,
-                       "SaveRestoreServices::restore_failed_notification():%d: Unexpected Restore state for label: \'%s\'!\n",
-                       __LINE__, restore_label_str.c_str() );
-
-      return ( false );
-   }
-
-   // Check for completion of the load_checkpoint_job call by Trick.
-   if ( this->restore_checkpoint_pending ) {
-
->>>>>>> 4601f1223e9b4dc62a4c360e192c18a02481afb3
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
          if ( execution_control->process_timer.timeout( execution_control->process_timer.time() ) ) {
             execution_control->process_timer.reset();
@@ -1740,7 +1713,6 @@ void SaveRestoreServices::restore_waiting_for_checkpoint_load()
                              __LINE__, restore_label_str.c_str() );
          }
       }
-<<<<<<< HEAD
    }
    else {
       ostringstream errmsg;
@@ -1750,10 +1722,6 @@ void SaveRestoreServices::restore_waiting_for_checkpoint_load()
              << "   Expected state: RESTORE_INITIATED" << endl
              << "   Current state : " << TrickHLA::to_string( restore_state ) << endl;
       message_publish( MSG_ERROR, errmsg.str().c_str() );
-=======
-
-      return ( true );
->>>>>>> 4601f1223e9b4dc62a4c360e192c18a02481afb3
    }
 
    // NOTE: The Restore state will transition from RESTORE_INITIATED to
