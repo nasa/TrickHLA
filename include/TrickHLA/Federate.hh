@@ -1124,7 +1124,7 @@ class Federate : public CheckpointConversionBase
    bool shutdown_called; ///< @trick_units{--} Flag to indicate shutdown has been called.
 
   private:
-   bool publish_data;           /**< @trick_io{**} Default true. indicates if this federate's data & interactions should be processed. */
+   bool publish_data; /**< @trick_io{**} Default true. indicates if this federate's data & interactions should be processed. */
 
    RTI1516_NAMESPACE::ObjectClassHandle MOM_HLAfederation_class_handle;      ///< @trick_io{**} MOM Federation class handle.
    RTI1516_NAMESPACE::AttributeHandle   MOM_HLAfederatesInFederation_handle; ///< @trick_io{**} MOM attribute handle to Federate-count.
