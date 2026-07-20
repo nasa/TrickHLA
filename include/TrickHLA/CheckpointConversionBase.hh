@@ -51,6 +51,14 @@ class CheckpointConversionBase
       return;
    }
 
+   //-------------------------------------------------------------------------
+   // Save and Restore functions.
+   //
+   // These functions support the HLA Save and Restore processes. These
+   // functions are used in the SaveRestoreServices and ExecutionControl
+   // classes to regulate the HLA Save and Restore processes.  Users will
+   // typically NOT interact with these functions.
+   //
    /*! @brief Convert data to a form Trick can checkpoint. */
    virtual void convert_data_before_checkpoint() = 0;
 
@@ -59,6 +67,27 @@ class CheckpointConversionBase
 
    /*! @brief Clear/release the memory used for the conversion data for the checkpoint. */
    virtual void free_converted_data_for_checkpoint() = 0;
+
+   
+   //-------------------------------------------------------------------------
+   // Checkpoint functions.
+   //
+   // These functions support the Trick checkpoint processes. These functions
+   // are used in the THLABase.sm simulation module.  Users will typically NOT
+   // interact with these functions.
+   //
+   /*! @brief Prepare for checkpointing.  Usually for an HLA Save. */
+   virtual void checkpoint_before(){ return; }
+
+   /*! @brief Prepare to load a checkpoint file.  Usually as part of an HLA Restore. */
+   virtual void checkpoint_preload(){ return; }
+
+   /*! @brief Federate tasks to perform after a checkpoint.  Usually for an HLA Save. */
+   virtual void checkpoint_after(){ return; }
+
+   /*! @brief Tasks to perform after a checkpoint load.  Usually as part of an HLA Restore. */
+   virtual void checkpoint_restart(){ return; }
+
 };
 
 } // namespace TrickHLA

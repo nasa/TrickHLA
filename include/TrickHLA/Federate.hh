@@ -1073,6 +1073,9 @@ class Federate : public CheckpointConversionBase
 
    //-------------------------------------------------------------------------
    // CheckpointConversionBase Interface.
+   //-------------------------------------------------------------------------
+   //
+   // Save and Restore functions.
    //
    // These functions provide the functions used by the CheckpointConversionBase
    // interface class to support Trick checkpoint processing.
@@ -1086,7 +1089,7 @@ class Federate : public CheckpointConversionBase
    /*! @brief Clear/release the memory used for the conversion data for the checkpoint. */
    virtual void free_converted_data_for_checkpoint() override;
 
-   //-------------------------------------------------------------------------
+   //
    // Checkpoint functions.
    //
    // These functions support the Trick checkpoint processes. These functions
@@ -1095,19 +1098,19 @@ class Federate : public CheckpointConversionBase
    //
    /*! @brief Prepare the Federate for checkpointing.  Usually for an HLA Save.
     * Delegates to Execution Control interface. */
-   void checkpoint_before();
+   void checkpoint_before() override;
 
    /*! @brief Prepare the Federate to load a checkpoint file.  Usually as part
     *  of an HLA Restore.  Delegates to Execution Control interface.*/
-   void checkpoint_preload();
+   void checkpoint_preload() override;
 
    /*! @brief Federate tasks to perform after a checkpoint.  Usually for an HLA Save.
     * Delegates to Execution Control interface. */
-   void checkpoint_after();
+   void checkpoint_after() override;
 
    /*! @brief Federate tasks to perform after a checkpoint load.  Usually as
     *  part of an HLA Restore.  Delegates to Execution Control interface.*/
-   void checkpoint_restart();
+   void checkpoint_restart() override;
 
   private:
    //
@@ -1123,7 +1126,6 @@ class Federate : public CheckpointConversionBase
 
    bool shutdown_called; ///< @trick_units{--} Flag to indicate shutdown has been called.
 
-  private:
    bool publish_data; /**< @trick_io{**} Default true. indicates if this federate's data & interactions should be processed. */
 
    RTI1516_NAMESPACE::ObjectClassHandle MOM_HLAfederation_class_handle;      ///< @trick_io{**} MOM Federation class handle.
@@ -1189,7 +1191,6 @@ class Federate : public CheckpointConversionBase
 #   pragma GCC diagnostic pop
 #endif // IEEE_1516_2025
 
-  private:
    /*! @brief Subscribe to the specified attributes for the given class handle.
     *  @param class_handle   Class handle.
     *  @param attribute_list Attributes handles. */
@@ -1239,7 +1240,7 @@ class Federate : public CheckpointConversionBase
     *  @param federate_name Federate name to test. */
    bool is_required_federate( std::wstring const &federate_name );
 
-  private:
+   
    // Do not allow the copy constructor or assignment operator.
    /*! @brief Copy constructor for Federate class.
     *  @details This constructor is private to prevent inadvertent copies. */

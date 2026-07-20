@@ -880,6 +880,10 @@ void SyncPointManagerBase::sync_point_federation_synchronized(
    }
 }
 
+//-------------------------------------------------------------------------
+// CheckpointConversionBase Interface.
+//-------------------------------------------------------------------------
+
 /*! @brief Encode the variables to a form Trick can checkpoint. */
 void SyncPointManagerBase::convert_data_before_checkpoint()
 {
@@ -906,4 +910,17 @@ void SyncPointManagerBase::free_converted_data_for_checkpoint()
    for ( SyncPointList *sync_pnt_list : sync_pnt_lists ) {
       sync_pnt_list->free_converted_data_for_checkpoint();
    }
+}
+
+/*!
+ *  @job_class{restart}
+ */
+void SyncPointManagerBase::checkpoint_restart()
+{
+   // Restore the mutex for the sync point lists.
+   for ( SyncPointList *sync_pnt_list : sync_pnt_lists ) {
+      sync_pnt_list->set_mutex( this->mutex );
+   }
+
+   return;
 }

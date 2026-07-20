@@ -526,9 +526,6 @@ void SaveRestoreServices::save( wstring const &label )
    // Tell the object_service to setup the checkpoint data structures.
    object_service->convert_data_before_checkpoint();
 
-   // Save any synchronization points.
-   this->convert_sync_pts();
-
    // Mark that the Save state is SAVE_IN_PROGRESS
    save_state = THLASaveProcessEnum::SAVE_IN_PROGRESS;
 
@@ -826,15 +823,6 @@ void SaveRestoreServices::request_federation_save_status() // cppcheck-suppress 
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
    return;
-}
-
-/*!
- *  @job_class{checkpoint}
- */
-void SaveRestoreServices::convert_sync_pts()
-{
-   // Dispatch to the ExecutionControl specific process.
-   federate->get_execution_control()->convert_loggable_sync_pts();
 }
 
 //----------------------------------------------------------------------------
@@ -1797,8 +1785,9 @@ void SaveRestoreServices::restore_after_checkpoint_load()
    interaction_service->setup_interaction_RTI_handles();
    object_service->set_all_object_instance_handles_by_name();
 
+   // FIXME: These need to be implemented.
    // Restore interactions and sync points
-   reinstate_logged_sync_pts();
+   //reinstate_sync_pts();
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
       message_publish( MSG_NORMAL, "SaveRestoreServices::restore_after_checkpoint_load():%d: Rebuilt HLA federate state.\n",
@@ -2106,15 +2095,6 @@ void SaveRestoreServices::restore_failed_print_reason(
    return;
 }
 
-/*!
- *  @job_class{restart}
- */
-void SaveRestoreServices::reinstate_logged_sync_pts()
-{
-   // Dispatch to the ExecutionControl specific process.
-   execution_control->reinstate_logged_sync_pts();
-}
-
 //--------------------------------------------------------------------------
 // FIXME: Potentially deprecated SaveRestoreService functions.
 //--------------------------------------------------------------------------
@@ -2212,7 +2192,8 @@ void SaveRestoreServices::restart_checkpoint()
    time_management_service->set_requested_time_to_granted_time();
    this->restore_state = THLARestoreProcessEnum::RESTORE_NONE;
 
-   reinstate_logged_sync_pts();
+   // FIXME: Is this needed?
+   //reinstate_sync_pts();
 
    // FIXME: Reset the Save/Restore state.
    restore_label.clear();
