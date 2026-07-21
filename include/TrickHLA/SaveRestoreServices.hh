@@ -291,9 +291,6 @@ class SaveRestoreServices : public CheckpointConversionBase
    /*! @brief Requests the status of the Federation Save. */
    void request_federation_save_status();
 
-   /*! @brief Converts HLA sync points into something Trick can save in a checkpoint. */
-   void convert_sync_pts();
-
    //..........................................................................
    // Restore functions.
    //..........................................................................
@@ -405,12 +402,12 @@ class SaveRestoreServices : public CheckpointConversionBase
     * @param reason Restore failure reason. */
    static void restore_failed_print_reason( RTI1516_NAMESPACE::RestoreFailureReason reason );
 
-   /*! @brief Converts checkpointed sync points into HLA sync points. */
-   void reinstate_logged_sync_pts();
-
-   //..........................................................................
+   //-------------------------------------------------------------------------
    // CheckpointConversionBase Interface.
-   //..........................................................................
+   //-------------------------------------------------------------------------
+   //
+   // Save and Restore functions.
+   //
    /*! @brief Convert data to a form Trick can checkpoint. */
    virtual void convert_data_before_checkpoint() override
    {

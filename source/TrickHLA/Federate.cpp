@@ -3715,6 +3715,13 @@ void Federate::restore( wstring const &label )
    return;
 }
 
+//-------------------------------------------------------------------------
+// CheckpointConversionBase Interface.
+//-------------------------------------------------------------------------
+
+/*!
+ *  @job_class{freeze}
+ */
 /*! @brief Convert data to a form Trick can checkpoint. */
 void Federate::convert_data_before_checkpoint()
 {
@@ -3726,21 +3733,19 @@ void Federate::convert_data_before_checkpoint()
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
-   // Make sure to free resources before doing the data conversions to avoid
-   // a memory leak.
-   free_converted_data_for_checkpoint();
-
-   // Convert the federate services data before a checkpoint.
-   time_management_service.convert_data_before_checkpoint();
-   object_service.convert_data_before_checkpoint();
-   interaction_service.convert_data_before_checkpoint();
-   save_restore_service.convert_data_before_checkpoint();
+   // Delegate to the Execution Control specific implementation.
+   if ( execution_control != NULL ) {
+      execution_control->restore_data_after_checkpoint();
+   }
 
    // TODO: Convert other Federate data into data types Trick can checkpoint.
 
    return;
 }
 
+/*!
+ *  @job_class{freeze}
+ */
 /*! @brief Restore data structures after loading a Trick checkpoint. */
 void Federate::restore_data_after_checkpoint()
 {
@@ -3751,17 +3756,19 @@ void Federate::restore_data_after_checkpoint()
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
-   // Restore the federate services data after checkpoint load.
-   time_management_service.restore_data_after_checkpoint();
-   object_service.restore_data_after_checkpoint();
-   interaction_service.restore_data_after_checkpoint();
-   save_restore_service.restore_data_after_checkpoint();
+   // Delegate to the Execution Control specific implementation.
+   if ( execution_control != NULL ) {
+      execution_control->restore_data_after_checkpoint();
+   }
 
    // TODO: Restore other checkpoint data into Federate data.
 
    return;
 }
 
+/*!
+ *  @job_class{freeze}
+ */
 /*! @brief Clear/release the memory used for the conversion data for the checkpoint. */
 void Federate::free_converted_data_for_checkpoint()
 {
@@ -3772,11 +3779,10 @@ void Federate::free_converted_data_for_checkpoint()
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
-   // Free the converted federate services data for checkpoint.
-   time_management_service.free_converted_data_for_checkpoint();
-   object_service.free_converted_data_for_checkpoint();
-   interaction_service.free_converted_data_for_checkpoint();
-   save_restore_service.free_converted_data_for_checkpoint();
+   // Delegate to the Execution Control specific implementation.
+   if ( execution_control != NULL ) {
+      execution_control->free_converted_data_for_checkpoint();
+   }
 
    // TODO: Free other Federate checkpoint converted data.
 

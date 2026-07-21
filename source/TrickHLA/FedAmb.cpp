@@ -814,7 +814,8 @@ void FedAmb::reflectAttributeValues(
    // instance.  We use these to process joined federate data.
    if ( ( federate != NULL ) && federate->is_joined_federate_by_object_handle( objectInstance ) ) {
 
-      if ( save_restore_service->restore_state == THLARestoreProcessEnum::RESTORE_CHECKPOINT ) {
+      if ( save_restore_service->restore_state == THLARestoreProcessEnum::RESTORE_CHECKPOINT
+           || save_restore_service->restore_state == THLARestoreProcessEnum::RESTORE_WAITING_COMPLETION ) {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
             string id_str;
             StringUtilities::to_string( id_str, objectInstance );

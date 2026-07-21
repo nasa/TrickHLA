@@ -1329,6 +1329,10 @@ void SyncPointManagerBase::sync_point_federation_synchronized(
    }
 }
 
+//-------------------------------------------------------------------------
+// CheckpointConversionBase Interface.
+//-------------------------------------------------------------------------
+
 /*! @brief Encode the variables to a form Trick can checkpoint. */
 void SyncPointManagerBase::convert_data_before_checkpoint()
 {
@@ -1387,4 +1391,12 @@ int SyncPointManagerBase::get_list_index_for_sync_point(
       }
    }
    return -1;
+}
+
+/*!
+ *  @job_class{restart}
+ */
+void SyncPointManagerBase::checkpoint_restart()
+{
+   return;
 }

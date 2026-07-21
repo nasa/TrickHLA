@@ -827,42 +827,46 @@ class ExecutionControlBase : public SyncPointManagerBase
    /*! @brief Map a Save/Restore label into a checkpoint file name. */
    virtual std::string const map_label_to_checkpoint_file_name( std::wstring const &save_label );
 
-   /*! @brief Convert the variables to a form Trick can checkpoint. */
+   //-------------------------------------------------------------------------
+   // CheckpointConversionBase Interface.
+   //-------------------------------------------------------------------------
+   //
+   // Save and Restore functions.
+   //
+   // These functions provide the functions used by the CheckpointConversionBase
+   // interface class to support Trick checkpoint processing.
+   //
+   /*! @brief Convert data to a form Trick can checkpoint. */
    virtual void convert_data_before_checkpoint() override; // cppcheck-suppress [uselessOverride, unmatchedSuppression]
 
-   /*! @brief Restore the state of this class from the Trick checkpoint. */
+   /*! @brief Restore data structures after loading a Trick checkpoint. */
    virtual void restore_data_after_checkpoint() override; // cppcheck-suppress [uselessOverride, unmatchedSuppression]
 
-   /*! @brief Clear/release the memory used for the checkpoint data structures. */
+   /*! @brief Clear/release the memory used for the conversion data for the checkpoint. */
    virtual void free_converted_data_for_checkpoint() override; // cppcheck-suppress [uselessOverride, unmatchedSuppression]
 
-   /*! @brief Converts HLA sync points into something Trick can save in a checkpoint. */
-   virtual void convert_loggable_sync_pts()
-   {
-      return;
-   }
+   //
+   // Checkpoint functions.
+   //
+   // These functions support the Trick checkpoint processes. These functions
+   // are used in the THLABase.sm simulation module.  Users will typically NOT
+   // interact with these functions.
+   //
+   /*! @brief Prepare for checkpointing.  Usually for an HLA Save.
+    *  Delegates to federate service checkpoint functions. */
+   void checkpoint_before() override;
 
-   /*! @brief Converts checkpointed sync points into HLA sync points. */
-   virtual void reinstate_logged_sync_pts()
-   {
-      return;
-   }
+   /*! @brief Prepare to load a checkpoint file.  Usually as part of an HLA Restore.
+    *  Delegates to federate service checkpoint functions. */
+   void checkpoint_preload() override;
 
-   /*! @brief Execution Control functions to perform in conjunction with
-    *  (just before writing) a Trick simulation checkpoint. */
-   virtual void checkpoint_before();
+   /*! @brief Tasks to perform after a checkpoint.  Usually for an HLA Save.
+    *  Delegates to federate service checkpoint functions. */
+   void checkpoint_after() override;
 
-   /*! @brief Execution Control functions to perform before loading a Trick
-    * simulation checkpoint file. */
-   virtual void checkpoint_preload();
-
-   /*! @brief Execution Control functions to perform after a Trick simulation
-    * checkpoint. */
-   virtual void checkpoint_after();
-
-   /*! @brief Execution Control functions to perform after loading a Trick
-    *  simulation checkpoint file to prepare for simulation restart. */
-   virtual void checkpoint_restart();
+   /*! @brief Tasks to perform after a checkpoint load.  Usually as part of an HLA Restore.
+    *  Delegates to federate service checkpoint functions. */
+   void checkpoint_restart() override;
 
   protected:
    double time_padding; ///< @trick_units{s} Time in seconds to add to the go-to-run time.

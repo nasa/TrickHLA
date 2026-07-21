@@ -184,17 +184,27 @@ class SyncPointManagerBase : public CheckpointConversionBase
 
    virtual void sync_point_federation_synchronized( std::wstring const &label );
 
-   //
+   //-------------------------------------------------------------------------
    // CheckpointConversionBase Interface.
+   //-------------------------------------------------------------------------
    //
-   /*! @brief Encode the variables to a form Trick can checkpoint. */
+   // Save and Restore functions.
+   //
+   /*! @brief Convert data to a form Trick can checkpoint. */
    virtual void convert_data_before_checkpoint() override;
 
-   /*! @brief Decode the state of this class from the Trick checkpoint. */
+   /*! @brief Restore data structures after loading a Trick checkpoint. */
    virtual void restore_data_after_checkpoint() override;
 
-   /*! @brief Free/release the memory used for the checkpoint data structures. */
+   /*! @brief Clear/release the memory used for the conversion data for the checkpoint. */
    virtual void free_converted_data_for_checkpoint() override;
+
+   //
+   // Checkpoint functions.
+   //
+   /*! @brief Tasks to perform after a checkpoint load.  Usually as part of an HLA Restore.
+    *  Delegates to federate service checkpoint functions. */
+   void checkpoint_restart() override;
 
   protected:
    SyncPoint *get_sync_point( std::wstring const &label );
