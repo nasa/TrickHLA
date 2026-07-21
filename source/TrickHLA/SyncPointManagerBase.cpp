@@ -165,7 +165,7 @@ bool SyncPointManagerBase::add_sync_point_list(
       if ( list == NULL ) {
          ostringstream errmsg;
          errmsg << "SyncPointManagerBase::add_sync_point_list():" << __LINE__
-                << " ERROR: Cannot allocate Trick Memory for TrickHLA::SyncPointList named '"
+                << " ERROR: Cannot allocate Trick Managed Memory for TrickHLA::SyncPointList named '"
                 << list_name << "'!\n";
          DebugHandler::terminate( errmsg.str() );
          return false;
@@ -1010,7 +1010,7 @@ bool SyncPointManagerBase::wait_for_all_sync_points_synchronized(
    SyncPointList const *sp_list = get_sync_point_list( list_name );
 
    // First check to insure that the list exists.
-   if ( sp_list != NULL ){
+   if ( sp_list != NULL ) {
       // The list exists; so, wait for all the sync points to synchronize.
       for ( SyncPoint const *sp : sp_list->list ) {
          if ( wait_for_synchronized( sp ) ) {
