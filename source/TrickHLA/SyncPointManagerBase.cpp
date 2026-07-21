@@ -1009,9 +1009,13 @@ bool SyncPointManagerBase::wait_for_all_sync_points_synchronized(
 
    SyncPointList const *sp_list = get_sync_point_list( list_name );
 
-   for ( SyncPoint const *sp : sp_list->list ) {
-      if ( wait_for_synchronized( sp ) ) {
-         status = true;
+   // First check to insure that the list exists.
+   if ( sp_list != NULL ){
+      // The list exists; so, wait for all the sync points to synchronize.
+      for ( SyncPoint const *sp : sp_list->list ) {
+         if ( wait_for_synchronized( sp ) ) {
+            status = true;
+         }
       }
    }
    return status;
