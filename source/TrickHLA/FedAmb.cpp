@@ -498,7 +498,7 @@ void FedAmb::federationRestored()
       message_publish( MSG_NORMAL, "FedAmb::federationRestored():%d\n",
                        __LINE__ );
    }
-   
+
    save_restore_service->restore_set_state( THLARestoreProcessEnum::RESTORE_COMPLETE );
 
    return;

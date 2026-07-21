@@ -153,8 +153,18 @@ bool SyncPointList::add(
    }
 
    // Add the sync-point to the corresponding named list.
-   //
    SyncPoint *sp = static_cast< SyncPoint * >( TMM_declare_var_1d( "TrickHLA::SyncPoint", 1 ) );
+   if ( sp == NULL ) {
+      string label_str;
+      StringUtilities::to_string( label_str, label );
+      ostringstream errmsg;
+      errmsg << "SyncPointList::add():" << __LINE__
+             << " ERROR: Cannot allocate Trick Managed Memory for TrickHLA::SyncPoint with label '"
+             << label_str << "'!\n";
+      DebugHandler::terminate( errmsg.str() );
+      return false;
+   }
+
    sp->set_label( label );
    list.push_back( sp );
 
@@ -177,8 +187,18 @@ bool SyncPointList::add(
    }
 
    // Add the sync-point to the corresponding named list.
-   //
    SyncPointTimed *sp = static_cast< SyncPointTimed * >( TMM_declare_var_1d( "TrickHLA::SyncPointTimed", 1 ) );
+   if ( sp == NULL ) {
+      string label_str;
+      StringUtilities::to_string( label_str, label );
+      ostringstream errmsg;
+      errmsg << "SyncPointList::add():" << __LINE__
+             << " ERROR: Cannot allocate Trick Managed Memory for TrickHLA::SyncPointTimed with label '"
+             << label_str << "' and time " << time.to_string() << "!\n";
+      DebugHandler::terminate( errmsg.str() );
+      return false;
+   }
+
    sp->set_label( label );
    sp->set_time( time );
    list.push_back( sp );
