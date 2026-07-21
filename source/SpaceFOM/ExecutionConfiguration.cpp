@@ -533,7 +533,7 @@ void ExecutionConfiguration::setup_ref_attributes(
    this->attributes[0].rti_encoding = ENCODING_UNICODE_STRING;
 
    // Normally, we would specify the Trick 'name' of the simulation
-   // variable. However, T=this will be replaced with a direct construction
+   // variable. However, this will be replaced with a direct construction
    // of the Trick REF2 ATTRIBUTES for the associated variable in memory.
    // trick_name_str = S_define_name + string( ".root_frame_name" );
    // this->attributes[0].trick_name = trick_MM->mm_strdup( trick_name_str.c_str() );

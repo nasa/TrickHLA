@@ -3836,7 +3836,7 @@ void Federate::checkpoint_preload()
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream msg;
       msg << "Federate::checkpoint_preload():"
-          << __LINE__ << ": Preparing to load and checkpoint file as part of an HLA Restore process." << endl;
+          << __LINE__ << ": Preparing to load checkpoint file as part of an HLA Restore process." << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
