@@ -42,6 +42,7 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
+#include <algorithm>
 #include <climits>
 #include <cstdint>
 #include <cstdlib>
@@ -1534,8 +1535,6 @@ bool Federate::check_joined_federates_match()
       // Iterate through the joined federates map checking for a match.
       for ( auto const &map_entry : joined_federates_map ) {
 
-         bool found = false;
-
          // Get the known federate reference.
          KnownFederate const &joined_federate = map_entry.second;
 
@@ -1546,7 +1545,18 @@ bool Federate::check_joined_federates_match()
             break;
          }
 
+#if defined( TRICKHLA_USE_STL_ALGORITHM )
+         // If no match was found for at least one federate in the federates
+         // in Federation list, then mark this as a fail.
+         if ( std::all_of( federate_handles.begin(), federate_handles.end(),
+                           [&joined_federate]( auto fed_handle ) -> bool {
+                              return ( fed_handle != joined_federate.federate_handle );
+                           } ) ) {
+            success = false;
+         }
+#else
          // Iterate through the federates in Federation list.
+         bool found = false;
          for ( FederateHandle federate_handle : federate_handles ) { // NOLINT(misc-const-correctness)
 
             // Check for matching federate handle.
@@ -1561,6 +1571,7 @@ bool Federate::check_joined_federates_match()
          if ( !found ) {
             success = false;
          }
+#endif // TRICKHLA_USE_STL_ALGORITHM
 
          // Break out of the loop if the we find any fail.
          if ( !success ) {
@@ -1937,6 +1948,16 @@ string Federate::wait_for_required_federates_to_join()
       return status_string;
    }
 
+#if defined( TRICKHLA_USE_STL_ALGORITHM )
+   // Determine how many required federates we have.
+   size_t num_required_feds = 0;
+   std::for_each( known_federates.begin(), known_federates.end(),
+                  [&num_required_feds]( auto const &known_fed ) {
+                     if ( known_fed.required ) {
+                        ++num_required_feds;
+                     }
+                  } );
+#else
    // Determine how many required federates we have.
    size_t num_required_feds = 0;
    for ( auto const &known_fed : known_federates ) {
@@ -1944,6 +1965,7 @@ string Federate::wait_for_required_federates_to_join()
          ++num_required_feds; // cppcheck-suppress [useStlAlgorithm]
       }
    }
+#endif // TRICKHLA_USE_STL_ALGORITHM
 
    // If we don't have any required Federates then return.
    if ( num_required_feds == 0 ) {
@@ -3790,12 +3812,13 @@ void Federate::checkpoint_preload()
    // TrickHLA only supports a checkpoint load as part of an HLA Restore process.
    if ( save_restore_service.restore_state != THLARestoreProcessEnum::RESTORE_INITIATED ) {
       ostringstream msg;
-      msg << "Federate::checkpoint_preload():"
-          << __LINE__ << ": Checkpoint loading only supported as part of an HLA Restore process!" << endl;
+      msg << "Federate::checkpoint_preload():" << __LINE__
+          << ": Checkpoint loading only supported as part of an HLA Restore process!" << endl;
       message_publish( MSG_WARNING, msg.str().c_str() );
-      std::string restore_label_str;
-      ostringstream errmsg;
+
+      string restore_label_str;
       StringUtilities::to_string( restore_label_str, save_restore_service.restore_label );
+      ostringstream errmsg;
       errmsg << "Federate::checkpoint_preload():" << __LINE__
              << ": ERROR: Unexpected Restore state for label: " << restore_label_str << endl
              << "   Expected state: RESTORE_INITIATED" << endl

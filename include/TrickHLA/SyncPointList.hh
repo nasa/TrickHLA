@@ -21,10 +21,8 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../source/TrickHLA/SyncPointList.cpp}
-@trick_link_dependency{../../source/TrickHLA/Federate.cpp}
 @trick_link_dependency{../../source/TrickHLA/SyncPoint.cpp}
 @trick_link_dependency{../../source/TrickHLA/SyncPointTimed.cpp}
-@trick_link_dependency{../../source/TrickHLA/utils/MutexLock.cpp}
 
 @revs_title
 @revs_begin
@@ -37,6 +35,7 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_SYNC_POINT_LIST_HH
 
 // System includes.
+#include <cstddef>
 #include <string>
 
 // TrickHLA
@@ -46,7 +45,6 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/SyncPointTimed.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64Time.hh"
-#include "TrickHLA/utils/MutexLock.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -69,11 +67,6 @@ namespace TrickHLA
 {
 
 typedef std::vector< SyncPoint * > SyncPointVector;
-
-// Forward Declared Classes:  Since these classes are only used as references
-// through pointers, these classes are included as forward declarations. This
-// helps to limit issues with recursive includes.
-class Federate;
 
 class SyncPointList : public CheckpointConversionBase
 {
@@ -99,25 +92,15 @@ class SyncPointList : public CheckpointConversionBase
    SyncPointList();
 
    /*! @brief Constructor for the TrickHLA SyncPointList class. */
-   SyncPointList( std::string const &name,
-                  MutexLock         &mtx,
-                  Federate          *fed );
+   explicit SyncPointList( std::string const &name );
 
    /*! @brief Pure virtual destructor for the TrickHLA SyncPointList class. */
    virtual ~SyncPointList() override;
 
   public:
-   void setup( Federate *fed );
-
    void set_list_name( std::string const &name );
 
    std::string &get_list_name();
-
-   void set_mutex( MutexLock &mtx );
-
-   void set_federate( Federate *fed );
-
-   SyncPtStateEnum get_state( std::wstring const &label );
 
    void clear();
 
@@ -126,12 +109,12 @@ class SyncPointList : public CheckpointConversionBase
       return list.empty();
    }
 
-   int size()
+   size_t size()
    {
       return list.size();
    }
 
-   SyncPoint *get( std::wstring const &label ); // Search all lists for the unique sync-point label.
+   SyncPoint *get( std::wstring const &label );
 
    bool add( std::wstring const &label );
 
@@ -143,47 +126,17 @@ class SyncPointList : public CheckpointConversionBase
 
    bool mark_registered( std::wstring const &label );
 
-   bool register_sync_point( std::wstring const &label );
-
-   bool register_sync_point( std::wstring const &label, RTI1516_NAMESPACE::FederateHandleSet const &handle_set );
-
-   bool register_all();
-
-   bool register_all( RTI1516_NAMESPACE::FederateHandleSet const &handle_set );
-
-   bool register_sync_point( SyncPoint *sp );
-
-   bool register_sync_point( SyncPoint *sp, RTI1516_NAMESPACE::FederateHandleSet const &handle_set );
-
    bool is_announced( std::wstring const &label );
 
    bool mark_announced( std::wstring const &label, RTI1516_NAMESPACE::VariableLengthData const &user_supplied_tag );
 
-   bool wait_for_announced( std::wstring const &label );
-
-   bool wait_for_all_announced();
-
-   bool wait_for_announced( SyncPoint *sp );
-
    bool is_achieved( std::wstring const &label );
-
-   bool achieve( std::wstring const &label );
-
-   bool achieve_all();
-
-   bool achieve_sync_point( SyncPoint *sp );
 
    bool is_synchronized( std::wstring const &label );
 
    bool is_all_synchronized();
 
    bool mark_synchronized( std::wstring const &label );
-
-   bool wait_for_synchronized( std::wstring const &label );
-
-   bool wait_for_all_synchronized();
-
-   bool wait_for_synchronized( SyncPoint const *sp );
 
    std::string to_string();
 
@@ -205,10 +158,6 @@ class SyncPointList : public CheckpointConversionBase
    SyncPointVector list; ///< @trick_units{--} Vector of sync-points objects
 
    std::string list_name; ///< @trick_units{--} Name of this sync-point list.
-
-   MutexLock *mutex; ///< @trick_io{**} Mutex to lock thread over critical code sections.
-
-   Federate *federate; ///< @trick_units{--} Associated TrickHLA Federate.
 
   private:
    // Do not allow the copy constructor or assignment operator.

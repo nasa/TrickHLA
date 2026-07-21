@@ -99,17 +99,30 @@ class SyncPoint : public CheckpointConversionBase
     *  @return True if the synchronization point is known. */
    virtual bool is_known() const;
 
+   /*! @brief Mark the sync-point as registered. */
+   virtual void mark_registered();
+
    /*! @brief Check if the synchronization point is registered.
     *  @return True if the synchronization point is registered. */
    virtual bool is_registered() const;
+
+   /*! @brief Mark the sync-point as announced.
+    *  @param tag The user supplied tag. */
+   virtual void mark_announced( RTI1516_NAMESPACE::VariableLengthData const &tag );
 
    /*! @brief Check if the synchronization point is announced.
     *  @return True if the synchronization point is announced. */
    virtual bool is_announced() const;
 
+   /*! @brief Mark the sync-point as achieved. */
+   virtual void mark_achieved();
+
    /*! @brief Check if the synchronization point is achieved.
     *  @return True if the synchronization point is achieved. */
    virtual bool is_achieved() const;
+
+   /*! @brief Mark the sync-point as synchronized. */
+   virtual void mark_synchronized();
 
    /*! @brief Check if the synchronization point is synchronized.
     *  @return True if the synchronization point is synchronized. */

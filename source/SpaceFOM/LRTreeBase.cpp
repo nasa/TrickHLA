@@ -42,6 +42,7 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
+#include <algorithm>
 #include <cstddef>
 #include <map>
 #include <ostream>
@@ -59,6 +60,7 @@ NASA, Johnson Space Center\n
 #include "SpaceFOM/LRTreeNodeBase.hh"
 
 // TrickHLA includes.
+#include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Types.hh"
 
@@ -341,6 +343,12 @@ bool LRTreeBase::has_node( string const &name )
  */
 bool LRTreeBase::has_node( LRTreeNodeBase const *node )
 {
+#if defined( TRICKHLA_USE_STL_ALGORITHM )
+   return std::any_of( nodes.begin(), nodes.end(),
+                       [node]( LRTreeNodeBase *node_item ) -> bool {
+                          return ( node_item == node );
+                       } );
+#else
    vector< LRTreeNodeBase * >::iterator node_iter;
 
    // Find the node in the vector.
@@ -349,8 +357,8 @@ bool LRTreeBase::has_node( LRTreeNodeBase const *node )
          return ( true );
       }
    }
-
    return ( false );
+#endif // TRICKHLA_USE_STL_ALGORITHM
 }
 
 /*!
@@ -411,7 +419,6 @@ void LRTreeBase::print_path(
    LRTreeNodeBase &end,
    std::ostream   &stream ) const
 {
-
    // Check to see if a paths matrix has been allocated.
    if ( paths != NULL ) {
       print_path( start.node_id, end.node_id, stream );

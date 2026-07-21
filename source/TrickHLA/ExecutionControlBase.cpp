@@ -1355,7 +1355,7 @@ void ExecutionControlBase::save_at_HLT(
  */
 void ExecutionControlBase::restore_process()
 {
-   std::string restore_label_str;
+   string restore_label_str;
 
    // NOTE: The Restore label is assumed to be set outside this function in the
    // SaveRestroreService.
@@ -1728,12 +1728,11 @@ void ExecutionControlBase::checkpoint_after()
  */
 void ExecutionControlBase::checkpoint_preload()
 {
-
    // TrickHLA only supports a checkpoint load as part of an HLA Restore process.
    if ( save_restore_service->restore_state != THLARestoreProcessEnum::RESTORE_INITIATED ) {
-      std::string restore_label_str;
-      ostringstream errmsg;
+      string restore_label_str;
       StringUtilities::to_string( restore_label_str, save_restore_service->restore_label );
+      ostringstream errmsg;
       errmsg << "ExecutionControlBase::checkpoint_preload():" << __LINE__
              << ": ERROR: Unexpected Restore state for label: " << restore_label_str << endl
              << "   Expected state: RESTORE_INITIATED" << endl
@@ -1760,13 +1759,12 @@ void ExecutionControlBase::checkpoint_preload()
  */
 void ExecutionControlBase::checkpoint_restart()
 {
-
    // FIXME: Is this always the case?
    // TrickHLA only supports a checkpoint load as part of an HLA Restore process.
    if ( save_restore_service->restore_state != THLARestoreProcessEnum::RESTORE_CHECKPOINT ) {
-      std::string restore_label_str;
-      ostringstream errmsg;
+      string restore_label_str;
       StringUtilities::to_string( restore_label_str, save_restore_service->restore_label );
+      ostringstream errmsg;
       errmsg << "ExecutionControlBase::checkpoint_restart():" << __LINE__
              << ": ERROR: Unexpected Restore state for label: " << restore_label_str << endl
              << "   Expected state: RESTORE_INITIATED" << endl
@@ -1798,16 +1796,6 @@ void ExecutionControlBase::checkpoint_restart()
       }
       save_restore_service->save_state = THLASaveProcessEnum::SAVE_NONE;
    }
-
-   // FIXME: We may want to move all code like this into call specific extensions to
-   // the CheckpointConversionBase class.  This would separate the Trick checkpoint
-   // activities from the TrickHLA Save/Restore activities.
-   // Restore the mutex for the sync point lists.
-   for ( SyncPointList *sync_pnt_list : sync_pnt_lists ) {
-      sync_pnt_list->set_mutex( this->mutex );
-   }
-
-   return;
 }
 
 /*!

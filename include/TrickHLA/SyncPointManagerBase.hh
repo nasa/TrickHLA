@@ -105,10 +105,6 @@ class SyncPointManagerBase : public CheckpointConversionBase
 
    void clear();
 
-   int get_list_index_for_sync_point( std::wstring const &label ); // Search all lists for the unique sync-point label.
-
-   int get_list_index_for_list_name( std::string const &list_name );
-
    SyncPtStateEnum get_sync_point_state( std::wstring const &label );
 
    bool add_sync_point_list( std::string const &list_name );
@@ -201,6 +197,22 @@ class SyncPointManagerBase : public CheckpointConversionBase
    virtual void free_converted_data_for_checkpoint() override;
 
   protected:
+   SyncPoint *get_sync_point( std::wstring const &label );
+
+   SyncPointList *get_sync_point_list( std::string const &list_name );
+
+   bool register_sync_point( SyncPoint *sp );
+
+   bool register_sync_point( SyncPoint *sp, RTI1516_NAMESPACE::FederateHandleSet const &handle_set );
+
+   bool wait_for_announced( SyncPoint *sp );
+
+   bool achieve_sync_point( SyncPoint *sp );
+
+   bool wait_for_synchronized( SyncPoint const *sp );
+
+   int get_list_index_for_sync_point( std::wstring const &label ); // Search all lists for the unique sync-point label.
+
    MutexLock mutex; ///< @trick_io{**} Mutex to lock thread over critical code sections.
 
    SyncPointListVector sync_pnt_lists; ///< @trick_units{--} Array of named sync-point lists.

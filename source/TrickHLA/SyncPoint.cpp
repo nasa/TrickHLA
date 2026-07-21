@@ -88,9 +88,21 @@ bool SyncPoint::is_known() const
    return ( this->state == TrickHLA::SYNC_PT_STATE_KNOWN );
 }
 
+void SyncPoint::mark_registered()
+{
+   set_state( TrickHLA::SYNC_PT_STATE_REGISTERED );
+}
+
 bool SyncPoint::is_registered() const
 {
    return ( this->state == TrickHLA::SYNC_PT_STATE_REGISTERED );
+}
+
+void SyncPoint::mark_announced(
+   VariableLengthData const &tag )
+{
+   set_state( TrickHLA::SYNC_PT_STATE_ANNOUNCED );
+   decode_user_supplied_tag( tag );
 }
 
 bool SyncPoint::is_announced() const
@@ -98,9 +110,19 @@ bool SyncPoint::is_announced() const
    return ( this->state == TrickHLA::SYNC_PT_STATE_ANNOUNCED );
 }
 
+void SyncPoint::mark_achieved()
+{
+   set_state( TrickHLA::SYNC_PT_STATE_ACHIEVED );
+}
+
 bool SyncPoint::is_achieved() const
 {
    return ( this->state == TrickHLA::SYNC_PT_STATE_ACHIEVED );
+}
+
+void SyncPoint::mark_synchronized()
+{
+   set_state( TrickHLA::SYNC_PT_STATE_SYNCHRONIZED );
 }
 
 bool SyncPoint::is_synchronized() const

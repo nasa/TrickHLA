@@ -35,7 +35,9 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
+#include <algorithm>
 #include <cstddef>
+#include <cstdint>
 #include <ostream>
 #include <sstream>
 #include <string>
@@ -49,12 +51,15 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
+#include "TrickHLA/SyncPoint.hh"
 #include "TrickHLA/SyncPointList.hh"
 #include "TrickHLA/SyncPointManagerBase.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64Time.hh"
 #include "TrickHLA/utils/MutexProtection.hh"
+#include "TrickHLA/utils/SleepTimeout.hh"
 #include "TrickHLA/utils/StringUtilities.hh"
+#include "TrickHLA/utils/Utilities.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -66,6 +71,8 @@ NASA, Johnson Space Center\n
 
 // HLA include files.
 #include "RTI/Enums.h"
+#include "RTI/Exception.h"
+#include "RTI/RTIambassador.h"
 #include "RTI/Typedefs.h"
 #include "RTI/VariableLengthData.h"
 
@@ -121,17 +128,10 @@ void SyncPointManagerBase::setup(
    if ( this->federate == NULL ) {
       ostringstream errmsg;
       errmsg << "SyncPointManagerBase::setup():" << __LINE__
-             << " ERROR: Unexpected NULL federate pointer." << endl;
+             << " ERROR: Unexpected NULL federate pointer.\n";
       DebugHandler::terminate( errmsg.str() );
       return;
    }
-
-   // Register the Federate with the syncronization point lists.
-   for ( SyncPointList *sync_pnt_list : sync_pnt_lists ) {
-      sync_pnt_list->setup( this->federate );
-   }
-
-   return;
 }
 
 void SyncPointManagerBase::clear()
@@ -143,46 +143,13 @@ void SyncPointManagerBase::clear()
       sync_pnt_lists.pop_back();
    }
    sync_pnt_lists.clear();
-
-   return;
-}
-
-int SyncPointManagerBase::get_list_index_for_sync_point(
-   wstring const &label )
-{
-   MutexProtection const auto_unlock_mutex( &mutex );
-
-   for ( int index = 0; index < sync_pnt_lists.size(); ++index ) {
-      if ( sync_pnt_lists[index]->contains( label ) ) {
-         return index;
-      }
-   }
-   return -1;
-}
-
-int SyncPointManagerBase::get_list_index_for_list_name(
-   string const &list_name )
-{
-   MutexProtection const auto_unlock_mutex( &mutex );
-
-   for ( int index = 0; index < sync_pnt_lists.size(); ++index ) {
-      if ( list_name.compare( sync_pnt_lists[index]->get_list_name() ) == 0 ) {
-         return index;
-      }
-   }
-   return -1;
 }
 
 SyncPtStateEnum SyncPointManagerBase::get_sync_point_state(
    wstring const &label )
 {
-   // for ( int index = 0; index < sync_pnt_lists.size(); ++index ) {
-   for ( SyncPointList *sync_pnt_list : sync_pnt_lists ) {
-      if ( sync_pnt_list->contains( label ) ) {
-         return ( sync_pnt_list->get_state( label ) );
-      }
-   }
-   return ( TrickHLA::SYNC_PT_STATE_UNKNOWN );
+   SyncPoint const *sp = get_sync_point( label );
+   return ( ( sp != NULL ) ? sp->get_state() : TrickHLA::SYNC_PT_STATE_UNKNOWN );
 }
 
 bool SyncPointManagerBase::add_sync_point_list(
@@ -194,10 +161,8 @@ bool SyncPointManagerBase::add_sync_point_list(
    if ( !contains_sync_point_list_name( list_name ) ) {
 
       // Allocate a new sync point list and add it to the sync_pnt_lists.
-      SyncPointList *list = (SyncPointList *)TMM_declare_var_1d( "TrickHLA::SyncPointList", 1 );
+      SyncPointList *list = static_cast< SyncPointList * >( TMM_declare_var_1d( "TrickHLA::SyncPointList", 1 ) );
       list->set_list_name( list_name );
-      list->set_federate( this->federate );
-      list->set_mutex( this->mutex );
       sync_pnt_lists.push_back( list );
 
       return true;
@@ -212,33 +177,32 @@ bool SyncPointManagerBase::add_sync_point(
 {
    MutexProtection const auto_unlock_mutex( &mutex );
 
+   // Check for the label being in any of the lists.
    if ( contains_sync_point( label ) ) {
       string label_str;
       StringUtilities::to_string( label_str, label );
       ostringstream errmsg;
       errmsg << "SyncPointManagerBase::add_sync_point():" << __LINE__
              << " ERROR: The sync-point label '" << label_str
-             << "' has already been added!" << endl;
+             << "' has already been added!\n";
       DebugHandler::terminate( errmsg.str() );
       return false;
    }
 
-   // Add the named list if it does not exist.
-   int index = get_list_index_for_list_name( list_name );
-   if ( index < 0 ) {
+   SyncPointList *sp_list = get_sync_point_list( list_name );
+   if ( sp_list == NULL ) {
       if ( !add_sync_point_list( list_name ) ) {
          ostringstream errmsg;
          errmsg << "SyncPointManagerBase::add_sync_point():" << __LINE__
                 << " ERROR: Could not add the named sync-point list for '"
-                << list_name << "'!" << endl;
+                << list_name << "'!\n";
          DebugHandler::terminate( errmsg.str() );
          return false;
       }
-      index = get_list_index_for_list_name( list_name );
+      sp_list = get_sync_point_list( list_name );
    }
 
-   // Add the sync-point label to the named list.
-   if ( ( index >= 0 ) && sync_pnt_lists[index]->add( label ) ) {
+   if ( ( sp_list != NULL ) && sp_list->add( label ) ) {
       return true;
    }
 
@@ -248,7 +212,7 @@ bool SyncPointManagerBase::add_sync_point(
    errmsg << "SyncPointManagerBase::add_sync_point():" << __LINE__
           << " ERROR: Could not add the sync-point label '"
           << label_str << "' to the named sync-point list '"
-          << list_name << "'!" << endl;
+          << list_name << "'!\n";
    DebugHandler::terminate( errmsg.str() );
    return false;
 }
@@ -266,27 +230,27 @@ bool SyncPointManagerBase::add_sync_point(
       ostringstream errmsg;
       errmsg << "SyncPointManagerBase::add_sync_point():" << __LINE__
              << " ERROR: The sync-point label '" << label_str
-             << "' has already been added!" << endl;
+             << "' has already been added!\n";
       DebugHandler::terminate( errmsg.str() );
       return false;
    }
 
    // Add the named list if it does not exist.
-   int index = get_list_index_for_list_name( list_name );
-   if ( index < 0 ) {
+   SyncPointList *sp_list = get_sync_point_list( list_name );
+   if ( sp_list == NULL ) {
       if ( !add_sync_point_list( list_name ) ) {
          ostringstream errmsg;
          errmsg << "SyncPointManagerBase::add_sync_point():" << __LINE__
                 << " ERROR: Could not add the named sync-point list for '"
-                << list_name << "'!" << endl;
+                << list_name << "'!\n";
          DebugHandler::terminate( errmsg.str() );
          return false;
       }
-      index = get_list_index_for_list_name( list_name );
+      sp_list = get_sync_point_list( list_name );
    }
 
    // Add the sync-point label with time to the named list.
-   if ( ( index >= 0 ) && sync_pnt_lists[index]->add( label, time ) ) {
+   if ( ( sp_list != NULL ) && sp_list->add( label, time ) ) {
       return true;
    }
 
@@ -296,7 +260,7 @@ bool SyncPointManagerBase::add_sync_point(
    errmsg << "SyncPointManagerBase::add_sync_point():" << __LINE__
           << " ERROR: Could not add the sync-point label '"
           << label_str << "' to the named sync-point list '"
-          << list_name << "'!" << endl;
+          << list_name << "'!\n";
    DebugHandler::terminate( errmsg.str() );
    return false;
 }
@@ -306,12 +270,19 @@ bool SyncPointManagerBase::contains_sync_point(
 {
    MutexProtection const auto_unlock_mutex( &mutex );
 
+#if defined( TRICKHLA_USE_STL_ALGORITHM )
+   return ( std::any_of( sync_pnt_lists.begin(), sync_pnt_lists.end(),
+                         [&label]( SyncPointList *sync_pnt_list ) -> bool {
+                            return sync_pnt_list->contains( label );
+                         } ) );
+#else
    for ( SyncPointList *sync_pnt_list : sync_pnt_lists ) {
       if ( sync_pnt_list->contains( label ) ) {
          return true;
       }
    }
    return false;
+#endif // TRICKHLA_USE_STL_ALGORITHM
 }
 
 /*
@@ -323,8 +294,8 @@ bool SyncPointManagerBase::contains_sync_point(
 {
    MutexProtection const auto_unlock_mutex( &mutex );
 
-   int const index = get_list_index_for_list_name( list_name );
-   return ( ( index >= 0 ) && sync_pnt_lists[index]->contains( label ) );
+   SyncPointList *sp_list = get_sync_point_list( list_name );
+   return ( ( sp_list != NULL ) && sp_list->contains( label ) );
 }
 
 bool SyncPointManagerBase::contains_sync_point_list_name(
@@ -332,7 +303,7 @@ bool SyncPointManagerBase::contains_sync_point_list_name(
 {
    MutexProtection const auto_unlock_mutex( &mutex );
 
-   return ( get_list_index_for_list_name( list_name ) >= 0 );
+   return ( get_sync_point_list( list_name ) != NULL );
 }
 
 bool SyncPointManagerBase::is_sync_point_list_empty(
@@ -340,8 +311,8 @@ bool SyncPointManagerBase::is_sync_point_list_empty(
 {
    MutexProtection const auto_unlock_mutex( &mutex );
 
-   int const index = get_list_index_for_list_name( list_name );
-   return ( ( index < 0 ) || sync_pnt_lists[index]->empty() );
+   SyncPointList *sp_list = get_sync_point_list( list_name );
+   return ( ( sp_list == NULL ) || sp_list->empty() );
 }
 
 bool SyncPointManagerBase::is_sync_point_registered(
@@ -349,8 +320,8 @@ bool SyncPointManagerBase::is_sync_point_registered(
 {
    MutexProtection const auto_unlock_mutex( &mutex );
 
-   int const index = get_list_index_for_sync_point( label );
-   return ( ( index >= 0 ) && sync_pnt_lists[index]->is_registered( label ) );
+   SyncPoint const *sp = get_sync_point( label );
+   return ( ( sp != NULL ) && sp->is_registered() );
 }
 
 /*!
@@ -359,12 +330,14 @@ bool SyncPointManagerBase::is_sync_point_registered(
 bool SyncPointManagerBase::mark_sync_point_registered(
    wstring const &label )
 {
-   // When auto_unlock_mutex goes out of scope it automatically unlocks the
-   // mutex even if there is an exception.
    MutexProtection const auto_unlock_mutex( &mutex );
 
-   int const index = get_list_index_for_sync_point( label );
-   return ( ( index >= 0 ) && sync_pnt_lists[index]->mark_registered( label ) );
+   SyncPoint *sp = get_sync_point( label );
+   if ( sp != NULL ) {
+      sp->mark_registered();
+      return true;
+   }
+   return false;
 }
 
 bool SyncPointManagerBase::register_sync_point(
@@ -372,10 +345,10 @@ bool SyncPointManagerBase::register_sync_point(
 {
    MutexProtection const auto_unlock_mutex( &mutex );
 
-   int index = get_list_index_for_sync_point( label );
+   SyncPoint *sp = get_sync_point( label );
 
    // Unknown sync point if it is not contained in any list.
-   if ( index < 0 ) {
+   if ( sp == NULL ) {
       // Add the unknown sync-point to the unknown list so it can be registered.
       if ( !add_sync_point( label, TrickHLA::UNKNOWN_SYNC_POINT_LIST ) ) {
          string label_str;
@@ -383,14 +356,13 @@ bool SyncPointManagerBase::register_sync_point(
          ostringstream errmsg;
          errmsg << "SyncPointManagerBase::register_sync_point():" << __LINE__
                 << " ERROR: Failed to add sync-point '" << label_str
-                << "' to '" << TrickHLA::UNKNOWN_SYNC_POINT_LIST << "' list!" << endl;
+                << "' to '" << TrickHLA::UNKNOWN_SYNC_POINT_LIST << "' list!\n";
          DebugHandler::terminate( errmsg.str() );
          return false;
       }
-      index = get_list_index_for_sync_point( label );
+      sp = get_sync_point( label );
    }
-
-   return ( ( index >= 0 ) && sync_pnt_lists[index]->register_sync_point( label ) );
+   return register_sync_point( sp );
 }
 
 bool SyncPointManagerBase::register_sync_point(
@@ -399,10 +371,10 @@ bool SyncPointManagerBase::register_sync_point(
 {
    MutexProtection const auto_unlock_mutex( &mutex );
 
-   int index = get_list_index_for_sync_point( label );
+   SyncPoint *sp = get_sync_point( label );
 
    // Unknown sync point if it is not contained in any list.
-   if ( index < 0 ) {
+   if ( sp == NULL ) {
       // Add the unknown sync-point to the unknown list so it can be registered.
       if ( !add_sync_point( label, TrickHLA::UNKNOWN_SYNC_POINT_LIST ) ) {
          string label_str;
@@ -410,34 +382,165 @@ bool SyncPointManagerBase::register_sync_point(
          ostringstream errmsg;
          errmsg << "SyncPointManagerBase::register_sync_point():" << __LINE__
                 << " ERROR: Failed to add sync-point '" << label_str
-                << "' to '" << TrickHLA::UNKNOWN_SYNC_POINT_LIST << "' list!" << endl;
+                << "' to '" << TrickHLA::UNKNOWN_SYNC_POINT_LIST << "' list!\n";
          DebugHandler::terminate( errmsg.str() );
          return false;
       }
-      index = get_list_index_for_sync_point( label );
+      sp = get_sync_point( label );
+   }
+   return register_sync_point( sp, handle_set );
+}
+
+bool SyncPointManagerBase::register_sync_point(
+   SyncPoint *sp )
+{
+   if ( sp == NULL ) {
+      ostringstream errmsg;
+      errmsg << "SyncPointManagerBase::register_sync_point():" << __LINE__
+             << " ERROR: Unexpected NULL SyncPoint!\n";
+      DebugHandler::terminate( errmsg.str() );
+      return false;
+   }
+   if ( this->federate == NULL ) {
+      ostringstream errmsg;
+      errmsg << "SyncPointManagerBase::register_sync_point():" << __LINE__
+             << " ERROR: Unexpected NULL federate pointer!\n";
+      DebugHandler::terminate( errmsg.str() );
+      return false;
    }
 
-   return ( ( index >= 0 ) && sync_pnt_lists[index]->register_sync_point( label, handle_set ) );
+   // Macro to save the FPU Control Word register value.
+   TRICKHLA_SAVE_FPU_CONTROL_WORD;
+
+   RTIambassador *RTI_amb = federate->get_RTI_ambassador();
+
+   // Register the sync-point label.
+   bool registered = false;
+   try {
+      RTI_amb->registerFederationSynchronizationPoint( sp->get_label(),
+                                                       sp->encode_user_supplied_tag() );
+      // Mark the sync-point as registered.
+      sp->mark_registered();
+
+      registered = true;
+
+   } catch ( RTI1516_NAMESPACE::Exception const &e ) {
+
+      // Macro to restore the saved FPU Control Word register value.
+      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
+      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+
+      string label_str;
+      StringUtilities::to_string( label_str, sp->get_label() );
+      ostringstream errmsg;
+      errmsg << "SyncPointManagerBase::register_sync_point():" << __LINE__
+             << " ERROR: Failed to register '" << label_str
+             << "' synchronization point with RTI!\n";
+      DebugHandler::terminate( errmsg.str() );
+      return false;
+   }
+
+   // Macro to restore the saved FPU Control Word register value.
+   TRICKHLA_RESTORE_FPU_CONTROL_WORD;
+   TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+
+   return registered;
+}
+
+bool SyncPointManagerBase::register_sync_point(
+   SyncPoint               *sp,
+   FederateHandleSet const &handle_set )
+{
+   if ( sp == NULL ) {
+      ostringstream errmsg;
+      errmsg << "SyncPointManagerBase::register_sync_point():" << __LINE__
+             << " ERROR: Unexpected NULL SyncPoint!\n";
+      DebugHandler::terminate( errmsg.str() );
+      return false;
+   }
+   if ( this->federate == NULL ) {
+      ostringstream errmsg;
+      errmsg << "SyncPointManagerBase::register_sync_point():" << __LINE__
+             << " ERROR: Unexpected NULL federate pointer!\n";
+      DebugHandler::terminate( errmsg.str() );
+      return false;
+   }
+
+   // Macro to save the FPU Control Word register value.
+   TRICKHLA_SAVE_FPU_CONTROL_WORD;
+
+   RTIambassador *RTI_amb = federate->get_RTI_ambassador();
+
+   // Register the sync-point label.
+   bool registered = false;
+   try {
+      RTI_amb->registerFederationSynchronizationPoint( sp->get_label(),
+                                                       sp->encode_user_supplied_tag(),
+                                                       handle_set );
+      // Mark the sync-point as registered.
+      sp->mark_registered();
+
+      registered = true;
+
+   } catch ( RTI1516_NAMESPACE::Exception const &e ) {
+
+      // Macro to restore the saved FPU Control Word register value.
+      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
+      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+
+      string label_str;
+      StringUtilities::to_string( label_str, sp->get_label() );
+      ostringstream errmsg;
+      errmsg << "SyncPointManagerBase::register_sync_point():" << __LINE__
+             << " ERROR: Failed to register '" << label_str
+             << "' synchronization point with RTI!\n";
+      DebugHandler::terminate( errmsg.str() );
+      return false;
+   }
+
+   // Macro to restore the saved FPU Control Word register value.
+   TRICKHLA_RESTORE_FPU_CONTROL_WORD;
+   TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+
+   return registered;
 }
 
 // True if at least one sync-point is registered.
 bool SyncPointManagerBase::register_all_sync_points(
    string const &list_name )
 {
+   bool                  status = false;
    MutexProtection const auto_unlock_mutex( &mutex );
 
-   int const index = get_list_index_for_list_name( list_name );
-   return ( ( index >= 0 ) && sync_pnt_lists[index]->register_all() );
+   SyncPointList const *sp_list = get_sync_point_list( list_name );
+
+   if ( sp_list != NULL ) {
+      for ( SyncPoint *sp : sp_list->list ) {
+         if ( register_sync_point( sp ) ) {
+            status = true;
+         }
+      }
+   }
+   return status;
 }
 
 bool SyncPointManagerBase::register_all_sync_points(
    string const            &list_name,
    FederateHandleSet const &handle_set )
 {
+   bool                  status = false;
    MutexProtection const auto_unlock_mutex( &mutex );
 
-   int const index = get_list_index_for_list_name( list_name );
-   return ( ( index >= 0 ) && sync_pnt_lists[index]->register_all( handle_set ) );
+   SyncPointList const *sp_list = get_sync_point_list( list_name );
+
+   if ( sp_list != NULL ) {
+      for ( SyncPoint *sp : sp_list->list ) {
+         if ( register_sync_point( sp, handle_set ) ) {
+            status = true;
+         }
+      }
+   }
+   return status;
 }
 
 bool SyncPointManagerBase::is_sync_point_announced(
@@ -445,35 +548,37 @@ bool SyncPointManagerBase::is_sync_point_announced(
 {
    MutexProtection const auto_unlock_mutex( &mutex );
 
-   int const index = get_list_index_for_sync_point( label );
-   return ( ( index >= 0 ) && sync_pnt_lists[index]->is_announced( label ) );
+   SyncPoint const *sp = get_sync_point( label );
+   return ( ( sp != NULL ) && sp->is_announced() );
 }
 
 bool SyncPointManagerBase::mark_sync_point_announced(
    wstring const            &label,
    VariableLengthData const &user_supplied_tag )
 {
-   // When auto_unlock_mutex goes out of scope it automatically unlocks the
-   // mutex even if there is an exception.
    MutexProtection const auto_unlock_mutex( &mutex );
 
-   int const index = get_list_index_for_sync_point( label );
-   return ( ( index >= 0 ) && sync_pnt_lists[index]->mark_announced( label, user_supplied_tag ) );
+   SyncPoint *sp = get_sync_point( label );
+   if ( sp != NULL ) {
+      sp->mark_announced( user_supplied_tag );
+      return true;
+   }
+   return false;
 }
 
 bool SyncPointManagerBase::wait_for_sync_point_announced(
    wstring const &label )
 {
-   int index;
+   SyncPoint *sp;
    {
       // Scope this mutex lock because locking over the blocking wait call
       // below will cause deadlock.
       MutexProtection const auto_unlock_mutex( &mutex );
 
-      index = get_list_index_for_sync_point( label );
+      sp = get_sync_point( label );
 
       // If the sync-point index is negative it is unknown.
-      if ( index < 0 ) {
+      if ( sp == NULL ) {
          // Add the unknown sync-point to the unknown list so it can be tracked.
          if ( !add_sync_point( label, TrickHLA::UNKNOWN_SYNC_POINT_LIST ) ) {
             string label_str;
@@ -481,24 +586,137 @@ bool SyncPointManagerBase::wait_for_sync_point_announced(
             ostringstream errmsg;
             errmsg << "SyncPointManagerBase::wait_for_sync_point_announced():" << __LINE__
                    << " ERROR: Failed to add sync-point '" << label_str
-                   << "' to '" << TrickHLA::UNKNOWN_SYNC_POINT_LIST << "' list!" << endl;
+                   << "' to '" << TrickHLA::UNKNOWN_SYNC_POINT_LIST << "' list!\n";
             DebugHandler::terminate( errmsg.str() );
             return false;
          }
-         index = get_list_index_for_sync_point( label );
+         sp = get_sync_point( label );
       }
    }
 
-   return ( ( index >= 0 ) && sync_pnt_lists[index]->wait_for_announced( label ) );
+   return wait_for_announced( sp );
+}
+
+bool SyncPointManagerBase::wait_for_announced(
+   SyncPoint *sp )
+{
+   if ( sp == NULL ) {
+      ostringstream errmsg;
+      errmsg << "SyncPointManagerBase::wait_for_announced():" << __LINE__
+             << " ERROR: Unexpected NULL SyncPoint!\n";
+      DebugHandler::terminate( errmsg.str() );
+      return false;
+   }
+   if ( this->federate == NULL ) {
+      ostringstream errmsg;
+      errmsg << "SyncPointManagerBase::wait_for_announced():" << __LINE__
+             << " ERROR: Unexpected NULL federate pointer!\n";
+      DebugHandler::terminate( errmsg.str() );
+      return false;
+   }
+
+   bool announced = false;
+
+   // Critical code section.
+   {
+      MutexProtection const auto_unlock_mutex( &mutex );
+
+      announced = sp->is_announced();
+
+      if ( !announced && !sp->is_valid() ) {
+         ostringstream errmsg;
+         errmsg << "SyncPointManagerBase::wait_for_announced():" << __LINE__
+                << " ERROR: Bad sync-point state for sync-point!"
+                << " Sync-point: " << sp->to_string() << "\n";
+         DebugHandler::terminate( errmsg.str() );
+         return false;
+      }
+   }
+
+   bool         print_summary = DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE );
+   SleepTimeout print_timer;
+   SleepTimeout sleep_timer;
+
+   // Wait for the sync-point to be announced.
+   while ( !announced ) {
+
+      if ( print_summary ) {
+         print_summary = false;
+
+         // Get the current sync-point status.
+         ostringstream message;
+         message << "SyncPointManagerBase::wait_for_announced():" << __LINE__
+                 << " Sync-point: " << sp->to_string() << "\n";
+         message_publish( MSG_NORMAL, message.str().c_str() );
+      }
+
+      // Always check to see is a shutdown was received.
+      federate->check_for_shutdown_with_termination();
+
+      sleep_timer.sleep();
+
+      // Critical code section.
+      {
+         MutexProtection const auto_unlock_mutex( &mutex );
+         announced = sp->is_announced();
+      }
+
+      if ( !announced ) {
+
+         // To be more efficient, we get the time once and share it.
+         int64_t const wallclock_time = sleep_timer.time();
+
+         // Check to make sure we're still a member of the federation execution.
+         if ( sleep_timer.timeout( wallclock_time ) ) {
+            sleep_timer.reset();
+            if ( !federate->is_execution_member() ) {
+               ostringstream errmsg;
+               errmsg << "SyncPointManagerBase::wait_for_announced():" << __LINE__
+                      << " ERROR: Unexpectedly the Federate is no longer an execution"
+                      << " member. This means we are either not connected to the"
+                      << " RTI or we are no longer joined to the federation"
+                      << " execution because someone forced our resignation at"
+                      << " the Central RTI Component (CRC) level!\n";
+               DebugHandler::terminate( errmsg.str() );
+               return false;
+            }
+         }
+
+         // Determine if we should print a summary.
+         if ( print_timer.timeout( wallclock_time ) ) {
+            print_timer.reset();
+            print_summary = true;
+         }
+      }
+   }
+
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      // Get the current sync-point status.
+      ostringstream message;
+      message << "SyncPointManagerBase::wait_for_announced():" << __LINE__
+              << " Sync-point announced: " << sp->to_string() << "\n";
+      message_publish( MSG_NORMAL, message.str().c_str() );
+   }
+
+   return announced;
 }
 
 bool SyncPointManagerBase::wait_for_all_sync_points_announced(
    string const &list_name )
 {
-   // NOTE: Locking the mutex while waiting can cause deadlock for callbacks.
+   // NOTE: Locking mutex while waiting can cause deadlock for FedAmb callbacks.
+   bool status = false;
 
-   int const index = get_list_index_for_list_name( list_name );
-   return ( ( index >= 0 ) && sync_pnt_lists[index]->wait_for_all_announced() );
+   SyncPointList const *sp_list = get_sync_point_list( list_name );
+
+   if ( sp_list != NULL ) {
+      for ( SyncPoint *sp : sp_list->list ) {
+         if ( wait_for_announced( sp ) ) {
+            status = true;
+         }
+      }
+   }
+   return status;
 }
 
 bool SyncPointManagerBase::is_sync_point_achieved(
@@ -506,8 +724,8 @@ bool SyncPointManagerBase::is_sync_point_achieved(
 {
    MutexProtection const auto_unlock_mutex( &mutex );
 
-   int const index = get_list_index_for_sync_point( label );
-   return ( ( index >= 0 ) && sync_pnt_lists[index]->is_achieved( label ) );
+   SyncPoint const *sp = get_sync_point( label );
+   return ( ( sp != NULL ) && sp->is_achieved() );
 }
 
 bool SyncPointManagerBase::achieve_sync_point(
@@ -522,10 +740,10 @@ bool SyncPointManagerBase::achieve_sync_point(
 {
    MutexProtection const auto_unlock_mutex( &mutex );
 
-   int index = get_list_index_for_sync_point( label );
+   SyncPoint *sp = get_sync_point( label );
 
-   // If the sync-point list index is negative it is unknown.
-   if ( index < 0 ) {
+   // If the sync-point is NULL it is unknown.
+   if ( sp == NULL ) {
       // Add the unknown sync-point to the Unknown list so it will be achieved.
       if ( !add_sync_point( label, TrickHLA::UNKNOWN_SYNC_POINT_LIST ) ) {
          string label_str;
@@ -533,31 +751,180 @@ bool SyncPointManagerBase::achieve_sync_point(
          ostringstream errmsg;
          errmsg << "SyncPointManagerBase::achieve_sync_point():" << __LINE__
                 << " ERROR: Failed to add sync-point '" << label_str
-                << "' to '" << TrickHLA::UNKNOWN_SYNC_POINT_LIST << "' list!" << endl;
+                << "' to '" << TrickHLA::UNKNOWN_SYNC_POINT_LIST << "' list!\n";
          DebugHandler::terminate( errmsg.str() );
          return false;
       }
-      index = get_list_index_for_sync_point( label );
-      if ( index >= 0 ) {
+      sp = get_sync_point( label );
+      if ( sp != NULL ) {
          // Mark unknown sync-point as announced otherwise it will not be achieved.
-         sync_pnt_lists[index]->mark_announced( label, user_supplied_tag );
+         sp->mark_announced( user_supplied_tag );
       }
-   } else if ( TrickHLA::UNKNOWN_SYNC_POINT_LIST.compare( sync_pnt_lists[index]->get_list_name() ) ) {
+   } else if ( contains_sync_point( label, TrickHLA::UNKNOWN_SYNC_POINT_LIST ) ) {
       // Mark any sync-point already in the Unknown list as announced so that
       // it will be achieved.
-      sync_pnt_lists[index]->mark_announced( label, user_supplied_tag );
+      sp->mark_announced( user_supplied_tag );
    }
 
-   return ( ( index >= 0 ) && sync_pnt_lists[index]->achieve( label ) );
+   return achieve_sync_point( sp );
+}
+
+bool SyncPointManagerBase::achieve_sync_point(
+   SyncPoint *sp )
+{
+   if ( sp == NULL ) {
+      ostringstream errmsg;
+      errmsg << "SyncPointManagerBase::achieve_sync_point():" << __LINE__
+             << " ERROR: Unexpected NULL SyncPoint!\n";
+      DebugHandler::terminate( errmsg.str() );
+      return false;
+   }
+   if ( this->federate == NULL ) {
+      ostringstream errmsg;
+      errmsg << "SyncPointManagerBase::achieve_sync_point():" << __LINE__
+             << " ERROR: Unexpected NULL federate pointer!\n";
+      DebugHandler::terminate( errmsg.str() );
+      return false;
+   }
+
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      ostringstream msg;
+      msg << "SyncPointManagerBase::achieve_sync_point():" << __LINE__
+          << " Known Sync-point " << sp->to_string() << "\n";
+      message_publish( MSG_NORMAL, msg.str().c_str() );
+   }
+
+   bool achieved = false;
+
+   if ( sp->is_announced() ) {
+
+      // Macro to save the FPU Control Word register value.
+      TRICKHLA_SAVE_FPU_CONTROL_WORD;
+
+      RTIambassador *RTI_amb = federate->get_RTI_ambassador();
+
+      try {
+         // When auto_unlock_mutex goes out of scope it automatically unlocks the
+         // mutex even if there is an exception.
+         MutexProtection const auto_unlock_mutex( &mutex );
+
+         RTI_amb->synchronizationPointAchieved( sp->get_label() );
+
+         // Mark the sync-point as achieved.
+         sp->mark_achieved();
+
+         achieved = true;
+
+      } catch ( SynchronizationPointLabelNotAnnounced const &e ) {
+         // Keep sync-point state the same, and return false.
+      } catch ( FederateNotExecutionMember const &e ) {
+         // Keep sync-point state the same, and return false.
+      } catch ( SaveInProgress const &e ) {
+         // Keep sync-point state the same, and return false.
+      } catch ( RestoreInProgress const &e ) {
+         // Keep sync-point state the same, and return false.
+      } catch ( NotConnected const &e ) {
+         // Keep sync-point state the same, and return false.
+         ostringstream msg;
+         msg << "SyncPointManagerBase::achieve_sync_point():" << __LINE__
+             << " For Known Sync-point " << sp->to_string()
+             << ", Not Connected to RTI!\n";
+         message_publish( MSG_WARNING, msg.str().c_str() );
+         if ( federate != NULL ) {
+            federate->set_connection_lost();
+         }
+      } catch ( RTIinternalError const &e ) {
+         // Keep sync-point state the same, and return false.
+      }
+
+      // Macro to restore the saved FPU Control Word register value.
+      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
+      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+
+   } else if ( sp->is_achieved() ) {
+
+      // If the synchronization point is already achieved then print out
+      // a message.
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         string label_str;
+         StringUtilities::to_string( label_str, sp->get_label() );
+         ostringstream errmsg;
+         errmsg << "SyncPointManagerBase::achieve_sync_point():" << __LINE__
+                << " Sync-point '" << label_str
+                << "' has already been achieved with the RTI!\n";
+         message_publish( MSG_WARNING, errmsg.str().c_str() );
+      }
+
+      achieved = true;
+
+   } else if ( sp->is_synchronized() ) {
+      // If the synchronization point is already synchronized, then print
+      // out a message and return.
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         string label_str;
+         StringUtilities::to_string( label_str, sp->get_label() );
+         ostringstream errmsg;
+         errmsg << "SyncPointManagerBase::achieve_sync_point():" << __LINE__
+                << " Sync-point '" << label_str
+                << "' has already been synchronized with the RTI!\n";
+         message_publish( MSG_WARNING, errmsg.str().c_str() );
+      }
+
+      achieved = true;
+
+   } else if ( sp->is_registered() ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         string label_str;
+         StringUtilities::to_string( label_str, sp->get_label() );
+         ostringstream errmsg;
+         errmsg << "SyncPointManagerBase::achieve_sync_point():" << __LINE__
+                << " WARNING: Sync-point '" << label_str
+                << "' is registered but has not been announced by the RTI!\n";
+         message_publish( MSG_WARNING, errmsg.str().c_str() );
+      }
+   } else if ( sp->is_known() ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         string label_str;
+         StringUtilities::to_string( label_str, sp->get_label() );
+         ostringstream errmsg;
+         errmsg << "SyncPointManagerBase::achieve_sync_point():" << __LINE__
+                << " WARNING: Sync-point '" << label_str
+                << "' is known but has not been registered or announced!\n";
+         message_publish( MSG_WARNING, errmsg.str().c_str() );
+      }
+   } else {
+      // Sync-point is unknown.
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         string label_str;
+         StringUtilities::to_string( label_str, sp->get_label() );
+         ostringstream errmsg;
+         errmsg << "SyncPointManagerBase::achieve_sync_point():" << __LINE__
+                << " WARNING: Sync-point '" << label_str
+                << "' is unknown!\n";
+         message_publish( MSG_WARNING, errmsg.str().c_str() );
+      }
+   }
+
+   return achieved;
 }
 
 bool SyncPointManagerBase::achieve_all_sync_points(
    string const &list_name )
 {
+   bool status = false;
+
    MutexProtection const auto_unlock_mutex( &mutex );
 
-   int const index = get_list_index_for_list_name( list_name );
-   return ( ( index >= 0 ) && sync_pnt_lists[index]->achieve_all() );
+   SyncPointList const *sp_list = get_sync_point_list( list_name );
+
+   if ( sp_list != NULL ) {
+      for ( SyncPoint *sp : sp_list->list ) {
+         if ( achieve_sync_point( sp ) ) {
+            status = true;
+         }
+      }
+   }
+   return status;
 }
 
 bool SyncPointManagerBase::is_sync_point_synchronized(
@@ -565,8 +932,8 @@ bool SyncPointManagerBase::is_sync_point_synchronized(
 {
    MutexProtection const auto_unlock_mutex( &mutex );
 
-   int const index = get_list_index_for_sync_point( label );
-   return ( ( index >= 0 ) && sync_pnt_lists[index]->is_synchronized( label ) );
+   SyncPoint const *sp = get_sync_point( label );
+   return ( ( sp != NULL ) && sp->is_synchronized() );
 }
 
 bool SyncPointManagerBase::is_all_sync_points_synchronized(
@@ -574,8 +941,8 @@ bool SyncPointManagerBase::is_all_sync_points_synchronized(
 {
    MutexProtection const auto_unlock_mutex( &mutex );
 
-   int const index = get_list_index_for_list_name( list_name );
-   return ( ( index >= 0 ) && sync_pnt_lists[index]->is_all_synchronized() );
+   SyncPointList *sp_list = get_sync_point_list( list_name );
+   return ( ( sp_list != NULL ) && sp_list->is_all_synchronized() );
 }
 
 /*!
@@ -584,27 +951,29 @@ bool SyncPointManagerBase::is_all_sync_points_synchronized(
 bool SyncPointManagerBase::mark_sync_point_synchronized(
    wstring const &label )
 {
-   // When auto_unlock_mutex goes out of scope it automatically unlocks the
-   // mutex even if there is an exception.
    MutexProtection const auto_unlock_mutex( &mutex );
 
-   int const index = get_list_index_for_sync_point( label );
-   return ( ( index >= 0 ) && sync_pnt_lists[index]->mark_synchronized( label ) );
+   SyncPoint *sp = get_sync_point( label );
+   if ( sp != NULL ) {
+      sp->mark_synchronized();
+      return true;
+   }
+   return false;
 }
 
 bool SyncPointManagerBase::wait_for_sync_point_synchronized(
    wstring const &label )
 {
-   int index;
+   SyncPoint const *sp;
    {
       // Scope this mutex lock because locking over the blocking wait call
       // below will cause deadlock.
       MutexProtection const auto_unlock_mutex( &mutex );
 
-      index = get_list_index_for_sync_point( label );
+      sp = get_sync_point( label );
 
-      // If the sync-point is null then it is unknown.
-      if ( index < 0 ) {
+      // If the sync-point is NULL then it is unknown.
+      if ( sp == NULL ) {
          // Add the unknown sync-point to the unknown list so it can be tracked.
          if ( !add_sync_point( label, TrickHLA::UNKNOWN_SYNC_POINT_LIST ) ) {
             string label_str;
@@ -612,24 +981,111 @@ bool SyncPointManagerBase::wait_for_sync_point_synchronized(
             ostringstream errmsg;
             errmsg << "SyncPointManagerBase::wait_for_sync_point_synchronized():" << __LINE__
                    << " ERROR: Failed to add sync-point '" << label_str
-                   << "' to '" << TrickHLA::UNKNOWN_SYNC_POINT_LIST << "' list!" << endl;
+                   << "' to '" << TrickHLA::UNKNOWN_SYNC_POINT_LIST << "' list!\n";
             DebugHandler::terminate( errmsg.str() );
             return false;
          }
-         index = get_list_index_for_sync_point( label );
+         sp = get_sync_point( label );
       }
    }
 
-   return ( ( index >= 0 ) && sync_pnt_lists[index]->wait_for_synchronized( label ) );
+   return wait_for_synchronized( sp );
 }
 
 bool SyncPointManagerBase::wait_for_all_sync_points_synchronized(
    string const &list_name )
 {
-   // NOTE: Locking the mutex while waiting can cause deadlock for callbacks.
+   // NOTE: Locking mutex while waiting can cause deadlock for FedAmb callbacks.
+   bool status = false;
 
-   int const index = get_list_index_for_list_name( list_name );
-   return ( ( index >= 0 ) && sync_pnt_lists[index]->wait_for_all_synchronized() );
+   SyncPointList const *sp_list = get_sync_point_list( list_name );
+
+   for ( SyncPoint const *sp : sp_list->list ) {
+      if ( wait_for_synchronized( sp ) ) {
+         status = true;
+      }
+   }
+   return status;
+}
+
+bool SyncPointManagerBase::wait_for_synchronized(
+   SyncPoint const *sp )
+{
+   if ( sp == NULL ) {
+      ostringstream errmsg;
+      errmsg << "SyncPointManagerBase::wait_for_synchronized():" << __LINE__
+             << " ERROR: Unexpected NULL SyncPoint!\n";
+      DebugHandler::terminate( errmsg.str() );
+      return false;
+   }
+   if ( this->federate == NULL ) {
+      ostringstream errmsg;
+      errmsg << "SyncPointManagerBase::wait_for_synchronized():" << __LINE__
+             << " ERROR: Unexpected NULL federate pointer!\n";
+      DebugHandler::terminate( errmsg.str() );
+      return false;
+   }
+
+   bool         print_summary = DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE );
+   bool         synchronized;
+   SleepTimeout print_timer;
+   SleepTimeout sleep_timer;
+
+   // Wait for the federation to synchronize on the sync-point.
+   do {
+      if ( print_summary ) {
+         print_summary = false;
+         string label_str;
+         StringUtilities::to_string( label_str, sp->get_label() );
+         ostringstream msg;
+         msg << "SyncPointManagerBase::wait_for_synchronized():" << __LINE__
+             << " Sync-point '" << label_str << "'\n";
+         message_publish( MSG_NORMAL, msg.str().c_str() );
+      }
+
+      // Critical code section.
+      {
+         // When auto_unlock_mutex goes out of scope it automatically unlocks
+         // the mutex even if there is an exception.
+         MutexProtection const auto_unlock_mutex( &mutex );
+         synchronized = sp->is_synchronized();
+      }
+
+      if ( !synchronized ) {
+
+         // Always check to see if a shutdown was received.
+         federate->check_for_shutdown_with_termination();
+
+         sleep_timer.sleep();
+
+         // To be more efficient, we get the time once and share it.
+         int64_t const wallclock_time = sleep_timer.time();
+
+         // Check to make sure we're still a member of the federation execution.
+         if ( sleep_timer.timeout( wallclock_time ) ) {
+            sleep_timer.reset();
+            if ( !federate->is_execution_member() ) {
+               ostringstream errmsg;
+               errmsg << "SyncPointManagerBase::wait_for_synchronized():" << __LINE__
+                      << " ERROR: Unexpectedly the Federate is no longer an execution"
+                      << " member. This means we are either not connected to the"
+                      << " RTI or we are no longer joined to the federation"
+                      << " execution because someone forced our resignation at"
+                      << " the Central RTI Component (CRC) level!\n";
+               DebugHandler::terminate( errmsg.str() );
+               return false;
+            }
+         }
+
+         // Print a summary if we timeout waiting.
+         if ( print_timer.timeout( wallclock_time ) ) {
+            print_timer.reset();
+            print_summary = true;
+         }
+      }
+   } while ( !synchronized );
+
+   return true;
 }
 
 bool SyncPointManagerBase::achieve_sync_point_and_wait_for_synchronization(
@@ -648,7 +1104,7 @@ bool SyncPointManagerBase::achieve_sync_point_and_wait_for_synchronization(
          StringUtilities::to_string( label_str, label );
          ostringstream errmsg;
          errmsg << "SyncPointManagerBase::achieve_sync_point_and_wait_for_synchronization():" << __LINE__
-                << " ERROR: Failed to wait for sync-point '" << label_str << "'" << endl;
+                << " ERROR: Failed to wait for sync-point '" << label_str << "'\n";
          DebugHandler::terminate( errmsg.str() );
          return false;
       }
@@ -657,7 +1113,7 @@ bool SyncPointManagerBase::achieve_sync_point_and_wait_for_synchronization(
       StringUtilities::to_string( label_str, label );
       ostringstream errmsg;
       errmsg << "SyncPointManagerBase::achieve_sync_point_and_wait_for_synchronization():" << __LINE__
-             << " ERROR: Failed to achieve sync-point '" << label_str << "'" << endl;
+             << " ERROR: Failed to achieve sync-point '" << label_str << "'\n";
       DebugHandler::terminate( errmsg.str() );
       return false;
    }
@@ -674,12 +1130,10 @@ string SyncPointManagerBase::to_string()
 
    // Critical code section.
    {
-      // When auto_unlock_mutex goes out of scope it automatically unlocks the
-      // mutex even if there is an exception.
       MutexProtection const auto_unlock_mutex( &mutex );
 
       msg << "SyncPointManagerBase::to_string():" << __LINE__
-          << " Number of Sync-Point Lists:" << sync_pnt_lists.size() << endl;
+          << " Number of Sync-Point Lists:" << sync_pnt_lists.size() << "\n";
 
       for ( SyncPointList *sync_pnt_list : sync_pnt_lists ) {
          msg << sync_pnt_list->to_string();
@@ -691,44 +1145,39 @@ string SyncPointManagerBase::to_string()
 string SyncPointManagerBase::to_string(
    wstring const &label )
 {
-   // When auto_unlock_mutex goes out of scope it automatically unlocks the
-   // mutex even if there is an exception.
    MutexProtection const auto_unlock_mutex( &mutex );
 
-   int const index = get_list_index_for_sync_point( label );
-   if ( index >= 0 ) {
-      return sync_pnt_lists[index]->to_string( label );
+   SyncPoint *sp = get_sync_point( label );
+   if ( sp != NULL ) {
+      return sp->to_string();
    }
 
    string label_str;
    StringUtilities::to_string( label_str, label );
    ostringstream msg;
    msg << "SyncPointManagerBase::to_string():" << __LINE__
-       << " Unknown sync-point label:'" << label_str << "'" << endl;
+       << " Unknown sync-point label:'" << label_str << "'\n";
    return msg.str();
 }
 
 string SyncPointManagerBase::to_string(
    string const &list_name )
 {
-   // When auto_unlock_mutex goes out of scope it automatically unlocks the
-   // mutex even if there is an exception.
    MutexProtection const auto_unlock_mutex( &mutex );
 
-   // Add the named list if it does not exist.
-   int const index = get_list_index_for_list_name( list_name );
-
-   if ( index >= 0 ) {
-      return sync_pnt_lists[index]->to_string();
+   SyncPointList *sp_list = get_sync_point_list( list_name );
+   if ( sp_list != NULL ) {
+      return sp_list->to_string();
    }
+
    return "SyncPointManagerBase::to_string():" + std::to_string( __LINE__ )
-          + " Unknown list name '" + list_name + "'";
+          + " Unknown list name '" + list_name + "'\n";
 }
 
 void SyncPointManagerBase::print_sync_points()
 {
    ostringstream msg;
-   msg << "SyncPointManagerBase::print_sync_points():" << __LINE__ << endl
+   msg << "SyncPointManagerBase::print_sync_points():" << __LINE__ << "\n"
        << to_string();
    message_publish( MSG_NORMAL, msg.str().c_str() );
 }
@@ -750,7 +1199,7 @@ void SyncPointManagerBase::sync_point_registration_succeeded(
       ostringstream errmsg;
       errmsg << "SyncPointManagerBase::sync_point_registration_succeeded():" << __LINE__
              << " ERROR: Failed to mark sync-point '" << label_str
-             << "' as registered!" << endl;
+             << "' as registered!\n";
       DebugHandler::terminate( errmsg.str() );
    }
 }
@@ -780,7 +1229,7 @@ void SyncPointManagerBase::sync_point_registration_failed(
             ostringstream errmsg;
             errmsg << "SyncPointManagerBase::sync_point_registration_failed():" << __LINE__
                    << " ERROR: Failed to mark sync-point '" << label_str
-                   << "' as registered." << endl;
+                   << "' as registered.\n";
             DebugHandler::terminate( errmsg.str() );
          }
       } else {
@@ -789,7 +1238,7 @@ void SyncPointManagerBase::sync_point_registration_failed(
          ostringstream errmsg;
          errmsg << "SyncPointManagerBase::sync_point_registration_failed():" << __LINE__
                 << " ERROR: Failed to register sync-point label '" << label_str
-                << "'" << endl;
+                << "'\n";
          DebugHandler::terminate( errmsg.str() );
       }
    } else {
@@ -802,7 +1251,7 @@ void SyncPointManagerBase::sync_point_registration_failed(
          ostringstream errmsg;
          errmsg << "SyncPointManagerBase::sync_point_registration_failed():" << __LINE__
                 << " ERROR: Failed to add sync-point '" << label_str
-                << "' to '" << TrickHLA::UNKNOWN_SYNC_POINT_LIST << "' list!" << endl;
+                << "' to '" << TrickHLA::UNKNOWN_SYNC_POINT_LIST << "' list!\n";
          DebugHandler::terminate( errmsg.str() );
       }
    }
@@ -850,7 +1299,7 @@ void SyncPointManagerBase::sync_point_announced(
          ostringstream errmsg;
          errmsg << "SyncPointManagerBase::sync_point_announced():" << __LINE__
                 << " ERROR: Failed to mark sync-point '" << label_str
-                << "' as announced." << endl;
+                << "' as announced.\n";
          DebugHandler::terminate( errmsg.str() );
       }
    }
@@ -875,7 +1324,7 @@ void SyncPointManagerBase::sync_point_federation_synchronized(
       StringUtilities::to_string( label_str, label );
       ostringstream errmsg;
       errmsg << "SyncPointManagerBase::sync_point_federation_synchronized():" << __LINE__
-             << " ERROR: Unexpected unmanaged sync-point '" << label_str << "'" << endl;
+             << " ERROR: Unexpected unmanaged sync-point '" << label_str << "'\n";
       DebugHandler::terminate( errmsg.str() );
    }
 }
@@ -892,10 +1341,6 @@ void SyncPointManagerBase::convert_data_before_checkpoint()
 void SyncPointManagerBase::restore_data_after_checkpoint()
 {
    for ( SyncPointList *sync_pnt_list : sync_pnt_lists ) {
-      // The mutex should already be set.  But, incase it's not, set it.
-      if ( sync_pnt_list->mutex == NULL ) {
-         sync_pnt_list->set_mutex( this->mutex );
-      }
       sync_pnt_list->restore_data_after_checkpoint();
    }
 }
@@ -906,4 +1351,40 @@ void SyncPointManagerBase::free_converted_data_for_checkpoint()
    for ( SyncPointList *sync_pnt_list : sync_pnt_lists ) {
       sync_pnt_list->free_converted_data_for_checkpoint();
    }
+}
+
+SyncPoint *SyncPointManagerBase::get_sync_point(
+   wstring const &label )
+{
+   for ( SyncPointList *sp_list : sync_pnt_lists ) {
+      SyncPoint *sp = sp_list->get( label );
+      if ( sp != NULL ) {
+         return sp;
+      }
+   }
+   return NULL;
+}
+
+SyncPointList *SyncPointManagerBase::get_sync_point_list(
+   string const &list_name )
+{
+   for ( SyncPointList *sp_list : sync_pnt_lists ) {
+      if ( list_name.compare( sp_list->get_list_name() ) == 0 ) {
+         return sp_list;
+      }
+   }
+   return NULL;
+}
+
+int SyncPointManagerBase::get_list_index_for_sync_point(
+   wstring const &label )
+{
+   MutexProtection const auto_unlock_mutex( &mutex );
+
+   for ( size_t index = 0; index < sync_pnt_lists.size(); ++index ) {
+      if ( sync_pnt_lists[index]->contains( label ) ) { // cppcheck-suppress [useStlAlgorithm]
+         return (int)index;
+      }
+   }
+   return -1;
 }

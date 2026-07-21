@@ -32,6 +32,7 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
+#include <algorithm>
 #include <cstdlib>
 #include <cstring>
 #include <fstream>
@@ -1199,6 +1200,14 @@ void SaveRestoreServices::restore_waiting_for_request_status()
 
    } else {
 
+#if defined( TRICKHLA_USE_STL_ALGORITHM )
+      if ( std::any_of( restore_status_response.begin(), restore_status_response.end(),
+                        []( FederateRestoreStatus const &status ) -> bool {
+                           return ( status.status != NO_RESTORE_IN_PROGRESS );
+                        } ) ) {
+         restore_conflict = true;
+      }
+#else
       // Iterate through the response vector to check for ongoing restores.
       for ( FederateRestoreStatus const &status : restore_status_response ) {
          if ( status.status != NO_RESTORE_IN_PROGRESS ) {
@@ -1206,6 +1215,7 @@ void SaveRestoreServices::restore_waiting_for_request_status()
             break;
          }
       }
+#endif // TRICKHLA_USE_STL_ALGORITHM
    }
 
    // Check for Restore response status conflict.
@@ -1559,8 +1569,8 @@ void SaveRestoreServices::restore_initiated(
    FederateHandle new_federate_handle )
 #endif // IEEE_1516_2025
 {
-   std::string restore_label_str;
-   std::string checkpoint_file_name;
+   string      restore_label_str;
+   string      checkpoint_file_name;
    struct stat temp_buf;
 
    // Just return if HLA save and restore is not supported by the simulation
@@ -1672,8 +1682,6 @@ void SaveRestoreServices::restore_initiated(
  */
 void SaveRestoreServices::restore_waiting_for_checkpoint_load()
 {
-   std::string restore_label_str;
-
    // If Federation SaveRestore is not supported then return without action.
    if ( this->restore_state == THLARestoreProcessEnum::RESTORE_UNSUPPORTED ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
@@ -1688,7 +1696,7 @@ void SaveRestoreServices::restore_waiting_for_checkpoint_load()
    // If the restore_state is THLARestoreProcessEnum::RESTORE_FAILED then
    // something went wrong and we need to notify the Federation.
    if ( this->restore_state == THLARestoreProcessEnum::RESTORE_FAILED ) {
-
+      string restore_label_str;
       StringUtilities::to_string( restore_label_str, restore_label );
       message_publish( MSG_ERROR,
                        "SaveRestoreServices::restore_waiting_for_checkpoint_load():%d: Restore failed for label: \'%s\'!\n",
@@ -1707,16 +1715,17 @@ void SaveRestoreServices::restore_waiting_for_checkpoint_load()
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
          if ( execution_control->process_timer.timeout( execution_control->process_timer.time() ) ) {
             execution_control->process_timer.reset();
+            string restore_label_str;
             StringUtilities::to_string( restore_label_str, restore_label );
             message_publish( MSG_NORMAL,
                              "SaveRestoreServices::restore_waiting_for_checkpoint_load():%d: HLA Restore label \'%s\'!\n",
                              __LINE__, restore_label_str.c_str() );
          }
       }
-   }
-   else {
-      ostringstream errmsg;
+   } else {
+      string restore_label_str;
       StringUtilities::to_string( restore_label_str, restore_label );
+      ostringstream errmsg;
       errmsg << "SaveRestoreServices::restore_waiting_for_checkpoint_load():" << __LINE__
              << ": ERROR: Unexpected Restore state for label: " << restore_label_str << endl
              << "   Expected state: RESTORE_INITIATED" << endl
@@ -1726,7 +1735,7 @@ void SaveRestoreServices::restore_waiting_for_checkpoint_load()
 
    // NOTE: The Restore state will transition from RESTORE_INITIATED to
    // RESTORE_CHECKPOINT one the Federate::checkpoint_preload job is called.
-   
+
    return;
 }
 
@@ -1763,9 +1772,9 @@ void SaveRestoreServices::restore_after_checkpoint_load()
    // If so, the restore_state should be THLARestoreProcessEnum::RESTORE_CHECKPOINT.
    // If not, then we are not in the Restore state we think we should be in.
    if ( this->restore_state != THLARestoreProcessEnum::RESTORE_CHECKPOINT ) {
-      ostringstream errmsg;
       string restore_label_str;
       StringUtilities::to_string( restore_label_str, restore_label );
+      ostringstream errmsg;
       errmsg << "SaveRestoreServices::restore_after_checkpoint_load():" << __LINE__
              << ": WARNING: Unexpected Restore state for label: " << restore_label_str << endl
              << "   Expected state: RESTORE_CHECKPOINT" << endl
@@ -1777,7 +1786,7 @@ void SaveRestoreServices::restore_after_checkpoint_load()
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
       message_publish( MSG_NORMAL, "SaveRestoreServices::restore_after_checkpoint_load():%d: Rebuilding HLA Handles.\n",
-                        __LINE__ );
+                       __LINE__ );
    }
 
    // Restore the data constructs from loading the checkpoint file.
@@ -1802,9 +1811,9 @@ void SaveRestoreServices::restore_after_checkpoint_load()
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
       message_publish( MSG_NORMAL, "SaveRestoreServices::restore_after_checkpoint_load():%d: Rebuilt HLA federate state.\n",
-                        __LINE__ );
+                       __LINE__ );
    }
-   
+
    // Notify the Federation that we successfully completed the Restore.
    restore_success_notification();
 
@@ -1819,9 +1828,8 @@ void SaveRestoreServices::restore_after_checkpoint_load()
  */
 void SaveRestoreServices::restore_success_notification()
 {
-   std::string restore_label_str;
-
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+      string restore_label_str;
       StringUtilities::to_string( restore_label_str, restore_label );
       message_publish( MSG_NORMAL,
                        "SaveRestoreServices::restore_success_notification():%d: Restore succeeded for label: \'%s\'!\n",
@@ -1867,9 +1875,8 @@ void SaveRestoreServices::restore_success_notification()
  */
 void SaveRestoreServices::restore_failed_notification()
 {
-   std::string restore_label_str;
-
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+      string restore_label_str;
       StringUtilities::to_string( restore_label_str, restore_label );
       message_publish( MSG_ERROR,
                        "SaveRestoreServices::restore_failed_notification():%d: Restore failed for label: \'%s\'!\n",
@@ -1915,8 +1922,6 @@ void SaveRestoreServices::restore_failed_notification()
  */
 bool SaveRestoreServices::restore_waiting_for_completion()
 {
-   std::string restore_label_str;
-
    // If Federation SaveRestore is not supported then return without action.
    if ( this->restore_state == THLARestoreProcessEnum::RESTORE_UNSUPPORTED ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
@@ -1929,7 +1934,7 @@ bool SaveRestoreServices::restore_waiting_for_completion()
    // If the restore_state is THLARestoreProcessEnum::RESTORE_FAILED then
    // something went wrong and we need to notify the Federation.
    if ( this->restore_state == THLARestoreProcessEnum::RESTORE_FAILED ) {
-
+      string restore_label_str;
       StringUtilities::to_string( restore_label_str, restore_label );
       message_publish( MSG_ERROR,
                        "SaveRestoreServices::restore_waiting_for_completion():%d: Restore failed for label: \'%s\'!\n",
@@ -1938,33 +1943,33 @@ bool SaveRestoreServices::restore_waiting_for_completion()
       // Notify the Federation that we could not complete the Restore.
       restore_failed_notification();
 
-      return( false );
+      return ( false );
    }
 
    // Check to see that the restore_after_checkpoint_load jobs ran successfully.
    // If so, the restore_state should be THLARestoreProcessEnum::RESTORE_WAITING_COMPLETION.
    // If not, then we are not in the Restore state we think we should be in.
    if ( this->restore_state != THLARestoreProcessEnum::RESTORE_WAITING_COMPLETION ) {
-      ostringstream errmsg;
       string restore_label_str;
       StringUtilities::to_string( restore_label_str, restore_label );
+      ostringstream errmsg;
       errmsg << "SaveRestoreServices::restore_waiting_for_completion():" << __LINE__
              << ": WARNING: Unexpected Restore state for label: " << restore_label_str << endl
              << "   Expected state: RESTORE_WAITING_COMPLETION" << endl
              << "   Current state:  " << TrickHLA::to_string( restore_state ) << endl;
       message_publish( MSG_ERROR, errmsg.str().c_str() );
 
-      return( false );
-
+      return ( false );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
       if ( execution_control->process_timer.timeout( execution_control->process_timer.time() ) ) {
          execution_control->process_timer.reset();
+         string restore_label_str;
          StringUtilities::to_string( restore_label_str, restore_label );
          message_publish( MSG_NORMAL,
-                           "SaveRestoreServices::restore_waiting_for_completion():%d: HLA Restore in progress for label \'%s\'!\n",
-                           __LINE__, restore_label_str.c_str() );
+                          "SaveRestoreServices::restore_waiting_for_completion():%d: HLA Restore in progress for label \'%s\'!\n",
+                          __LINE__, restore_label_str.c_str() );
       }
    }
 
