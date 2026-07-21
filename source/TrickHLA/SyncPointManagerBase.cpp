@@ -1380,19 +1380,6 @@ SyncPointList *SyncPointManagerBase::get_sync_point_list(
    return NULL;
 }
 
-int SyncPointManagerBase::get_list_index_for_sync_point(
-   wstring const &label )
-{
-   MutexProtection const auto_unlock_mutex( &mutex );
-
-   for ( size_t index = 0; index < sync_pnt_lists.size(); ++index ) {
-      if ( sync_pnt_lists[index]->contains( label ) ) { // cppcheck-suppress [useStlAlgorithm]
-         return (int)index;
-      }
-   }
-   return -1;
-}
-
 /*!
  *  @job_class{restart}
  */

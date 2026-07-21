@@ -221,8 +221,6 @@ class SyncPointManagerBase : public CheckpointConversionBase
 
    bool wait_for_synchronized( SyncPoint const *sp );
 
-   int get_list_index_for_sync_point( std::wstring const &label ); // Search all lists for the unique sync-point label.
-
    MutexLock mutex; ///< @trick_io{**} Mutex to lock thread over critical code sections.
 
    SyncPointListVector sync_pnt_lists; ///< @trick_units{--} Array of named sync-point lists.
