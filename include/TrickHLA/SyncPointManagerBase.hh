@@ -207,10 +207,6 @@ class SyncPointManagerBase : public CheckpointConversionBase
    void checkpoint_restart() override;
 
   protected:
-   SyncPoint *get_sync_point( std::wstring const &label );
-
-   SyncPointList *get_sync_point_list( std::string const &list_name );
-
    bool register_sync_point( SyncPoint *sp );
 
    bool register_sync_point( SyncPoint *sp, RTI1516_NAMESPACE::FederateHandleSet const &handle_set );
@@ -220,6 +216,10 @@ class SyncPointManagerBase : public CheckpointConversionBase
    bool achieve_sync_point( SyncPoint *sp );
 
    bool wait_for_synchronized( SyncPoint const *sp );
+
+   SyncPoint *get_sync_point( std::wstring const &label );
+
+   SyncPointList *get_sync_point_list( std::string const &list_name );
 
    MutexLock mutex; ///< @trick_io{**} Mutex to lock thread over critical code sections.
 

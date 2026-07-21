@@ -1329,6 +1329,29 @@ void SyncPointManagerBase::sync_point_federation_synchronized(
    }
 }
 
+SyncPoint *SyncPointManagerBase::get_sync_point(
+   wstring const &label )
+{
+   for ( SyncPointList *sp_list : sync_pnt_lists ) {
+      SyncPoint *sp = sp_list->get( label );
+      if ( sp != NULL ) {
+         return sp;
+      }
+   }
+   return NULL;
+}
+
+SyncPointList *SyncPointManagerBase::get_sync_point_list(
+   string const &list_name )
+{
+   for ( SyncPointList *sp_list : sync_pnt_lists ) {
+      if ( list_name.compare( sp_list->get_list_name() ) == 0 ) {
+         return sp_list;
+      }
+   }
+   return NULL;
+}
+
 //-------------------------------------------------------------------------
 // CheckpointConversionBase Interface.
 //-------------------------------------------------------------------------
@@ -1355,29 +1378,6 @@ void SyncPointManagerBase::free_converted_data_for_checkpoint()
    for ( SyncPointList *sync_pnt_list : sync_pnt_lists ) {
       sync_pnt_list->free_converted_data_for_checkpoint();
    }
-}
-
-SyncPoint *SyncPointManagerBase::get_sync_point(
-   wstring const &label )
-{
-   for ( SyncPointList *sp_list : sync_pnt_lists ) {
-      SyncPoint *sp = sp_list->get( label );
-      if ( sp != NULL ) {
-         return sp;
-      }
-   }
-   return NULL;
-}
-
-SyncPointList *SyncPointManagerBase::get_sync_point_list(
-   string const &list_name )
-{
-   for ( SyncPointList *sp_list : sync_pnt_lists ) {
-      if ( list_name.compare( sp_list->get_list_name() ) == 0 ) {
-         return sp_list;
-      }
-   }
-   return NULL;
 }
 
 /*!
