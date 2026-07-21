@@ -1333,9 +1333,11 @@ SyncPoint *SyncPointManagerBase::get_sync_point(
    wstring const &label )
 {
    for ( SyncPointList *sp_list : sync_pnt_lists ) {
-      SyncPoint *sp = sp_list->get( label );
-      if ( sp != NULL ) {
-         return sp;
+      if ( sp_list != NULL ) {
+         SyncPoint *sp = sp_list->get( label );
+         if ( sp != NULL ) {
+            return sp;
+         }
       }
    }
    return NULL;
@@ -1345,7 +1347,7 @@ SyncPointList *SyncPointManagerBase::get_sync_point_list(
    string const &list_name )
 {
    for ( SyncPointList *sp_list : sync_pnt_lists ) {
-      if ( list_name.compare( sp_list->get_list_name() ) == 0 ) {
+      if ( ( sp_list != NULL ) && list_name.compare( sp_list->get_list_name() ) == 0 ) {
          return sp_list;
       }
    }
