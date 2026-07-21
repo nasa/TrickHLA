@@ -162,6 +162,15 @@ bool SyncPointManagerBase::add_sync_point_list(
 
       // Allocate a new sync point list and add it to the sync_pnt_lists.
       SyncPointList *list = static_cast< SyncPointList * >( TMM_declare_var_1d( "TrickHLA::SyncPointList", 1 ) );
+      if ( list == NULL ) {
+         ostringstream errmsg;
+         errmsg << "SyncPointManagerBase::add_sync_point_list():" << __LINE__
+                << " ERROR: Cannot allocate Trick Memory for TrickHLA::SyncPointList named '"
+                << list_name << "'!\n";
+         DebugHandler::terminate( errmsg.str() );
+         return false;
+      }
+
       list->set_list_name( list_name );
       sync_pnt_lists.push_back( list );
 
