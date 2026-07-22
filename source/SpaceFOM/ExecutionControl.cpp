@@ -57,10 +57,10 @@ NASA, Johnson Space Center\n
 // Trick includes.
 #include "trick/Clock.hh"
 #include "trick/Executive.hh"
+#include "trick/MemoryManager.hh"
 #include "trick/attributes.h"
 #include "trick/exec_proto.h"
 #include "trick/exec_proto.hh"
-#include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
 #include "trick/message_type.h"
 #include "trick/sim_mode.h"
@@ -296,7 +296,8 @@ void ExecutionControl::setup_object_ref_attributes()
 void ExecutionControl::setup_interaction_ref_attributes()
 {
    // Allocate the Mode Transition Request Interaction.
-   mtr_interaction = reinterpret_cast< Interaction * >( alloc_type( 1, "TrickHLA::Interaction" ) );
+   mtr_interaction = reinterpret_cast< Interaction * >(
+                        trick_MM->declare_var( "TrickHLA::Interaction", 1 ) );
    if ( mtr_interaction == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::setup_MTR_interaction_ref_attributes():" << __LINE__
@@ -319,8 +320,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
    // Set up parameters.
    mtr_interaction->set_parameter_count( 1 );
    Parameter *tParm = reinterpret_cast< Parameter * >(
-      alloc_type( mtr_interaction->get_parameter_count(),
-                  "TrickHLA::Parameter" ) );
+      trick_MM->declare_var( "TrickHLA::Parameter", mtr_interaction->get_parameter_count() ) );
    if ( tParm == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__

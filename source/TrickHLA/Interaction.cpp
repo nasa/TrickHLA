@@ -47,7 +47,6 @@ NASA, Johnson Space Center\n
 
 // Trick includes.
 #include "trick/MemoryManager.hh"
-#include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
 #include "trick/message_type.h"
 
@@ -294,12 +293,12 @@ void Interaction::set_user_supplied_tag(
       user_supplied_tag_capacity = tag_size;
       if ( user_supplied_tag == NULL ) {
          user_supplied_tag = static_cast< unsigned char * >(
-            TMM_declare_var_1d( "unsigned char",
-                                (int)user_supplied_tag_capacity ) );
+            trick_MM->declare_var( "unsigned char",
+                                   (int)user_supplied_tag_capacity ) );
       } else {
          user_supplied_tag = static_cast< unsigned char * >(
-            TMM_resize_array_1d_a( user_supplied_tag,
-                                   (int)user_supplied_tag_capacity ) );
+            trick_MM->resize_array( user_supplied_tag,
+                                    (int)user_supplied_tag_capacity ) );
       }
    }
    user_supplied_tag_size = tag_size;

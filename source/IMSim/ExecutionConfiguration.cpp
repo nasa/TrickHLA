@@ -51,7 +51,6 @@ NASA, Johnson Space Center\n
 #include "trick/Executive.hh"
 #include "trick/MemoryManager.hh"
 #include "trick/attributes.h"
-#include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
 #include "trick/message_type.h"
 
@@ -195,7 +194,7 @@ void ExecutionConfiguration::configure_attributes()
    this->packing = this;
    // Allocate the attributes for the SimulationConfiguration HLA object.
    this->attr_count = 10;
-   this->attributes = static_cast< Attribute * >( TMM_declare_var_1d( "TrickHLA::Attribute", this->attr_count ) );
+   this->attributes = static_cast< Attribute * >( trick_MM->declare_var( "TrickHLA::Attribute", this->attr_count ) );
 
    //
    // Specify the SimulationConfiguration attributes.

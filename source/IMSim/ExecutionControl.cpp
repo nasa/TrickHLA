@@ -62,7 +62,6 @@ NASA, Johnson Space Center\n
 #include "trick/attributes.h"
 #include "trick/exec_proto.h"
 #include "trick/exec_proto.hh"
-#include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
 #include "trick/message_type.h"
 

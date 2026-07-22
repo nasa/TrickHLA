@@ -47,8 +47,8 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick include files.
+#include "trick/MemoryManager.hh"
 #include "trick/attributes.h"
-#include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
 #include "trick/message_type.h"
 #include "trick/parameter_types.h"
@@ -81,7 +81,7 @@ EncoderBase *EncoderFactory::create(
    string const      &trick_name,
    EncodingEnum const hla_encoding )
 {
-   REF2 *ref2 = ref_attributes( trick_name.c_str() );
+   REF2 *ref2 = trick_MM->ref_attributes( trick_name.c_str() );
 
    // Determine if we had an error getting the ref-attributes.
    if ( ref2 == NULL ) {

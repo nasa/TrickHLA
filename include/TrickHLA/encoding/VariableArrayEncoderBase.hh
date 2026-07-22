@@ -40,7 +40,6 @@ NASA, Johnson Space Center\n
 
 // Trick includes.
 #include "trick/attributes.h"
-#include "trick/memorymanager_c_intf.h"
 #include "trick/parameter_types.h"
 
 // TrickHLA includes.

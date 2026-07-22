@@ -49,7 +49,6 @@ NASA, Johnson Space Center\n
 
 // Trick includes.
 #include "trick/MemoryManager.hh"
-#include "trick/memorymanager_c_intf.h"
 #include "trick/parameter_types.h"
 
 // TrickHLA includes.
@@ -124,7 +123,7 @@ class StringUtilities
       int               size = ( len <= INT_MAX ) ? (int)len : INT_MAX;
 
       /** @li Allocate the duplicate character string */
-      wchar_t *addr = static_cast< wchar_t * >( TMM_declare_var( TRICK_WCHAR, "", 0, "", 1, &size ) );
+      wchar_t *addr = static_cast< wchar_t * >( trick_MM->declare_var( TRICK_WCHAR, "", 0, "", 1, &size ) );
 
       /** @li Copy the contents of the original character string to the duplicate. */
       /** @li Return the address of the new allocation.*/

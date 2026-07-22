@@ -55,12 +55,10 @@ NASA, Johnson Space Center\n
 // Trick includes.
 #include "trick/MemoryManager.hh"
 #include "trick/attributes.h"
-#include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
 #include "trick/message_type.h"
 
 // SpaceFOM includes.
-#include "SpaceFOM/ExecutionConfiguration.hh"
 #include "SpaceFOM/ExecutionConfiguration2.hh"
 #include "SpaceFOM/Types.hh"
 
@@ -156,7 +154,7 @@ void ExecutionConfiguration2::configure_attributes()
    this->packing  = this;
    // Allocate the attributes for the ExCO HLA object.
    this->attr_count = 8;
-   this->attributes = static_cast< Attribute * >( TMM_declare_var_1d( "TrickHLA::Attribute", this->attr_count ) );
+   this->attributes = static_cast< Attribute * >( trick_MM->declare_var( "TrickHLA::Attribute", this->attr_count ) );
 
    //
    // Specify the ExCO attributes.

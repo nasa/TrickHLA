@@ -49,9 +49,7 @@ thread data cycle time being longer than the main thread data cycle time.}
 #include "trick/Executive.hh"
 #include "trick/MemoryManager.hh"
 #include "trick/Threads.hh"
-#include "trick/exec_proto.h"
 #include "trick/exec_proto.hh"
-#include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
 #include "trick/message_type.h"
 
@@ -224,7 +222,7 @@ void TrickThreadCoordinator::initialize_thread_coordinator(
    }
 
    // Allocate the thread state array for all the Trick threads (main + child).
-   thread_state = static_cast< unsigned int * >( TMM_declare_var_1d( "unsigned int", thread_cnt ) );
+   thread_state = static_cast< unsigned int * >( trick_MM->declare_var( "unsigned int", thread_cnt ) );
    if ( thread_state == NULL ) {
       ostringstream errmsg;
       errmsg << "TrickThreadCoordinator::initialize_thread_coordinator():" << __LINE__
@@ -288,7 +286,7 @@ void TrickThreadCoordinator::initialize_thread_coordinator(
    }
 
    // Allocate memory for the data cycle times per each thread.
-   data_cycle_time_per_thread = static_cast< double * >( TMM_declare_var_1d( "double", thread_cnt ) );
+   data_cycle_time_per_thread = static_cast< double * >( trick_MM->declare_var( "double", thread_cnt ) );
    if ( data_cycle_time_per_thread == NULL ) {
       ostringstream errmsg;
       errmsg << "TrickThreadCoordinator::initialize_thread_coordinator():" << __LINE__
@@ -297,7 +295,7 @@ void TrickThreadCoordinator::initialize_thread_coordinator(
              << "!\n";
       DebugHandler::terminate( errmsg.str() );
    }
-   data_cycle_base_time_per_thread = static_cast< int64_t * >( TMM_declare_var_1d( "long long", thread_cnt ) );
+   data_cycle_base_time_per_thread = static_cast< int64_t * >( trick_MM->declare_var( "long long", thread_cnt ) );
    if ( data_cycle_base_time_per_thread == NULL ) {
       ostringstream errmsg;
       errmsg << "TrickThreadCoordinator::initialize_thread_coordinator():" << __LINE__
@@ -315,7 +313,7 @@ void TrickThreadCoordinator::initialize_thread_coordinator(
 
    // Allocate memory for the data cycle times per each object instance.
    if ( object_service->obj_count > 0 ) {
-      data_cycle_time_per_obj = static_cast< double * >( TMM_declare_var_1d( "double", object_service->obj_count ) );
+      data_cycle_time_per_obj = static_cast< double * >( trick_MM->declare_var( "double", object_service->obj_count ) );
       if ( data_cycle_time_per_obj == NULL ) {
          ostringstream errmsg;
          errmsg << "TrickThreadCoordinator::initialize_thread_coordinator():" << __LINE__
@@ -325,7 +323,7 @@ void TrickThreadCoordinator::initialize_thread_coordinator(
          DebugHandler::terminate( errmsg.str() );
          return;
       }
-      data_cycle_base_time_per_obj = static_cast< int64_t * >( TMM_declare_var_1d( "long long", object_service->obj_count ) );
+      data_cycle_base_time_per_obj = static_cast< int64_t * >( trick_MM->declare_var( "long long", object_service->obj_count ) );
       if ( data_cycle_base_time_per_obj == NULL ) {
          ostringstream errmsg;
          errmsg << "TrickThreadCoordinator::initialize_thread_coordinator():" << __LINE__

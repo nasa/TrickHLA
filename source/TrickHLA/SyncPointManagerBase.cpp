@@ -43,7 +43,7 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick includes.
-#include "trick/memorymanager_c_intf.h"
+#include "trick/MemoryManager.hh"
 #include "trick/message_proto.h"
 #include "trick/message_type.h"
 
@@ -138,7 +138,7 @@ void SyncPointManagerBase::clear()
 {
    // Clear/remove everything from the list.
    while ( !sync_pnt_lists.empty() ) {
-      TMM_delete_var_a( sync_pnt_lists.back() );
+      trick_MM->delete_var( sync_pnt_lists.back() );
       sync_pnt_lists.back() = NULL;
       sync_pnt_lists.pop_back();
    }
@@ -161,7 +161,7 @@ bool SyncPointManagerBase::add_sync_point_list(
    if ( !contains_sync_point_list_name( list_name ) ) {
 
       // Allocate a new sync point list and add it to the sync_pnt_lists.
-      SyncPointList *list = static_cast< SyncPointList * >( TMM_declare_var_1d( "TrickHLA::SyncPointList", 1 ) );
+      SyncPointList *list = static_cast< SyncPointList * >( trick_MM->declare_var( "TrickHLA::SyncPointList", 1 ) );
       if ( list == NULL ) {
          ostringstream errmsg;
          errmsg << "SyncPointManagerBase::add_sync_point_list():" << __LINE__

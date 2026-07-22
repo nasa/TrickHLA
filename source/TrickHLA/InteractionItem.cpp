@@ -45,7 +45,6 @@ NASA, Johnson Space Center\n
 
 // Trick includes.
 #include "trick/MemoryManager.hh"
-#include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
 #include "trick/message_type.h"
 
@@ -148,7 +147,7 @@ InteractionItem::InteractionItem(
 {
    if ( ( user_supplied_tag_size > 0 ) && ( rhs.user_supplied_tag != NULL ) ) {
       user_supplied_tag = static_cast< unsigned char * >(
-         TMM_declare_var_1d( "unsigned char", (int)user_supplied_tag_size ) );
+         trick_MM->declare_var( "unsigned char", (int)user_supplied_tag_size ) );
       memcpy( user_supplied_tag, rhs.user_supplied_tag, user_supplied_tag_size ); // flawfinder: ignore
    }
 
@@ -227,7 +226,7 @@ void InteractionItem::initialize(
    user_supplied_tag_size = theUserSuppliedTag.size();
    if ( user_supplied_tag_size > 0 ) {
       user_supplied_tag = static_cast< unsigned char * >(
-         TMM_declare_var_1d( "unsigned char", (int)user_supplied_tag_size ) );
+         trick_MM->declare_var( "unsigned char", (int)user_supplied_tag_size ) );
       memcpy( user_supplied_tag, theUserSuppliedTag.data(), user_supplied_tag_size ); // flawfinder: ignore
    }
 }
@@ -243,7 +242,7 @@ void InteractionItem::checkpoint_queue()
       parm_items_count = parameter_queue.size();
 
       parm_items = reinterpret_cast< ParameterItem * >(
-         alloc_type( (int)parm_items_count, "TrickHLA::ParameterItem" ) );
+         trick_MM->declare_var( "TrickHLA::ParameterItem", (int)parm_items_count ) );
       if ( parm_items == NULL ) {
          ostringstream errmsg;
          errmsg << "InteractionItem::checkpoint_queue():" << __LINE__
@@ -264,7 +263,7 @@ void InteractionItem::checkpoint_queue()
          parm_items[i].size  = item->size;
          if ( item->size > 0 ) {
             parm_items[i].data = static_cast< unsigned char * >(
-               TMM_declare_var_1d( "unsigned char", (int)item->size ) );
+               trick_MM->declare_var( "unsigned char", (int)item->size ) );
 
             memcpy( parm_items[i].data, item->data, item->size ); // flawfinder: ignore
          } else {

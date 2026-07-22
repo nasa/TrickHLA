@@ -40,7 +40,7 @@ NASA, Johnson Space Center\n
 // Trick include files.
 #include "trick/attributes.h"
 #include "trick/io_alloc.h"
-#include "trick/memorymanager_c_intf.h"
+#include "trick/MemoryManager.hh"
 #include "trick/parameter_types.h"
 
 // TrickHLA include files.
@@ -170,10 +170,10 @@ void VariableArrayEncoderBase::calculate_var_element_count()
       if ( var_address != NULL ) {
 
          // get_size returns the number of elements in the dynamic array.
-         int num_items = get_size( var_address );
+         int num_items = trick_MM->get_size( var_address );
          if ( num_items <= 0 ) {
             // Get the allocation info that contains the variable address.
-            ALLOC_INFO const *alloc_info = get_alloc_info_of( var_address );
+            ALLOC_INFO const *alloc_info = trick_MM->get_alloc_info_of( var_address );
             if ( alloc_info != NULL ) {
                num_items = alloc_info->num;
             }
@@ -195,20 +195,20 @@ void VariableArrayEncoderBase::resize_trick_var(
              || ( *( static_cast< void ** >( address ) ) == NULL ) ) ) {
 
       if ( ( type == TRICK_STRING ) || ( type == TRICK_WSTRING ) ) {
-         // TMM_resize_array_1d_a does not support std::string or std::wstring
+         // trick_MM->resize_array does not support std::string or std::wstring
          // so reallocate a new array and delete the old one.
          if ( *( static_cast< void ** >( address ) ) != NULL ) {
-            TMM_delete_var_a( *( static_cast< void ** >( address ) ) );
+            trick_MM->delete_var( *( static_cast< void ** >( address ) ) );
          }
          *( static_cast< void ** >( address ) ) =
-            static_cast< void * >( TMM_declare_var_1d( type_name.c_str(), (int)new_size ) );
+            static_cast< void * >( trick_MM->declare_var( type_name.c_str(), (int)new_size ) );
       } else {
          if ( *( static_cast< void ** >( address ) ) == NULL ) {
             *( static_cast< void ** >( address ) ) =
-               static_cast< void * >( TMM_declare_var_1d( type_name.c_str(), (int)new_size ) );
+               static_cast< void * >( trick_MM->declare_var( type_name.c_str(), (int)new_size ) );
          } else {
             *( static_cast< void ** >( address ) ) =
-               static_cast< void * >( TMM_resize_array_1d_a(
+               static_cast< void * >( trick_MM->resize_array(
                   *( static_cast< void ** >( address ) ), (int)new_size ) );
          }
       }

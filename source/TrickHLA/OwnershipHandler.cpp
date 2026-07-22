@@ -48,7 +48,6 @@ NASA, Johnson Space Center\n
 
 // Trick includes.
 #include "trick/MemoryManager.hh"
-#include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
 #include "trick/message_type.h"
 
@@ -119,7 +118,8 @@ void OwnershipHandler::convert_data_before_checkpoint()
          message_publish( MSG_NORMAL, "OwnershipHandler::convert_data_before_checkpoint():%d Checkpointing %d pull_request elements.\n",
                           __LINE__, pull_items_cnt );
       }
-      pull_items = reinterpret_cast< OwnershipItem * >( alloc_type( (int)pull_items_cnt, "TrickHLA::OwnershipItem" ) );
+      pull_items = reinterpret_cast< OwnershipItem * >(
+                      trick_MM->declare_var( "TrickHLA::OwnershipItem", (int)pull_items_cnt ) );
       if ( pull_items == NULL ) {
          ostringstream errmsg;
          errmsg << "OwnershipHandler::convert_data_before_checkpoint():" << __LINE__
@@ -156,7 +156,8 @@ void OwnershipHandler::convert_data_before_checkpoint()
          message_publish( MSG_NORMAL, "OwnershipHandler::convert_data_before_checkpoint():%d Checkpointing %d push_request elements.\n",
                           __LINE__, push_items_cnt );
       }
-      push_items = reinterpret_cast< OwnershipItem * >( alloc_type( (int)push_items_cnt, "TrickHLA::OwnershipItem" ) );
+      push_items = reinterpret_cast< OwnershipItem * >(
+                      trick_MM->declare_var( "TrickHLA::OwnershipItem", (int)push_items_cnt ) );
       if ( push_items == NULL ) {
          ostringstream errmsg;
          errmsg << "OwnershipHandler::convert_data_before_checkpoint():" << __LINE__

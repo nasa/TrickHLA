@@ -33,7 +33,6 @@ NASA, Johnson Space Center\n
 
 // Trick includes.
 #include "trick/MemoryManager.hh"
-#include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
 #include "trick/message_type.h"
 
@@ -75,7 +74,7 @@ ParameterItem::ParameterItem(
    if ( param_value != NULL ) {
       size = param_value->size();
       if ( size > 0 ) {
-         data = static_cast< unsigned char * >( TMM_declare_var_1d( "unsigned char", (int)size ) );
+         data = static_cast< unsigned char * >( trick_MM->declare_var( "unsigned char", (int)size ) );
          memcpy( data, param_value->data(), size ); // flawfinder: ignore
       }
    }
@@ -92,7 +91,7 @@ ParameterItem::ParameterItem(
      data( NULL )
 {
    if ( ( size > 0 ) && ( rhs.data != NULL ) ) {
-      data = static_cast< unsigned char * >( TMM_declare_var_1d( "unsigned char", (int)size ) );
+      data = static_cast< unsigned char * >( trick_MM->declare_var( "unsigned char", (int)size ) );
       memcpy( data, rhs.data, size ); // flawfinder: ignore
    }
 }

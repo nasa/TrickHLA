@@ -57,7 +57,6 @@ NASA, Johnson Space Center\n
 // Trick includes.
 #include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
-#include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
 #include "trick/message_type.h"
 
@@ -5773,7 +5772,7 @@ void Object::initialize_thread_ID_array()
 
    // Allocate memory for the data cycle times per each thread.
    this->thread_ids_array = static_cast< bool * >(
-      TMM_declare_var_1d( "bool", this->thread_ids_array_count ) );
+      trick_MM->declare_var( "bool", this->thread_ids_array_count ) );
    if ( this->thread_ids_array == NULL ) {
       ostringstream errmsg;
       errmsg << "Object::initialize_thread_ID_array():" << __LINE__

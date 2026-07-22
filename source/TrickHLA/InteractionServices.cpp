@@ -43,7 +43,6 @@ NASA, Johnson Space Center\n
 
 // Trick includes.
 #include "trick/MemoryManager.hh"
-#include "trick/memorymanager_c_intf.h"
 #include "trick/message_proto.h"
 #include "trick/message_type.h"
 
@@ -764,7 +763,7 @@ void InteractionServices::convert_data_before_checkpoint()
 
       // Allocate the interaction items base don the count.
       check_interactions = reinterpret_cast< InteractionItem * >(
-         alloc_type( (int)check_interactions_count, "TrickHLA::InteractionItem" ) );
+         trick_MM->declare_var( "TrickHLA::InteractionItem", (int)check_interactions_count ));
       if ( check_interactions == NULL ) {
          ostringstream errmsg;
          errmsg << "InteractionServices::convert_data_before_checkpoint():" << __LINE__

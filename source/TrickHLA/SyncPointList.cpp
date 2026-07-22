@@ -38,7 +38,7 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick includes.
-#include "trick/memorymanager_c_intf.h"
+#include "trick/MemoryManager.hh"
 
 // TrickHLA includes.
 #include "TrickHLA/DebugHandler.hh"
@@ -113,7 +113,7 @@ void SyncPointList::clear()
 {
    // Clear/remove everything from the list.
    while ( !list.empty() ) {
-      TMM_delete_var_a( list.back() );
+      trick_MM->delete_var( list.back() );
       list.back() = NULL;
       list.pop_back();
    }
@@ -153,7 +153,7 @@ bool SyncPointList::add(
    }
 
    // Add the sync-point to the corresponding named list.
-   SyncPoint *sp = static_cast< SyncPoint * >( TMM_declare_var_1d( "TrickHLA::SyncPoint", 1 ) );
+   SyncPoint *sp = static_cast< SyncPoint * >( trick_MM->declare_var( "TrickHLA::SyncPoint", 1 ) );
    if ( sp == NULL ) {
       string label_str;
       StringUtilities::to_string( label_str, label );
@@ -187,7 +187,7 @@ bool SyncPointList::add(
    }
 
    // Add the sync-point to the corresponding named list.
-   SyncPointTimed *sp = static_cast< SyncPointTimed * >( TMM_declare_var_1d( "TrickHLA::SyncPointTimed", 1 ) );
+   SyncPointTimed *sp = static_cast< SyncPointTimed * >( trick_MM->declare_var( "TrickHLA::SyncPointTimed", 1 ) );
    if ( sp == NULL ) {
       string label_str;
       StringUtilities::to_string( label_str, label );

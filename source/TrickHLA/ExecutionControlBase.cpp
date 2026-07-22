@@ -1815,7 +1815,7 @@ void ExecutionControlBase::checkpoint_restart()
          errmsg << "ExecutionControlBase::checkpoint_restart():" << __LINE__
                 << ": WARNING: Resetting Save state to THLASaveProcessEnum::SAVE_NONE!" << endl
                 << " Label: '" << label_str << "'" << endl
-                << " State: '" << TrickHLA::to_string( save_restore_service->restore_state ) << "'" << endl;
+                << " State: '" << TrickHLA::to_string( save_restore_service->save_state ) << "'" << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
       save_restore_service->save_state = THLASaveProcessEnum::SAVE_NONE;
