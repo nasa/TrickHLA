@@ -155,13 +155,24 @@ SyncPtStateEnum SyncPointManagerBase::get_sync_point_state(
 bool SyncPointManagerBase::add_sync_point_list(
    string const &list_name )
 {
+
    MutexProtection const auto_unlock_mutex( &mutex );
 
    // Create the named list only if it does not already exist.
    if ( !contains_sync_point_list_name( list_name ) ) {
 
       // Allocate a new sync point list and add it to the sync_pnt_lists.
-      SyncPointList *list = static_cast< SyncPointList * >( trick_MM->declare_var( "TrickHLA::SyncPointList", 1 ) );
+      // FIXME: We need to use a named allocation to keep Trick STL checkpoint happy.
+      int cdims[] = {1};
+      string sync_point_list_name = string( "SyncPointList_" ) + list_name;
+      SyncPointList *list = nullptr;
+      list = memory_services->declare_var( list, 
+                                           "TrickHLA::SyncPointList",
+                                           0,
+                                           sync_point_list_name.c_str(),
+                                           1,
+                                           cdims );
+
       if ( list == NULL ) {
          ostringstream errmsg;
          errmsg << "SyncPointManagerBase::add_sync_point_list():" << __LINE__

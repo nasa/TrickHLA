@@ -37,12 +37,10 @@ NASA, Johnson Space Center\n
 #include <sstream>
 #include <string>
 
-// Trick includes.
-#include "trick/MemoryManager.hh"
-
 // TrickHLA includes.
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
+#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/SyncPoint.hh"
 #include "TrickHLA/SyncPointList.hh"
 #include "TrickHLA/SyncPointTimed.hh"
@@ -141,9 +139,10 @@ SyncPoint *SyncPointList::get(
 bool SyncPointList::add(
    wstring const &label )
 {
+   string label_str;
+   StringUtilities::to_string( label_str, label );
+
    if ( contains( label ) ) {
-      string label_str;
-      StringUtilities::to_string( label_str, label );
       ostringstream errmsg;
       errmsg << "SyncPointList::add():" << __LINE__
              << " ERROR: The sync-point label '" << label_str
@@ -153,7 +152,17 @@ bool SyncPointList::add(
    }
 
    // Add the sync-point to the corresponding named list.
-   SyncPoint *sp = static_cast< SyncPoint * >( trick_MM->declare_var( "TrickHLA::SyncPoint", 1 ) );
+   // Using a named allocation makes the checkpoint file easier to work with.
+   int cdims[] = {1};
+   string sync_point_name = string( "SyncPoint_" ) + label_str;
+   SyncPoint *sp = nullptr;
+   sp = memory_services->declare_var( sp, 
+                                      "TrickHLA::SyncPoint",
+                                      0,
+                                      sync_point_name.c_str(),
+                                      1,
+                                      cdims );
+
    if ( sp == NULL ) {
       string label_str;
       StringUtilities::to_string( label_str, label );

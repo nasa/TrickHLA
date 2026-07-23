@@ -1783,6 +1783,43 @@ void ExecutionControlBase::checkpoint_preload()
  */
 void ExecutionControlBase::checkpoint_restart()
 {
+
+   // Make sure to reset the Save state.  Otherwise, the Freeze loop
+   // SaveRestoreServices::save_process routine will pickup wherever the Save
+   // process was when the checkpoint file was generateed.
+   if ( save_restore_service->save_state != THLASaveProcessEnum::SAVE_NONE ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+         string label_str;
+         StringUtilities::to_string( label_str, save_restore_service->restore_label );
+         ostringstream errmsg;
+         errmsg << "ExecutionControlBase::checkpoint_restart():" << __LINE__
+                << ": WARNING: Resetting Save state to THLASaveProcessEnum::SAVE_NONE!" << endl
+                << " Label: '" << label_str << "'" << endl
+                << " State: '" << TrickHLA::to_string( save_restore_service->save_state ) << "'" << endl;
+         message_publish( MSG_WARNING, errmsg.str().c_str() );
+      }
+      save_restore_service->save_state = THLASaveProcessEnum::SAVE_NONE;
+   }
+
+   // Check to see if the load_checkpoint succeded.
+   if ( !trick_MM->get_checkpoint_restore_state() ){
+
+      // Set the Restore state to failed!
+      save_restore_service->restore_state = THLARestoreProcessEnum::RESTORE_FAILED;
+
+      // Tell the user.
+      string restore_label_str;
+      StringUtilities::to_string( restore_label_str, save_restore_service->restore_label );
+      ostringstream errmsg;
+      errmsg << "ExecutionControlBase::checkpoint_restart():" << __LINE__
+             << ": ERROR: Restore failed for label: " << restore_label_str << endl;
+      message_publish( MSG_ERROR, errmsg.str().c_str() );
+
+      // Return and let the restore_process handle the failure.
+      return;
+
+   }
+
    // FIXME: Is this always the case?
    // TrickHLA only supports a checkpoint load as part of an HLA Restore process.
    if ( save_restore_service->restore_state != THLARestoreProcessEnum::RESTORE_CHECKPOINT ) {
@@ -1802,23 +1839,6 @@ void ExecutionControlBase::checkpoint_restart()
       msg << "ExecutionControlBase::checkpoint_restart():"
           << __LINE__ << ": Restarting after loading a checkpoint." << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
-   }
-
-   // Make sure to reset the Save state.  Otherwise, the Freeze loop
-   // SaveRestoreServices::save_process routine will pickup wherever the Save
-   // process was when the checkpoint file was generateed.
-   if ( save_restore_service->save_state != THLASaveProcessEnum::SAVE_NONE ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
-         string label_str;
-         StringUtilities::to_string( label_str, save_restore_service->restore_label );
-         ostringstream errmsg;
-         errmsg << "ExecutionControlBase::checkpoint_restart():" << __LINE__
-                << ": WARNING: Resetting Save state to THLASaveProcessEnum::SAVE_NONE!" << endl
-                << " Label: '" << label_str << "'" << endl
-                << " State: '" << TrickHLA::to_string( save_restore_service->save_state ) << "'" << endl;
-         message_publish( MSG_WARNING, errmsg.str().c_str() );
-      }
-      save_restore_service->save_state = THLASaveProcessEnum::SAVE_NONE;
    }
 
    // Call the SyncpointManagerBase function.

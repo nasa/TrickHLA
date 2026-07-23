@@ -58,6 +58,7 @@ NASA, Johnson Space Center\n
 // TrickHLA includes.
 #include "TrickHLA/CheckpointConversionBase.hh"
 #include "TrickHLA/CompileConfig.hh"
+#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/ExecutionConfigurationBase.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
@@ -1155,6 +1156,7 @@ class Federate : public CheckpointConversionBase
    // Federation services required and contained within the Federate class.
    //
    FedAmb                 federate_ambassador;     ///< @trick_units{--} Federate ambassador.
+   MemoryServices         memory_services;         ///< @trick_units{--} Memory services class.
    TimeManagementServices time_management_service; ///< @trick_units{--} Time Management services.
    ObjectServices         object_service;          ///< @trick_units{--} Object Management services.
    SaveRestoreServices    save_restore_service;    ///< @trick_units{--} Save & Restore services.

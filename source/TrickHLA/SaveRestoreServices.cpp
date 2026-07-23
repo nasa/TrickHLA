@@ -2041,17 +2041,17 @@ void SaveRestoreServices::restore_succeded()
  */
 void SaveRestoreServices::restore_failed()
 {
+   ostringstream errmsg;
+   string restore_label_str;
+   StringUtilities::to_string( restore_label_str, restore_label );
 
    // Just return if HLA save and restore is not supported by the simulation
    // initialization scheme selected by the user.
    if ( !execution_control->is_save_and_restore_supported() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
-         string label_str;
-         StringUtilities::to_string( label_str, restore_label );
-         ostringstream errmsg;
          errmsg << "SaveRestoreServices::restore_failed():" << __LINE__
                 << ": WARNING: SaveRestore NOT supported!" << endl
-                << " Label:'" << label_str << "'" << endl;
+                << " Label:'" << restore_label_str << "'" << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
       return;
@@ -2059,16 +2059,34 @@ void SaveRestoreServices::restore_failed()
 
    // Just return if we are not in the proper restore state.
    if ( restore_state != THLARestoreProcessEnum::RESTORE_FAILED ) {
+      errmsg << "SaveRestoreServices::restore_failed():" << __LINE__
+             << ": ERROR: Unexpected Restore state for label: " << restore_label_str << endl
+             << "   Expected state: RESTORE_FAILED" << endl
+             << "   Current state : " << TrickHLA::to_string( restore_state ) << endl;
+         message_publish( MSG_ERROR, errmsg.str().c_str() );
       return;
    }
 
-   // Resume publishing HLA data.
-   federate->publish_data = true;
+   // Really all we can do from here is to resign and shutdown.
+   federate->resign();
+   federate->destroy();
 
-   // Return to nominal state.
-   restore_state = THLARestoreProcessEnum::RESTORE_NONE;
+   // We don't know what the state of memory is in the simulation.
+   // As a result, we cannot count on the TrickHLA shutdown jobs
+   // working as expected.  In fact, they wil most likely generate
+   // a SIGSEGV.  So, we tell TrickHLA to bypass the shutdown jobs
+   // that it knows about.
+   federate->shutdown_called = true;
 
-   // FIXME: Should we just terminate here?
+   // Tell Trick NOT to generate a terminating checkpoint.
+   // This would call the TrickHLA checkpoint jobs.  We DO NOT
+   // want that.
+   the_cpr->set_end_checkpoint( false );
+
+   // Print out message and terminate.
+   errmsg << "SaveRestoreServices::restore_failed():" << __LINE__
+          << ": ERROR: Restore failed for label: " << restore_label_str << endl;
+   DebugHandler::terminate( errmsg.str() );
 
    return;
 }
