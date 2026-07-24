@@ -44,15 +44,15 @@ NASA, Johnson Space Center\n
 namespace TrickHLA
 {
 
-template <typename T>
+template < typename T >
 T MemoryServices::declare_var( T type, std::string class_name, int n_stars, std::string var_name, int n_cdims, int *cdims )
 {
    TRICK_TYPE trick_type = TRICK_STRUCTURED;
 
    // Check to make sure the incoming type is a pointer.
    // If not, then return null.
-   if ( !(std::is_pointer<T>::value) ) {
-      return( nullptr );
+   if ( !( std::is_pointer< T >::value ) ) {
+      return ( nullptr );
    }
 
    // NOTE: This function does not support the following Trick types:
@@ -63,76 +63,58 @@ T MemoryServices::declare_var( T type, std::string class_name, int n_stars, std:
    // Otherwise, match to a recognized Trick type.
    if ( std::is_same< T, char * >::value ) {
       trick_type = TRICK_CHARACTER;
-   }
-   else if ( std::is_same< T, unsigned char * >::value ) {
+   } else if ( std::is_same< T, unsigned char * >::value ) {
       trick_type = TRICK_UNSIGNED_CHARACTER;
-   }
-   else if ( std::is_same< T, char ** >::value ) {
+   } else if ( std::is_same< T, char ** >::value ) {
       trick_type = TRICK_STRING;
-   }
-   else if ( std::is_same< T, short * >::value ) {
+   } else if ( std::is_same< T, short * >::value ) {
       trick_type = TRICK_SHORT;
-   }
-   else if ( std::is_same< T, unsigned short * >::value ) {
+   } else if ( std::is_same< T, unsigned short * >::value ) {
       trick_type = TRICK_UNSIGNED_SHORT;
-   }
-   else if ( std::is_same< T, int * >::value ) {
+   } else if ( std::is_same< T, int * >::value ) {
       trick_type = TRICK_INTEGER;
-   }
-   else if ( std::is_same< T, unsigned int * >::value ) {
+   } else if ( std::is_same< T, unsigned int * >::value ) {
       trick_type = TRICK_UNSIGNED_INTEGER;
-   }
-   else if ( std::is_same< T, long * >::value ) {
+   } else if ( std::is_same< T, long * >::value ) {
       trick_type = TRICK_LONG;
-   }
-   else if ( std::is_same< T, unsigned long * >::value ) {
+   } else if ( std::is_same< T, unsigned long * >::value ) {
       trick_type = TRICK_UNSIGNED_LONG;
-   }
-   else if ( std::is_same< T, float * >::value ) {
+   } else if ( std::is_same< T, float * >::value ) {
       trick_type = TRICK_FLOAT;
-   }
-   else if ( std::is_same< T, double * >::value ) {
+   } else if ( std::is_same< T, double * >::value ) {
       trick_type = TRICK_DOUBLE;
-   }
-   else if ( std::is_same< T, long long * >::value ) {
+   } else if ( std::is_same< T, long long * >::value ) {
       trick_type = TRICK_LONG_LONG;
-   }
-   else if ( std::is_same< T, unsigned long long * >::value ) {
+   } else if ( std::is_same< T, unsigned long long * >::value ) {
       trick_type = TRICK_UNSIGNED_LONG_LONG;
-   }
-   else if ( std::is_same< T, bool * >::value ) {
+   } else if ( std::is_same< T, bool * >::value ) {
       trick_type = TRICK_BOOLEAN;
-   }
-   else if ( std::is_same< T, wchar_t * >::value ) {
+   } else if ( std::is_same< T, wchar_t * >::value ) {
       trick_type = TRICK_WCHAR;
-   }
-   else if ( std::is_same< T, wchar_t ** >::value ) {
+   } else if ( std::is_same< T, wchar_t ** >::value ) {
       trick_type = TRICK_WSTRING;
-   }
-   else if ( std::is_same< T, void * >::value ) {
+   } else if ( std::is_same< T, void * >::value ) {
       trick_type = TRICK_VOID_PTR;
-   }
-   else if ( std::is_same< T, int * >::value ) {
+   } else if ( std::is_same< T, int * >::value ) {
       trick_type = TRICK_INTEGER;
-   }
-   else {
+   } else {
       trick_type = TRICK_STRUCTURED;
    }
 
    // Perform the allocation and return the allocated value.
-   return( static_cast<T>(trick_MM->declare_var( trick_type, class_name, n_stars, var_name, n_cdims, cdims )) );
+   return ( static_cast< T >( trick_MM->declare_var( trick_type, class_name, n_stars, var_name, n_cdims, cdims ) ) );
 }
 
-template <typename T>
+template < typename T >
 T MemoryServices::declare_var( T type, std::string enh_type_spec, int n_elems )
 {
-   return( static_cast<T>(trick_MM->declare_var( enh_type_spec.c_str(), n_elems )) );
+   return ( static_cast< T >( trick_MM->declare_var( enh_type_spec.c_str(), n_elems ) ) );
 }
 
-template <typename T>
+template < typename T >
 T MemoryServices::declare_var( T type, std::string declaration )
 {
-   return( static_cast<T>(trick_MM->declare_var( declaration.c_str() )) );
+   return ( static_cast< T >( trick_MM->declare_var( declaration.c_str() ) ) );
 }
 
 } // namespace TrickHLA

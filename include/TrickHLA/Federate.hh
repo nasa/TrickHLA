@@ -58,12 +58,12 @@ NASA, Johnson Space Center\n
 // TrickHLA includes.
 #include "TrickHLA/CheckpointConversionBase.hh"
 #include "TrickHLA/CompileConfig.hh"
-#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/ExecutionConfigurationBase.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/InteractionServices.hh"
 #include "TrickHLA/KnownFederate.hh"
+#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/ObjectServices.hh"
 #include "TrickHLA/SaveRestoreServices.hh"
 #include "TrickHLA/Types.hh"

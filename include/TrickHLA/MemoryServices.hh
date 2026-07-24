@@ -4,7 +4,7 @@
 @brief Memory management services implementation class for TrickHLA.
 
 @detail This class provide the Trick-based memory management services used by
-the TrickHLA source code for all memory management tasks. 
+the TrickHLA source code for all memory management tasks.
 
 @copyright Copyright 2026 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.
@@ -58,7 +58,7 @@ class MemoryServices
     * @param declaration - a type specifier followed by zero or more asterisks,
     * followed by an optional name, followed by zero or more bracketed integers.
     * @return - An address to the allocated memory or NULL on failure. */
-   virtual void* declare_var( const char* declaration );
+   virtual void *declare_var( char const *declaration );
 
    /* @brief Allocate an anonymous, one dimensional array. The elements of the
     * array are specified by the enhanced-type-specifier. The length of the array
@@ -66,7 +66,7 @@ class MemoryServices
     * @param enh_type_spec - type specifier followed by zero or more asterisks.
     * @param n_elems - The number of items of the given type to allocate.
     * @return - An address to the allocated memory or NULL on failure.  */
-   virtual void* declare_var( const char* enh_type_spec, int n_elems );
+   virtual void *declare_var( char const *enh_type_spec, int n_elems );
 
    /* @brief This is the general version of declare_var(), which allocates a contiguous
     * region of memory, for a (named or anonymous) variable, of the specified type
@@ -83,23 +83,21 @@ class MemoryServices
     * @param n_cdims - number of constrained/fixed dimensions. =0 for unarrayed variables.
     * @param cdims - array of dimension sizes.
     * @return - an address to the allocated memory or NULL on failure. */
-   //virtual void* declare_var( TRICK_TYPE type, std::string class_name, int n_stars, std::string var_name, int n_cdims, int *cdims ) = 0;
-
+   // virtual void* declare_var( TRICK_TYPE type, std::string class_name, int n_stars, std::string var_name, int n_cdims, int *cdims ) = 0;
 
    /* @brief A template function used to allocate memory for any recognized base type. */
-   template <typename T>
+   template < typename T >
    T declare_var( T type, std::string class_name, int n_stars, std::string var_name, int n_cdims, int *cdims );
 
-   template <typename T>
+   template < typename T >
    T declare_var( T type, std::string enh_type_spec, int n_elems );
 
-   template <typename T>
+   template < typename T >
    T declare_var( T type, std::string declaration );
-
 };
 
 // Allow external access to the TrickHLA::MemoryServices instance.
-static MemoryServices * memory_services;
+static MemoryServices *memory_services;
 
 } // namespace TrickHLA
 

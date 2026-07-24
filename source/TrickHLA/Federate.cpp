@@ -215,7 +215,7 @@ Federate::Federate()
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
    // Set the global memory services pointer.
-   TrickHLA::memory_services = &(this->memory_services);
+   TrickHLA::memory_services = &( this->memory_services );
 }
 
 /*!

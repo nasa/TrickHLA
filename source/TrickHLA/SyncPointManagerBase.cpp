@@ -163,15 +163,15 @@ bool SyncPointManagerBase::add_sync_point_list(
 
       // Allocate a new sync point list and add it to the sync_pnt_lists.
       // FIXME: We need to use a named allocation to keep Trick STL checkpoint happy.
-      int cdims[] = {1};
-      string sync_point_list_name = string( "SyncPointList_" ) + list_name;
-      SyncPointList *list = nullptr;
-      list = memory_services->declare_var( list, 
-                                           "TrickHLA::SyncPointList",
-                                           0,
-                                           sync_point_list_name.c_str(),
-                                           1,
-                                           cdims );
+      int            cdims[]              = { 1 };
+      string         sync_point_list_name = string( "SyncPointList_" ) + list_name;
+      SyncPointList *list                 = nullptr;
+      list                                = memory_services->declare_var( list,
+                                                                          "TrickHLA::SyncPointList",
+                                                                          0,
+                                                                          sync_point_list_name.c_str(),
+                                                                          1,
+                                                                          cdims );
 
       if ( list == NULL ) {
          ostringstream errmsg;

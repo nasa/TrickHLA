@@ -119,7 +119,7 @@ void OwnershipHandler::convert_data_before_checkpoint()
                           __LINE__, pull_items_cnt );
       }
       pull_items = reinterpret_cast< OwnershipItem * >(
-                      trick_MM->declare_var( "TrickHLA::OwnershipItem", (int)pull_items_cnt ) );
+         trick_MM->declare_var( "TrickHLA::OwnershipItem", (int)pull_items_cnt ) );
       if ( pull_items == NULL ) {
          ostringstream errmsg;
          errmsg << "OwnershipHandler::convert_data_before_checkpoint():" << __LINE__
@@ -157,7 +157,7 @@ void OwnershipHandler::convert_data_before_checkpoint()
                           __LINE__, push_items_cnt );
       }
       push_items = reinterpret_cast< OwnershipItem * >(
-                      trick_MM->declare_var( "TrickHLA::OwnershipItem", (int)push_items_cnt ) );
+         trick_MM->declare_var( "TrickHLA::OwnershipItem", (int)push_items_cnt ) );
       if ( push_items == NULL ) {
          ostringstream errmsg;
          errmsg << "OwnershipHandler::convert_data_before_checkpoint():" << __LINE__

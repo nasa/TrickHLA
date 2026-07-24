@@ -196,7 +196,7 @@ Object::~Object()
       set_to_unblocking_cyclic_reads();
 
       if ( ( this->thread_ids_array != NULL )
-            && trick_MM->is_alloced( static_cast< void * >( this->thread_ids_array ) ) ) {
+           && trick_MM->is_alloced( static_cast< void * >( this->thread_ids_array ) ) ) {
          if ( trick_MM->delete_var( static_cast< void * >( this->thread_ids_array ) ) ) {
             message_publish( MSG_WARNING, "Object::~Object():%d WARNING failed to delete Trick Memory for 'this->thread_ids_array'\n",
                              __LINE__ );

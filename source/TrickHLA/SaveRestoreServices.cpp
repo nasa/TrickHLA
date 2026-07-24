@@ -2042,7 +2042,7 @@ void SaveRestoreServices::restore_succeded()
 void SaveRestoreServices::restore_failed()
 {
    ostringstream errmsg;
-   string restore_label_str;
+   string        restore_label_str;
    StringUtilities::to_string( restore_label_str, restore_label );
 
    // Just return if HLA save and restore is not supported by the simulation
@@ -2063,7 +2063,7 @@ void SaveRestoreServices::restore_failed()
              << ": ERROR: Unexpected Restore state for label: " << restore_label_str << endl
              << "   Expected state: RESTORE_FAILED" << endl
              << "   Current state : " << TrickHLA::to_string( restore_state ) << endl;
-         message_publish( MSG_ERROR, errmsg.str().c_str() );
+      message_publish( MSG_ERROR, errmsg.str().c_str() );
       return;
    }
 

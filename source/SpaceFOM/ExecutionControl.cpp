@@ -297,7 +297,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
 {
    // Allocate the Mode Transition Request Interaction.
    mtr_interaction = reinterpret_cast< Interaction * >(
-                        trick_MM->declare_var( "TrickHLA::Interaction", 1 ) );
+      trick_MM->declare_var( "TrickHLA::Interaction", 1 ) );
    if ( mtr_interaction == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::setup_MTR_interaction_ref_attributes():" << __LINE__

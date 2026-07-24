@@ -1802,7 +1802,7 @@ void ExecutionControlBase::checkpoint_restart()
    }
 
    // Check to see if the load_checkpoint succeded.
-   if ( !trick_MM->get_checkpoint_restore_state() ){
+   if ( !trick_MM->get_checkpoint_restore_state() ) {
 
       // Set the Restore state to failed!
       save_restore_service->restore_state = THLARestoreProcessEnum::RESTORE_FAILED;
@@ -1817,7 +1817,6 @@ void ExecutionControlBase::checkpoint_restart()
 
       // Return and let the restore_process handle the failure.
       return;
-
    }
 
    // FIXME: Is this always the case?

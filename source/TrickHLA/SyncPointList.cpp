@@ -153,15 +153,15 @@ bool SyncPointList::add(
 
    // Add the sync-point to the corresponding named list.
    // Using a named allocation makes the checkpoint file easier to work with.
-   int cdims[] = {1};
-   string sync_point_name = string( "SyncPoint_" ) + label_str;
-   SyncPoint *sp = nullptr;
-   sp = memory_services->declare_var( sp, 
-                                      "TrickHLA::SyncPoint",
-                                      0,
-                                      sync_point_name.c_str(),
-                                      1,
-                                      cdims );
+   int        cdims[]         = { 1 };
+   string     sync_point_name = string( "SyncPoint_" ) + label_str;
+   SyncPoint *sp              = nullptr;
+   sp                         = memory_services->declare_var( sp,
+                                                              "TrickHLA::SyncPoint",
+                                                              0,
+                                                              sync_point_name.c_str(),
+                                                              1,
+                                                              cdims );
 
    if ( sp == NULL ) {
       string label_str;

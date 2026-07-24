@@ -4,7 +4,7 @@
 @brief Memory management services implementation class for TrickHLA.
 
 @detail This class provide the Trick-based memory management services used by
-the TrickHLA source code for all memory management tasks. 
+the TrickHLA source code for all memory management tasks.
 
 @copyright Copyright 2026 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.
@@ -42,8 +42,6 @@ NASA, Johnson Space Center\n
 using namespace std;
 using namespace TrickHLA;
 
-
-
 /*!
  * @details This is a pure virtual destructor.
  * @job_class{shutdown}
@@ -53,14 +51,12 @@ MemoryServices::~MemoryServices()
    return;
 }
 
-void* MemoryServices::declare_var( const char* declaration )
+void *MemoryServices::declare_var( char const *declaration )
 {
-   return( NULL );
+   return ( NULL );
 }
 
-
-void* MemoryServices::declare_var( const char* enh_type_spec, int n_elems )
+void *MemoryServices::declare_var( char const *enh_type_spec, int n_elems )
 {
-   return( NULL );
+   return ( NULL );
 }
-

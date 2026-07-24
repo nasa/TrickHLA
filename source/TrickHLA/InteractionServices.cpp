@@ -763,7 +763,7 @@ void InteractionServices::convert_data_before_checkpoint()
 
       // Allocate the interaction items base don the count.
       check_interactions = reinterpret_cast< InteractionItem * >(
-         trick_MM->declare_var( "TrickHLA::InteractionItem", (int)check_interactions_count ));
+         trick_MM->declare_var( "TrickHLA::InteractionItem", (int)check_interactions_count ) );
       if ( check_interactions == NULL ) {
          ostringstream errmsg;
          errmsg << "InteractionServices::convert_data_before_checkpoint():" << __LINE__
