@@ -32,9 +32,7 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
-
-// Trick includes.
-#include "trick/MemoryManager.hh"
+#include <cstddef>
 
 // TrickHLA includes.
 #include "TrickHLA/MemoryServices.hh"

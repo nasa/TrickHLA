@@ -22,7 +22,7 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../../../source/TrickHLA/MemoryServices.cpp}
+@trick_link_dependency{../../source/TrickHLA/MemoryServices.cpp}
 
 @revs_title
 @revs_begin
@@ -33,6 +33,9 @@ NASA, Johnson Space Center\n
 
 #ifndef TRICKHLA_MEMORY_SERVICES_HH
 #define TRICKHLA_MEMORY_SERVICES_HH
+
+// System includes.
+#include <string>
 
 namespace TrickHLA
 {
@@ -87,13 +90,13 @@ class MemoryServices
 
    /* @brief A template function used to allocate memory for any recognized base type. */
    template < typename T >
-   T declare_var( T type, std::string class_name, int n_stars, std::string var_name, int n_cdims, int *cdims );
+   T declare_var( T type, std::string const &class_name, int n_stars, std::string const &var_name, int n_cdims, int *cdims );
 
    template < typename T >
-   T declare_var( T type, std::string enh_type_spec, int n_elems );
+   T declare_var( T type, std::string const &enh_type_spec, int n_elems );
 
    template < typename T >
-   T declare_var( T type, std::string declaration );
+   T declare_var( T type, std::string const &declaration );
 };
 
 // Allow external access to the TrickHLA::MemoryServices instance.

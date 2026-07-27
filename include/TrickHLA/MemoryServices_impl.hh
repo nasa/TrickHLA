@@ -19,7 +19,7 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../../../source/TrickHLA/MemoryServices.cpp}
+@trick_link_dependency{../../source/TrickHLA/MemoryServices.cpp}
 
 @revs_title
 @revs_begin
@@ -45,13 +45,19 @@ namespace TrickHLA
 {
 
 template < typename T >
-T MemoryServices::declare_var( T type, std::string class_name, int n_stars, std::string var_name, int n_cdims, int *cdims )
+T MemoryServices::declare_var(
+   T                  type,
+   std::string const &class_name,
+   int                n_stars,
+   std::string const &var_name,
+   int                n_cdims,
+   int               *cdims )
 {
    TRICK_TYPE trick_type = TRICK_STRUCTURED;
 
    // Check to make sure the incoming type is a pointer.
    // If not, then return null.
-   if ( !( std::is_pointer< T >::value ) ) {
+   if ( !std::is_pointer< T >::value ) {
       return ( nullptr );
    }
 
@@ -95,8 +101,6 @@ T MemoryServices::declare_var( T type, std::string class_name, int n_stars, std:
       trick_type = TRICK_WSTRING;
    } else if ( std::is_same< T, void * >::value ) {
       trick_type = TRICK_VOID_PTR;
-   } else if ( std::is_same< T, int * >::value ) {
-      trick_type = TRICK_INTEGER;
    } else {
       trick_type = TRICK_STRUCTURED;
    }
@@ -106,13 +110,18 @@ T MemoryServices::declare_var( T type, std::string class_name, int n_stars, std:
 }
 
 template < typename T >
-T MemoryServices::declare_var( T type, std::string enh_type_spec, int n_elems )
+T MemoryServices::declare_var(
+   T                  type,
+   std::string const &enh_type_spec,
+   int                n_elems )
 {
    return ( static_cast< T >( trick_MM->declare_var( enh_type_spec.c_str(), n_elems ) ) );
 }
 
 template < typename T >
-T MemoryServices::declare_var( T type, std::string declaration )
+T MemoryServices::declare_var(
+   T                  type,
+   std::string const &declaration )
 {
    return ( static_cast< T >( trick_MM->declare_var( declaration.c_str() ) ) );
 }

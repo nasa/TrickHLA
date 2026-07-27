@@ -46,9 +46,9 @@ thread data cycle time being longer than the main thread data cycle time.}
 #include <vector>
 
 // Trick includes.
-#include "trick/Executive.hh"
 #include "trick/MemoryManager.hh"
 #include "trick/Threads.hh"
+#include "trick/exec_proto.h"
 #include "trick/exec_proto.hh"
 #include "trick/message_proto.h"
 #include "trick/message_type.h"

@@ -20,6 +20,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{FedAmb.cpp}
 @trick_link_dependency{Federate.cpp}
 @trick_link_dependency{InteractionServices.cpp}
+@trick_link_dependency{MemoryServices.cpp}
 @trick_link_dependency{ObjectServices.cpp}
 @trick_link_dependency{SaveRestoreServices.cpp}
 @trick_link_dependency{Types.cpp}
@@ -70,6 +71,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/InteractionServices.hh"
 #include "TrickHLA/KnownFederate.hh"
+#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/ObjectServices.hh"
 #include "TrickHLA/SaveRestoreServices.hh"

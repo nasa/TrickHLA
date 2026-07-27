@@ -51,6 +51,7 @@ NASA, Johnson Space Center\n
 // Trick includes.
 #include "trick/CheckPointRestart.hh"
 #include "trick/Clock.hh"
+#include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
 #include "trick/message_proto.h"
 #include "trick/message_type.h"

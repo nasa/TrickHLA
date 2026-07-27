@@ -36,6 +36,7 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick include files.
+#include "trick/MemoryManager.hh"
 #include "trick/attributes.h"
 #include "trick/parameter_types.h"
 
@@ -135,7 +136,7 @@ void CharUnicodeStringEncoder::update_after_decode()
       if ( wstring_data.size() > 0 ) {
          *static_cast< char ** >( address ) = StringUtilities::mm_strdup_wstring( wstring_data );
       } else {
-         char empty = '\0';
+         char const empty = '\0';
 
          // Zero length so allocate and set the null terminating character.
          *static_cast< char ** >( address ) = trick_MM->mm_strdup( &empty );
