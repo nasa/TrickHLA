@@ -49,7 +49,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
     THLA.federate.setup_time_management( 0.250, True, True )
 ```
 
-- The minimum supported Trick version is 25.1.0 because of Trick changes for variable server security, swig class pointers, and std::wstring support.
+- The minimum supported Trick version is 25.1.1 because of Trick changes for variable server security, swig class pointers, std::wstring and checkpoint ssupport.
 - The function name to disable Trick child thread associations in TrickHLA was changed and the corresponding function call in the TrickHLAFederateConfig.py has also been updated.
   - FROM: disable_trick_child_thread_associations()
   - TO: disable_trick_thread_associations()
