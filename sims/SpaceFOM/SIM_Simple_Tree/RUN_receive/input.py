@@ -161,7 +161,6 @@ frames_sim_config.start_in_freeze( False )
 # Instantiate the Python SpaceFOM configuration object.
 federate = SpaceFOMFederateConfig(
    thla_federate        = THLA.federate,
-   thla_manager         = THLA.manager,
    thla_control         = THLA.execution_control,
    thla_config          = THLA.ExCO,
    thla_federation_name = 'SpaceFOM_Roles_Test',
@@ -238,11 +237,11 @@ leaf_loop.getIntegrator( trick.Runge_Kutta_4, 13 )
 if not trick_debug:
    # Check for object allocation.
    # Probably did not trigger the default_data allocation.
-   if THLA.federate.get_manager().obj_count <= 0:
+   if THLA.federate.get_object_service().obj_count <= 0:
       trick.exec_terminate_with_return( -1,
                                         sys._getframe( 0 ).f_code.co_filename,
                                         sys._getframe( 0 ).f_lineno,
-                                        'input.py ERROR: TrickHLA::Manager objects have not been allocated! Try running with --default_data_config command line argument.' )
+                                        'input.py ERROR: TrickHLA objects have not been allocated! Try running with --default_data_config command line argument.' )
    
    # Set the debug flag for the reference frames.
    root_ref_frame.frame_packing.debug = verbose
