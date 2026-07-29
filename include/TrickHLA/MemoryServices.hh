@@ -54,49 +54,147 @@ class MemoryServices
 
   public:
    /*! @brief Destructor for the TrickHLA CheckpointConversionBase class. */
-   virtual ~MemoryServices();
+   ~MemoryServices();
 
-   /* @brief Allocate a contiguous region of memory as specified by an
+   /*! @brief Allocate a contiguous region of memory as specified by an
     * allocation declaration string.
-    * @param declaration - a type specifier followed by zero or more asterisks,
+    * @param declaration A type specifier followed by zero or more asterisks,
     * followed by an optional name, followed by zero or more bracketed integers.
-    * @return - An address to the allocated memory or NULL on failure. */
-   virtual void *declare_var( char const *declaration );
+    * @return An address to the allocated memory or NULL on failure. */
+   static void *declare_var( char const *declaration );
 
-   /* @brief Allocate an anonymous, one dimensional array. The elements of the
+   /*! @brief Delete the memory at the named allocation address.
+    * @param  var_name Name of the Trick memory allocation.
+    * @return Returns true if deallocation succeeded, false otherwise. */
+   static bool delete_var( std::string const & var_name );
+
+   /*! @brief Allocate an anonymous, one dimensional array. The elements of the
     * array are specified by the enhanced-type-specifier. The length of the array
     * is specified by @b n_elems.
-    * @param enh_type_spec - type specifier followed by zero or more asterisks.
-    * @param n_elems - The number of items of the given type to allocate.
-    * @return - An address to the allocated memory or NULL on failure.  */
-   virtual void *declare_var( char const *enh_type_spec, int n_elems );
+    * @param enh_type_spec Type specifier followed by zero or more asterisks.
+    * @param n_elems       The number of items of the given type to allocate.
+    * @return An address to the allocated memory or NULL on failure.  */
+   static void *declare_var( char const *enh_type_spec, size_t n_elems );
 
-   /* @brief This is the general version of declare_var(), which allocates a contiguous
+   //--------------------------------------------------------------------------
+   // String memory management functions.
+   //--------------------------------------------------------------------------
+   
+   /*! @brief Allocate for a duplicate of an input C string (char*).
+    * @param input The C string (char *) to be duplicated.
+    * @return An address to the allocated C string or NULL on failure. */
+   static char * cstrdup( const char * input );
+   
+   /*! @brief Allocate for a duplicate of an input C++ string (std::string).
+    * @param input The string to be duplicated.
+    * @return An address to the allocated C string or NULL on failure. */
+   static char * cstrdup( std::string const &input );
+   
+   /*! @brief Allocate for a duplicate of an input C string (char*).
+    * @param input The C wide string (wchar_t *) to be duplicated.
+    * @return An address to the allocated C wide string or NULL on failure. */
+   static wchar_t * cwstrdup( const char * input );
+   
+   /*! @brief Allocate for a duplicate of an input C wide string (char*).
+    * @param input The C wide string (wchar_t *) to be duplicated.
+    * @return An address to the allocated C wide string or NULL on failure. */
+   static wchar_t * cwstrdup( const wchar_t * input );
+   
+   /*! @brief Allocate for a duplicate of an input C++ wide string (std::wstring).
+    * @param input The wide string to be duplicated.
+    * @return An address to the allocated C wide string or NULL on failure. */
+   static wchar_t * cwstrdup( std::wstring const &input );
+
+   //--------------------------------------------------------------------------
+   // Template functions.
+   //--------------------------------------------------------------------------
+
+   /*! @brief Allocate an array of a specified type instances.
+    * @detail An allocation (variable) may by named (@b var_name != "") or anonymous
+    * (@b var_name == ""). Named allocations are checkpointed using their given name.
+    * Anonymous allocations are checkpointed with generated names of the form:
+    * @c trick_temp_#, where @c # is an integer.
+    * @tparam T        Template type parameter.
+    * @param  type     Specified type to allocate.
+    * @param  n_elems  Number of elements in the array.
+    * @param  var_name Name of the allocation for Trick.  Anonymous allocation if empty.
+    * @return An address to the allocated memory or NULL on failure. */
+   template < typename T >
+   static T declare_var( T type, size_t n_elems, std::string const &var_name = "" );
+
+   /*! @brief This is the general version of declare_var(), which allocates a contiguous
     * region of memory, for a (named or anonymous) variable, of the specified type
     * and dimension.
     * @detail An allocation (variable) may by named (@b var_name != "") or anonymous
     * (@b var_name == ""). Named allocations are checkpointed using their given name.
     * Anonymous allocations are checkpointed with generated names of the form:
     * @c trick_temp_#, where @c # is an integer.
-    * @param type - TRICK_TYPE.
-    * @param class_name - class or struct name if @b type is TRICK_STRUCTURED,
+    * @tparam T          Template type parameter.
+    * @param  type       Specified type to allocate.
+    * @param  class_name Class or struct name if @b type is TRICK_STRUCTURED,
     * otherwise @b class_name should be "".
-    * @param n_stars - number of asterisks in the variable declaration.
-    * @param var_name - (optional) name of the allocation. ="" for anonymous allocations.
-    * @param n_cdims - number of constrained/fixed dimensions. =0 for unarrayed variables.
-    * @param cdims - array of dimension sizes.
-    * @return - an address to the allocated memory or NULL on failure. */
-   // virtual void* declare_var( TRICK_TYPE type, std::string class_name, int n_stars, std::string var_name, int n_cdims, int *cdims ) = 0;
-
-   /* @brief A template function used to allocate memory for any recognized base type. */
+    * @param  n_stars    Number of asterisks in the variable declaration.
+    * @param  var_name   Name of the allocation. ="" for anonymous allocations.
+    * @param  n_cdims    Number of constrained/fixed dimensions. =0 for unarrayed variables.
+    * @param  cdims      Array of dimension sizes.
+    * @return An address to the allocated memory or NULL on failure. */
    template < typename T >
-   T declare_var( T type, std::string const &class_name, int n_stars, std::string const &var_name, int n_cdims, int *cdims );
+   static T declare_var( T type, std::string const &class_name, size_t n_stars, std::string const &var_name, size_t n_cdims, size_t *cdims );
 
+   /*! @brief Allocate a contiguous region of memory as specified by an
+    * allocation declaration string.
+    * @tparam T           Template type parameter.
+    * @param  type        Specified type to allocate.
+    * @param  declaration A type specifier followed by zero or more asterisks,
+    * followed by an optional name, followed by zero or more bracketed integers.
+    * @return An address to the allocated memory or NULL on failure. */
    template < typename T >
-   T declare_var( T type, std::string const &enh_type_spec, int n_elems );
+   static T declare_var( T type, std::string const &declaration );
 
+   /*! @brief Allocate an anonymous, one dimensional array. The elements of the
+    * array are specified by the enhanced-type-specifier. The length of the array
+    * is specified by @b n_elems.
+    * @tparam T             Template type parameter.
+    * @param  type          Specified type to allocate.
+    * @param  enh_type_spec Type specifier followed by zero or more asterisks.
+    * @param  n_elems       The number of items of the given type to allocate.
+    * @return An address to the allocated memory or NULL on failure.  */
    template < typename T >
-   T declare_var( T type, std::string const &declaration );
+   static T declare_var( T type, std::string const &enh_type_spec, size_t n_elems );
+
+   /*! @brief Resize one-dimensional array by address.
+    * @tparam T             Template type parameter.
+    * @param  address       Address of array to be resized.
+    * @param  n_elems       The number of items of the given type to allocate.
+    * @return An address to the allocated memory or NULL on failure.  */
+   template < typename T >
+   static T resize_array( T address, size_t n_elems);
+
+   /*! @brief Delete the memory at the specified address.
+    * @tparam T    Template type parameter.
+    * @param  addr Specified type to allocate.
+    * @return Returns true if deallocation succeeded, false otherwise. */
+   template < typename T >
+   static bool delete_var( T addr );
+
+   //--------------------------------------------------------------------------
+   // Information functions.
+   //--------------------------------------------------------------------------
+
+   /*! @brief Test whether the given address is in Trick managed memory.
+    * @tparam T       Template type parameter.
+    * @param  address The address to be tested.
+    * @return Returns true if allocation exists, false otherwise. */
+   template < typename T >
+   static bool is_alloced( T address);
+
+   /*! @brief Get the size of the given allocation in Trick managed memory.
+    * @tparam T       Template type parameter.
+    * @param  address The address to be queried.
+    * @return Returns the size of the allocation at that address. */
+   template < typename T >
+   static std::size_t get_size( T address );
+
 };
 
 // Allow external access to the TrickHLA::MemoryServices instance.

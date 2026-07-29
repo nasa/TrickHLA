@@ -36,11 +36,11 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick include files.
-#include "trick/MemoryManager.hh"
 #include "trick/attributes.h"
 #include "trick/parameter_types.h"
 
 // TrickHLA include files.
+#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/encoding/CharUnicodeStringEncoder.hh"
@@ -129,7 +129,7 @@ void CharUnicodeStringEncoder::update_after_decode()
 
       // Don't leak memory by deleting the old char* string allocation.
       if ( *static_cast< void ** >( address ) != NULL ) {
-         trick_MM->delete_var( *( static_cast< void ** >( address ) ) );
+         MemoryServices::delete_var( *( static_cast< void ** >( address ) ) );
       }
 
       // Convert from the wide-string to a char* string.
@@ -139,7 +139,7 @@ void CharUnicodeStringEncoder::update_after_decode()
          char const empty = '\0';
 
          // Zero length so allocate and set the null terminating character.
-         *static_cast< char ** >( address ) = trick_MM->mm_strdup( &empty );
+         *static_cast< char ** >( address ) = MemoryServices::cstrdup( &empty );
       }
    }
 }

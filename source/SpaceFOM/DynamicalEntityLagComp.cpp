@@ -36,7 +36,6 @@ NASA, Johnson Space Center\n
 
 // Trick includes.
 #include "trick/Integrator.hh"
-#include "trick/MemoryManager.hh"
 #include "trick/matrix_macros.h"
 #include "trick/message_proto.h"
 #include "trick/message_type.h"
@@ -50,6 +49,7 @@ NASA, Johnson Space Center\n
 #include "SpaceFOM/SpaceTimeCoordinateData.hh"
 
 // TrickHLA includes.
+#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/DebugHandler.hh"
 
 using namespace std;
@@ -89,8 +89,8 @@ DynamicalEntityLagComp::~DynamicalEntityLagComp() // RETURN: -- None.
 {
    // Free up any allocated intergrator.
    if ( this->integrator != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->integrator ) ) ) {
-         message_publish( MSG_WARNING, "SpaceFOM::DynamicalEntityBase::~DynamicalEntityBase():%d WARNING failed to delete Trick Memory for 'this->integrator'\n",
+      if ( !MemoryServices::delete_var( static_cast< void * >( this->integrator ) ) ) {
+         message_publish( MSG_WARNING, "SpaceFOM::DynamicalEntityBase::~DynamicalEntityBase():%d WARNING failed to delete memory for 'this->integrator'\n",
                           __LINE__ );
       }
       this->integrator = NULL;

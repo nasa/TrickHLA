@@ -46,12 +46,12 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick includes.
-#include "trick/MemoryManager.hh"
 #include "trick/message_proto.h"
 #include "trick/message_type.h"
 
 // TrickHLA includes.
 #include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Interaction.hh"
@@ -127,7 +127,7 @@ Interaction::~Interaction()
    // longer get that interaction.
 
    if ( user_supplied_tag != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( user_supplied_tag ) ) ) {
+      if ( !MemoryServices::delete_var( user_supplied_tag ) ) {
          message_publish( MSG_WARNING, "Interaction::~Interaction():%d WARNING failed to delete Trick Memory for 'user_supplied_tag'\n",
                           __LINE__ );
       }
@@ -292,13 +292,11 @@ void Interaction::set_user_supplied_tag(
    if ( tag_size > user_supplied_tag_capacity ) {
       user_supplied_tag_capacity = tag_size;
       if ( user_supplied_tag == NULL ) {
-         user_supplied_tag = static_cast< unsigned char * >(
-            trick_MM->declare_var( "unsigned char",
-                                   (int)user_supplied_tag_capacity ) );
+         user_supplied_tag = MemoryServices::declare_var( user_supplied_tag,
+                                                          (int)user_supplied_tag_capacity );
       } else {
-         user_supplied_tag = static_cast< unsigned char * >(
-            trick_MM->resize_array( user_supplied_tag,
-                                    (int)user_supplied_tag_capacity ) );
+         user_supplied_tag = MemoryServices::resize_array( user_supplied_tag,
+                                                           (int)user_supplied_tag_capacity );
       }
    }
    user_supplied_tag_size = tag_size;

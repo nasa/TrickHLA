@@ -55,7 +55,6 @@ NASA, Johnson Space Center\n
 #include <vector>
 
 // Trick includes.
-#include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
 #include "trick/message_proto.h"
 #include "trick/message_type.h"
@@ -64,6 +63,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
 #include "TrickHLA/Conditional.hh"
 #include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
@@ -195,9 +195,9 @@ Object::~Object()
       // blocking threads go.
       set_to_unblocking_cyclic_reads();
 
-      if ( ( this->thread_ids_array != NULL )
-           && trick_MM->is_alloced( static_cast< void * >( this->thread_ids_array ) ) ) {
-         if ( trick_MM->delete_var( static_cast< void * >( this->thread_ids_array ) ) ) {
+      if (      this->thread_ids_array != NULL
+             && MemoryServices::is_alloced( this->thread_ids_array ) ) {
+         if ( !MemoryServices::delete_var( this->thread_ids_array ) ) {
             message_publish( MSG_WARNING, "Object::~Object():%d WARNING failed to delete Trick Memory for 'this->thread_ids_array'\n",
                              __LINE__ );
          }
@@ -5751,7 +5751,7 @@ void Object::initialize_thread_ID_array()
    // out the thread ID array if it exists and return.
    if ( thread_ids.empty() ) {
       if ( this->thread_ids_array != NULL ) {
-         if ( trick_MM->delete_var( static_cast< void * >( this->thread_ids_array ) ) ) {
+         if ( !MemoryServices::delete_var( this->thread_ids_array ) ) {
             message_publish( MSG_WARNING, "Object::initialize_thread_ID_array():%d WARNING failed to delete Trick Memory for 'this->thread_ids_array'\n",
                              __LINE__ );
          }
@@ -5771,8 +5771,8 @@ void Object::initialize_thread_ID_array()
    }
 
    // Allocate memory for the data cycle times per each thread.
-   this->thread_ids_array = static_cast< bool * >(
-      trick_MM->declare_var( "bool", this->thread_ids_array_count ) );
+   this->thread_ids_array = MemoryServices::declare_var( this->thread_ids_array,
+                                                         this->thread_ids_array_count );
    if ( this->thread_ids_array == NULL ) {
       ostringstream errmsg;
       errmsg << "Object::initialize_thread_ID_array():" << __LINE__

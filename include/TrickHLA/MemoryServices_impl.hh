@@ -34,12 +34,15 @@ NASA, Johnson Space Center\n
 // System includes.
 #include <string>
 #include <type_traits>
+#include <sstream>
 
 // Trick includes.
+#include "trick/message_proto.h"
 #include "trick/MemoryManager.hh"
 
 // TrickHLA includes.
 #include "TrickHLA/MemoryServices.hh"
+#include "TrickHLA/DebugHandler.hh"
 
 namespace TrickHLA
 {
@@ -48,16 +51,23 @@ template < typename T >
 T MemoryServices::declare_var(
    T                  type,
    std::string const &class_name,
-   int                n_stars,
+   size_t             n_stars,
    std::string const &var_name,
-   int                n_cdims,
-   int               *cdims )
+   size_t             n_cdims,
+   size_t            *cdims )
 {
    TRICK_TYPE trick_type = TRICK_STRUCTURED;
 
    // Check to make sure the incoming type is a pointer.
    // If not, then return null.
    if ( !std::is_pointer< T >::value ) {
+      // FIXME: Should we add a DEBUG_SOURCE_MEMORY debug type?
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
+         std::ostringstream msg;
+         msg << "MemoryServices::declare_var():" << __LINE__
+             << ": Type is not a pointer: " << typeid(T).name() << std::endl;
+         message_publish( MSG_WARNING, msg.str().c_str() );
+      }
       return ( nullptr );
    }
 
@@ -106,24 +116,169 @@ T MemoryServices::declare_var(
    }
 
    // Perform the allocation and return the allocated value.
-   return ( static_cast< T >( trick_MM->declare_var( trick_type, class_name, n_stars, var_name, n_cdims, cdims ) ) );
+   return ( static_cast< T >( trick_MM->declare_var( trick_type,
+                                                     class_name,
+                                                     (int)n_stars,
+                                                     var_name,
+                                                     (int)n_cdims,
+                                                     reinterpret_cast<int*>(cdims) ) ) );
 }
 
 template < typename T >
 T MemoryServices::declare_var(
-   T                  type,
-   std::string const &enh_type_spec,
-   int                n_elems )
+   T                   type,
+   size_t              n_elems,
+   std::string const & var_name )
 {
-   return ( static_cast< T >( trick_MM->declare_var( enh_type_spec.c_str(), n_elems ) ) );
+   // Check to make sure the incoming type is a pointer.
+   // If not, then return null.
+   if ( !std::is_pointer< T >::value ) {
+      // FIXME: Should we add a DEBUG_SOURCE_MEMORY debug type?
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
+         std::ostringstream msg;
+         msg << "MemoryServices::declare_var():" << __LINE__
+             << ": Type is not a pointer: " << typeid(T).name() << std::endl;
+         message_publish( MSG_WARNING, msg.str().c_str() );
+      }
+      return ( nullptr );
+   }
+   return( declare_var( type, "", 0, var_name, 1, &n_elems ));
 }
 
 template < typename T >
 T MemoryServices::declare_var(
-   T                  type,
-   std::string const &declaration )
+   T                   type,
+   std::string const & enh_type_spec,
+   size_t              n_elems )
 {
+   // Check to make sure the incoming type is a pointer.
+   // If not, then return null.
+   if ( !std::is_pointer< T >::value ) {
+      // FIXME: Should we add a DEBUG_SOURCE_MEMORY debug type?
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
+         std::ostringstream msg;
+         msg << "MemoryServices::declare_var():" << __LINE__
+             << ": Type is not a pointer: " << typeid(T).name() << std::endl;
+         message_publish( MSG_WARNING, msg.str().c_str() );
+      }
+      return ( nullptr );
+   }
+   return ( static_cast< T >( trick_MM->declare_var( enh_type_spec.c_str(), (int)n_elems ) ) );
+}
+
+template < typename T >
+T MemoryServices::declare_var(
+   T                   type,
+   std::string const & declaration )
+{
+   // Check to make sure the incoming type is a pointer.
+   // If not, then return null.
+   if ( !std::is_pointer< T >::value ) {
+      // FIXME: Should we add a DEBUG_SOURCE_MEMORY debug type?
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
+         std::ostringstream msg;
+         msg << "MemoryServices::declare_var():" << __LINE__
+             << ": Type is not a pointer: " << typeid(T).name() << std::endl;
+         message_publish( MSG_WARNING, msg.str().c_str() );
+      }
+      return ( nullptr );
+   }
    return ( static_cast< T >( trick_MM->declare_var( declaration.c_str() ) ) );
+}
+
+template < typename T >
+T MemoryServices::resize_array( T address, size_t n_elems)
+{
+   // Check to make sure the incoming type is a pointer.
+   // If not, then return null.
+   if ( !std::is_pointer< T >::value ) {
+      // FIXME: Should we add a DEBUG_SOURCE_MEMORY debug type?
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
+         std::ostringstream msg;
+         msg << "MemoryServices::declare_var():" << __LINE__
+             << ": Type is not a pointer: " << typeid(T).name() << std::endl;
+         message_publish( MSG_WARNING, msg.str().c_str() );
+      }
+      return ( nullptr );
+   }
+
+   return( static_cast<T>( trick_MM->resize_array( static_cast<void*>(address), (int)n_elems ) ) );
+
+}
+
+template < typename T >
+bool MemoryServices::delete_var( T addr )
+{
+   // Check to make sure the incoming type is a pointer.
+   // If not, then return null.
+   if ( !std::is_pointer< T >::value ) {
+      // FIXME: Should we add a DEBUG_SOURCE_MEMORY debug type?
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
+         std::ostringstream msg;
+         msg << "MemoryServices::delete_var():" << __LINE__
+             << ": Type is not a pointer: " << typeid(T).name() << std::endl;
+         message_publish( MSG_WARNING, msg.str().c_str() );
+      }
+      return ( false );
+   }
+
+   // Delete the address in Trick memory.
+   // NOTE: trick_MM->delete_var returns 0 on success and 1 on failure!
+   if ( trick_MM->delete_var( static_cast<void*>(addr) ) ) {
+      // FIXME: Should we add a DEBUG_SOURCE_MEMORY debug type?
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
+         std::ostringstream msg;
+         msg << "MemoryServices::delete_var():" << __LINE__
+             << ": Error deleting variable at address: " << addr << std::endl;
+         message_publish( MSG_WARNING, msg.str().c_str() );
+      }
+      return( false );
+   }
+
+   return( true );
+}
+
+template < typename T >
+bool MemoryServices::is_alloced( T addr )
+{
+   // Check to make sure the incoming type is a pointer.
+   // If not, then return false.
+   if ( !std::is_pointer< T >::value ) {
+      // FIXME: Should we add a DEBUG_SOURCE_MEMORY debug type?
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
+         std::ostringstream msg;
+         msg << "MemoryServices::is_alloced():" << __LINE__
+             << ": Type is not a pointer: " << typeid(T).name() << std::endl;
+         message_publish( MSG_WARNING, msg.str().c_str() );
+      }
+      return ( false );
+   }
+   
+   // Call the Trick Memory Manager function.
+   if ( trick_MM->is_alloced( static_cast<void*>(addr) ) ){
+      return( true );
+   }
+   return( false );
+}
+
+template < typename T >
+std::size_t MemoryServices::get_size( T addr )
+{
+   // Check to make sure the incoming type is a pointer.
+   // If not, then return false.
+   if ( !std::is_pointer< T >::value ) {
+      // FIXME: Should we add a DEBUG_SOURCE_MEMORY debug type?
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
+         std::ostringstream msg;
+         msg << "MemoryServices::get_size():" << __LINE__
+             << ": Type is not a pointer: " << typeid(T).name() << std::endl;
+         message_publish( MSG_WARNING, msg.str().c_str() );
+      }
+      return ( false );
+   }
+   
+   // Return the Trick Memory Manager function results.
+   return( trick_MM->get_size( static_cast<void*>(addr) ) );
 }
 
 } // namespace TrickHLA

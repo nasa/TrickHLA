@@ -43,7 +43,6 @@ NASA, Johnson Space Center\n
 #include "JEOD/JEODPhysicalInterface.hh"
 
 // Trick includes.
-#include "trick/MemoryManager.hh"
 #include "trick/message_proto.h"
 #include "trick/message_type.h"
 
@@ -53,6 +52,7 @@ NASA, Johnson Space Center\n
 #include "SpaceFOM/QuaternionData.hh"
 
 // TrickHLA includes.
+#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/Attribute.hh"
 #include "TrickHLA/DebugHandler.hh"
 
@@ -105,7 +105,7 @@ JEODPhysicalInterface::~JEODPhysicalInterface()
    vehicle_point_data = NULL;
 
    if ( this->vehicle_point_id != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->vehicle_point_id ) ) ) {
+      if ( !MemoryServices::delete_var( this->vehicle_point_id ) ) {
          message_publish( MSG_WARNING, "SpaceFOM::JEODPhysicalInterface::~JEODPhysicalInterface():%d WARNING failed to delete Trick Memory for 'this->vehicle_point_id'\n",
                           __LINE__ );
       }
@@ -267,12 +267,12 @@ void JEODPhysicalInterface::unpack_into_working_data()
 void JEODPhysicalInterface::set_vehicle_point_id( char const *new_id )
 {
    if ( this->vehicle_point_id != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->vehicle_point_id ) ) ) {
+      if ( !MemoryServices::delete_var( this->vehicle_point_id ) ) {
          message_publish( MSG_WARNING, "SpaceFOM::JEODPhysicalInterface::set_vehicle_point_id():%d WARNING failed to delete Trick Memory for 'this->vehicle_point_id'\n",
                           __LINE__ );
       }
    }
-   vehicle_point_id = trick_MM->mm_strdup( new_id );
+   vehicle_point_id = MemoryServices::cstrdup( new_id );
 }
 
 /*!

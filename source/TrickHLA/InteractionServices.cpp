@@ -42,12 +42,12 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick includes.
-#include "trick/MemoryManager.hh"
 #include "trick/message_proto.h"
 #include "trick/message_type.h"
 
 // TrickHLA includes.
 #include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Interaction.hh"
@@ -762,8 +762,7 @@ void InteractionServices::convert_data_before_checkpoint()
       check_interactions_count = interactions_queue.size();
 
       // Allocate the interaction items base don the count.
-      check_interactions = reinterpret_cast< InteractionItem * >(
-         trick_MM->declare_var( "TrickHLA::InteractionItem", (int)check_interactions_count ) );
+      check_interactions = MemoryServices::declare_var( check_interactions, check_interactions_count );
       if ( check_interactions == NULL ) {
          ostringstream errmsg;
          errmsg << "InteractionServices::convert_data_before_checkpoint():" << __LINE__
@@ -801,9 +800,8 @@ void InteractionServices::convert_data_before_checkpoint()
          check_interactions[i].user_supplied_tag_size = item->user_supplied_tag_size;
          if ( item->user_supplied_tag_size > 0 ) {
             check_interactions[i].user_supplied_tag =
-               static_cast< unsigned char * >(
-                  trick_MM->declare_var( "unsigned char",
-                                         (int)item->user_supplied_tag_size ) );
+               MemoryServices::declare_var( check_interactions[i].user_supplied_tag,
+                                            item->user_supplied_tag_size             );
 
             memcpy( check_interactions[i].user_supplied_tag, // flawfinder: ignore
                     item->user_supplied_tag,
@@ -860,7 +858,7 @@ void InteractionServices::free_converted_data_for_checkpoint()
       for ( size_t i = 0; i < check_interactions_count; ++i ) {
          check_interactions[i].clear_parm_items();
       }
-      if ( trick_MM->delete_var( static_cast< void * >( check_interactions ) ) ) {
+      if ( !MemoryServices::delete_var( check_interactions ) ) {
          message_publish( MSG_WARNING, "InteractionServices::free_converted_data_for_checkpoint():%d WARNING failed to delete Trick Memory for 'check_interactions'\n",
                           __LINE__ );
       }

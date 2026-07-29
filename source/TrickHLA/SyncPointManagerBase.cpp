@@ -139,7 +139,7 @@ void SyncPointManagerBase::clear()
 {
    // Clear/remove everything from the list.
    while ( !sync_pnt_lists.empty() ) {
-      trick_MM->delete_var( sync_pnt_lists.back() );
+      MemoryServices::delete_var( sync_pnt_lists.back() );
       sync_pnt_lists.back() = NULL;
       sync_pnt_lists.pop_back();
    }
@@ -164,15 +164,15 @@ bool SyncPointManagerBase::add_sync_point_list(
 
       // Allocate a new sync point list and add it to the sync_pnt_lists.
       // FIXME: We need to use a named allocation to keep Trick STL checkpoint happy.
-      int            cdims[]              = { 1 };
+      size_t         cdims[]              = { 1 };
       string const   sync_point_list_name = string( "SyncPointList_" ) + list_name;
       SyncPointList *list                 = nullptr;
-      list                                = memory_services->declare_var( list,
-                                                                          "TrickHLA::SyncPointList",
-                                                                          0,
-                                                                          sync_point_list_name,
-                                                                          1,
-                                                                          cdims );
+      list                                = MemoryServices::declare_var( list,
+                                                                         "TrickHLA::SyncPointList",
+                                                                         0,
+                                                                         sync_point_list_name,
+                                                                         1,
+                                                                         cdims );
 
       if ( list == NULL ) {
          ostringstream errmsg;

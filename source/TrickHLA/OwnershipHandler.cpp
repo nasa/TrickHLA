@@ -47,11 +47,11 @@ NASA, Johnson Space Center\n
 #include <utility>
 
 // Trick includes.
-#include "trick/MemoryManager.hh"
 #include "trick/message_proto.h"
 #include "trick/message_type.h"
 
 // TrickHLA includes.
+#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/Attribute.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
@@ -118,8 +118,7 @@ void OwnershipHandler::convert_data_before_checkpoint()
          message_publish( MSG_NORMAL, "OwnershipHandler::convert_data_before_checkpoint():%d Checkpointing %d pull_request elements.\n",
                           __LINE__, pull_items_cnt );
       }
-      pull_items = reinterpret_cast< OwnershipItem * >(
-         trick_MM->declare_var( "TrickHLA::OwnershipItem", (int)pull_items_cnt ) );
+      pull_items = MemoryServices::declare_var( pull_items, pull_items_cnt );
       if ( pull_items == NULL ) {
          ostringstream errmsg;
          errmsg << "OwnershipHandler::convert_data_before_checkpoint():" << __LINE__
@@ -128,6 +127,7 @@ void OwnershipHandler::convert_data_before_checkpoint()
          DebugHandler::terminate( errmsg.str() );
       }
 
+      // FIXME: Is this needed anymore?
       // Now, encode them to get checkpointed.
       int count = 0;
       for ( owner_map_iter = pull_requests.begin(); owner_map_iter != pull_requests.end(); ++owner_map_iter ) {
@@ -135,7 +135,7 @@ void OwnershipHandler::convert_data_before_checkpoint()
          THLAAttributeMap *tMap      = owner_map_iter->second;
          for ( attrib_iter = tMap->begin(); attrib_iter != tMap->end(); ++attrib_iter ) {
             pull_items[count].time     = curr_time;
-            pull_items[count].FOM_name = trick_MM->mm_strdup( attrib_iter->first.c_str() );
+            pull_items[count].FOM_name = MemoryServices::cstrdup( attrib_iter->first.c_str() );
             ++count;
          }
       }
@@ -156,8 +156,7 @@ void OwnershipHandler::convert_data_before_checkpoint()
          message_publish( MSG_NORMAL, "OwnershipHandler::convert_data_before_checkpoint():%d Checkpointing %d push_request elements.\n",
                           __LINE__, push_items_cnt );
       }
-      push_items = reinterpret_cast< OwnershipItem * >(
-         trick_MM->declare_var( "TrickHLA::OwnershipItem", (int)push_items_cnt ) );
+      push_items = MemoryServices::declare_var( push_items, push_items_cnt );
       if ( push_items == NULL ) {
          ostringstream errmsg;
          errmsg << "OwnershipHandler::convert_data_before_checkpoint():" << __LINE__
@@ -173,7 +172,7 @@ void OwnershipHandler::convert_data_before_checkpoint()
          THLAAttributeMap *tMap      = owner_map_iter->second;
          for ( attrib_iter = tMap->begin(); attrib_iter != tMap->end(); ++attrib_iter ) {
             push_items[count].time     = curr_time;
-            push_items[count].FOM_name = trick_MM->mm_strdup( attrib_iter->first.c_str() );
+            push_items[count].FOM_name = MemoryServices::cstrdup( attrib_iter->first.c_str() );
             ++count;
          }
       }
@@ -256,7 +255,7 @@ void OwnershipHandler::free_converted_data_for_checkpoint()
       for ( int i = 0; i < pull_items_cnt; ++i ) {
          pull_items[i].clear();
       }
-      if ( trick_MM->delete_var( static_cast< void * >( pull_items ) ) ) {
+      if ( !MemoryServices::delete_var( pull_items ) ) {
          message_publish( MSG_WARNING, "OwnershipHandler::free_converted_data_for_checkpoint():%d WARNING failed to delete Trick Memory for 'pull_items'\n",
                           __LINE__ );
       }
@@ -269,7 +268,7 @@ void OwnershipHandler::free_converted_data_for_checkpoint()
       for ( int i = 0; i < push_items_cnt; ++i ) {
          push_items[i].clear();
       }
-      if ( trick_MM->delete_var( static_cast< void * >( push_items ) ) ) {
+      if ( !MemoryServices::delete_var( push_items ) ) {
          message_publish( MSG_WARNING, "OwnershipHandler::free_converted_data_for_checkpoint():%d WARNING failed to delete Trick Memory for 'push_items'\n",
                           __LINE__ );
       }

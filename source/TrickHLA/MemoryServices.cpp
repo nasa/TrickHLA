@@ -33,9 +33,14 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstddef>
+#include <sstream>
+
+// Trick includes.
+#include "trick/message_proto.h"
 
 // TrickHLA includes.
 #include "TrickHLA/MemoryServices.hh"
+#include "TrickHLA/DebugHandler.hh"
 
 using namespace std;
 using namespace TrickHLA;
@@ -51,10 +56,78 @@ MemoryServices::~MemoryServices()
 
 void *MemoryServices::declare_var( char const *declaration )
 {
-   return ( NULL );
+   return ( trick_MM->declare_var( declaration ) );
 }
 
-void *MemoryServices::declare_var( char const *enh_type_spec, int n_elems )
+void *MemoryServices::declare_var( char const *enh_type_spec, size_t n_elems )
 {
-   return ( NULL );
+   return ( trick_MM->declare_var( enh_type_spec, n_elems ) );
+}
+
+bool MemoryServices::delete_var( std::string const & var_name )
+{
+   // Delete the variable name in Trick memory.
+   // NOTE: trick_MM->delete_var returns 0 on success and 1 on failure!
+   if ( trick_MM->delete_var( const_cast<std::string&>(var_name) ) ) {
+      // FIXME: Should we add a DEBUG_SOURCE_MEMORY debug type?
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
+         ostringstream msg;
+         msg << "MemoryServices::delete_var():" << __LINE__
+             << ": Error deleting variable: " << var_name << endl;
+         message_publish( MSG_WARNING, msg.str().c_str() );
+      }
+      return( false );
+   }
+   return( true );
+}
+
+char * MemoryServices::cstrdup( const char * input )
+{
+   return( trick_MM->mm_strdup( input ) );
+}
+
+char * MemoryServices::cstrdup( std::string const &input )
+{
+   return( cstrdup( const_cast< char * >( input.c_str() ) ) );
+}
+
+wchar_t * MemoryServices::cwstrdup( const char * input )
+{
+   std::size_t const len  = strlen( input ) + 1;
+   std::size_t       size = ( len <= INT_MAX ) ? (int)len : INT_MAX;
+   std::size_t       ret;
+
+   /** @li Allocate the duplicate character string */
+   wchar_t *addr = nullptr;
+   addr = MemoryServices::declare_var( addr, "", 0, "", 1, &size );
+
+   /** @li Copy the contents of the original character string to the duplicate. */
+   ret = mbstowcs( addr, input, size );
+   if ( ret == -1 ){
+      // Delete the allocated memory.
+      MemoryServices::delete_var( addr );
+      addr = nullptr;
+   }
+
+   /** @li Return the address of the new allocation.*/
+   return ( addr );
+}
+
+wchar_t * MemoryServices::cwstrdup( const wchar_t * input )
+{
+   std::size_t const len  = wcslen( input ) + 1;
+   std::size_t       size = ( len <= INT_MAX ) ? (int)len : INT_MAX;
+
+   /** @li Allocate the duplicate character string */
+   wchar_t *addr = nullptr;
+   addr = MemoryServices::declare_var( addr, "", 0, "", 1, &size );
+
+   /** @li Copy the contents of the original character string to the duplicate. */
+   /** @li Return the address of the new allocation.*/
+   return ( wcscpy( addr, input ) );
+}
+
+wchar_t * MemoryServices::cwstrdup( std::wstring const &input )
+{
+   return( cwstrdup( const_cast< wchar_t * >( input.c_str() ) ) );
 }

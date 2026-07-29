@@ -44,12 +44,12 @@ NASA, Johnson Space Center\n
 #include <time.h>
 
 // Trick includes.
-#include "trick/MemoryManager.hh"
 #include "trick/message_proto.h"
 #include "trick/message_type.h"
 
 // TrickHLA includes.
 #include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/InteractionItem.hh"
 #include "TrickHLA/Item.hh"
@@ -146,8 +146,7 @@ InteractionItem::InteractionItem(
      time( rhs.time )
 {
    if ( ( user_supplied_tag_size > 0 ) && ( rhs.user_supplied_tag != NULL ) ) {
-      user_supplied_tag = static_cast< unsigned char * >(
-         trick_MM->declare_var( "unsigned char", (int)user_supplied_tag_size ) );
+      user_supplied_tag = MemoryServices::declare_var( user_supplied_tag, user_supplied_tag_size );
       memcpy( user_supplied_tag, rhs.user_supplied_tag, user_supplied_tag_size ); // flawfinder: ignore
    }
 
@@ -168,8 +167,8 @@ InteractionItem::InteractionItem(
 InteractionItem::~InteractionItem()
 {
    if ( user_supplied_tag != NULL ) {
-      if ( trick_MM->is_alloced( static_cast< void * >( user_supplied_tag ) )
-           && trick_MM->delete_var( static_cast< void * >( user_supplied_tag ) ) ) {
+      if (     MemoryServices::is_alloced( user_supplied_tag )
+           && !MemoryServices::delete_var( user_supplied_tag ) ) {
          message_publish( MSG_WARNING, "InteractionItem::~InteractionItem():%d WARNING failed to delete Trick Memory for 'user_supplied_tag'\n",
                           __LINE__ );
       }
@@ -214,8 +213,8 @@ void InteractionItem::initialize(
    }
    // Free the Trick allocated memory for the user supplied tag.
    if ( user_supplied_tag != NULL ) {
-      if ( trick_MM->is_alloced( static_cast< void * >( user_supplied_tag ) )
-           && trick_MM->delete_var( static_cast< void * >( user_supplied_tag ) ) ) {
+      if (     MemoryServices::is_alloced( user_supplied_tag )
+           && !MemoryServices::delete_var( user_supplied_tag ) ) {
          message_publish( MSG_WARNING, "InteractionItem::initialize():%d WARNING failed to delete Trick Memory for 'user_supplied_tag'\n",
                           __LINE__ );
       }
@@ -225,8 +224,7 @@ void InteractionItem::initialize(
    // Put the user supplied tag into a buffer.
    user_supplied_tag_size = theUserSuppliedTag.size();
    if ( user_supplied_tag_size > 0 ) {
-      user_supplied_tag = static_cast< unsigned char * >(
-         trick_MM->declare_var( "unsigned char", (int)user_supplied_tag_size ) );
+      user_supplied_tag = MemoryServices::declare_var( user_supplied_tag, user_supplied_tag_size );
       memcpy( user_supplied_tag, theUserSuppliedTag.data(), user_supplied_tag_size ); // flawfinder: ignore
    }
 }
@@ -241,8 +239,7 @@ void InteractionItem::checkpoint_queue()
 
       parm_items_count = parameter_queue.size();
 
-      parm_items = reinterpret_cast< ParameterItem * >(
-         trick_MM->declare_var( "TrickHLA::ParameterItem", (int)parm_items_count ) );
+      parm_items = MemoryServices::declare_var( parm_items, parm_items_count );
       if ( parm_items == NULL ) {
          ostringstream errmsg;
          errmsg << "InteractionItem::checkpoint_queue():" << __LINE__
@@ -262,8 +259,7 @@ void InteractionItem::checkpoint_queue()
          parm_items[i].index = item->index;
          parm_items[i].size  = item->size;
          if ( item->size > 0 ) {
-            parm_items[i].data = static_cast< unsigned char * >(
-               trick_MM->declare_var( "unsigned char", (int)item->size ) );
+            parm_items[i].data = MemoryServices::declare_var( parm_items[i].data, item->size );
 
             memcpy( parm_items[i].data, item->data, item->size ); // flawfinder: ignore
          } else {
@@ -279,8 +275,8 @@ void InteractionItem::clear_parm_items()
       for ( size_t i = 0; i < parm_items_count; ++i ) {
          parm_items[i].clear();
       }
-      if ( trick_MM->is_alloced( static_cast< void * >( parm_items ) )
-           && trick_MM->delete_var( static_cast< void * >( parm_items ) ) ) {
+      if (     MemoryServices::is_alloced( parm_items )
+           && !MemoryServices::delete_var( parm_items ) ) {
          message_publish( MSG_WARNING, "InteractionItem::clear_parm_items():%d WARNING failed to delete Trick Memory for 'parm_items'\n",
                           __LINE__ );
       }

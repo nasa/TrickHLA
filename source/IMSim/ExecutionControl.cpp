@@ -58,7 +58,6 @@ NASA, Johnson Space Center\n
 
 // Trick includes.
 #include "trick/Executive.hh"
-#include "trick/MemoryManager.hh"
 #include "trick/attributes.h"
 #include "trick/exec_proto.h"
 #include "trick/exec_proto.hh"
@@ -66,6 +65,7 @@ NASA, Johnson Space Center\n
 #include "trick/message_type.h"
 
 // TrickHLA includes.
+#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionConfigurationBase.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
@@ -193,14 +193,14 @@ ExecutionControl::~ExecutionControl()
    // Free up the allocated Freeze Interaction.
    if ( freeze_interaction != NULL ) {
       if ( freeze_interaction->get_handler() != NULL ) {
-         if ( trick_MM->delete_var( static_cast< void * >( freeze_interaction->get_handler() ) ) ) {
-            message_publish( MSG_WARNING, "IMSim::ExecutionControl::~ExecutionControl():%d WARNING failed to delete Trick Memory for 'freeze_interaction->get_handler()'\n",
+         if ( !MemoryServices::delete_var( freeze_interaction->get_handler() ) ) {
+            message_publish( MSG_WARNING, "IMSim::ExecutionControl::~ExecutionControl():%d WARNING failed to delete memory for 'freeze_interaction->get_handler()'\n",
                              __LINE__ );
          }
          freeze_interaction->set_handler( NULL );
       }
-      if ( trick_MM->delete_var( static_cast< void * >( freeze_interaction ) ) ) {
-         message_publish( MSG_WARNING, "IMSim::ExecutionControl::~ExecutionControl():%d WARNING failed to delete Trick Memory for 'freeze_interaction'\n",
+      if ( !MemoryServices::delete_var( freeze_interaction ) ) {
+         message_publish( MSG_WARNING, "IMSim::ExecutionControl::~ExecutionControl():%d WARNING failed to delete memory for 'freeze_interaction'\n",
                           __LINE__ );
       }
       freeze_interaction = NULL;

@@ -46,7 +46,6 @@ thread data cycle time being longer than the main thread data cycle time.}
 #include <vector>
 
 // Trick includes.
-#include "trick/MemoryManager.hh"
 #include "trick/Threads.hh"
 #include "trick/exec_proto.h"
 #include "trick/exec_proto.hh"
@@ -55,6 +54,7 @@ thread data cycle time being longer than the main thread data cycle time.}
 
 // TrickHLA includes.
 #include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Object.hh"
@@ -98,35 +98,35 @@ TrickThreadCoordinator::~TrickThreadCoordinator() // RETURN: -- None.
    // Release the arrays.
    if ( this->thread_state != NULL ) {
       this->thread_cnt = 0;
-      if ( trick_MM->delete_var( static_cast< void * >( this->thread_state ) ) ) {
+      if ( !MemoryServices::delete_var( this->thread_state ) ) {
          message_publish( MSG_WARNING, "TrickThreadCoordinator::~TrickThreadCoordinator():%d WARNING failed to delete Trick Memory for 'this->thread_state'\n",
                           __LINE__ );
       }
       this->thread_state = NULL;
    }
    if ( this->data_cycle_time_per_thread != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->data_cycle_time_per_thread ) ) ) {
+      if ( !MemoryServices::delete_var( this->data_cycle_time_per_thread ) ) {
          message_publish( MSG_WARNING, "TrickThreadCoordinator::~TrickThreadCoordinator():%d WARNING failed to delete Trick Memory for 'this->data_cycle_time_per_thread'\n",
                           __LINE__ );
       }
       this->data_cycle_time_per_thread = NULL;
    }
    if ( this->data_cycle_base_time_per_thread != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->data_cycle_base_time_per_thread ) ) ) {
+      if ( !MemoryServices::delete_var( this->data_cycle_base_time_per_thread ) ) {
          message_publish( MSG_WARNING, "TrickThreadCoordinator::~TrickThreadCoordinator():%d WARNING failed to delete Trick Memory for 'this->data_cycle_base_time_per_thread'\n",
                           __LINE__ );
       }
       this->data_cycle_base_time_per_thread = NULL;
    }
    if ( this->data_cycle_time_per_obj != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->data_cycle_time_per_obj ) ) ) {
+      if ( !MemoryServices::delete_var( this->data_cycle_time_per_obj ) ) {
          message_publish( MSG_WARNING, "TrickThreadCoordinator::~TrickThreadCoordinator():%d WARNING failed to delete Trick Memory for 'this->data_cycle_time_per_obj'\n",
                           __LINE__ );
       }
       this->data_cycle_time_per_obj = NULL;
    }
    if ( this->data_cycle_base_time_per_obj != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( this->data_cycle_base_time_per_obj ) ) ) {
+      if ( !MemoryServices::delete_var( this->data_cycle_base_time_per_obj ) ) {
          message_publish( MSG_WARNING, "TrickThreadCoordinator::~TrickThreadCoordinator():%d WARNING failed to delete Trick Memory for 'this->data_cycle_base_time_per_obj'\n",
                           __LINE__ );
       }

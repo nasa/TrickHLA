@@ -48,11 +48,11 @@ NASA, Johnson Space Center\n
 #include <vector>
 
 // Trick includes.
-#include "trick/MemoryManager.hh"
 #include "trick/parameter_types.h"
 
 // TrickHLA includes.
 #include "TrickHLA/HLAStandardSupport.hh"
+#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/time/Int64BaseTime.hh"
 #include "TrickHLA/time/Int64Time.hh"
 
@@ -120,10 +120,11 @@ class StringUtilities
    static wchar_t *tmm_wstrdup( wchar_t const *s )
    {
       std::size_t const len  = wcslen( s ) + 1;
-      int               size = ( len <= INT_MAX ) ? (int)len : INT_MAX;
+      std::size_t       size = ( len <= INT_MAX ) ? (int)len : INT_MAX;
 
       /** @li Allocate the duplicate character string */
-      wchar_t *addr = static_cast< wchar_t * >( trick_MM->declare_var( TRICK_WCHAR, "", 0, "", 1, &size ) );
+      wchar_t *addr = nullptr;
+      addr = MemoryServices::declare_var( addr, "", 0, "", 1, &size );
 
       /** @li Copy the contents of the original character string to the duplicate. */
       /** @li Return the address of the new allocation.*/
@@ -159,7 +160,7 @@ class StringUtilities
    static char *mm_strdup_string(
       std::string const &input )
    {
-      return trick_MM->mm_strdup( const_cast< char * >( input.c_str() ) );
+      return( MemoryServices::cstrdup( input ) );
    }
 
    /*! @brief C++ wide string to C (char *) string conversion routine with the
@@ -173,7 +174,7 @@ class StringUtilities
    {
       std::string s;
       s.assign( input.begin(), input.end() );
-      return trick_MM->mm_strdup( const_cast< char * >( s.c_str() ) );
+      return( MemoryServices::cstrdup( s ) );
    }
 
    /*! @brief Formatted time double string.

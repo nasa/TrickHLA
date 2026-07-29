@@ -37,13 +37,10 @@ NASA, Johnson Space Center\n
 #include <sstream>
 #include <string>
 
-// trick includes.
-#include "trick/MemoryManager.hh"
-
 // TrickHLA includes.
+#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
-#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/SyncPoint.hh"
 #include "TrickHLA/SyncPointList.hh"
 #include "TrickHLA/SyncPointTimed.hh"
@@ -114,7 +111,7 @@ void SyncPointList::clear()
 {
    // Clear/remove everything from the list.
    while ( !list.empty() ) {
-      trick_MM->delete_var( list.back() );
+      MemoryServices::delete_var( list.back() );
       list.back() = NULL;
       list.pop_back();
    }
@@ -156,15 +153,15 @@ bool SyncPointList::add(
 
    // Add the sync-point to the corresponding named list.
    // Using a named allocation makes the checkpoint file easier to work with.
-   int          cdims[]         = { 1 };
+   size_t       cdims[]         = { 1 };
    string const sync_point_name = string( "SyncPoint_" ) + label_str;
    SyncPoint   *sp              = nullptr;
-   sp                           = memory_services->declare_var( sp,
-                                                                "TrickHLA::SyncPoint",
-                                                                0,
-                                                                sync_point_name,
-                                                                1,
-                                                                cdims );
+   sp                           = MemoryServices::declare_var( sp,
+                                                               "TrickHLA::SyncPoint",
+                                                               0,
+                                                               sync_point_name,
+                                                               1,
+                                                               cdims );
 
    if ( sp == NULL ) {
       ostringstream errmsg;
@@ -197,7 +194,8 @@ bool SyncPointList::add(
    }
 
    // Add the sync-point to the corresponding named list.
-   SyncPointTimed *sp = static_cast< SyncPointTimed * >( trick_MM->declare_var( "TrickHLA::SyncPointTimed", 1 ) );
+   SyncPointTimed *sp = nullptr;
+   sp = MemoryServices::declare_var( sp, 1 );
    if ( sp == NULL ) {
       string label_str;
       StringUtilities::to_string( label_str, label );

@@ -32,12 +32,12 @@ NASA, Johnson Space Center\n
 #include <cstring>
 
 // Trick includes.
-#include "trick/MemoryManager.hh"
 #include "trick/message_proto.h"
 #include "trick/message_type.h"
 
 // TrickHLA includes.
 #include "TrickHLA/HLAStandardSupport.hh"
+#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/Item.hh"
 #include "TrickHLA/ParameterItem.hh"
 
@@ -74,7 +74,7 @@ ParameterItem::ParameterItem(
    if ( param_value != NULL ) {
       size = param_value->size();
       if ( size > 0 ) {
-         data = static_cast< unsigned char * >( trick_MM->declare_var( "unsigned char", (int)size ) );
+         data = MemoryServices::declare_var( data, size );
          memcpy( data, param_value->data(), size ); // flawfinder: ignore
       }
    }
@@ -91,7 +91,7 @@ ParameterItem::ParameterItem(
      data( NULL )
 {
    if ( ( size > 0 ) && ( rhs.data != NULL ) ) {
-      data = static_cast< unsigned char * >( trick_MM->declare_var( "unsigned char", (int)size ) );
+      data = MemoryServices::declare_var( data, size );
       memcpy( data, rhs.data, size ); // flawfinder: ignore
    }
 }
@@ -107,8 +107,8 @@ ParameterItem::~ParameterItem()
 void ParameterItem::clear()
 {
    if ( data != NULL ) {
-      if ( trick_MM->is_alloced( static_cast< void * >( data ) )
-           && trick_MM->delete_var( static_cast< void * >( data ) ) ) {
+      if (     MemoryServices::is_alloced( data )
+           && !MemoryServices::delete_var( data ) ) {
          message_publish( MSG_WARNING, "ParameterItem::clear():%d WARNING failed to delete Trick Memory for 'data'\n", __LINE__ );
       }
       data  = NULL;

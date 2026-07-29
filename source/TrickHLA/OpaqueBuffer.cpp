@@ -38,11 +38,11 @@ NASA, Johnson Space Center\n
 #include <sstream>
 
 // Trick includes.
-#include "trick/MemoryManager.hh"
 #include "trick/message_proto.h"
 #include "trick/message_type.h"
 
 // TrickHLA includes.
+#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/OpaqueBuffer.hh"
 #include "TrickHLA/Types.hh"
@@ -74,7 +74,7 @@ OpaqueBuffer::OpaqueBuffer()
 OpaqueBuffer::~OpaqueBuffer() // RETURN: -- None.
 {
    if ( buffer != NULL ) {
-      if ( trick_MM->delete_var( static_cast< void * >( buffer ) ) ) {
+      if ( !MemoryServices::delete_var( buffer ) ) {
          message_publish( MSG_WARNING, "OpaqueBuffer::~OpaqueBuffer():%d WARNING failed to delete Trick Memory for 'buffer'\n",
                           __LINE__ );
       }
@@ -127,9 +127,9 @@ void OpaqueBuffer::ensure_buffer_capacity(
    if ( requested_size > capacity ) {
       capacity = requested_size;
       if ( buffer == NULL ) {
-         buffer = static_cast< unsigned char * >( trick_MM->declare_var( "unsigned char", (int)capacity ) );
+         buffer = MemoryServices::declare_var( buffer, capacity );
       } else {
-         buffer = static_cast< unsigned char * >( trick_MM->resize_array( buffer, (int)capacity ) );
+         buffer = MemoryServices::resize_array( buffer, capacity );
       }
    } else if ( buffer == NULL ) {
       // Handle the case where the buffer has not been created yet and we
@@ -137,7 +137,7 @@ void OpaqueBuffer::ensure_buffer_capacity(
 
       // Make sure the capacity is at least the same size as the byte alignment.
       capacity = ( requested_size >= alignment ) ? requested_size : alignment;
-      buffer   = static_cast< unsigned char * >( trick_MM->declare_var( "unsigned char", (int)capacity ) );
+      buffer   = MemoryServices::declare_var( buffer, capacity );
    }
 
    if ( buffer == NULL ) {
