@@ -42,18 +42,18 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick includes.
-#include "trick/MemoryManager.hh"
 #include "trick/message_proto.h"
 #include "trick/message_type.h"
 #include "trick/reference_frame.h"
 #include "trick/vector_macros.h"
 
 // TrickHLA includes.
-#include "TrickHLA/Attribute.hh"
 #include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
+#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/Object.hh"
 #include "TrickHLA/Types.hh"
+#include "TrickHLA/Attribute.hh"
+#include "TrickHLA/Object.hh"
 
 // SpaceFOM includes.
 #include "SpaceFOM/PhysicalEntityBase.hh"
@@ -183,7 +183,7 @@ void PhysicalEntityBase::base_config(
    object->packing             = this;
    // Allocate the attributes for the PhysicalEntity HLA object.
    object->attr_count = 9;
-   object->attributes = static_cast< TrickHLA::Attribute * >( trick_MM->declare_var( "TrickHLA::Attribute", object->attr_count ) );
+   object->attributes = MemoryServices::declare_var( object->attributes, object->attr_count );
 
    bool const publish_attr   = create || publish;
    bool const subscribe_attr = !create || subscribe;

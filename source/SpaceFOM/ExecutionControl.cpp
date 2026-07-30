@@ -57,7 +57,6 @@ NASA, Johnson Space Center\n
 // Trick includes.
 #include "trick/Clock.hh"
 #include "trick/Executive.hh"
-#include "trick/MemoryManager.hh"
 #include "trick/attributes.h"
 #include "trick/exec_proto.h"
 #include "trick/exec_proto.hh"
@@ -65,13 +64,10 @@ NASA, Johnson Space Center\n
 #include "trick/message_type.h"
 #include "trick/sim_mode.h"
 
-// SpaceFOM includes.
-#include "SpaceFOM/ExecutionConfiguration.hh"
-#include "SpaceFOM/ExecutionControl.hh"
-#include "SpaceFOM/Types.hh"
-
 // TrickHLA includes.
+#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/Types.hh"
 #include "TrickHLA/ExecutionConfigurationBase.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
@@ -82,7 +78,6 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/ObjectServices.hh"
 #include "TrickHLA/Parameter.hh"
 #include "TrickHLA/SyncPointManagerBase.hh"
-#include "TrickHLA/Types.hh"
 #include "TrickHLA/time/CTETimelineBase.hh"
 #include "TrickHLA/time/Int64BaseTime.hh"
 #include "TrickHLA/time/Int64Time.hh"
@@ -91,6 +86,11 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/utils/SleepTimeout.hh"
 #include "TrickHLA/utils/StringUtilities.hh"
 #include "TrickHLA/utils/Utilities.hh"
+
+// SpaceFOM includes.
+#include "SpaceFOM/ExecutionConfiguration.hh"
+#include "SpaceFOM/ExecutionControl.hh"
+#include "SpaceFOM/Types.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -296,8 +296,7 @@ void ExecutionControl::setup_object_ref_attributes()
 void ExecutionControl::setup_interaction_ref_attributes()
 {
    // Allocate the Mode Transition Request Interaction.
-   mtr_interaction = reinterpret_cast< Interaction * >(
-      trick_MM->declare_var( "TrickHLA::Interaction", 1 ) );
+   mtr_interaction = MemoryServices::declare_var( mtr_interaction, 1 );
    if ( mtr_interaction == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::setup_MTR_interaction_ref_attributes():" << __LINE__
@@ -319,8 +318,8 @@ void ExecutionControl::setup_interaction_ref_attributes()
 
    // Set up parameters.
    mtr_interaction->set_parameter_count( 1 );
-   Parameter *tParm = reinterpret_cast< Parameter * >(
-      trick_MM->declare_var( "TrickHLA::Parameter", mtr_interaction->get_parameter_count() ) );
+   Parameter *tParm = nullptr;
+   tParm = MemoryServices::declare_var( tParm, mtr_interaction->get_parameter_count() );
    if ( tParm == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__

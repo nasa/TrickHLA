@@ -33,17 +33,17 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick includes.
-#include "trick/MemoryManager.hh"
+
+// TrickHLA includes.
+#include "TrickHLA/MemoryServices.hh"
+#include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/Attribute.hh"
+#include "TrickHLA/RecordElement.hh"
+#include "TrickHLA/Types.hh"
 
 // SpaceFOM includes.
 #include "SpaceFOM/QuaternionConfig.hh"
 #include "SpaceFOM/SpaceTimeCoordinateConfig.hh"
-
-// TrickHLA includes.
-#include "TrickHLA/Attribute.hh"
-#include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/RecordElement.hh"
-#include "TrickHLA/Types.hh"
 
 using namespace std;
 using namespace TrickHLA;
@@ -106,14 +106,15 @@ void SpaceTimeCoordinateConfig::configure(
    // field-Name: time, dataType: HLAfloat64LE
    rec_element->rti_encoding  = TrickHLA::ENCODING_FIXED_RECORD;
    rec_element->element_count = 3;
-   rec_element->elements      = static_cast< RecordElement * >( trick_MM->declare_var( "TrickHLA::RecordElement", rec_element->element_count ) );
+   rec_element->elements      = MemoryServices::declare_var( rec_element->elements, rec_element->element_count );
 
    // field-Name: translational_state, dataType: ReferenceFrameTranslation, encoding: HLAfixedRecord, FOM-Module: SISO_SpaceFOM_datatypes.xml
    //    field-Name: position, dataType: PositionVectordata, dataType: (Length,representation:HLAfloat64LE), encoding:HLAfixedArray, cardinality: 3
    //    field-Name: velocity, dataType: VelocityVector, dataType: (Velocity,representation:HLAfloat64LE), encoding:HLAfixedArray, cardinality: 3
    rec_element->elements[0].rti_encoding  = TrickHLA::ENCODING_FIXED_RECORD;
    rec_element->elements[0].element_count = 2;
-   rec_element->elements[0].elements      = static_cast< RecordElement * >( trick_MM->declare_var( "TrickHLA::RecordElement", rec_element->elements[0].element_count ) );
+   rec_element->elements[0].elements      = MemoryServices::declare_var( rec_element->elements[0].elements,
+                                                                         rec_element->elements[0].element_count );
 
    // ReferenceFrameTranslation
    rec_element->elements[0].elements[0].trick_name   = trick_root_name + string( ".pos" );
@@ -129,7 +130,8 @@ void SpaceTimeCoordinateConfig::configure(
    //       AngularVelocityVector: dataType:(AngularRate,representation:HLAfloat64LE), encoding:HLAfixedArray, cardinality:3
    rec_element->elements[1].rti_encoding  = TrickHLA::ENCODING_FIXED_RECORD;
    rec_element->elements[1].element_count = 2;
-   rec_element->elements[1].elements      = static_cast< RecordElement * >( trick_MM->declare_var( "TrickHLA::RecordElement", rec_element->elements[1].element_count ) );
+   rec_element->elements[1].elements      = MemoryServices::declare_var( rec_element->elements[1].elements,
+                                                                         rec_element->elements[1].element_count );
 
    // Quaternion - Attitude
    string const att_trick_root_name = trick_root_name + string( ".att" );

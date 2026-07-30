@@ -47,6 +47,17 @@ NASA, Johnson Space Center\n
 namespace TrickHLA
 {
 
+// Forward Declared Classes:  Since these classes are only used as references
+// through pointers, these classes are included as forward declarations. This
+// helps to limit issues with recursive includes.
+class Attribute;
+class Interaction;
+class InteractionItem;
+class OwnershipItem;
+class Parameter;
+class ParameterItem;
+class RecordElement;
+
 template < typename T >
 T MemoryServices::declare_var(
    T                  type,
@@ -71,48 +82,28 @@ T MemoryServices::declare_var(
       return ( nullptr );
    }
 
+
    // NOTE: This function does not support the following Trick types:
    // TRICK_VOID, TRICK_FILE_PTR, TRICK_ENUMERATED, TRICK_OPAQUE_TYPE,
    // or TRICK_STL.  It will treat everything that it cannot match as
    // a basic type as TRICK_STRUCTURED.
 
-   // Otherwise, match to a recognized Trick type.
-   if ( std::is_same< T, char * >::value ) {
-      trick_type = TRICK_CHARACTER;
-   } else if ( std::is_same< T, unsigned char * >::value ) {
-      trick_type = TRICK_UNSIGNED_CHARACTER;
-   } else if ( std::is_same< T, char ** >::value ) {
-      trick_type = TRICK_STRING;
-   } else if ( std::is_same< T, short * >::value ) {
-      trick_type = TRICK_SHORT;
-   } else if ( std::is_same< T, unsigned short * >::value ) {
-      trick_type = TRICK_UNSIGNED_SHORT;
-   } else if ( std::is_same< T, int * >::value ) {
-      trick_type = TRICK_INTEGER;
-   } else if ( std::is_same< T, unsigned int * >::value ) {
-      trick_type = TRICK_UNSIGNED_INTEGER;
-   } else if ( std::is_same< T, long * >::value ) {
-      trick_type = TRICK_LONG;
-   } else if ( std::is_same< T, unsigned long * >::value ) {
-      trick_type = TRICK_UNSIGNED_LONG;
-   } else if ( std::is_same< T, float * >::value ) {
-      trick_type = TRICK_FLOAT;
-   } else if ( std::is_same< T, double * >::value ) {
-      trick_type = TRICK_DOUBLE;
-   } else if ( std::is_same< T, long long * >::value ) {
-      trick_type = TRICK_LONG_LONG;
-   } else if ( std::is_same< T, unsigned long long * >::value ) {
-      trick_type = TRICK_UNSIGNED_LONG_LONG;
-   } else if ( std::is_same< T, bool * >::value ) {
-      trick_type = TRICK_BOOLEAN;
-   } else if ( std::is_same< T, wchar_t * >::value ) {
-      trick_type = TRICK_WCHAR;
-   } else if ( std::is_same< T, wchar_t ** >::value ) {
-      trick_type = TRICK_WSTRING;
-   } else if ( std::is_same< T, void * >::value ) {
-      trick_type = TRICK_VOID_PTR;
-   } else {
-      trick_type = TRICK_STRUCTURED;
+   // Get the equivalent Trick type.
+   trick_type = static_cast<TRICK_TYPE>(get_trick_type( type ));
+
+   // Check that there is a class_name with any STRUTURED Trick type.
+   if ( trick_type == TRICK_STRUCTURED ) {
+      // Trick has to have a class name for structered types.
+      if ( class_name.empty() ){
+         // FIXME: Should we add a DEBUG_SOURCE_MEMORY debug type?
+         if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
+            std::ostringstream msg;
+            msg << "MemoryServices::declare_var():" << __LINE__
+                << ": Empty class_name for type allocation: "
+                << typeid(T).name() << std::endl;
+            message_publish( MSG_ERROR, msg.str().c_str() );
+         }
+      }
    }
 
    // Perform the allocation and return the allocated value.
@@ -142,7 +133,30 @@ T MemoryServices::declare_var(
       }
       return ( nullptr );
    }
-   return( declare_var( type, "", 0, var_name, 1, &n_elems ));
+   return( declare_var( type, get_class_name(type), 0, var_name, 1, &n_elems ));
+}
+
+template < typename T >
+T MemoryServices::declare_var(
+   T      type,
+   size_t n_elems )
+{
+   std::string class_name = "";
+
+   // Check to make sure the incoming type is a pointer.
+   // If not, then return null.
+   if ( !std::is_pointer< T >::value ) {
+      // FIXME: Should we add a DEBUG_SOURCE_MEMORY debug type?
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
+         std::ostringstream msg;
+         msg << "MemoryServices::declare_var():" << __LINE__
+             << ": Type is not a pointer: " << typeid(T).name() << std::endl;
+         message_publish( MSG_WARNING, msg.str().c_str() );
+      }
+      return ( nullptr );
+   }
+
+   return( declare_var( type, get_class_name(type), 0, "", 1, &n_elems ));
 }
 
 template < typename T >
@@ -226,7 +240,7 @@ bool MemoryServices::delete_var( T addr )
    // NOTE: trick_MM->delete_var returns 0 on success and 1 on failure!
    if ( trick_MM->delete_var( static_cast<void*>(addr) ) ) {
       // FIXME: Should we add a DEBUG_SOURCE_MEMORY debug type?
-      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
          std::ostringstream msg;
          msg << "MemoryServices::delete_var():" << __LINE__
              << ": Error deleting variable at address: " << addr << std::endl;
@@ -279,6 +293,106 @@ std::size_t MemoryServices::get_size( T addr )
    
    // Return the Trick Memory Manager function results.
    return( trick_MM->get_size( static_cast<void*>(addr) ) );
+}
+
+
+template < typename T >
+std::string MemoryServices::get_class_name( T type )
+{
+   std::string class_name = "";
+
+   // Get the Trick type.
+   TRICK_TYPE trick_type = static_cast<TRICK_TYPE>(get_trick_type(type));
+   if ( trick_type != TRICK_STRUCTURED ){
+      // Only the TRICK_STRUCTURED type requires a class name.
+      return( class_name );
+   }
+
+   // Check for specific TrickHLA type matches.
+   if ( std::is_same< T, TrickHLA::Attribute * >::value ) {
+      return( std::string("TrickHLA::Attribute") );
+   }
+   else if ( std::is_same< T, TrickHLA::Interaction * >::value ) {
+      return( std::string("TrickHLA::Interaction") );
+   }
+   else if ( std::is_same< T, TrickHLA::InteractionItem * >::value ) {
+      return( std::string("TrickHLA::InteractionItem") );
+   }
+   else if ( std::is_same< T, TrickHLA::OwnershipItem * >::value ) {
+      return( std::string("TrickHLA::OwnershipItem") );
+   }
+   else if ( std::is_same< T, TrickHLA::Parameter * >::value ) {
+      return( std::string("TrickHLA::Parameter") );
+   }
+   else if ( std::is_same< T, TrickHLA::ParameterItem * >::value ) {
+      return( std::string("TrickHLA::ParameterItem") );
+   }
+   else if ( std::is_same< T, TrickHLA::RecordElement * >::value ) {
+      return( std::string("TrickHLA::RecordElement") );
+   }
+
+   // FIXME: Should we add a DEBUG_SOURCE_MEMORY debug type?
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
+      std::ostringstream msg;
+      msg << "MemoryServices::get_class_name():" << __LINE__
+            << ": Unrecognized TrickHLA type: " << typeid(T).name() << std::endl;
+      message_publish( MSG_WARNING, msg.str().c_str() );
+   }
+
+   return( std::string( "" ) );
+}
+
+
+template < typename T >
+int MemoryServices::get_trick_type( T type )
+{
+   TRICK_TYPE trick_type = TRICK_STRUCTURED;
+
+   // NOTE: This function does not support the following Trick types:
+   // TRICK_VOID, TRICK_FILE_PTR, TRICK_ENUMERATED, TRICK_OPAQUE_TYPE,
+   // or TRICK_STL.  It will treat everything that it cannot match as
+   // a basic type as TRICK_STRUCTURED.
+
+   // Otherwise, match to a recognized Trick type.
+   if ( std::is_same< T, char * >::value ) {
+      trick_type = TRICK_CHARACTER;
+   } else if ( std::is_same< T, unsigned char * >::value ) {
+      trick_type = TRICK_UNSIGNED_CHARACTER;
+   } else if ( std::is_same< T, char ** >::value ) {
+      trick_type = TRICK_STRING;
+   } else if ( std::is_same< T, short * >::value ) {
+      trick_type = TRICK_SHORT;
+   } else if ( std::is_same< T, unsigned short * >::value ) {
+      trick_type = TRICK_UNSIGNED_SHORT;
+   } else if ( std::is_same< T, int * >::value ) {
+      trick_type = TRICK_INTEGER;
+   } else if ( std::is_same< T, unsigned int * >::value ) {
+      trick_type = TRICK_UNSIGNED_INTEGER;
+   } else if ( std::is_same< T, long * >::value ) {
+      trick_type = TRICK_LONG;
+   } else if ( std::is_same< T, unsigned long * >::value ) {
+      trick_type = TRICK_UNSIGNED_LONG;
+   } else if ( std::is_same< T, float * >::value ) {
+      trick_type = TRICK_FLOAT;
+   } else if ( std::is_same< T, double * >::value ) {
+      trick_type = TRICK_DOUBLE;
+   } else if ( std::is_same< T, long long * >::value ) {
+      trick_type = TRICK_LONG_LONG;
+   } else if ( std::is_same< T, unsigned long long * >::value ) {
+      trick_type = TRICK_UNSIGNED_LONG_LONG;
+   } else if ( std::is_same< T, bool * >::value ) {
+      trick_type = TRICK_BOOLEAN;
+   } else if ( std::is_same< T, wchar_t * >::value ) {
+      trick_type = TRICK_WCHAR;
+   } else if ( std::is_same< T, wchar_t ** >::value ) {
+      trick_type = TRICK_WSTRING;
+   } else if ( std::is_same< T, void * >::value ) {
+      trick_type = TRICK_VOID_PTR;
+   } else {
+      trick_type = TRICK_STRUCTURED;
+   }
+
+   return(trick_type);
 }
 
 } // namespace TrickHLA

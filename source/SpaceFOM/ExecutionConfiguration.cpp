@@ -54,7 +54,6 @@ NASA, Johnson Space Center\n
 
 // Trick includes.
 #include "trick/Executive.hh"
-#include "trick/MemoryManager.hh"
 #include "trick/attributes.h"
 #include "trick/message_proto.h"
 #include "trick/message_type.h"
@@ -65,11 +64,12 @@ NASA, Johnson Space Center\n
 #include "SpaceFOM/Types.hh"
 
 // TrickHLA includes.
-#include "TrickHLA/Attribute.hh"
+#include "TrickHLA/HLAStandardSupport.hh"
+#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/Attribute.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
-#include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Packing.hh"
 #include "TrickHLA/Types.hh"
@@ -160,61 +160,61 @@ void ExecutionConfiguration::configure_attributes()
    // also be specified in the input.py file for the Root Reference
    // Frame Publisher (RRFP).
    //
-   this->root_frame_name = trick_MM->mm_strdup( "" );
+   this->root_frame_name = "";
 
    //---------------------------------------------------------
    // Set up the execution configuration HLA object mappings.
    //---------------------------------------------------------
    // Set the FOM name of the ExCO object.
-   this->FOM_name = trick_MM->mm_strdup( "ExecutionConfiguration" );
-   this->name     = trick_MM->mm_strdup( "ExCO" );
+   this->FOM_name = "ExecutionConfiguration";
+   this->name     = "ExCO";
    this->packing  = this;
    // Allocate the attributes for the ExCO HLA object.
    this->attr_count = 7;
-   this->attributes = static_cast< Attribute * >( trick_MM->declare_var( "TrickHLA::Attribute", this->attr_count ) );
+   this->attributes = MemoryServices::declare_var( this->attributes, this->attr_count );
 
    //
    // Specify the ExCO attributes.
    //
-   this->attributes[0].FOM_name     = trick_MM->mm_strdup( "root_frame_name" );
+   this->attributes[0].FOM_name     = "root_frame_name";
    string trick_name_str            = S_define_name + string( ".root_frame_name" );
-   this->attributes[0].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
+   this->attributes[0].trick_name   = trick_name_str;
    this->attributes[0].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[0].rti_encoding = ENCODING_UNICODE_STRING;
 
-   this->attributes[1].FOM_name     = trick_MM->mm_strdup( "scenario_time_epoch" );
+   this->attributes[1].FOM_name     = "scenario_time_epoch";
    trick_name_str                   = S_define_name + string( ".scenario_time_epoch" );
-   this->attributes[1].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
+   this->attributes[1].trick_name   = trick_name_str;
    this->attributes[1].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[1].rti_encoding = ENCODING_LITTLE_ENDIAN;
 
-   this->attributes[2].FOM_name     = trick_MM->mm_strdup( "next_mode_scenario_time" );
+   this->attributes[2].FOM_name     = "next_mode_scenario_time";
    trick_name_str                   = S_define_name + string( ".next_mode_scenario_time" );
-   this->attributes[2].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
+   this->attributes[2].trick_name   = trick_name_str;
    this->attributes[2].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[2].rti_encoding = ENCODING_LITTLE_ENDIAN;
 
-   this->attributes[3].FOM_name     = trick_MM->mm_strdup( "next_mode_cte_time" );
+   this->attributes[3].FOM_name     = "next_mode_cte_time";
    trick_name_str                   = S_define_name + string( ".next_mode_cte_time" );
-   this->attributes[3].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
+   this->attributes[3].trick_name   = trick_name_str;
    this->attributes[3].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[3].rti_encoding = ENCODING_LITTLE_ENDIAN;
 
-   this->attributes[4].FOM_name     = trick_MM->mm_strdup( "current_execution_mode" );
+   this->attributes[4].FOM_name     = "current_execution_mode";
    trick_name_str                   = S_define_name + string( ".current_execution_mode" );
-   this->attributes[4].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
+   this->attributes[4].trick_name   = trick_name_str;
    this->attributes[4].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[4].rti_encoding = ENCODING_LITTLE_ENDIAN;
 
-   this->attributes[5].FOM_name     = trick_MM->mm_strdup( "next_execution_mode" );
+   this->attributes[5].FOM_name     = "next_execution_mode";
    trick_name_str                   = S_define_name + string( ".next_execution_mode" );
-   this->attributes[5].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
+   this->attributes[5].trick_name   = trick_name_str;
    this->attributes[5].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[5].rti_encoding = ENCODING_LITTLE_ENDIAN;
 
-   this->attributes[6].FOM_name     = trick_MM->mm_strdup( "least_common_time_step" );
+   this->attributes[6].FOM_name     = "least_common_time_step";
    trick_name_str                   = S_define_name + string( ".least_common_time_step" );
-   this->attributes[6].trick_name   = trick_MM->mm_strdup( trick_name_str.c_str() );
+   this->attributes[6].trick_name   = trick_name_str;
    this->attributes[6].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[6].rti_encoding = ENCODING_BIG_ENDIAN;
 }
@@ -235,7 +235,7 @@ void ExecutionConfiguration::configure()
 
    // Clear out the existing object instance name, because we are going to
    // make sure it is ExCO regardless of what the user set it to be.
-   this->name = trick_MM->mm_strdup( "ExCO" );
+   this->name = "ExCO";
 
    // Lag compensation is not supported for the Execution Configuration object.
    set_lag_compensation_type( LAG_COMPENSATION_NONE );
@@ -471,9 +471,9 @@ void ExecutionConfiguration::setup_ref_attributes(
    this->data_changed = false;
 
    // Set up the fixed ExCO naming.
-   this->name          = trick_MM->mm_strdup( "ExCO" );
+   this->name          = "ExCO";
    this->name_required = true;
-   this->FOM_name      = trick_MM->mm_strdup( "SpaceFOM::ExecutionConfiguration" );
+   this->FOM_name      = "SpaceFOM::ExecutionConfiguration";
 
    // Create the ExCO instance only if the SpaceFOM Master federate.
    if ( execution_control->is_master() ) {
@@ -505,7 +505,7 @@ void ExecutionConfiguration::setup_ref_attributes(
 
    // Set up attributes.
    this->attr_count = 7;
-   this->attributes = static_cast< Attribute * >( trick_MM->declare_var( "Attribute", this->attr_count ) );
+   this->attributes = MemoryServices::declare_var( this->attributes, this->attr_count );
    if ( this->attributes == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionConfiguration::setup_ref_attributes():" << __LINE__
@@ -518,7 +518,7 @@ void ExecutionConfiguration::setup_ref_attributes(
    // Specify the ExCO attributes.
    //
    // Setup the "root_frame_name" attribute.
-   this->attributes[0].FOM_name = trick_MM->mm_strdup( "root_frame_name" );
+   this->attributes[0].FOM_name = "root_frame_name";
    if ( execution_control->is_master() ) {
       this->attributes[0].publish       = true;
       this->attributes[0].subscribe     = false;
@@ -535,7 +535,7 @@ void ExecutionConfiguration::setup_ref_attributes(
    // variable. However, this will be replaced with a direct construction
    // of the Trick REF2 ATTRIBUTES for the associated variable in memory.
    // trick_name_str = S_define_name + string( ".root_frame_name" );
-   // this->attributes[0].trick_name = trick_MM->mm_strdup( trick_name_str.c_str() );
+   // this->attributes[0].trick_name = trick_name_str;
 
    // Normally we would use the Trick variable to resolve to at run time,
    // which is supplied by the input.py file. Instead, we must build the

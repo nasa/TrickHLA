@@ -36,11 +36,11 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick include files.
-#include "trick/MemoryManager.hh"
 #include "trick/attributes.h"
 #include "trick/parameter_types.h"
 
 // TrickHLA include files.
+#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/encoding/CharOpaqueDataEncoder.hh"
@@ -106,7 +106,7 @@ void CharOpaqueDataEncoder::update_before_encode()
    HLAopaqueData *opaque_encoder = dynamic_cast< HLAopaqueData * >( data_encoder );
    Octet         *byte_data      = *static_cast< Octet ** >( address );
 
-   opaque_encoder->set( const_cast< Octet const * >( byte_data ), trick_MM->get_size( byte_data ) );
+   opaque_encoder->set( const_cast< Octet const * >( byte_data ), MemoryServices::get_size( byte_data ) );
 }
 
 void CharOpaqueDataEncoder::update_after_decode()

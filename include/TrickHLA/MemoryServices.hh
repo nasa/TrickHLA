@@ -63,11 +63,6 @@ class MemoryServices
     * @return An address to the allocated memory or NULL on failure. */
    static void *declare_var( char const *declaration );
 
-   /*! @brief Delete the memory at the named allocation address.
-    * @param  var_name Name of the Trick memory allocation.
-    * @return Returns true if deallocation succeeded, false otherwise. */
-   static bool delete_var( std::string const & var_name );
-
    /*! @brief Allocate an anonymous, one dimensional array. The elements of the
     * array are specified by the enhanced-type-specifier. The length of the array
     * is specified by @b n_elems.
@@ -75,6 +70,11 @@ class MemoryServices
     * @param n_elems       The number of items of the given type to allocate.
     * @return An address to the allocated memory or NULL on failure.  */
    static void *declare_var( char const *enh_type_spec, size_t n_elems );
+
+   /*! @brief Delete the memory at the named allocation address.
+    * @param  var_name Name of the Trick memory allocation.
+    * @return Returns true if deallocation succeeded, false otherwise. */
+   static bool delete_var( std::string const & var_name );
 
    //--------------------------------------------------------------------------
    // String memory management functions.
@@ -109,19 +109,6 @@ class MemoryServices
    // Template functions.
    //--------------------------------------------------------------------------
 
-   /*! @brief Allocate an array of a specified type instances.
-    * @detail An allocation (variable) may by named (@b var_name != "") or anonymous
-    * (@b var_name == ""). Named allocations are checkpointed using their given name.
-    * Anonymous allocations are checkpointed with generated names of the form:
-    * @c trick_temp_#, where @c # is an integer.
-    * @tparam T        Template type parameter.
-    * @param  type     Specified type to allocate.
-    * @param  n_elems  Number of elements in the array.
-    * @param  var_name Name of the allocation for Trick.  Anonymous allocation if empty.
-    * @return An address to the allocated memory or NULL on failure. */
-   template < typename T >
-   static T declare_var( T type, size_t n_elems, std::string const &var_name = "" );
-
    /*! @brief This is the general version of declare_var(), which allocates a contiguous
     * region of memory, for a (named or anonymous) variable, of the specified type
     * and dimension.
@@ -140,6 +127,31 @@ class MemoryServices
     * @return An address to the allocated memory or NULL on failure. */
    template < typename T >
    static T declare_var( T type, std::string const &class_name, size_t n_stars, std::string const &var_name, size_t n_cdims, size_t *cdims );
+
+   /*! @brief Allocate an array of a specified type instances.
+    * @detail An allocation (variable) may by named (@b var_name != "") or anonymous
+    * (@b var_name == ""). Named allocations are checkpointed using their given name.
+    * Anonymous allocations are checkpointed with generated names of the form:
+    * @c trick_temp_#, where @c # is an integer.
+    * @tparam T        Template type parameter.
+    * @param  type     Specified type to allocate.
+    * @param  n_elems  Number of elements in the array.
+    * @param  var_name Name of the allocation for Trick.  Anonymous allocation if empty.
+    * @return An address to the allocated memory or NULL on failure. */
+   template < typename T >
+   static T declare_var( T type, size_t n_elems, std::string const &var_name );
+
+   /*! @brief Allocate an array of a specified type instances.
+    * @detail An allocation (variable) may by named (@b var_name != "") or anonymous
+    * (@b var_name == ""). Named allocations are checkpointed using their given name.
+    * Anonymous allocations are checkpointed with generated names of the form:
+    * @c trick_temp_#, where @c # is an integer.
+    * @tparam T        Template type parameter.
+    * @param  type     Specified type to allocate.
+    * @param  n_elems  Number of elements in the array.
+    * @return An address to the allocated memory or NULL on failure. */
+   template < typename T >
+   static T declare_var( T type, size_t n_elems );
 
    /*! @brief Allocate a contiguous region of memory as specified by an
     * allocation declaration string.
@@ -194,6 +206,12 @@ class MemoryServices
     * @return Returns the size of the allocation at that address. */
    template < typename T >
    static std::size_t get_size( T address );
+
+   template < typename T >
+   static std::string get_class_name( T type );
+
+   template < typename T >
+   static int get_trick_type( T type );
 
 };
 

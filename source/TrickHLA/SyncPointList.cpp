@@ -156,12 +156,12 @@ bool SyncPointList::add(
    size_t       cdims[]         = { 1 };
    string const sync_point_name = string( "SyncPoint_" ) + label_str;
    SyncPoint   *sp              = nullptr;
-   sp                           = MemoryServices::declare_var( sp,
-                                                               "TrickHLA::SyncPoint",
-                                                               0,
-                                                               sync_point_name,
-                                                               1,
-                                                               cdims );
+   sp = MemoryServices::declare_var( sp,
+                                     "TrickHLA::SyncPoint",
+                                     0,
+                                     sync_point_name,
+                                     1,
+                                     cdims );
 
    if ( sp == NULL ) {
       ostringstream errmsg;
@@ -182,6 +182,9 @@ bool SyncPointList::add(
    wstring const   &label,
    Int64Time const &time )
 {
+   string label_str;
+   StringUtilities::to_string( label_str, label );
+
    if ( contains( label ) ) {
       string label_str;
       StringUtilities::to_string( label_str, label );
@@ -194,8 +197,15 @@ bool SyncPointList::add(
    }
 
    // Add the sync-point to the corresponding named list.
-   SyncPointTimed *sp = nullptr;
-   sp = MemoryServices::declare_var( sp, 1 );
+   size_t          cdims[]         = { 1 };
+   string const    sync_point_name = string( "SyncPointTimed_" ) + label_str;
+   SyncPointTimed *sp              = nullptr;
+   sp = MemoryServices::declare_var( sp,
+                                     "TrickHLA::SyncPointTimed",
+                                     0,
+                                     sync_point_name,
+                                     1,
+                                     cdims );
    if ( sp == NULL ) {
       string label_str;
       StringUtilities::to_string( label_str, label );

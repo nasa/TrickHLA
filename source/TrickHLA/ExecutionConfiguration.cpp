@@ -152,38 +152,38 @@ void ExecutionConfiguration::configure_attributes()
    this->packing  = this;
    // Allocate the attributes for the ExCO HLA object.
    this->attr_count = 4;
-   this->attributes = static_cast< Attribute * >( MemoryServices::declare_var( "TrickHLA::Attribute", this->attr_count ) );
+   this->attributes = MemoryServices::declare_var( this->attributes, "TrickHLA::Attribute", this->attr_count );
 
    //
    // Specify the ExCO attributes.
    //
-   this->attributes[0].FOM_name     = MemoryServices::cstrdup( "owner" );
+   this->attributes[0].FOM_name     = "owner";
    trick_name_str                   = exco_name_str + string( ".owner" );
-   this->attributes[0].trick_name   = MemoryServices::cstrdup( trick_name_str.c_str() );
+   this->attributes[0].trick_name   = trick_name_str;
    this->attributes[0].publish      = true;
    this->attributes[0].subscribe    = true;
    this->attributes[0].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[0].rti_encoding = ENCODING_UNICODE_STRING;
 
-   this->attributes[1].FOM_name     = MemoryServices::cstrdup( "run_duration" );
+   this->attributes[1].FOM_name     = "run_duration";
    trick_name_str                   = exco_name_str + string( ".run_duration_base_time" );
-   this->attributes[1].trick_name   = MemoryServices::cstrdup( trick_name_str.c_str() );
+   this->attributes[1].trick_name   = trick_name_str;
    this->attributes[1].publish      = true;
    this->attributes[1].subscribe    = true;
    this->attributes[1].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[1].rti_encoding = ENCODING_LITTLE_ENDIAN;
 
-   this->attributes[2].FOM_name     = MemoryServices::cstrdup( "number_of_federates" );
+   this->attributes[2].FOM_name     = "number_of_federates";
    trick_name_str                   = exco_name_str + string( ".num_federates" );
-   this->attributes[2].trick_name   = MemoryServices::cstrdup( trick_name_str.c_str() );
+   this->attributes[2].trick_name   = trick_name_str;
    this->attributes[2].publish      = true;
    this->attributes[2].subscribe    = true;
    this->attributes[2].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[2].rti_encoding = ENCODING_LITTLE_ENDIAN;
 
-   this->attributes[3].FOM_name     = MemoryServices::cstrdup( "required_federates" );
+   this->attributes[3].FOM_name     = "required_federates";
    trick_name_str                   = exco_name_str + string( ".required_federates" );
-   this->attributes[3].trick_name   = MemoryServices::cstrdup( trick_name_str.c_str() );
+   this->attributes[3].trick_name   = trick_name_str;
    this->attributes[3].publish      = true;
    this->attributes[3].subscribe    = true;
    this->attributes[3].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;

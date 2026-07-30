@@ -32,13 +32,13 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick includes.
-#include "trick/MemoryManager.hh"
 
 // TrickHLA includes.
-#include "TrickHLA/Attribute.hh"
+#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/RecordElement.hh"
 #include "TrickHLA/Types.hh"
+#include "TrickHLA/Attribute.hh"
+#include "TrickHLA/RecordElement.hh"
 
 // SpaceFOM includes.
 #include "SpaceFOM/QuaternionConfig.hh"
@@ -97,7 +97,8 @@ void QuaternionConfig::configure(
    //    field-name: vector, dataType: Vector, dataType:(Scalar,representation:HLAfloat64LE), encoding:HLAfixedArray, cardinality: 3
    rec_element->rti_encoding  = TrickHLA::ENCODING_FIXED_RECORD;
    rec_element->element_count = 2;
-   rec_element->elements      = static_cast< RecordElement * >( trick_MM->declare_var( "TrickHLA::RecordElement", rec_element->element_count ) );
+   rec_element->elements      = MemoryServices::declare_var( rec_element->elements,
+                                                             rec_element->element_count );
 
    rec_element->elements[0].trick_name   = trick_root_name + string( ".scalar" );
    rec_element->elements[0].rti_encoding = TrickHLA::ENCODING_LITTLE_ENDIAN;
