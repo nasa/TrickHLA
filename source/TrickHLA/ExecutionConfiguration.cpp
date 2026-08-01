@@ -128,20 +128,13 @@ ExecutionConfiguration::~ExecutionConfiguration() // RETURN: -- None.
  */
 void ExecutionConfiguration::configure_attributes()
 {
-   string exco_name_str;
-   string trick_name_str;
-
    // Check to make sure we have an S_define name for this ExCO instance.
    if ( S_define_name.empty() ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionConfiguration::configure_attributes():" << __LINE__
-             << " ERROR: Unexpected empty S_define_name." << endl;
+             << " ERROR: Unexpected empty S_define_name.\n";
       DebugHandler::terminate( errmsg.str() );
-      return;
    }
-
-   // Convert the S_define_name to a string.
-   exco_name_str = string( S_define_name );
 
    //---------------------------------------------------------
    // Set up the execution configuration HLA object mappings.
@@ -158,32 +151,28 @@ void ExecutionConfiguration::configure_attributes()
    // Specify the ExCO attributes.
    //
    this->attributes[0].FOM_name     = "owner";
-   trick_name_str                   = exco_name_str + string( ".owner" );
-   this->attributes[0].trick_name   = trick_name_str;
+   this->attributes[0].trick_name   = S_define_name + string( ".owner" );
    this->attributes[0].publish      = true;
    this->attributes[0].subscribe    = true;
    this->attributes[0].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[0].rti_encoding = ENCODING_UNICODE_STRING;
 
    this->attributes[1].FOM_name     = "run_duration";
-   trick_name_str                   = exco_name_str + string( ".run_duration_base_time" );
-   this->attributes[1].trick_name   = trick_name_str;
+   this->attributes[1].trick_name   = S_define_name + string( ".run_duration_base_time" );
    this->attributes[1].publish      = true;
    this->attributes[1].subscribe    = true;
    this->attributes[1].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[1].rti_encoding = ENCODING_LITTLE_ENDIAN;
 
    this->attributes[2].FOM_name     = "number_of_federates";
-   trick_name_str                   = exco_name_str + string( ".num_federates" );
-   this->attributes[2].trick_name   = trick_name_str;
+   this->attributes[2].trick_name   = S_define_name + string( ".num_federates" );
    this->attributes[2].publish      = true;
    this->attributes[2].subscribe    = true;
    this->attributes[2].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[2].rti_encoding = ENCODING_LITTLE_ENDIAN;
 
    this->attributes[3].FOM_name     = "required_federates";
-   trick_name_str                   = exco_name_str + string( ".required_federates" );
-   this->attributes[3].trick_name   = trick_name_str;
+   this->attributes[3].trick_name   = S_define_name + string( ".required_federates" );
    this->attributes[3].publish      = true;
    this->attributes[3].subscribe    = true;
    this->attributes[3].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
