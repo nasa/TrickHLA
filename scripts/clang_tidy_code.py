@@ -118,6 +118,12 @@ Examples:\n  clang_tidy_code --TrickHLA --SpaceFOM -v --check-includes --check-c
    parser.add_argument( '--hla4', \
                         help = 'Check against HLA 4, IEEE 1516-2025', \
                         action = 'store_true', dest = 'hla4' )
+   parser.add_argument( '--file-start', \
+                        help = 'File count to start scanning from (default: 1).', \
+                        dest = 'file_start_cnt' )
+   parser.add_argument( '--file-limit', \
+                        help = 'Maximum number of files to scan (default: Unlimited).', \
+                        dest = 'file_cnt_limit' )
    parser.add_argument( '--jeod-home', \
                         help = 'Provide a path to the JEOD installation directory.', \
                         dest = 'jeod_home' )
@@ -191,6 +197,16 @@ Examples:\n  clang_tidy_code --TrickHLA --SpaceFOM -v --check-includes --check-c
    # If we selected very verbose, then we also need to set verbose in the clang-tidy output.
    if args.very_verbose:
       args.verbose = True
+
+   # The file count to start scanning from, default is 1.
+   file_start_cnt = 1
+   if args.file_start_cnt:
+      file_start_cnt = int( args.file_start_cnt )
+
+   # Default is unlimited files to scan (<= 0), otherwise a fixed number of files.
+   file_cnt_limit = -1
+   if args.file_cnt_limit:
+      file_cnt_limit = int( args.file_cnt_limit )
 
    #
    # Now let's check for paths to commands and directories.
@@ -401,12 +417,16 @@ Examples:\n  clang_tidy_code --TrickHLA --SpaceFOM -v --check-includes --check-c
 
    # Build the list if source filenames given the source directories.
    source_files = []
+   file_cnt = 0
+   file_added_cnt = 0
    for src_dir in source_dirs:
       for dir_path, dir_names, filenames in os.walk( src_dir ):
          for filename in filenames:
             if filename.endswith( ".cpp" ) or filename.endswith( ".cxx" ) or filename.endswith( ".cc" ) or filename.endswith( ".c" ):
-               file_path = os.path.join( dir_path, filename )
-               source_files.append( file_path )
+               file_cnt += 1
+               if ( file_cnt >= file_start_cnt ) and ( ( file_cnt_limit <= 0 ) or ( file_added_cnt < file_cnt_limit ) ):
+                  source_files.append( os.path.join( dir_path, filename ) )
+                  file_added_cnt += 1
 
    # Form the clang-tidy command with command line options.
    clang_tidy_command = [ clang_tidy_cmd ]
