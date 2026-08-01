@@ -42,8 +42,8 @@ NASA, Johnson Space Center\n
 #include "trick/message_type.h"
 
 // TrickHLA includes.
-#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/OpaqueBuffer.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/utils/Utilities.hh"

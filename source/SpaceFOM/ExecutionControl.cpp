@@ -65,19 +65,19 @@ NASA, Johnson Space Center\n
 #include "trick/sim_mode.h"
 
 // TrickHLA includes.
-#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/Types.hh"
 #include "TrickHLA/ExecutionConfigurationBase.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Interaction.hh"
 #include "TrickHLA/InteractionItem.hh"
+#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/ObjectServices.hh"
 #include "TrickHLA/Parameter.hh"
 #include "TrickHLA/SyncPointManagerBase.hh"
+#include "TrickHLA/Types.hh"
 #include "TrickHLA/time/CTETimelineBase.hh"
 #include "TrickHLA/time/Int64BaseTime.hh"
 #include "TrickHLA/time/Int64Time.hh"
@@ -319,7 +319,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
    // Set up parameters.
    mtr_interaction->set_parameter_count( 1 );
    Parameter *tParm = nullptr;
-   tParm = MemoryServices::declare_var( tParm, mtr_interaction->get_parameter_count() );
+   tParm            = MemoryServices::declare_var( tParm, mtr_interaction->get_parameter_count() );
    if ( tParm == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__

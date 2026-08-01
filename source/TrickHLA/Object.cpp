@@ -63,11 +63,11 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
 #include "TrickHLA/Conditional.hh"
 #include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/LagCompensation.hh"
+#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/ObjectDeletedHandler.hh"
 #include "TrickHLA/ObjectServices.hh"
@@ -195,8 +195,8 @@ Object::~Object()
       // blocking threads go.
       set_to_unblocking_cyclic_reads();
 
-      if (      this->thread_ids_array != NULL
-             && MemoryServices::is_alloced( this->thread_ids_array ) ) {
+      if ( this->thread_ids_array != NULL
+           && MemoryServices::is_alloced( this->thread_ids_array ) ) {
          if ( !MemoryServices::delete_var( this->thread_ids_array ) ) {
             message_publish( MSG_WARNING, "Object::~Object():%d WARNING failed to delete Trick Memory for 'this->thread_ids_array'\n",
                              __LINE__ );

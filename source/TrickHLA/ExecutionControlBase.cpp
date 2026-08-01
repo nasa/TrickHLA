@@ -1621,7 +1621,7 @@ void ExecutionControlBase::convert_data_before_checkpoint()
    if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream msg;
       msg << "ExecutionControlBase::convert_data_before_checkpoint():"
-          << __LINE__ << ": Converting data for checkpointing." << endl;
+          << __LINE__ << " Converting data for checkpointing." << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
@@ -1653,7 +1653,7 @@ void ExecutionControlBase::restore_data_after_checkpoint()
    if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream msg;
       msg << "ExecutionControlBase::restore_data_after_checkpoint():"
-          << __LINE__ << ": Restoring data after checkpoint loading." << endl;
+          << __LINE__ << " Restoring data after checkpoint loading." << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
@@ -1681,7 +1681,7 @@ void ExecutionControlBase::free_converted_data_for_checkpoint()
    if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream msg;
       msg << "ExecutionControlBase::free_converted_data_for_checkpoint():"
-          << __LINE__ << ": Freeing data allocated for checkpointing." << endl;
+          << __LINE__ << " Freeing data allocated for checkpointing." << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
@@ -1717,7 +1717,7 @@ void ExecutionControlBase::checkpoint_before()
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream msg;
       msg << "ExecutionControlBase::checkpoint_before():"
-          << __LINE__ << ": Preparing for a checkpoint." << endl;
+          << __LINE__ << " Preparing for a checkpoint." << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
@@ -1735,7 +1735,7 @@ void ExecutionControlBase::checkpoint_after()
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream msg;
       msg << "ExecutionControlBase::checkpoint_after():"
-          << __LINE__ << ": Cleaning up after a checkpoint." << endl;
+          << __LINE__ << " Cleaning up after a checkpoint." << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
@@ -1755,7 +1755,7 @@ void ExecutionControlBase::checkpoint_preload()
       StringUtilities::to_string( restore_label_str, save_restore_service->restore_label );
       ostringstream errmsg;
       errmsg << "ExecutionControlBase::checkpoint_preload():" << __LINE__
-             << ": ERROR: Unexpected Restore state for label: " << restore_label_str << endl
+             << " ERROR: Unexpected Restore state for label: " << restore_label_str << endl
              << "   Expected state: RESTORE_INITIATED" << endl
              << "   Current state : " << TrickHLA::to_string( save_restore_service->restore_state ) << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
@@ -1765,7 +1765,7 @@ void ExecutionControlBase::checkpoint_preload()
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream msg;
       msg << "ExecutionControlBase::checkpoint_preload():"
-          << __LINE__ << ": Preparing to load a checkpoint." << endl;
+          << __LINE__ << " Preparing to load a checkpoint." << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
@@ -1794,7 +1794,7 @@ void ExecutionControlBase::checkpoint_restart()
          StringUtilities::to_string( label_str, save_restore_service->restore_label );
          ostringstream errmsg;
          errmsg << "ExecutionControlBase::checkpoint_restart():" << __LINE__
-                << ": WARNING: Resetting Save state to THLASaveProcessEnum::SAVE_NONE!" << endl
+                << " WARNING: Resetting Save state to THLASaveProcessEnum::SAVE_NONE!" << endl
                 << " Label: '" << label_str << "'" << endl
                 << " State: '" << TrickHLA::to_string( save_restore_service->save_state ) << "'" << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
@@ -1813,7 +1813,7 @@ void ExecutionControlBase::checkpoint_restart()
       StringUtilities::to_string( restore_label_str, save_restore_service->restore_label );
       ostringstream errmsg;
       errmsg << "ExecutionControlBase::checkpoint_restart():" << __LINE__
-             << ": ERROR: Restore failed for label: " << restore_label_str << endl;
+             << " ERROR: Restore failed for label: " << restore_label_str << endl;
       message_publish( MSG_ERROR, errmsg.str().c_str() );
 
       // Return and let the restore_process handle the failure.
@@ -1827,7 +1827,7 @@ void ExecutionControlBase::checkpoint_restart()
       StringUtilities::to_string( restore_label_str, save_restore_service->restore_label );
       ostringstream errmsg;
       errmsg << "ExecutionControlBase::checkpoint_restart():" << __LINE__
-             << ": ERROR: Unexpected Restore state for label: " << restore_label_str << endl
+             << " ERROR: Unexpected Restore state for label: " << restore_label_str << endl
              << "   Expected state: RESTORE_INITIATED" << endl
              << "   Current state : " << TrickHLA::to_string( save_restore_service->restore_state ) << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
@@ -1837,7 +1837,7 @@ void ExecutionControlBase::checkpoint_restart()
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream msg;
       msg << "ExecutionControlBase::checkpoint_restart():"
-          << __LINE__ << ": Restarting after loading a checkpoint." << endl;
+          << __LINE__ << " Restarting after loading a checkpoint." << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 

@@ -35,9 +35,9 @@ NASA, Johnson Space Center\n
 // Trick includes.
 
 // TrickHLA includes.
-#include "TrickHLA/MemoryServices.hh"
-#include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Attribute.hh"
+#include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/RecordElement.hh"
 #include "TrickHLA/Types.hh"
 

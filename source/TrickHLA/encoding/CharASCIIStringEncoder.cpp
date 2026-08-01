@@ -40,9 +40,9 @@ NASA, Johnson Space Center\n
 #include "trick/parameter_types.h"
 
 // TrickHLA include files.
-#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
+#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/encoding/CharASCIIStringEncoder.hh"
 #include "TrickHLA/encoding/VariableArrayEncoderBase.hh"
 #include "TrickHLA/utils/StringUtilities.hh"

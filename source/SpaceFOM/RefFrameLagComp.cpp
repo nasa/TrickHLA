@@ -47,8 +47,8 @@ NASA, Johnson Space Center\n
 #include "SpaceFOM/SpaceTimeCoordinateData.hh"
 
 // TrickHLA includes.
-#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/MemoryServices.hh"
 
 using namespace std;
 using namespace TrickHLA;

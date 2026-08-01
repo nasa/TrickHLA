@@ -47,12 +47,12 @@ NASA, Johnson Space Center\n
 
 // TrickHLA includes.
 #include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Interaction.hh"
 #include "TrickHLA/InteractionItem.hh"
 #include "TrickHLA/InteractionServices.hh"
+#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/Parameter.hh"
 #include "TrickHLA/ParameterItem.hh"
 #include "TrickHLA/Types.hh"
@@ -801,7 +801,7 @@ void InteractionServices::convert_data_before_checkpoint()
          if ( item->user_supplied_tag_size > 0 ) {
             check_interactions[i].user_supplied_tag =
                MemoryServices::declare_var( check_interactions[i].user_supplied_tag,
-                                            item->user_supplied_tag_size             );
+                                            item->user_supplied_tag_size );
 
             memcpy( check_interactions[i].user_supplied_tag, // flawfinder: ignore
                     item->user_supplied_tag,

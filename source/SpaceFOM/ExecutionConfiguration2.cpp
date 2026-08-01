@@ -58,16 +58,17 @@ NASA, Johnson Space Center\n
 #include "trick/message_type.h"
 
 // SpaceFOM includes.
+#include "SpaceFOM/ExecutionConfiguration.hh"
 #include "SpaceFOM/ExecutionConfiguration2.hh"
 #include "SpaceFOM/Types.hh"
 
 // TrickHLA includes.
-#include "TrickHLA/HLAStandardSupport.hh"
-#include "TrickHLA/MemoryServices.hh"
-#include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Attribute.hh"
+#include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
+#include "TrickHLA/HLAStandardSupport.hh"
+#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/CTETimelineBase.hh"
@@ -157,61 +158,54 @@ void ExecutionConfiguration2::configure_attributes()
    this->attributes = MemoryServices::declare_var( this->attributes, this->attr_count );
 
    // FIXME:
-   if ( this->attributes == nullptr ){
+   if ( this->attributes == nullptr ) {
       ostringstream msg;
       msg << "SpaceFOM::ExecutionConfiguration2::configure_attributes():" << __LINE__
-          << " Error: Memory allocation failed." << endl;
-      message_publish( MSG_ERROR, msg.str().c_str() );
+          << " ERROR: Memory allocation failed." << endl;
+      DebugHandler::terminate( msg.str() );
+      return;
    }
 
    //
    // Specify the ExCO attributes.
    //
    this->attributes[0].FOM_name     = "root_frame_name";
-   string trick_name_str            = S_define_name + string( ".root_frame_name" );
-   this->attributes[0].trick_name   = trick_name_str;
+   this->attributes[0].trick_name   = S_define_name + string( ".root_frame_name" );
    this->attributes[0].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[0].rti_encoding = ENCODING_UNICODE_STRING;
 
    this->attributes[1].FOM_name     = "scenario_time_epoch";
-   trick_name_str                   = S_define_name + string( ".scenario_time_epoch" );
-   this->attributes[1].trick_name   = trick_name_str;
+   this->attributes[1].trick_name   = S_define_name + string( ".scenario_time_epoch" );
    this->attributes[1].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[1].rti_encoding = ENCODING_LITTLE_ENDIAN;
 
    this->attributes[2].FOM_name     = "next_mode_scenario_time";
-   trick_name_str                   = S_define_name + string( ".next_mode_scenario_time" );
-   this->attributes[2].trick_name   = trick_name_str;
+   this->attributes[2].trick_name   = S_define_name + string( ".next_mode_scenario_time" );
    this->attributes[2].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[2].rti_encoding = ENCODING_LITTLE_ENDIAN;
 
    this->attributes[3].FOM_name     = "next_mode_cte_time";
-   trick_name_str                   = S_define_name + string( ".next_mode_cte_time" );
-   this->attributes[3].trick_name   = trick_name_str;
+   this->attributes[3].trick_name   = S_define_name + string( ".next_mode_cte_time" );
    this->attributes[3].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[3].rti_encoding = ENCODING_LITTLE_ENDIAN;
 
    this->attributes[4].FOM_name     = "current_execution_mode";
-   trick_name_str                   = S_define_name + string( ".current_execution_mode" );
-   this->attributes[4].trick_name   = trick_name_str;
+   this->attributes[4].trick_name   = S_define_name + string( ".current_execution_mode" );
    this->attributes[4].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[4].rti_encoding = ENCODING_LITTLE_ENDIAN;
 
    this->attributes[5].FOM_name     = "next_execution_mode";
-   trick_name_str                   = S_define_name + string( ".next_execution_mode" );
-   this->attributes[5].trick_name   = trick_name_str;
+   this->attributes[5].trick_name   = S_define_name + string( ".next_execution_mode" );
    this->attributes[5].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[5].rti_encoding = ENCODING_LITTLE_ENDIAN;
 
    this->attributes[6].FOM_name     = "least_common_time_step";
-   trick_name_str                   = S_define_name + string( ".least_common_time_step" );
-   this->attributes[6].trick_name   = trick_name_str;
+   this->attributes[6].trick_name   = S_define_name + string( ".least_common_time_step" );
    this->attributes[6].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[6].rti_encoding = ENCODING_BIG_ENDIAN;
 
    this->attributes[7].FOM_name     = "hla_base_time_multiplier";
-   trick_name_str                   = S_define_name + string( ".hla_base_time_multiplier" );
-   this->attributes[7].trick_name   = trick_name_str;
+   this->attributes[7].trick_name   = S_define_name + string( ".hla_base_time_multiplier" );
    this->attributes[7].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[7].rti_encoding = ENCODING_LITTLE_ENDIAN;
 }

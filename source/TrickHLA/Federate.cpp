@@ -1615,7 +1615,7 @@ bool Federate::verify_joined_federates()
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
             ostringstream errmsg;
             errmsg << "Federate::verify_joined_federates():" << __LINE__
-                   << ": There are " << joined_federates_map.size()
+                   << " There are " << joined_federates_map.size()
                    << " joined federates but expected "
                    << federate_handles.size() << "." << endl;
             message_publish( MSG_WARNING, errmsg.str().c_str() );
@@ -1669,7 +1669,7 @@ bool Federate::verify_joined_federates()
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          ostringstream errmsg;
          errmsg << "Federate::verify_joined_federates():" << __LINE__
-                << ": Could not match joined federates with federates in Federation:" << endl;
+                << " Could not match joined federates with federates in Federation:" << endl;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
          std::wcout << list_joined_federates() << endl;
       }
@@ -1841,7 +1841,7 @@ void Federate::update_joined_federates()
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          ostringstream errmsg;
          errmsg << "Federate::update_joined_federates():" << __LINE__
-                << ": Federate Name, Type, Required:" << endl;
+                << " Federate Name, Type, Required:" << endl;
          message_publish( MSG_NORMAL, errmsg.str().c_str() );
          std::wcout << list_joined_federates() << endl;
       }
@@ -2299,7 +2299,7 @@ void Federate::update_and_print_joined_federates()
    if ( federate_update_state != THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_NONE ) {
       ostringstream errmsg;
       errmsg << "Federate::update_and_print_joined_federates():" << __LINE__
-             << ": ERROR: Unexpected Federates update state."
+             << " ERROR: Unexpected Federates update state."
              << "  We expected FEDERATE_UPDATE_NONE but the state was "
              << to_string( federate_update_state )
              << "!" << endl;
@@ -3734,7 +3734,7 @@ void Federate::convert_data_before_checkpoint()
    if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream msg;
       msg << "Federate::convert_data_before_checkpoint():"
-          << __LINE__ << ": Converting the federate data for checkpointing." << endl;
+          << __LINE__ << " Converting the federate data for checkpointing." << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
@@ -3757,7 +3757,7 @@ void Federate::restore_data_after_checkpoint()
    if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream msg;
       msg << "Federate::restore_data_after_checkpoint():"
-          << __LINE__ << ": Restoring the federate data after loading a checkpoint." << endl;
+          << __LINE__ << " Restoring the federate data after loading a checkpoint." << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
@@ -3780,7 +3780,7 @@ void Federate::free_converted_data_for_checkpoint()
    if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream msg;
       msg << "Federate::free_converted_data_for_checkpoint():"
-          << __LINE__ << ": Freeing federate data allocated for checkpointing." << endl;
+          << __LINE__ << " Freeing federate data allocated for checkpointing." << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
@@ -3803,7 +3803,7 @@ void Federate::checkpoint_before()
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream msg;
       msg << "Federate::checkpoint_before():"
-          << __LINE__ << ": Preparing for a checkpoint." << endl;
+          << __LINE__ << " Preparing for a checkpoint." << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
@@ -3824,14 +3824,14 @@ void Federate::checkpoint_preload()
    if ( save_restore_service.restore_state != THLARestoreProcessEnum::RESTORE_INITIATED ) {
       ostringstream msg;
       msg << "Federate::checkpoint_preload():" << __LINE__
-          << ": Checkpoint loading only supported as part of an HLA Restore process!" << endl;
+          << " Checkpoint loading only supported as part of an HLA Restore process!" << endl;
       message_publish( MSG_WARNING, msg.str().c_str() );
 
       string restore_label_str;
       StringUtilities::to_string( restore_label_str, save_restore_service.restore_label );
       ostringstream errmsg;
       errmsg << "Federate::checkpoint_preload():" << __LINE__
-             << ": ERROR: Unexpected Restore state for label: " << restore_label_str << endl
+             << " ERROR: Unexpected Restore state for label: " << restore_label_str << endl
              << "   Expected state: RESTORE_INITIATED" << endl
              << "   Current state : " << TrickHLA::to_string( save_restore_service.restore_state ) << endl;
       message_publish( MSG_WARNING, errmsg.str().c_str() );
@@ -3841,7 +3841,7 @@ void Federate::checkpoint_preload()
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream msg;
       msg << "Federate::checkpoint_preload():"
-          << __LINE__ << ": Preparing to load checkpoint file as part of an HLA Restore process." << endl;
+          << __LINE__ << " Preparing to load checkpoint file as part of an HLA Restore process." << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
@@ -3861,7 +3861,7 @@ void Federate::checkpoint_after()
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream msg;
       msg << "Federate::checkpoint_after():"
-          << __LINE__ << ": Cleaning up after a checkpoint." << endl;
+          << __LINE__ << " Cleaning up after a checkpoint." << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
@@ -3884,7 +3884,7 @@ void Federate::checkpoint_restart()
    if ( save_restore_service.restore_state != THLARestoreProcessEnum::RESTORE_CHECKPOINT ) {
       ostringstream msg;
       msg << "Federate::checkpoint_restart():"
-          << __LINE__ << ": Checkpoint restart only supported as part of an HLA Restore process!" << endl;
+          << __LINE__ << " Checkpoint restart only supported as part of an HLA Restore process!" << endl;
       message_publish( MSG_WARNING, msg.str().c_str() );
       return;
    }
@@ -3892,7 +3892,7 @@ void Federate::checkpoint_restart()
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream msg;
       msg << "Federate::checkpoint_restart():"
-          << __LINE__ << ": Restarting after loading a checkpoint." << endl;
+          << __LINE__ << " Restarting after loading a checkpoint." << endl;
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
