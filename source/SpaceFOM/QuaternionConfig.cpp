@@ -62,7 +62,7 @@ void QuaternionConfig::configure(
    if ( attribute == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::QuaternionConfig::configure():" << __LINE__
-             << " ERROR: Unexpected NULL attribute specified!" << endl;
+             << " ERROR: Unexpected NULL attribute specified!\n";
       DebugHandler::terminate( errmsg.str() );
       return;
    }
@@ -87,7 +87,7 @@ void QuaternionConfig::configure(
    if ( rec_element == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::QuaternionConfig::configure():" << __LINE__
-             << " ERROR: Unexpected NULL rec_element specified!" << endl;
+             << " ERROR: Unexpected NULL rec_element specified!\n";
       DebugHandler::terminate( errmsg.str() );
       return;
    }

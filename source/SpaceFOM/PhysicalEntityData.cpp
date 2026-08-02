@@ -121,29 +121,29 @@ void PhysicalEntityData::print_data( std::ostream &stream ) const
    // Set the print precision.
    stream.precision( 15 );
 
-   stream << "               name: '" << name << "'" << endl
-          << "               type: '" << type << "'" << endl
-          << "             status: '" << status << "'" << endl
-          << "       parent_frame: '" << parent_frame << "'" << endl;
+   stream << "               name: '" << name << "'\n"
+          << "               type: '" << type << "'\n"
+          << "             status: '" << status << "'\n"
+          << "       parent_frame: '" << parent_frame << "'\n";
 
    state.print_data( stream );
 
    stream << "       acceleration: "
           << "\t" << accel[0] << ", "
           << "\t\t" << accel[1] << ", "
-          << "\t\t" << accel[2] << endl;
+          << "\t\t" << accel[2] << "\n";
 
    stream << "angular acceleration: "
           << "\t" << ang_accel[0] << ", "
           << "\t\t" << ang_accel[1] << ", "
-          << "\t\t" << ang_accel[2] << endl;
+          << "\t\t" << ang_accel[2] << "\n";
 
    stream << " center of mass (cm): "
           << "\t" << cm[0] << ", "
           << "\t\t" << cm[1] << ", "
-          << "\t\t" << cm[2] << endl;
+          << "\t\t" << cm[2] << "\n";
 
-   stream << "Body frame orientation:" << endl;
+   stream << "Body frame orientation:\n";
    body_wrt_struct.print_data( stream );
 
    return;

@@ -168,20 +168,20 @@ void SpaceTimeCoordinateData::print_data( std::ostream &stream ) const
    // Set the print precision.
    stream.precision( 15 );
 
-   stream << "               time: " << time << endl;
+   stream << "               time: " << time << "\n";
    stream << "           position: "
           << "\t" << pos[0] << ", "
           << "\t\t" << pos[1] << ", "
-          << "\t\t" << pos[2] << endl;
+          << "\t\t" << pos[2] << "\n";
    stream << "           velocity: "
           << "\t" << vel[0] << ", "
           << "\t\t" << vel[1] << ", "
-          << "\t\t" << vel[2] << endl;
+          << "\t\t" << vel[2] << "\n";
    att.print_data( stream );
    stream << "   angular velocity: "
           << "\t" << ang_vel[0] << ", "
           << "\t\t" << ang_vel[1] << ", "
-          << "\t\t" << ang_vel[2] << endl;
+          << "\t\t" << ang_vel[2] << "\n";
 
    return;
 }

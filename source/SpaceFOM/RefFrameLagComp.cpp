@@ -106,7 +106,7 @@ void RefFrameLagComp::initialize()
    if ( this->integrator == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameLagComp::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL Trick integrator!" << endl;
+             << " ERROR: Unexpected NULL Trick integrator!\n";
       // Print message and terminate.
       DebugHandler::terminate( errmsg.str() );
    }

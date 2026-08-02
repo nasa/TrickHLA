@@ -107,7 +107,7 @@ void PhysicalEntityLagComp::initialize()
       ostringstream errmsg;
 
       errmsg << "SpaceFOM::PhysicalEntityLagComp::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL Trick integrator!" << endl;
+             << " ERROR: Unexpected NULL Trick integrator!\n";
       // Print message and terminate.
       DebugHandler::terminate( errmsg.str() );
    }

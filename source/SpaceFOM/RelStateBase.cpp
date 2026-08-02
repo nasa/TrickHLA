@@ -110,7 +110,7 @@ bool RelStateBase::set_frame(
    if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream errmsg;
       errmsg << "RelStateBase::set_frame() Warning: Reference frame "
-             << wrt_frame << " not found!" << endl;
+             << wrt_frame << " not found!\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
 
@@ -134,7 +134,7 @@ bool RelStateBase::set_frame(
    if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
       ostringstream errmsg;
       errmsg << "RelStateBase::set_frame() Warning: Reference frame "
-             << wrt_frame << " not found!" << endl;
+             << wrt_frame << " not found!\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
 
@@ -178,7 +178,7 @@ bool RelStateBase::compute_state(
    if ( entity == NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
          ostringstream errmsg;
-         errmsg << "RelStateBase::compute_state() Warning: PhysicalEntityData NULL!" << endl;
+         errmsg << "RelStateBase::compute_state() Warning: PhysicalEntityData NULL!\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
       return ( false );
@@ -189,7 +189,7 @@ bool RelStateBase::compute_state(
    if ( entity_subject_frame == NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
          ostringstream errmsg;
-         errmsg << "RelStateBase::compute_state() Warning: Could not find subject frame: %s!" << endl;
+         errmsg << "RelStateBase::compute_state() Warning: Could not find subject frame: %s!\n";
          message_publish( MSG_WARNING, entity->parent_frame.c_str(), errmsg.str().c_str() );
       }
       return ( false );
@@ -204,8 +204,8 @@ bool RelStateBase::compute_state(
       // Print out the path transformation if debug is set.
       if ( debug ) {
          ostringstream msg;
-         msg << "SpaceFOM::RelStateBase::compute_state():" << __LINE__ << endl;
-         msg << "Path transformation for " << entity->name << endl;
+         msg << "SpaceFOM::RelStateBase::compute_state():" << __LINE__ << "\n";
+         msg << "Path transformation for " << entity->name << "\n";
          path_transform.print_data( msg );
          message_publish( MSG_NORMAL, msg.str().c_str() );
       }
@@ -224,7 +224,7 @@ bool RelStateBase::compute_state(
    if ( !frame_tree->build_transform( entity_subject_frame, express_frame, &path_transform ) ) {
       if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
          ostringstream errmsg;
-         errmsg << "RelStateBase::compute_state() Warning: Could not build frame transformation: %s/%s!" << endl;
+         errmsg << "RelStateBase::compute_state() Warning: Could not build frame transformation: %s/%s!\n";
          message_publish( MSG_WARNING, entity->parent_frame.c_str(), express_frame->name.c_str(), errmsg.str().c_str() );
       }
       return ( false );
@@ -314,8 +314,8 @@ bool RelStateBase::compute_state(
    // Print out the path transformation if debug is set.
    if ( debug ) {
       ostringstream msg;
-      msg << "SpaceFOM::RelStateBase::compute_state():" << __LINE__ << endl;
-      msg << "\tPath transform:" << endl;
+      msg << "SpaceFOM::RelStateBase::compute_state():" << __LINE__ << "\n";
+      msg << "\tPath transform:\n";
       path_transform.print_data( msg );
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
@@ -366,7 +366,7 @@ bool RelStateBase::compute_state(
    if ( wrt_frame == NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
          ostringstream errmsg;
-         errmsg << "RelStateBase::compute_state() Warning: Reference frame NULL!" << endl;
+         errmsg << "RelStateBase::compute_state() Warning: Reference frame NULL!\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
       return ( false );

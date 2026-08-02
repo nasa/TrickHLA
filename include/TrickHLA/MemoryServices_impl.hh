@@ -79,7 +79,7 @@ T MemoryServices::declare_var(
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
          std::ostringstream msg;
          msg << "MemoryServices::declare_var():" << __LINE__
-             << " WARNING: Type is not a pointer: " << typeid( T ).name() << std::endl;
+             << " WARNING: Type is not a pointer: " << typeid( T ).name() << "\n";
          message_publish( MSG_WARNING, msg.str().c_str() );
       }
       return ( nullptr );
@@ -102,7 +102,7 @@ T MemoryServices::declare_var(
             std::ostringstream msg;
             msg << "MemoryServices::declare_var():" << __LINE__
                 << " WARNING: Empty class_name for type allocation: "
-                << typeid( T ).name() << std::endl;
+                << typeid( T ).name() << "\n";
             message_publish( MSG_ERROR, msg.str().c_str() );
          }
       }
@@ -130,7 +130,7 @@ T MemoryServices::declare_var(
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
          std::ostringstream msg;
          msg << "MemoryServices::declare_var():" << __LINE__
-             << " WARNING: Type is not a pointer: " << typeid( T ).name() << std::endl;
+             << " WARNING: Type is not a pointer: " << typeid( T ).name() << "\n";
          message_publish( MSG_WARNING, msg.str().c_str() );
       }
       return ( nullptr );
@@ -150,7 +150,7 @@ T MemoryServices::declare_var(
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
          std::ostringstream msg;
          msg << "MemoryServices::declare_var():" << __LINE__
-             << " WARNING: Type is not a pointer: " << typeid( T ).name() << std::endl;
+             << " WARNING: Type is not a pointer: " << typeid( T ).name() << "\n";
          message_publish( MSG_WARNING, msg.str().c_str() );
       }
       return ( nullptr );
@@ -172,7 +172,7 @@ T MemoryServices::declare_var(
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
          std::ostringstream msg;
          msg << "MemoryServices::declare_var():" << __LINE__
-             << " WARNING: Type is not a pointer: " << typeid( T ).name() << std::endl;
+             << " WARNING: Type is not a pointer: " << typeid( T ).name() << "\n";
          message_publish( MSG_WARNING, msg.str().c_str() );
       }
       return ( nullptr );
@@ -192,7 +192,7 @@ T MemoryServices::declare_var(
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
          std::ostringstream msg;
          msg << "MemoryServices::declare_var():" << __LINE__
-             << " WARNING: Type is not a pointer: " << typeid( T ).name() << std::endl;
+             << " WARNING: Type is not a pointer: " << typeid( T ).name() << "\n";
          message_publish( MSG_WARNING, msg.str().c_str() );
       }
       return ( nullptr );
@@ -210,7 +210,7 @@ T MemoryServices::resize_array( T address, size_t n_elems )
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
          std::ostringstream msg;
          msg << "MemoryServices::declare_var():" << __LINE__
-             << " WARNING: Type is not a pointer: " << typeid( T ).name() << std::endl;
+             << " WARNING: Type is not a pointer: " << typeid( T ).name() << "\n";
          message_publish( MSG_WARNING, msg.str().c_str() );
       }
       return ( nullptr );
@@ -229,7 +229,7 @@ bool MemoryServices::delete_var( T addr )
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
          std::ostringstream msg;
          msg << "MemoryServices::delete_var():" << __LINE__
-             << " WARNING: Type is not a pointer: " << typeid( T ).name() << std::endl;
+             << " WARNING: Type is not a pointer: " << typeid( T ).name() << "\n";
          message_publish( MSG_WARNING, msg.str().c_str() );
       }
       return ( false );
@@ -242,7 +242,7 @@ bool MemoryServices::delete_var( T addr )
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
          std::ostringstream msg;
          msg << "MemoryServices::delete_var():" << __LINE__
-             << " WARNING: Could not delete variable at address: " << addr << std::endl;
+             << " WARNING: Could not delete variable at address: " << addr << "\n";
          message_publish( MSG_WARNING, msg.str().c_str() );
       }
       return ( false );
@@ -261,7 +261,7 @@ bool MemoryServices::is_alloced( T addr )
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
          std::ostringstream msg;
          msg << "MemoryServices::is_alloced():" << __LINE__
-             << " WARNING: Type is not a pointer: " << typeid( T ).name() << std::endl;
+             << " WARNING: Type is not a pointer: " << typeid( T ).name() << "\n";
          message_publish( MSG_WARNING, msg.str().c_str() );
       }
       return ( false );
@@ -284,7 +284,7 @@ std::size_t MemoryServices::get_size( T addr )
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
          std::ostringstream msg;
          msg << "MemoryServices::get_size():" << __LINE__
-             << " WARNING: Type is not a pointer: " << typeid( T ).name() << std::endl;
+             << " WARNING: Type is not a pointer: " << typeid( T ).name() << "\n";
          message_publish( MSG_WARNING, msg.str().c_str() );
       }
       return ( false );
@@ -325,7 +325,7 @@ std::string MemoryServices::get_class_name( T type )
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
       std::ostringstream msg;
       msg << "MemoryServices::get_class_name():" << __LINE__
-          << " WARNING: Unrecognized TrickHLA type: " << typeid( T ).name() << std::endl;
+          << " WARNING: Unrecognized TrickHLA type: " << typeid( T ).name() << "\n";
       message_publish( MSG_WARNING, msg.str().c_str() );
    }
 

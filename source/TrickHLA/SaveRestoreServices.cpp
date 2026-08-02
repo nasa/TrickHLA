@@ -345,7 +345,7 @@ void SaveRestoreServices::save_set_time(
              << " : WARNING: Save time for label \'" << label_str
              << "\' in the past!";
          msg << " Save time is " << time.get_base_time()
-             << " but Granted time is " << granted_time.get_base_time() << endl;
+             << " but Granted time is " << granted_time.get_base_time() << "\n";
          message_publish( MSG_WARNING, "%s\n", msg.str().c_str() );
       }
 
@@ -393,7 +393,7 @@ void SaveRestoreServices::save_request(
       if ( this->save_label.empty() ) {
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::save_request():" << __LINE__
-                << " ERROR: No Save label set!" << endl;
+                << " ERROR: No Save label set!\n";
          DebugHandler::terminate( errmsg.str() );
       }
       return;
@@ -470,7 +470,7 @@ void SaveRestoreServices::save( wstring const &label )
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::save():" << __LINE__
                 << " WARNING: Save state mismatch: "
-                << TrickHLA::to_string( save_state ) << "!" << endl;
+                << TrickHLA::to_string( save_state ) << "!\n";
          message_publish( MSG_WARNING, "%s\n",
                           __LINE__, errmsg.str().c_str() );
       }
@@ -483,7 +483,7 @@ void SaveRestoreServices::save( wstring const &label )
       if ( this->save_label.empty() ) {
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::save():" << __LINE__
-                << " ERROR: No Save label set!" << endl;
+                << " ERROR: No Save label set!\n";
          DebugHandler::terminate( errmsg.str() );
       }
    } else {
@@ -629,7 +629,7 @@ void SaveRestoreServices::save_succeded()
       ostringstream errmsg;
       errmsg << "SaveRestoreServices::save_succeded():" << __LINE__
              << " ERROR: Save state mismatch: "
-             << TrickHLA::to_string( save_state ) << "!" << endl;
+             << TrickHLA::to_string( save_state ) << "!\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -664,7 +664,7 @@ void SaveRestoreServices::save_failed()
       ostringstream errmsg;
       errmsg << "SaveRestoreServices::save_failed():" << __LINE__
              << " ERROR: Save state mismatch: "
-             << TrickHLA::to_string( save_state ) << "!" << endl;
+             << TrickHLA::to_string( save_state ) << "!\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -673,7 +673,7 @@ void SaveRestoreServices::save_failed()
       ostringstream msg;
       msg << "SaveRestoreServices::save_failed():" << __LINE__
           << " : Save for label \'" << label_str
-          << "\' failed!" << endl;
+          << "\' failed!\n";
       message_publish( MSG_ERROR, msg.str().c_str() );
    }
 
@@ -700,7 +700,7 @@ bool SaveRestoreServices::write_joined_federates_to_file(
       if ( this->save_label.empty() ) {
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::write_joined_federates_file():" << __LINE__
-                << " ERROR: No Save label set!" << endl;
+                << " ERROR: No Save label set!\n";
          DebugHandler::terminate( errmsg.str() );
       }
       // Get the joined federates file name from the ExecutionControl service.
@@ -720,7 +720,7 @@ bool SaveRestoreServices::write_joined_federates_to_file(
    if ( file.is_open() ) {
 
       // Start by writing the number of joined federates.
-      file << federate->joined_federates_map.size() << endl;
+      file << federate->joined_federates_map.size() << "\n";
 
       // Write the contents of running_feds into file...
       KnownFederateMap::iterator map_iter;
@@ -731,9 +731,9 @@ bool SaveRestoreServices::write_joined_federates_to_file(
          KnownFederate const *joined_federate = static_cast< KnownFederate * >( &( map_iter->second ) );
 
          // Write the federate information out to file.
-         file << joined_federate->name << endl;
-         file << joined_federate->type << endl;
-         file << joined_federate->required << endl;
+         file << joined_federate->name << "\n";
+         file << joined_federate->type << "\n";
+         file << joined_federate->required << "\n";
       }
 
       // Close the joined federates file.
@@ -743,7 +743,7 @@ bool SaveRestoreServices::write_joined_federates_to_file(
 
       ostringstream errmsg;
       errmsg << "SaveRestoreServices::write_joined_federates_file():" << __LINE__
-             << " ERROR: Failed to open file '" << full_file_path << "' for writing!" << endl;
+             << " ERROR: Failed to open file '" << full_file_path << "' for writing!\n";
       message_publish( MSG_ERROR, errmsg.str().c_str() );
 
       return ( false );
@@ -763,23 +763,23 @@ void SaveRestoreServices::print_save_failure_reason(
 
    if ( reason == RTI_UNABLE_TO_SAVE ) {
       msg << "SaveRestoreServices::print_save_failure_reason():" << __LINE__
-          << " failure reason=\"RTI_UNABLE_TO_SAVE\"" << endl;
+          << " failure reason=\"RTI_UNABLE_TO_SAVE\"\n";
    }
    if ( reason == FEDERATE_REPORTED_FAILURE_DURING_SAVE ) {
       msg << "SaveRestoreServices::print_save_failure_reason():" << __LINE__
-          << " failure reason=\"FEDERATE_REPORTED_FAILURE_DURING_SAVE\"" << endl;
+          << " failure reason=\"FEDERATE_REPORTED_FAILURE_DURING_SAVE\"\n";
    }
    if ( reason == FEDERATE_RESIGNED_DURING_SAVE ) {
       msg << "SaveRestoreServices::print_save_failure_reason():" << __LINE__
-          << " failure reason=\"FEDERATE_RESIGNED_DURING_SAVE\"" << endl;
+          << " failure reason=\"FEDERATE_RESIGNED_DURING_SAVE\"\n";
    }
    if ( reason == RTI_DETECTED_FAILURE_DURING_SAVE ) {
       msg << "SaveRestoreServices::print_save_failure_reason():" << __LINE__
-          << " failure reason=\"=RTI_DETECTED_FAILURE_DURING_SAVE\"" << endl;
+          << " failure reason=\"=RTI_DETECTED_FAILURE_DURING_SAVE\"\n";
    }
    if ( reason == SAVE_TIME_CANNOT_BE_HONORED ) {
       msg << "SaveRestoreServices::print_save_failure_reason():" << __LINE__
-          << " failure reason=\"SAVE_TIME_CANNOT_BE_HONORED\"" << endl;
+          << " failure reason=\"SAVE_TIME_CANNOT_BE_HONORED\"\n";
    }
    message_publish( MSG_NORMAL, msg.str().c_str() );
 
@@ -859,7 +859,7 @@ bool SaveRestoreServices::read_known_federates_from_file(
       if ( this->restore_label.empty() ) {
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::read_known_federates_from_file():" << __LINE__
-                << " ERROR: No Restore label set!" << endl;
+                << " ERROR: No Restore label set!\n";
          DebugHandler::terminate( errmsg.str() );
       }
       // Get the joined federates file name from the ExecutionControl service.
@@ -879,7 +879,7 @@ bool SaveRestoreServices::read_known_federates_from_file(
    if ( !file.is_open() ) {
       ostringstream errmsg;
       errmsg << "SaveRestoreServices::read_known_federates_from_file()" << __LINE__
-             << " ERROR: Failed to open file '" << full_path << "'!" << endl;
+             << " ERROR: Failed to open file '" << full_path << "'!\n";
       message_publish( MSG_ERROR, "%s\n", errmsg.str().c_str() );
       return ( false );
    }
@@ -897,17 +897,17 @@ bool SaveRestoreServices::read_known_federates_from_file(
       try {
          num_feds = stoi( num_feds_wstr );
       } catch ( std::invalid_argument const &e ) {
-         std::wcerr << L"Invalid input: No conversion could be performed." << endl;
+         std::wcerr << L"Invalid input: No conversion could be performed.\n";
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::read_known_federates_from_file()" << __LINE__
                 << " ERROR: Reading number of known federates:'"
-                << " Invalid input: No conversion could be performed." << "'!" << endl;
+                << " Invalid input: No conversion could be performed." << "'!\n";
          message_publish( MSG_ERROR, "%s\n", errmsg.str().c_str() );
          file.close();
          return ( false );
       } catch ( std::out_of_range const &e ) {
          file.close();
-         std::wcerr << L"Error: Number is out of range for an int." << endl;
+         std::wcerr << L"Error: Number is out of range for an int.\n";
          return ( false );
       }
    }
@@ -918,7 +918,7 @@ bool SaveRestoreServices::read_known_federates_from_file(
       ostringstream errmsg;
       errmsg << "SaveRestoreServices::read_known_federates_from_file()" << __LINE__
              << " ERROR: There has to be at least 1 federate.  Read in "
-             << num_feds << " from '" << full_path << "'!" << endl;
+             << num_feds << " from '" << full_path << "'!\n";
       message_publish( MSG_ERROR, "%s\n", errmsg.str().c_str() );
       return ( false );
    }
@@ -953,7 +953,7 @@ bool SaveRestoreServices::read_known_federates_from_file(
          errmsg << "SaveRestoreServices::read_known_federates_from_file()" << __LINE__
                 << " ERROR: Error reading the type for known federate '"
                 << fed_name_str << "' at line " << line_num
-                << " from '" << full_path << "'!" << endl;
+                << " from '" << full_path << "'!\n";
          message_publish( MSG_ERROR, "%s\n", errmsg.str().c_str() );
 
          // Break out of the read while loop.
@@ -981,13 +981,13 @@ bool SaveRestoreServices::read_known_federates_from_file(
             errmsg << "SaveRestoreServices::read_known_federates_from_file()" << __LINE__
                    << " ERROR: Error reading if known federate '"
                    << fed_name_str << "' is required at line " << line_num
-                   << " from '" << full_path << "'!" << endl;
+                   << " from '" << full_path << "'!\n";
             message_publish( MSG_ERROR, "%s\n", errmsg.str().c_str() );
 
          } catch ( std::out_of_range const &e ) {
 
             // Let the user know that something went wrong.
-            std::wcerr << L"Error: Number is out of range for an int." << endl;
+            std::wcerr << L"Error: Number is out of range for an int.\n";
          }
 
          // NOTE that a boolean conversion error is NOT a read error.
@@ -1006,7 +1006,7 @@ bool SaveRestoreServices::read_known_federates_from_file(
          errmsg << "SaveRestoreServices::read_known_federates_from_file()" << __LINE__
                 << " ERROR: Error reading if known federate '"
                 << fed_name_str << "' is required at line " << line_num
-                << " from '" << full_path << "'!" << endl;
+                << " from '" << full_path << "'!\n";
          message_publish( MSG_ERROR, "%s\n", errmsg.str().c_str() );
 
          // Break out of the read while loop.
@@ -1033,7 +1033,7 @@ bool SaveRestoreServices::read_known_federates_from_file(
       ostringstream errmsg;
       errmsg << "SaveRestoreServices::read_known_federates_from_file()" << __LINE__
              << " ERROR: Error reading the known federates file '"
-             << full_path << "'!" << endl;
+             << full_path << "'!\n";
       message_publish( MSG_ERROR, "%s\n", errmsg.str().c_str() );
 
       return ( false );
@@ -1046,7 +1046,7 @@ bool SaveRestoreServices::read_known_federates_from_file(
       ostringstream errmsg;
       errmsg << "SaveRestoreServices::read_known_federates_from_file()" << __LINE__
              << " ERROR: Federate file specified " << num_feds
-             << " but read in " << fed_count << "!" << endl;
+             << " but read in " << fed_count << "!\n";
       message_publish( MSG_ERROR, "%s\n", errmsg.str().c_str() );
 
       // NOTE that we are NOT clearing the known federates file.  We are just
@@ -1097,7 +1097,7 @@ void SaveRestoreServices::restore_request_status()
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::restore_request_status():" << __LINE__
-                << " WARNING: SaveRestore NOT supported!" << endl;
+                << " WARNING: SaveRestore NOT supported!\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
       return;
@@ -1158,7 +1158,7 @@ void SaveRestoreServices::restore_waiting_for_request_status()
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::restore_waiting_for_request_status():" << __LINE__
-                << " WARNING: SaveRestore NOT supported!" << endl;
+                << " WARNING: SaveRestore NOT supported!\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
       return;
@@ -1214,8 +1214,8 @@ void SaveRestoreServices::restore_waiting_for_request_status()
 
       ostringstream errmsg;
       errmsg << "SaveRestoreServices::restore_waiting_for_request_status():" << __LINE__
-             << " WARNING: Federation NOT in state to Restore:" << endl;
-      errmsg << to_string( restore_status_response ) << endl;
+             << " WARNING: Federation NOT in state to Restore:\n";
+      errmsg << to_string( restore_status_response ) << "\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
 
    } else {
@@ -1226,7 +1226,7 @@ void SaveRestoreServices::restore_waiting_for_request_status()
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
          ostringstream msg;
          msg << "SaveRestoreServices::restore_waiting_for_request_status():" << __LINE__
-             << " Restore status response complete." << endl;
+             << " Restore status response complete.\n";
          message_publish( MSG_NORMAL, msg.str().c_str() );
       }
    }
@@ -1247,8 +1247,8 @@ void SaveRestoreServices::restore_request( wstring const &label )
          StringUtilities::to_string( label_str, label );
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::restore_request():" << __LINE__
-                << " WARNING: SaveRestore NOT supported!" << endl
-                << " Label:'" << label_str << "'" << endl;
+                << " WARNING: SaveRestore NOT supported!\n"
+                << " Label:'" << label_str << "'\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
       return;
@@ -1265,7 +1265,7 @@ void SaveRestoreServices::restore_request( wstring const &label )
       if ( this->restore_label.empty() ) {
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::restore_request():" << __LINE__
-                << " ERROR: No Restore label set!" << endl;
+                << " ERROR: No Restore label set!\n";
          DebugHandler::terminate( errmsg.str() );
       }
    } else {
@@ -1327,7 +1327,7 @@ std::string SaveRestoreServices::to_string( FederateRestoreStatusVector const &r
    for ( FederateRestoreStatus const &status : response ) {
 
       // Get the individual federate status string.
-      response_msg << to_string( status ) << endl;
+      response_msg << to_string( status ) << "\n";
    }
 
    return ( response_msg.str() );
@@ -1339,9 +1339,9 @@ std::string SaveRestoreServices::to_string( FederateRestoreStatus const &restore
 
    string id_name;
    StringUtilities::to_string( id_name, restore_status.preRestoreHandle );
-   restore_status_str << "\tpre-restore fed_id: " << id_name << endl;
+   restore_status_str << "\tpre-restore fed_id: " << id_name << "\n";
    StringUtilities::to_string( id_name, restore_status.postRestoreHandle );
-   restore_status_str << "\tpost-restore fed_id: " << id_name << endl
+   restore_status_str << "\tpost-restore fed_id: " << id_name << "\n"
                       << "\tstatus: ";
 
    // Print the appropriate status string.
@@ -1392,8 +1392,8 @@ void SaveRestoreServices::restore_waiting_for_request()
          StringUtilities::to_string( label_str, restore_label );
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::restore_waiting_for_request():" << __LINE__
-                << " WARNING: SaveRestore NOT supported!" << endl
-                << " Label:'" << label_str << "'" << endl;
+                << " WARNING: SaveRestore NOT supported!\n"
+                << " Label:'" << label_str << "'\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
       return;
@@ -1433,8 +1433,8 @@ void SaveRestoreServices::restore_waiting_for_begun()
          StringUtilities::to_string( label_str, restore_label );
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::restore_waiting_for_begun():" << __LINE__
-                << " WARNING: SaveRestore NOT supported!" << endl
-                << " Label:'" << label_str << "'" << endl;
+                << " WARNING: SaveRestore NOT supported!\n"
+                << " Label:'" << label_str << "'\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
       return;
@@ -1453,7 +1453,7 @@ void SaveRestoreServices::restore_waiting_for_begun()
          StringUtilities::to_string( label_str, restore_label );
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::restore_waiting_for_begun():" << __LINE__
-                << " : Waiting for Restore to begin for Label: '" << label_str << "'!" << endl;
+                << " : Waiting for Restore to begin for Label: '" << label_str << "'!\n";
          message_publish( MSG_NORMAL, errmsg.str().c_str() );
       }
    }
@@ -1475,7 +1475,7 @@ void SaveRestoreServices::restore_request_failed()
    StringUtilities::to_string( label_str, restore_label );
    ostringstream errmsg;
    errmsg << "SaveRestoreServices::restore_request_failed():" << __LINE__
-          << " ERROR: Restore failed for Label: '" << label_str << "'" << endl;
+          << " ERROR: Restore failed for Label: '" << label_str << "'\n";
    message_publish( MSG_ERROR, errmsg.str().c_str() );
 
    return;
@@ -1518,8 +1518,8 @@ void SaveRestoreServices::restore_waiting_for_initiated()
          StringUtilities::to_string( label_str, restore_label );
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::restore_waiting_for_initiated():" << __LINE__
-                << " WARNING: SaveRestore NOT supported!" << endl
-                << " Label:'" << label_str << "'" << endl;
+                << " WARNING: SaveRestore NOT supported!\n"
+                << " Label:'" << label_str << "'\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
       return;
@@ -1573,8 +1573,8 @@ void SaveRestoreServices::restore_initiated(
          StringUtilities::to_string( fed_handle_str, new_federate_handle );
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::restore_initiated():" << __LINE__
-                << " WARNING: SaveRestore NOT supported!" << endl
-                << " Label:'" << label_str << "'" << endl;
+                << " WARNING: SaveRestore NOT supported!\n"
+                << " Label:'" << label_str << "'\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
       return;
@@ -1585,9 +1585,9 @@ void SaveRestoreServices::restore_initiated(
       ostringstream errmsg;
       StringUtilities::to_string( restore_label_str, restore_label );
       errmsg << "SaveRestoreServices::restore_initiated():" << __LINE__
-             << " ERROR: Unexpected Restore state for label: " << restore_label_str << endl
-             << "   Expected state: RESTORE_INITIATED" << endl
-             << "   Current state : " << TrickHLA::to_string( restore_state ) << endl;
+             << " ERROR: Unexpected Restore state for label: " << restore_label_str << "\n"
+             << "   Expected state: RESTORE_INITIATED\n"
+             << "   Current state : " << TrickHLA::to_string( restore_state ) << "\n";
       message_publish( MSG_ERROR, errmsg.str().c_str() );
       return;
    }
@@ -1715,9 +1715,9 @@ void SaveRestoreServices::restore_waiting_for_checkpoint_load()
       StringUtilities::to_string( restore_label_str, restore_label );
       ostringstream errmsg;
       errmsg << "SaveRestoreServices::restore_waiting_for_checkpoint_load():" << __LINE__
-             << " ERROR: Unexpected Restore state for label: " << restore_label_str << endl
-             << "   Expected state: RESTORE_INITIATED" << endl
-             << "   Current state : " << TrickHLA::to_string( restore_state ) << endl;
+             << " ERROR: Unexpected Restore state for label: " << restore_label_str << "\n"
+             << "   Expected state: RESTORE_INITIATED\n"
+             << "   Current state : " << TrickHLA::to_string( restore_state ) << "\n";
       message_publish( MSG_ERROR, errmsg.str().c_str() );
    }
 
@@ -1748,9 +1748,9 @@ void SaveRestoreServices::restore_after_checkpoint_load()
          StringUtilities::to_string( label_str, restore_label );
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::restore_after_checkpoint_load():" << __LINE__
-                << " WARNING: Resetting Save state to THLASaveProcessEnum::SAVE_NONE!" << endl
-                << " Label: '" << label_str << "'" << endl
-                << " State: '" << TrickHLA::to_string( save_state ) << "'" << endl;
+                << " WARNING: Resetting Save state to THLASaveProcessEnum::SAVE_NONE!\n"
+                << " Label: '" << label_str << "'\n"
+                << " State: '" << TrickHLA::to_string( save_state ) << "'\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
       save_state = THLASaveProcessEnum::SAVE_NONE;
@@ -1764,9 +1764,9 @@ void SaveRestoreServices::restore_after_checkpoint_load()
       StringUtilities::to_string( restore_label_str, restore_label );
       ostringstream errmsg;
       errmsg << "SaveRestoreServices::restore_after_checkpoint_load():" << __LINE__
-             << " WARNING: Unexpected Restore state for label: " << restore_label_str << endl
-             << "   Expected state: RESTORE_CHECKPOINT" << endl
-             << "   Current state:  " << TrickHLA::to_string( restore_state ) << endl;
+             << " WARNING: Unexpected Restore state for label: " << restore_label_str << "\n"
+             << "   Expected state: RESTORE_CHECKPOINT\n"
+             << "   Current state:  " << TrickHLA::to_string( restore_state ) << "\n";
       message_publish( MSG_ERROR, errmsg.str().c_str() );
 
       return;
@@ -1943,9 +1943,9 @@ bool SaveRestoreServices::restore_waiting_for_completion()
       StringUtilities::to_string( restore_label_str, restore_label );
       ostringstream errmsg;
       errmsg << "SaveRestoreServices::restore_waiting_for_completion():" << __LINE__
-             << " WARNING: Unexpected Restore state for label: " << restore_label_str << endl
-             << "   Expected state: RESTORE_WAITING_COMPLETION" << endl
-             << "   Current state:  " << TrickHLA::to_string( restore_state ) << endl;
+             << " WARNING: Unexpected Restore state for label: " << restore_label_str << "\n"
+             << "   Expected state: RESTORE_WAITING_COMPLETION\n"
+             << "   Current state:  " << TrickHLA::to_string( restore_state ) << "\n";
       message_publish( MSG_ERROR, errmsg.str().c_str() );
 
       return ( false );
@@ -1979,8 +1979,8 @@ void SaveRestoreServices::restore_succeded()
          StringUtilities::to_string( label_str, restore_label );
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::restore_succeded():" << __LINE__
-                << " WARNING: SaveRestore NOT supported!" << endl
-                << " Label:'" << label_str << "'" << endl;
+                << " WARNING: SaveRestore NOT supported!\n"
+                << " Label:'" << label_str << "'\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
       return;
@@ -2050,8 +2050,8 @@ void SaveRestoreServices::restore_failed()
    if ( !execution_control->is_save_and_restore_supported() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
          errmsg << "SaveRestoreServices::restore_failed():" << __LINE__
-                << " WARNING: SaveRestore NOT supported!" << endl
-                << " Label:'" << restore_label_str << "'" << endl;
+                << " WARNING: SaveRestore NOT supported!\n"
+                << " Label:'" << restore_label_str << "'\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
       return;
@@ -2060,9 +2060,9 @@ void SaveRestoreServices::restore_failed()
    // Just return if we are not in the proper restore state.
    if ( restore_state != THLARestoreProcessEnum::RESTORE_FAILED ) {
       errmsg << "SaveRestoreServices::restore_failed():" << __LINE__
-             << " ERROR: Unexpected Restore state for label: " << restore_label_str << endl
-             << "   Expected state: RESTORE_FAILED" << endl
-             << "   Current state : " << TrickHLA::to_string( restore_state ) << endl;
+             << " ERROR: Unexpected Restore state for label: " << restore_label_str << "\n"
+             << "   Expected state: RESTORE_FAILED\n"
+             << "   Current state : " << TrickHLA::to_string( restore_state ) << "\n";
       message_publish( MSG_ERROR, errmsg.str().c_str() );
       return;
    }
@@ -2085,7 +2085,7 @@ void SaveRestoreServices::restore_failed()
 
    // Print out message and terminate.
    errmsg << "SaveRestoreServices::restore_failed():" << __LINE__
-          << " ERROR: Restore failed for label: " << restore_label_str << endl;
+          << " ERROR: Restore failed for label: " << restore_label_str << "\n";
    DebugHandler::terminate( errmsg.str() );
 
    return;
@@ -2099,19 +2099,19 @@ void SaveRestoreServices::restore_failed_print_reason(
 
    if ( reason == RTI_UNABLE_TO_RESTORE ) {
       msg << "SaveRestoreServices::restore_failed_print_reason():" << __LINE__
-          << " failure reason=\"RTI_UNABLE_TO_RESTORE\"" << endl;
+          << " failure reason=\"RTI_UNABLE_TO_RESTORE\"\n";
    }
    if ( reason == FEDERATE_REPORTED_FAILURE_DURING_RESTORE ) {
       msg << "SaveRestoreServices::restore_failed_print_reason():" << __LINE__
-          << " failure reason=\"FEDERATE_REPORTED_FAILURE_DURING_RESTORE\"" << endl;
+          << " failure reason=\"FEDERATE_REPORTED_FAILURE_DURING_RESTORE\"\n";
    }
    if ( reason == FEDERATE_RESIGNED_DURING_RESTORE ) {
       msg << "SaveRestoreServices::restore_failed_print_reason():" << __LINE__
-          << " failure reason=\"FEDERATE_RESIGNED_DURING_RESTORE\"" << endl;
+          << " failure reason=\"FEDERATE_RESIGNED_DURING_RESTORE\"\n";
    }
    if ( reason == RTI_DETECTED_FAILURE_DURING_RESTORE ) {
       msg << "SaveRestoreServices::restore_failed_print_reason():" << __LINE__
-          << " failure reason=\"RTI_DETECTED_FAILURE_DURING_RESTORE\"" << endl;
+          << " failure reason=\"RTI_DETECTED_FAILURE_DURING_RESTORE\"\n";
    }
    message_publish( MSG_NORMAL, msg.str().c_str() );
 

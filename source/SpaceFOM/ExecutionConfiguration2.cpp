@@ -133,7 +133,7 @@ void ExecutionConfiguration2::configure_attributes()
    if ( S_define_name.empty() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionConfiguration2::configure_attributes():" << __LINE__
-             << " ERROR: Unexpected empty S_define_name." << endl;
+             << " ERROR: Unexpected empty S_define_name.\n";
       DebugHandler::terminate( errmsg.str() );
       return;
    }
@@ -161,7 +161,7 @@ void ExecutionConfiguration2::configure_attributes()
    if ( this->attributes == nullptr ) {
       ostringstream msg;
       msg << "SpaceFOM::ExecutionConfiguration2::configure_attributes():" << __LINE__
-          << " ERROR: Memory allocation failed." << endl;
+          << " ERROR: Memory allocation failed.\n";
       DebugHandler::terminate( msg.str() );
       return;
    }
@@ -223,13 +223,13 @@ void ExecutionConfiguration2::pack()
 
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       ostringstream msg;
-      msg << endl
-          << "=============================================================" << endl
-          << "SpaceFOM::ExecutionConfiguration2::pack():" << __LINE__ << endl
-          << "-- Extended ExCO Attributes --" << endl
+      msg << "\n"
+          << "=============================================================\n"
+          << "SpaceFOM::ExecutionConfiguration2::pack():" << __LINE__ << "\n"
+          << "-- Extended ExCO Attributes --\n"
           << "   hla_base_time_multiplier: " << hla_base_time_multiplier
-          << " " << Int64BaseTime::get_base_unit() << endl
-          << "=============================================================" << endl;
+          << " " << Int64BaseTime::get_base_unit() << "\n"
+          << "=============================================================\n";
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 }
@@ -247,13 +247,13 @@ void ExecutionConfiguration2::unpack()
 
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       ostringstream msg;
-      msg << endl
-          << "=============================================================" << endl
-          << "SpaceFOM::ExecutionConfiguration2::unpack():" << __LINE__ << endl
-          << "-- Extended ExCO Attributes --" << endl
+      msg << "\n"
+          << "=============================================================\n"
+          << "SpaceFOM::ExecutionConfiguration2::unpack():" << __LINE__ << "\n"
+          << "-- Extended ExCO Attributes --\n"
           << "   hla_base_time_multiplier: " << hla_base_time_multiplier
-          << " " << Int64BaseTime::get_base_unit() << endl
-          << "=============================================================" << endl;
+          << " " << Int64BaseTime::get_base_unit() << "\n"
+          << "=============================================================\n";
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 }
@@ -269,25 +269,25 @@ void ExecutionConfiguration2::print_execution_configuration() const
 {
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       ostringstream msg;
-      msg << endl
-          << "=============================================================" << endl
-          << "SpaceFOM::ExecutionConfiguration2::print_exec_config():" << __LINE__ << endl
-          << "              Object-Name: '" << get_name() << "'" << endl
-          << "          root_frame_name: '" << root_frame_name << "'" << endl
-          << "      scenario_time_epoch: " << StringUtilities::format_time( scenario_time_epoch ) << endl
-          << "  next_mode_scenario_time: " << StringUtilities::format_time( next_mode_scenario_time ) << endl
-          << "       next_mode_cte_time: " << StringUtilities::format_time( next_mode_cte_time ) << endl;
+      msg << "\n"
+          << "=============================================================\n"
+          << "SpaceFOM::ExecutionConfiguration2::print_exec_config():" << __LINE__ << "\n"
+          << "              Object-Name: '" << get_name() << "'\n"
+          << "          root_frame_name: '" << root_frame_name << "'\n"
+          << "      scenario_time_epoch: " << StringUtilities::format_time( scenario_time_epoch ) << "\n"
+          << "  next_mode_scenario_time: " << StringUtilities::format_time( next_mode_scenario_time ) << "\n"
+          << "       next_mode_cte_time: " << StringUtilities::format_time( next_mode_cte_time ) << "\n";
       if ( execution_control->does_cte_timeline_exist() ) {
-         msg << "         current-cte-time: " << StringUtilities::format_time( execution_control->cte_timeline->get_time() ) << endl;
+         msg << "         current-cte-time: " << StringUtilities::format_time( execution_control->cte_timeline->get_time() ) << "\n";
       } else {
-         msg << "         current-cte-time: Not Enabled" << endl;
+         msg << "         current-cte-time: Not Enabled\n";
       }
-      msg << "   current_execution_mode: " << SpaceFOM::execution_mode_enum_to_string( SpaceFOM::execution_mode_int16_to_enum( current_execution_mode ) ) << endl
-          << "      next_execution_mode: " << SpaceFOM::execution_mode_enum_to_string( SpaceFOM::execution_mode_int16_to_enum( next_execution_mode ) ) << endl
-          << "   least_common_time_step: " << least_common_time_step << " " << Int64BaseTime::get_base_unit() << endl
-          << "-- Extended ExCO Attributes --" << endl
-          << " hla_base_time_multiplier: " << hla_base_time_multiplier << " " << Int64BaseTime::get_base_unit() << endl
-          << "=============================================================" << endl;
+      msg << "   current_execution_mode: " << SpaceFOM::execution_mode_enum_to_string( SpaceFOM::execution_mode_int16_to_enum( current_execution_mode ) ) << "\n"
+          << "      next_execution_mode: " << SpaceFOM::execution_mode_enum_to_string( SpaceFOM::execution_mode_int16_to_enum( next_execution_mode ) ) << "\n"
+          << "   least_common_time_step: " << least_common_time_step << " " << Int64BaseTime::get_base_unit() << "\n"
+          << "-- Extended ExCO Attributes --\n"
+          << " hla_base_time_multiplier: " << hla_base_time_multiplier << " " << Int64BaseTime::get_base_unit() << "\n"
+          << "=============================================================\n";
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 }

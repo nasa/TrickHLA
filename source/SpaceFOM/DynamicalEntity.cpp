@@ -90,7 +90,7 @@ void DynamicalEntity::initialize()
       ostringstream errmsg;
       errmsg << "SpaceFOM::DynamicalEntity::initialize():" << __LINE__
              << " ERROR: Unexpected NULL DynamicalEntityData: "
-             << pe_packing_data.name << endl;
+             << pe_packing_data.name << "\n";
       // Print message and terminate.
       DebugHandler::terminate( errmsg.str() );
    }
@@ -115,7 +115,7 @@ void DynamicalEntity::set_data(
       ostringstream errmsg;
       errmsg << "SpaceFOM::DynamicalEntity::set_data():" << __LINE__
              << " ERROR: Unexpected NULL DynamicalEntityData: "
-             << pe_packing_data.name << endl;
+             << pe_packing_data.name << "\n";
       // Print message and terminate.
       DebugHandler::terminate( errmsg.str() );
    }

@@ -114,11 +114,11 @@ void PhysicalInterfaceBase::base_config(
    if ( mngr_object == NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          ostringstream errmsg;
-         errmsg << "PhysicalInterfaceBase::base_config() Warning: " << endl
-                << "\tThe TrickHLA::Object associated with object \'" << interface_fed_name << "\' is NULL." << endl
-                << "\tEither of the two things are possible:" << endl
-                << "\t1). We are configuring in the input file, which is okay." << endl
-                << "\t2). We are configuring in default_data but forgot to allocate and" << endl
+         errmsg << "PhysicalInterfaceBase::base_config() Warning: \n"
+                << "\tThe TrickHLA::Object associated with object \'" << interface_fed_name << "\' is NULL.\n"
+                << "\tEither of the two things are possible:\n"
+                << "\t1). We are configuring in the input file, which is okay.\n"
+                << "\t2). We are configuring in default_data but forgot to allocate and\n"
                 << "\t    assign the associated object in the 'create_connections()' routine.";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
@@ -204,7 +204,7 @@ void PhysicalInterfaceBase::initialize()
    if ( this->object == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterfaceBase::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL TrickHLA Object pointer!" << endl;
+             << " ERROR: Unexpected NULL TrickHLA Object pointer!\n";
       DebugHandler::terminate( errmsg.str() );
       return;
    }
@@ -214,7 +214,7 @@ void PhysicalInterfaceBase::initialize()
         && this->packing_data.name.empty() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterfaceBase::initialize():" << __LINE__
-             << " ERROR: Unexpected empty interface name!" << endl;
+             << " ERROR: Unexpected empty interface name!\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -223,7 +223,7 @@ void PhysicalInterfaceBase::initialize()
         && this->packing_data.parent_name.empty() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterfaceBase::initialize():" << __LINE__
-             << " WARNING: Unexpected empty interface parent!" << endl;
+             << " WARNING: Unexpected empty interface parent!\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
 
@@ -273,7 +273,7 @@ void PhysicalInterfaceBase::set_name( std::string const &new_name )
         && new_name.empty() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterfaceBase::set_name():" << __LINE__
-             << " WARNING: Unexpected empty interface name!" << endl;
+             << " WARNING: Unexpected empty interface name!\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
    this->packing_data.name = new_name;
@@ -290,7 +290,7 @@ void PhysicalInterfaceBase::set_parent( std::string const &new_parent_name )
         && new_parent_name.empty() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterfaceBase::set_parent():" << __LINE__
-             << " WARNING: Unexpected empty parent name!" << endl;
+             << " WARNING: Unexpected empty parent name!\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
    this->packing_data.parent_name = new_parent_name;
@@ -305,10 +305,10 @@ void PhysicalInterfaceBase::pack()
       ostringstream errmsg;
       errmsg << "PhysicalInterfaceBase::pack():" << __LINE__
 #if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
-             << " ERROR: The initialize() function has not been called!" << endl;
+             << " ERROR: The initialize() function has not been called!\n";
       DebugHandler::terminate( errmsg.str() );
 #else
-             << " WARNING: The initialize() function has not been called!" << endl;
+             << " WARNING: The initialize() function has not been called!\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
 #endif
    }
@@ -321,7 +321,7 @@ void PhysicalInterfaceBase::pack()
    // Print out debug information if desired.
    if ( debug ) {
       ostringstream msg;
-      msg << "PhysicalInterfaceBase::pack():" << __LINE__ << endl;
+      msg << "PhysicalInterfaceBase::pack():" << __LINE__ << "\n";
       print_data( msg );
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
@@ -340,10 +340,10 @@ void PhysicalInterfaceBase::unpack()
       ostringstream errmsg;
       errmsg << "PhysicalInterfaceBase::unpack():" << __LINE__
 #if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
-             << " ERROR: The initialize() function has not been called!" << endl;
+             << " ERROR: The initialize() function has not been called!\n";
       DebugHandler::terminate( errmsg.str() );
 #else
-             << " WARNING: The initialize() function has not been called!" << endl;
+             << " WARNING: The initialize() function has not been called!\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
 #endif
    }
@@ -359,7 +359,7 @@ void PhysicalInterfaceBase::unpack()
    // Print out debug information if desired.
    if ( debug ) {
       ostringstream msg;
-      msg << "PhysicalInterfaceBase::unpack():" << __LINE__ << endl;
+      msg << "PhysicalInterfaceBase::unpack():" << __LINE__ << "\n";
       print_data( msg );
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
@@ -380,22 +380,22 @@ void PhysicalInterfaceBase::print_data( std::ostream &stream ) const
    // Set the print precision.
    stream.precision( 15 );
 
-   stream << "        Object-Name: '" << object->get_name() << "'" << endl
-          << "               name: '" << packing_data.name << "'" << endl
-          << "             parent: '" << packing_data.parent_name << "'" << endl
+   stream << "        Object-Name: '" << object->get_name() << "'\n"
+          << "               name: '" << packing_data.name << "'\n"
+          << "             parent: '" << packing_data.parent_name << "'\n"
           << "           position: "
           << "\t" << packing_data.position[0] << ", "
           << "\t\t" << packing_data.position[1] << ", "
-          << "\t\t" << packing_data.position[2] << endl
+          << "\t\t" << packing_data.position[2] << "\n"
           << "     attitude (s,v): "
           << "\t" << packing_data.attitude.scalar << "; "
           << "\t\t" << packing_data.attitude.vector[0] << ", "
           << "\t\t" << packing_data.attitude.vector[1] << ", "
-          << "\t\t" << packing_data.attitude.vector[2] << endl
+          << "\t\t" << packing_data.attitude.vector[2] << "\n"
           << "attitude (RPY){deg}: "
           << "\t" << euler_angles[0] << ", "
           << "\t\t" << euler_angles[1] << ", "
-          << "\t\t" << euler_angles[2] << endl
-          << endl;
+          << "\t\t" << euler_angles[2] << "\n"
+          << "\n";
    return;
 }

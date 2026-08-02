@@ -139,7 +139,7 @@ void ExecutionControl::initialize()
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       ostringstream msg;
       msg << "TrickHLA::ExecutionControl::initialize():" << __LINE__
-          << " Initialization-Scheme:'" << get_type() << "'" << endl;
+          << " Initialization-Scheme:'" << get_type() << "'\n";
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
@@ -207,7 +207,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
              << " ERROR: For this Master federate, the time padding ("
-             << get_time_padding() << " seconds) must be greater than zero!" << endl;
+             << get_time_padding() << " seconds) must be greater than zero!\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -215,7 +215,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
    if ( !federate->verify_time_constraints() ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
-             << " ERROR: Time constraints verification failed!" << endl;
+             << " ERROR: Time constraints verification failed!\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -318,7 +318,7 @@ void ExecutionControl::setup_object_RTI_handles()
    if ( ExCO == NULL ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControl::setup_object_RTI_handles():" << __LINE__
-             << " ERROR: Unexpected NULL ExCO!" << endl;
+             << " ERROR: Unexpected NULL ExCO!\n";
       DebugHandler::terminate( errmsg.str() );
       return;
    }
@@ -355,7 +355,7 @@ void ExecutionControl::add_multiphase_init_sync_points()
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControl::add_multiphase_init_sync_points():" << __LINE__
              << " This call will be ignored because this ExecutionControl does not"
-             << " support multiphase initialization synchronization points." << endl;
+             << " support multiphase initialization synchronization points.\n";
       message_publish( MSG_NORMAL, errmsg.str().c_str() );
    }
 }
@@ -369,7 +369,7 @@ void ExecutionControl::clear_multiphase_init_sync_points()
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControl::clear_multiphase_init_sync_points():" << __LINE__
              << " This call will be ignored because this ExecutionControl does not"
-             << " support multiphase initialization synchronization points." << endl;
+             << " support multiphase initialization synchronization points.\n";
       message_publish( MSG_NORMAL, errmsg.str().c_str() );
    }
 }
@@ -476,7 +476,7 @@ ExecutionConfiguration *ExecutionControl::get_execution_configuration()
    if ( ExCO == NULL ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControl::get_execution_configuration():" << __LINE__
-             << " ERROR: Execution Configuration is not an TrickHLA ExCO." << endl;
+             << " ERROR: Execution Configuration is not an TrickHLA ExCO.\n";
       DebugHandler::terminate( errmsg.str() );
    }
    return ( ExCO );
@@ -494,7 +494,7 @@ void ExecutionControl::set_least_common_time_step(
       if ( ExCO == NULL ) {
          ostringstream errmsg;
          errmsg << "TrickHLA::ExecutionControl::set_least_common_time_step():" << __LINE__
-                << " ERROR: Execution Configuration is not an TrickHLA ExCO." << endl;
+                << " ERROR: Execution Configuration is not an TrickHLA ExCO.\n";
          DebugHandler::terminate( errmsg.str() );
          return;
       }
@@ -527,7 +527,7 @@ void ExecutionControl::set_time_padding( double t )
              << " " << Int64BaseTime::get_base_unit()
              << ") is not a multiple of 3 or more of the ExCO"
              << " Least Common Time Step (" << this->least_common_time_step
-             << " " << Int64BaseTime::get_base_unit() << ")!" << endl;
+             << " " << Int64BaseTime::get_base_unit() << ")!\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -538,7 +538,7 @@ void ExecutionControl::set_time_padding( double t )
              << " ERROR: Time padding value (" << t
              << " seconds) must be an integer multiple of the Least Common Time Step ("
              << this->least_common_time_step << " "
-             << Int64BaseTime::get_base_unit() << ")!" << endl;
+             << Int64BaseTime::get_base_unit() << ")!\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -555,7 +555,7 @@ void ExecutionControl::set_time_padding( double t )
              << " Least Common Time Step (LCTS:"
              << this->least_common_time_step << " " << Int64BaseTime::get_base_unit()
              << ") when the time padding is less than "
-             << THLA_PADDING_DEFAULT << " seconds!" << endl;
+             << THLA_PADDING_DEFAULT << " seconds!\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -572,18 +572,18 @@ void ExecutionControl::set_time_padding( double t )
                 << " frame time (" << exec_get_freeze_frame() << " seconds)!"
                 << " In your input.py file, please update the padding time"
                 << " and/or the Trick freeze frame time using directives"
-                << " like the following:" << endl
-                << "   federate.set_time_padding( pad )" << endl
-                << "   trick.exec_set_freeze_frame( frame_time )" << endl
+                << " like the following:\n"
+                << "   federate.set_time_padding( pad )\n"
+                << "   trick.exec_set_freeze_frame( frame_time )\n"
                 << "For example, adjusting the freeze frame time for the"
-                << " given time padding:" << endl;
+                << " given time padding:\n";
          if ( t > ( 2.0 * exec_get_software_frame() ) ) {
             // Example using the Trick software frame time to set freeze frame.
-            errmsg << "   federate.set_time_padding( " << t << " )" << endl
-                   << "   trick.exec_set_freeze_frame( " << exec_get_software_frame() << " )" << endl;
+            errmsg << "   federate.set_time_padding( " << t << " )\n"
+                   << "   trick.exec_set_freeze_frame( " << exec_get_software_frame() << " )\n";
          } else {
-            errmsg << "   federate.set_time_padding( " << t << " )" << endl
-                   << "   trick.exec_set_freeze_frame( " << ( t / 4 ) << " )" << endl;
+            errmsg << "   federate.set_time_padding( " << t << " )\n"
+                   << "   trick.exec_set_freeze_frame( " << ( t / 4 ) << " )\n";
          }
          DebugHandler::terminate( errmsg.str() );
       }
@@ -600,7 +600,7 @@ void ExecutionControl::start_federation_save_at_SST(
 {
    ostringstream errmsg;
    errmsg << "TrickHLA::ExecutionControl::start_federation_save_at_scenario_time:" << __LINE__
-          << " ERROR: The ExecutionControl does not yet support SAVE/RESTORE!" << endl;
+          << " ERROR: The ExecutionControl does not yet support SAVE/RESTORE!\n";
    DebugHandler::terminate( errmsg.str() );
 }
 #pragma GCC diagnostic pop

@@ -119,11 +119,11 @@ void DynamicalEntityBase::base_config(
    if ( mngr_object == NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          ostringstream errmsg;
-         errmsg << "DynamicalEntityBase::base_config() WARNING: " << endl
-                << "\tThe TrickHLA::Object associated with object \'" << entity_fed_name << "\' is NULL." << endl
-                << "\tEither of the two things are possible:" << endl
-                << "\t1). We are configuring in the input file, which is okay." << endl
-                << "\t2). We are configuring in default_data but forgot to allocate and" << endl
+         errmsg << "DynamicalEntityBase::base_config() WARNING: \n"
+                << "\tThe TrickHLA::Object associated with object \'" << entity_fed_name << "\' is NULL.\n"
+                << "\tEither of the two things are possible:\n"
+                << "\t1). We are configuring in the input file, which is okay.\n"
+                << "\t2). We are configuring in default_data but forgot to allocate and\n"
                 << "\t    assign the associated object in the 'create_connections()' routine.";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
@@ -137,7 +137,7 @@ void DynamicalEntityBase::base_config(
    if ( entity_fed_name.empty() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::DynamicalEntityBase::default_data():" << __LINE__
-             << " ERROR: Unexpected empty federation instance DynamicalEntity name!" << endl;
+             << " ERROR: Unexpected empty federation instance DynamicalEntity name!\n";
       DebugHandler::terminate( errmsg.str() );
    } else {
       set_name( entity_fed_name );
@@ -351,10 +351,10 @@ void DynamicalEntityBase::pack()
       ostringstream errmsg;
       errmsg << "DynamicalEntityBase::pack():" << __LINE__
 #if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
-             << " ERROR: The initialize() function has not been called!" << endl;
+             << " ERROR: The initialize() function has not been called!\n";
       DebugHandler::terminate( errmsg.str() );
 #else
-             << " WARNING: The initialize() function has not been called!" << endl;
+             << " WARNING: The initialize() function has not been called!\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
 #endif
    }
@@ -362,7 +362,7 @@ void DynamicalEntityBase::pack()
    // Print out debug information if desired.
    if ( debug ) {
       ostringstream msg;
-      msg << "DynamicalEntityBase::pack():" << __LINE__ << endl;
+      msg << "DynamicalEntityBase::pack():" << __LINE__ << "\n";
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
@@ -381,10 +381,10 @@ void DynamicalEntityBase::unpack()
       ostringstream errmsg;
       errmsg << "DynamicalEntityBase::unpack():" << __LINE__
 #if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
-             << " ERROR: The initialize() function has not been called!" << endl;
+             << " ERROR: The initialize() function has not been called!\n";
       DebugHandler::terminate( errmsg.str() );
 #else
-             << " WARNING: The initialize() function has not been called!" << endl;
+             << " WARNING: The initialize() function has not been called!\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
 #endif
    }
@@ -392,8 +392,8 @@ void DynamicalEntityBase::unpack()
    // Print out debug information if desired.
    if ( debug ) {
       ostringstream msg;
-      msg << "DynamicalEntityBase::unpack():" << __LINE__ << endl
-          << "DynamicalEntity: lag comp type: " << this->object->lag_comp_type << endl;
+      msg << "DynamicalEntityBase::unpack():" << __LINE__ << "\n"
+          << "DynamicalEntity: lag comp type: " << this->object->lag_comp_type << "\n";
       message_publish( MSG_WARNING, msg.str().c_str() );
    }
 

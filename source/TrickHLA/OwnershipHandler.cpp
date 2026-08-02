@@ -123,7 +123,7 @@ void OwnershipHandler::convert_data_before_checkpoint()
          ostringstream errmsg;
          errmsg << "OwnershipHandler::convert_data_before_checkpoint():" << __LINE__
                 << " CERROR: ould not allocate memory for pull_items (array of OwnershipItem type)!"
-                << endl;
+                << "\n";
          DebugHandler::terminate( errmsg.str() );
       }
 
@@ -161,7 +161,7 @@ void OwnershipHandler::convert_data_before_checkpoint()
          ostringstream errmsg;
          errmsg << "OwnershipHandler::convert_data_before_checkpoint():" << __LINE__
                 << "ERROR:  Could not allocate memory for push_items (array of OwnershipItem type)!"
-                << endl;
+                << "\n";
          DebugHandler::terminate( errmsg.str() );
       }
 

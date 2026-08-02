@@ -78,7 +78,7 @@ void LagCompensation::send_lag_compensation()
    ostringstream errmsg;
    errmsg << "LagCompensation::send_lag_compensation():" << __LINE__
           << " ERROR: Your class that extends LagCompensation must implement"
-          << " the 'virtual void send_lag_compensation()' function!" << endl;
+          << " the 'virtual void send_lag_compensation()' function!\n";
    DebugHandler::terminate( errmsg.str() );
 }
 
@@ -90,6 +90,6 @@ void LagCompensation::receive_lag_compensation()
    ostringstream errmsg;
    errmsg << "LagCompensation::receive_lag_compensation():" << __LINE__
           << " ERROR: Your class that extends LagCompensation must implement"
-          << " the 'virtual void receive_lag_compensation()' function!" << endl;
+          << " the 'virtual void receive_lag_compensation()' function!\n";
    DebugHandler::terminate( errmsg.str() );
 }

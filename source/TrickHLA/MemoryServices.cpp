@@ -82,7 +82,7 @@ bool MemoryServices::delete_var( std::string const &var_name )
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
          ostringstream msg;
          msg << "MemoryServices::delete_var():" << __LINE__
-             << " WARNING: Could not delete variable: " << var_name << std::endl;
+             << " WARNING: Could not delete variable: " << var_name << "\n";
          message_publish( MSG_WARNING, msg.str().c_str() );
       }
       return ( false );
