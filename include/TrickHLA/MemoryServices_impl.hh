@@ -47,6 +47,10 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/MemoryServices.hh" // NOLINT(misc-header-include-cycle)
 
+// Disable unused parameter compiler warnings. Works for both GCC and Clang.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+
 namespace TrickHLA
 {
 
@@ -385,5 +389,7 @@ int MemoryServices::get_trick_type( T type )
 }
 
 } // namespace TrickHLA
+
+#pragma GCC diagnostic pop
 
 #endif // TRICKHLA_MEMORY_SERVICES_IMPL_HH

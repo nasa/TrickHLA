@@ -52,8 +52,8 @@ Packing::Packing()
  * @job_class{initialization}
  */
 Packing::Packing(
-   string name ) // cppcheck-suppress [passedByValue]
-   : TrickHLA::ObjectCallbackBase( name )
+   string name )                          // cppcheck-suppress [passedByValue]
+   : TrickHLA::ObjectCallbackBase( name ) // NOLINT(performance-unnecessary-value-param)
 {
    return;
 }

@@ -1554,7 +1554,7 @@ bool Federate::check_joined_federates_match()
          // If no match was found for at least one federate in the federates
          // in Federation list, then mark this as a fail.
          if ( std::all_of( federate_handles.begin(), federate_handles.end(),
-                           [&joined_federate]( auto fed_handle ) -> bool {
+                           [&joined_federate]( auto const &fed_handle ) -> bool {
                               return ( fed_handle != joined_federate.federate_handle );
                            } ) ) {
             success = false;
@@ -1625,7 +1625,7 @@ bool Federate::verify_joined_federates()
       }
 
       // Iterate through the federates in Federation list.
-      for ( FederateHandle federate_handle : federate_handles ) { // NOLINT(misc-const-correctness)
+      for ( FederateHandle const &federate_handle : federate_handles ) { // NOLINT(misc-const-correctness)
 
          bool found = false;
 
@@ -1816,7 +1816,7 @@ void Federate::update_joined_federates()
 
       // Iterate through the federates in Federation set to see if they have a
       // counterpart in the joined federates map.
-      for ( FederateHandle fed_handle : federate_handles ) { // NOLINT(misc-const-correctness)
+      for ( FederateHandle const &fed_handle : federate_handles ) { // NOLINT(misc-const-correctness)
          if ( !is_joined_federate_by_federate_handle( fed_handle ) ) {
             all_found = false;
          }
@@ -5680,6 +5680,8 @@ void Federate::restore_federate_handles_from_MOM()
          // We should probably be using the update_joined_federates here.
          // Determine if all the federate handles have been found.
          // all_found = ( joined_federates_map.size() >= save_restore_service.running_feds_count );
+
+         // FIXME: BUG - Infinite loop because all_found is never set!!!!
       }
 
       if ( !all_found ) {

@@ -333,7 +333,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    /*! @brief Checks if Save has been initiated by this ExecutionControl method.
     * @return True if Save is initiated and synchronized with the federation,
     * False if Save not supported. */
-   virtual bool is_save_initiated() override;
+   virtual bool is_save_initiated();
 
    /*! @brief Checks if Save has been announced by this ExecutionControl method.
     * @return True if Save is announced, False if not. */

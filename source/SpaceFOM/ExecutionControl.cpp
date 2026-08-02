@@ -131,7 +131,7 @@ extern Trick::Clock *the_clock;
 extern "C" {
 #endif
 // C based model includes.
-extern ATTRIBUTES attrSpaceFOM__MTRInteractionHandler[];
+extern ATTRIBUTES attrSpaceFOM__MTRInteractionHandler[]; // NOLINT(bugprone-reserved-identifier)
 #ifdef __cplusplus
 }
 #endif

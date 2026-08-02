@@ -73,7 +73,7 @@ class PhysicalEntityData
 
    /*! @brief Assignment operator for PhysicalEntityData class.
     *  @param rhs Right operand data to copy from. */
-   virtual PhysicalEntityData &operator=( PhysicalEntityData const &rhs );
+   PhysicalEntityData &operator=( PhysicalEntityData const &rhs );
 
    /*! @brief Copy the PhysicalEntityData.
     *  @param source Source PhysicalEntityData to copy from. */

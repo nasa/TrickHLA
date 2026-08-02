@@ -1547,15 +1547,9 @@ void SaveRestoreServices::restore_waiting_for_initiated()
  *  @job_class{scheduled}
  */
 void SaveRestoreServices::restore_initiated(
-#if defined( IEEE_1516_2025 )
    wstring const        &label,
    wstring const        &federate_name,
    FederateHandle const &new_federate_handle )
-#else
-   wstring const &label,
-   wstring const &federate_name,
-   FederateHandle new_federate_handle )
-#endif // IEEE_1516_2025
 {
    string      restore_label_str;
    string      checkpoint_file_name;

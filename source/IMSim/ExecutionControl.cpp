@@ -126,7 +126,7 @@ std::string const ExecutionControl::type = "IMSim";
 extern "C" {
 #endif
 // C based model includes.
-extern ATTRIBUTES attrIMSim__FreezeInteractionHandler[];
+extern ATTRIBUTES attrIMSim__FreezeInteractionHandler[]; // NOLINT(bugprone-reserved-identifier)
 #ifdef __cplusplus
 }
 #endif
@@ -381,7 +381,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
    }
 
    // Save restore_file_name before it gets wiped out with the loading of the checkpoint file...
-   char *tRestoreName = NULL;
+   char const *tRestoreName = NULL;
    if ( !save_restore_service->restore_file_name.empty() ) {
       // we don't want this to get wiped out when trick clears memory for load checkpoint, so don't allocate with TMM
       tRestoreName = strdup( save_restore_service->restore_file_name.c_str() ); // NOLINT

@@ -54,8 +54,8 @@ Conditional::Conditional() // RETURN: -- None.
  * @job_class{initialization}
  */
 Conditional::Conditional(
-   string name ) // cppcheck-suppress [passedByValue]
-   : TrickHLA::ObjectCallbackBase( name )
+   string name )                          // cppcheck-suppress [passedByValue]
+   : TrickHLA::ObjectCallbackBase( name ) // NOLINT(performance-unnecessary-value-param)
 {
    return;
 }

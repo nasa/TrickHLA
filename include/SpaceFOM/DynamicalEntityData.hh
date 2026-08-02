@@ -66,7 +66,7 @@ class DynamicalEntityData
 
    /*! @brief Assignment operator for DynamicalEntityData class.
     *  @param rhs Right operand data to copy from. */
-   virtual DynamicalEntityData &operator=( DynamicalEntityData const &rhs );
+   DynamicalEntityData &operator=( DynamicalEntityData const &rhs );
 
    /*! @brief Copy the DynamicalEntityData.
     *  @param source Source DynamicalEntityData to copy from. */

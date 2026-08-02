@@ -65,7 +65,7 @@ ObjectCallbackBase::ObjectCallbackBase(
    string name )
    : initialized( false ),
      object( NULL ),
-     callback_name( name ),
+     callback_name( name ), // NOLINT(performance-unnecessary-value-param)
      exec_control( NULL )
 {
    return;

@@ -63,7 +63,7 @@ class RefFrameData : public SpaceFOM::RefFrameDataState
 
    /*! @brief Assignment operator for RefFrameData class.
     *  @param rhs Right operand data to copy from. */
-   virtual RefFrameData &operator=( RefFrameData const &rhs );
+   RefFrameData &operator=( RefFrameData const &rhs );
 
    /*! @brief Copy the RefFrameData.
     *  @param source Source RefFrameData to copy from. */

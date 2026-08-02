@@ -56,8 +56,8 @@ LagCompensation::LagCompensation()
  * @job_class{initialization}
  */
 LagCompensation::LagCompensation(
-   string name ) // cppcheck-suppress [passedByValue]
-   : TrickHLA::ObjectCallbackBase( name )
+   string name )                          // cppcheck-suppress [passedByValue]
+   : TrickHLA::ObjectCallbackBase( name ) // NOLINT(performance-unnecessary-value-param)
 {
    return;
 }

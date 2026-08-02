@@ -90,7 +90,7 @@ extern "C" {
 // Include the Trick generated ATTRIBUTES for the ExecutionConfiguration class.
 // This is used to set up Trick based simulation variable mapping into the
 // TrickHLA::Object associated with this class.
-extern ATTRIBUTES attrSpaceFOM__ExecutionConfiguration[];
+extern ATTRIBUTES attrSpaceFOM__ExecutionConfiguration[]; // NOLINT(bugprone-reserved-identifier)
 
 #ifdef __cplusplus
 }

@@ -92,7 +92,7 @@ std::string const ExecutionControl::type = "Simple";
 extern "C" {
 #endif
 // C based model includes.
-extern ATTRIBUTES attrTrickHLA__MTRInteractionHandler[];
+extern ATTRIBUTES attrTrickHLA__MTRInteractionHandler[]; // NOLINT(bugprone-reserved-identifier)
 #ifdef __cplusplus
 }
 #endif
