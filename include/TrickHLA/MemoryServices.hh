@@ -37,6 +37,9 @@ NASA, Johnson Space Center\n
 // System includes.
 #include <string>
 
+// Trick includes.
+#include "trick/attributes.h"
+
 namespace TrickHLA
 {
 
@@ -75,6 +78,11 @@ class MemoryServices
     * @param  var_name Name of the Trick memory allocation.
     * @return Returns true if deallocation succeeded, false otherwise. */
    static bool delete_var( std::string const &var_name );
+
+   /*! @brief Get the number of elements in a memory allocation.
+    * @param attr Trick ATTRIBUTE information for a memory allocation.
+    * @return The number of elements in the memory allocation.  */
+   static std::size_t get_static_var_element_count( ATTRIBUTES *attr );
 
    //--------------------------------------------------------------------------
    // String memory management functions.

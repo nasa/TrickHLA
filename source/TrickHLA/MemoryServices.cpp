@@ -89,6 +89,29 @@ bool MemoryServices::delete_var( std::string const &var_name )
    return ( true );
 }
 
+size_t MemoryServices::get_static_var_element_count(
+   ATTRIBUTES *attr )
+{
+   size_t count = 0;
+
+   if ( attr != NULL ) {
+      bool const is_array        = ( attr->num_index > 0 );
+      bool const is_static_array = is_array && ( attr->index[attr->num_index - 1].size != 0 );
+
+      if ( !is_array || is_static_array ) {
+         // The user variable is either a primitive type or a static
+         // multi-dimension array.
+         count = 1;
+         for ( int i = 0; i < attr->num_index; ++i ) {
+            if ( attr->index[i].size > 0 ) {
+               count *= attr->index[i].size;
+            }
+         }
+      }
+   }
+   return count;
+}
+
 char *MemoryServices::cstrdup( char const *input )
 {
    return ( trick_MM->mm_strdup( input ) );

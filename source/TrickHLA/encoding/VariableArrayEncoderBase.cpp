@@ -92,7 +92,7 @@ VariableArrayEncoderBase::VariableArrayEncoderBase(
    this->is_dynamic_array_flag = is_array() && ( attr->index[attr->num_index - 1].size == 0 );
 
    if ( is_static_in_size() ) {
-      this->var_element_count = Utilities::get_static_var_element_count( attr );
+      this->var_element_count = MemoryServices::get_static_var_element_count( attr );
    } else {
       // Dynamic variable array size calculation.
       calculate_var_element_count();

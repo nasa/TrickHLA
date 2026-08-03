@@ -40,6 +40,7 @@ NASA, Johnson Space Center\n
 // TrickHLA include files.
 #include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
 #include "TrickHLA/HLAStandardSupport.hh"
+#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/encoding/BasicDataFixedArrayEncoders.hh"
 #include "TrickHLA/encoding/EncoderBase.hh"
 #include "TrickHLA/utils/Utilities.hh"
@@ -72,7 +73,7 @@ using namespace TrickHLA;
       std::string const &name )                                                                                                        \
       : EncoderBase( name )                                                                                                            \
    {                                                                                                                                   \
-      std::size_t const length        = Utilities::get_static_var_element_count( attr );                                               \
+      std::size_t const length        = MemoryServices::get_static_var_element_count( attr );                                               \
       HLAfixedArray    *array_encoder = new HLAfixedArray( EncodableDataType(), length );                                              \
       this->data_encoder              = array_encoder;                                                                                 \
                                                                                                                                        \

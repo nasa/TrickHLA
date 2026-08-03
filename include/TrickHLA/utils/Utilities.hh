@@ -157,8 +157,6 @@ class Utilities
       return endianness;
    }
 
-   static std::size_t get_static_var_element_count( ATTRIBUTES *attr );
-
    /*! @brief Determine if the RTI data needs a byteswap before transmission.
     *  @return True if byteswap is needed.
     *  @param  rti_encoding TrickHLA RTI encoding of the data. */
