@@ -207,9 +207,23 @@ class MemoryServices
    template < typename T >
    static std::size_t get_size( T address );
 
+   /*! @brief Get the name of the class being allocated.
+    * @details  This need by the Trick memory allocation process when dealing
+    * with anything that is not a basic type.  NOTE: that this class only supports
+    * a limited number of TrickHLA types.  For other types on in the list, the
+    * explicit declare_var should be used and the actual class name should
+    * be passed in.
+    * @tparam T Template type parameter.
+    * @return Returns the name of the class associated with the template type. */
    template < typename T >
    static std::string get_class_name( T type );
 
+   /*! @brief Get Trick type corresponding to the template type.
+    * @details This routine compares the template to type to the known Trick
+    * types and returns the value that matches. Most complex types will be
+    * identified as TRICK_STRUCTURED.
+    * @tparam T Template type parameter.
+    * @return Returns an integer value equivalent to the TRICK_TYPE enum value. */
    template < typename T >
    static int get_trick_type( T type );
 

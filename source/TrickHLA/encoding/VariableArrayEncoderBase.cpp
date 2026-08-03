@@ -168,17 +168,7 @@ void VariableArrayEncoderBase::calculate_var_element_count()
 
       // Dynamic array is a pointer so check for NULL.
       if ( var_address != NULL ) {
-
-         // get_size returns the number of elements in the dynamic array.
-         int num_items = MemoryServices::get_size( var_address );
-         if ( num_items <= 0 ) {
-            // Get the allocation info that contains the variable address.
-            ALLOC_INFO const *alloc_info = trick_MM->get_alloc_info_of( var_address );
-            if ( alloc_info != NULL ) {
-               num_items = alloc_info->num;
-            }
-         }
-         this->var_element_count = ( num_items >= 0 ) ? num_items : 0;
+         this->var_element_count = MemoryServices::get_size( var_address );
       } else {
          this->var_element_count = 0;
       }
