@@ -38,9 +38,9 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // TrickHLA includes.
-#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
+#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/SyncPoint.hh"
 #include "TrickHLA/SyncPointList.hh"
 #include "TrickHLA/SyncPointTimed.hh"
@@ -156,12 +156,12 @@ bool SyncPointList::add(
    size_t       cdims[]         = { 1 };
    string const sync_point_name = string( "SyncPoint_" ) + label_str;
    SyncPoint   *sp              = nullptr;
-   sp = MemoryServices::declare_var( sp,
-                                     "TrickHLA::SyncPoint",
-                                     0,
-                                     sync_point_name,
-                                     1,
-                                     cdims );
+   sp                           = MemoryServices::declare_var( sp,
+                                                               "TrickHLA::SyncPoint",
+                                                               0,
+                                                               sync_point_name,
+                                                               1,
+                                                               cdims );
 
    if ( sp == NULL ) {
       ostringstream errmsg;
@@ -186,8 +186,6 @@ bool SyncPointList::add(
    StringUtilities::to_string( label_str, label );
 
    if ( contains( label ) ) {
-      string label_str;
-      StringUtilities::to_string( label_str, label );
       ostringstream errmsg;
       errmsg << "SyncPointList::add():" << __LINE__
              << " ERROR: The sync-point label '" << label_str
@@ -200,15 +198,13 @@ bool SyncPointList::add(
    size_t          cdims[]         = { 1 };
    string const    sync_point_name = string( "SyncPointTimed_" ) + label_str;
    SyncPointTimed *sp              = nullptr;
-   sp = MemoryServices::declare_var( sp,
-                                     "TrickHLA::SyncPointTimed",
-                                     0,
-                                     sync_point_name,
-                                     1,
-                                     cdims );
+   sp                              = MemoryServices::declare_var( sp,
+                                                                  "TrickHLA::SyncPointTimed",
+                                                                  0,
+                                                                  sync_point_name,
+                                                                  1,
+                                                                  cdims );
    if ( sp == NULL ) {
-      string label_str;
-      StringUtilities::to_string( label_str, label );
       ostringstream errmsg;
       errmsg << "SyncPointList::add():" << __LINE__
              << " ERROR: Cannot allocate Trick Managed Memory for TrickHLA::SyncPointTimed with label '"

@@ -80,9 +80,9 @@ void RefFrameLagCompInteg::initialize()
    if ( this->integ_dt < this->integ_tol ) {
       ostringstream errmsg;
 
-      errmsg << "SpaceFOM::RefFrameLagCompInteg::initialize():" << __LINE__ << endl
+      errmsg << "SpaceFOM::RefFrameLagCompInteg::initialize():" << __LINE__ << "\n"
              << " ERROR: Tolerance must be less that the dt!: dt = "
-             << this->integ_dt << "; tolerance = " << this->integ_tol << endl;
+             << this->integ_dt << "; tolerance = " << this->integ_tol << "\n";
       // Print message and terminate.
       DebugHandler::terminate( errmsg.str() );
    }
@@ -102,10 +102,10 @@ void RefFrameLagCompInteg::send_lag_compensation()
       ostringstream errmsg;
       errmsg << "RefFrameLagCompInteg::send_lag_compensation():" << __LINE__
 #if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
-             << " ERROR: The initialize() function has not been called!" << endl;
+             << " ERROR: The initialize() function has not been called!\n";
       DebugHandler::terminate( errmsg.str() );
 #else
-             << " WARNING: The initialize() function has not been called!" << endl;
+             << " WARNING: The initialize() function has not been called!\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
 #endif
    }
@@ -119,10 +119,10 @@ void RefFrameLagCompInteg::send_lag_compensation()
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
       ostringstream errmsg;
-      errmsg << "****** RefFrameLagCompInteg::send_lag_compensation():" << __LINE__ << endl
-             << " scenario-time:" << get_scenario_time() << endl
-             << "     lookahead:" << this->compensate_dt << endl
-             << " adjusted-time:" << end_t << endl;
+      errmsg << "****** RefFrameLagCompInteg::send_lag_compensation():" << __LINE__ << "\n"
+             << " scenario-time:" << get_scenario_time() << "\n"
+             << "     lookahead:" << this->compensate_dt << "\n"
+             << " adjusted-time:" << end_t << "\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
 
@@ -134,7 +134,7 @@ void RefFrameLagCompInteg::send_lag_compensation()
    // Print out debug information if desired.
    if ( debug ) {
       ostringstream msg;
-      msg << "Send data before compensation:" << endl;
+      msg << "Send data before compensation:\n";
       print_lag_comp_data( msg );
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
@@ -145,7 +145,7 @@ void RefFrameLagCompInteg::send_lag_compensation()
    // Print out debug information if desired.
    if ( debug ) {
       ostringstream msg;
-      msg << "Send data after compensation:" << endl;
+      msg << "Send data after compensation:\n";
       print_lag_comp_data( msg );
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
@@ -165,10 +165,10 @@ void RefFrameLagCompInteg::receive_lag_compensation()
       ostringstream errmsg;
       errmsg << "RefFrameLagCompInteg::receive_lag_compensation():" << __LINE__
 #if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
-             << " ERROR: The initialize() function has not been called!" << endl;
+             << " ERROR: The initialize() function has not been called!\n";
       DebugHandler::terminate( errmsg.str() );
 #else
-             << " WARNING: The initialize() function has not been called!" << endl;
+             << " WARNING: The initialize() function has not been called!\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
 #endif
    }
@@ -183,10 +183,10 @@ void RefFrameLagCompInteg::receive_lag_compensation()
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
       ostringstream errmsg;
-      errmsg << "******* RefFrameLagCompInteg::receive_lag_compensation():" << __LINE__ << endl
-             << "  scenario-time:" << end_t << endl
-             << "      data-time:" << data_t << endl
-             << " comp-time-step:" << this->compensate_dt << endl;
+      errmsg << "******* RefFrameLagCompInteg::receive_lag_compensation():" << __LINE__ << "\n"
+             << "  scenario-time:" << end_t << "\n"
+             << "      data-time:" << data_t << "\n"
+             << " comp-time-step:" << this->compensate_dt << "\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
 
@@ -201,7 +201,7 @@ void RefFrameLagCompInteg::receive_lag_compensation()
       // Print out debug information if desired.
       if ( debug ) {
          ostringstream msg;
-         msg << "Receive data before compensation:" << endl;
+         msg << "Receive data before compensation:\n";
          print_lag_comp_data( msg );
          message_publish( MSG_NORMAL, msg.str().c_str() );
       }
@@ -212,7 +212,7 @@ void RefFrameLagCompInteg::receive_lag_compensation()
       // Print out debug information if desired.
       if ( debug ) {
          ostringstream msg;
-         msg << "Receive data after compensation:" << endl;
+         msg << "Receive data after compensation:\n";
          print_lag_comp_data( msg );
          message_publish( MSG_NORMAL, msg.str().c_str() );
       }

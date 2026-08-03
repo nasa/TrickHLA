@@ -195,7 +195,7 @@ void create_connections() {
       std::ostringstream errmsg;
       errmsg << "S_define::create_connections():" << __LINE__
              << ": ERROR: Object count mismatch: allocated = " << object_services->obj_count
-             << " but set = " << object_count << std::endl;
+             << " but set = " << object_count << "\n";
       // Print message and terminate.
       //TrickHLA::DebugHandler::terminate( errmsg.str() );
       message_publish( MSG_ERROR, errmsg.str().c_str() );
@@ -205,7 +205,7 @@ void create_connections() {
       std::ostringstream errmsg;
       errmsg << "S_define::create_connections():" << __LINE__
              << ": ERROR: Interaction count mismatch: allocated = " << interaction_services->inter_count
-             << " but set = " << interaction_count << std::endl;
+             << " but set = " << interaction_count << "\n";
       // Print message and terminate.
       //TrickHLA::DebugHandler::terminate( errmsg.str() );
       message_publish( MSG_ERROR, errmsg.str().c_str() );

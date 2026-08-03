@@ -63,7 +63,7 @@ class RefFrameDataState
 
    /*! @brief Assignment operator for RefFrameDataState class.
     *  @param rhs Right operand data to copy from. */
-   virtual RefFrameDataState &operator=( RefFrameDataState const &rhs );
+   RefFrameDataState &operator=( RefFrameDataState const &rhs );
 
    /*! @brief Copy the RefFrameDataState.
     *  @param source Source RefFrameDataState to copy from. */

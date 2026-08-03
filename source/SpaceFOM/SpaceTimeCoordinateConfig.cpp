@@ -35,9 +35,9 @@ NASA, Johnson Space Center\n
 // Trick includes.
 
 // TrickHLA includes.
-#include "TrickHLA/MemoryServices.hh"
-#include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Attribute.hh"
+#include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/RecordElement.hh"
 #include "TrickHLA/Types.hh"
 
@@ -64,7 +64,7 @@ void SpaceTimeCoordinateConfig::configure(
    if ( attribute == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::SpaceTimeCoordinateConfig::configure():" << __LINE__
-             << " ERROR: Unexpected NULL attribute specified!" << endl;
+             << " ERROR: Unexpected NULL attribute specified!\n";
       DebugHandler::terminate( errmsg.str() );
       return;
    }
@@ -89,7 +89,7 @@ void SpaceTimeCoordinateConfig::configure(
    if ( rec_element == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::SpaceTimeCoordinateConfig::configure():" << __LINE__
-             << " ERROR: Unexpected NULL rec_element specified!" << endl;
+             << " ERROR: Unexpected NULL rec_element specified!\n";
       DebugHandler::terminate( errmsg.str() );
       return;
    }

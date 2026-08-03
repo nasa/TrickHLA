@@ -48,12 +48,12 @@ NASA, Johnson Space Center\n
 #include "trick/vector_macros.h"
 
 // TrickHLA includes.
-#include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
-#include "TrickHLA/MemoryServices.hh"
-#include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/Types.hh"
 #include "TrickHLA/Attribute.hh"
+#include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
+#include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/Object.hh"
+#include "TrickHLA/Types.hh"
 
 // SpaceFOM includes.
 #include "SpaceFOM/PhysicalEntityBase.hh"
@@ -149,11 +149,11 @@ void PhysicalEntityBase::base_config(
    if ( mngr_object == NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          ostringstream errmsg;
-         errmsg << "PhysicalEntityBase::base_config() Warning: " << endl
-                << "\tThe TrickHLA::Object associated with object \'" << entity_fed_name << "\' is NULL." << endl
-                << "\tEither of the two things are possible:" << endl
-                << "\t1). We are configuring in the input file, which is okay." << endl
-                << "\t2). We are configuring in default_data but forgot to allocate and" << endl
+         errmsg << "PhysicalEntityBase::base_config() Warning: \n"
+                << "\tThe TrickHLA::Object associated with object \'" << entity_fed_name << "\' is NULL.\n"
+                << "\tEither of the two things are possible:\n"
+                << "\t1). We are configuring in the input file, which is okay.\n"
+                << "\t2). We are configuring in default_data but forgot to allocate and\n"
                 << "\t    assign the associated object in the 'create_connections()' routine.";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
@@ -167,7 +167,7 @@ void PhysicalEntityBase::base_config(
    if ( entity_fed_name.empty() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntityBase::base_config():" << __LINE__
-             << " ERROR: Unexpected empty federation instance frame name!" << endl;
+             << " ERROR: Unexpected empty federation instance frame name!\n";
       DebugHandler::terminate( errmsg.str() );
    } else {
       set_name( entity_fed_name );
@@ -302,7 +302,7 @@ void PhysicalEntityBase::initialize()
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
              << " ERROR: Unexpected empty federation instance name!"
-             << endl;
+             << "\n";
       // Print message and terminate.
       DebugHandler::terminate( errmsg.str() );
    }
@@ -313,7 +313,7 @@ void PhysicalEntityBase::initialize()
       errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
              << " ERROR: Unexpected NULL entity parent_ref_frame!"
              << " Setting parent_ref_frame to empty string."
-             << endl;
+             << "\n";
       // Print message and terminate.
       DebugHandler::terminate( errmsg.str() );
    }
@@ -408,10 +408,10 @@ void PhysicalEntityBase::pack()
       ostringstream errmsg;
       errmsg << "PhysicalEntityBase::pack():" << __LINE__
 #if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
-             << " ERROR: The initialize() function has not been called!" << endl;
+             << " ERROR: The initialize() function has not been called!\n";
       DebugHandler::terminate( errmsg.str() );
 #else
-             << " WARNING: The initialize() function has not been called!" << endl;
+             << " WARNING: The initialize() function has not been called!\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
 #endif
    }
@@ -424,7 +424,7 @@ void PhysicalEntityBase::pack()
    // Print out debug information if desired.
    if ( debug ) {
       ostringstream msg;
-      msg << "PhysicalEntityBase::pack():" << __LINE__ << endl;
+      msg << "PhysicalEntityBase::pack():" << __LINE__ << "\n";
       debug_print( msg );
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
@@ -449,10 +449,10 @@ void PhysicalEntityBase::unpack()
       ostringstream errmsg;
       errmsg << "PhysicalEntityBase::unpack():" << __LINE__
 #if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
-             << " ERROR: The initialize() function has not been called!" << endl;
+             << " ERROR: The initialize() function has not been called!\n";
       DebugHandler::terminate( errmsg.str() );
 #else
-             << " WARNING: The initialize() function has not been called!" << endl;
+             << " WARNING: The initialize() function has not been called!\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
 #endif
    }
@@ -469,7 +469,7 @@ void PhysicalEntityBase::unpack()
    // Print out debug information if desired.
    if ( debug ) {
       ostringstream msg;
-      msg << "PhysicalEntityBase::unpack():" << __LINE__ << endl;
+      msg << "PhysicalEntityBase::unpack():" << __LINE__ << "\n";
       debug_print( msg );
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
@@ -488,7 +488,7 @@ void PhysicalEntityBase::debug_print( std::ostream &stream ) const
    // Set the print precision.
    stream.precision( 15 );
 
-   stream << "        Object-Name: '" << object->get_name() << "'" << endl;
+   stream << "        Object-Name: '" << object->get_name() << "'\n";
 
    pe_packing_data.print_data( stream );
 

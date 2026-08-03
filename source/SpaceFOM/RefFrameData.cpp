@@ -120,7 +120,7 @@ bool RefFrameData::transform_to_parent(
    // Check for null reference to transformed frame data.
    if ( frame_out == NULL ) {
       std::ostringstream errmsg;
-      errmsg << "SpaceFOM::RefFrameData::transform_to_parent() ERROR:%d NULL transformed frame reference!" << endl;
+      errmsg << "SpaceFOM::RefFrameData::transform_to_parent() ERROR:%d NULL transformed frame reference!\n";
       message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__ );
       return ( false );
    }
@@ -139,19 +139,19 @@ bool RefFrameData::transform_to_parent(
    // frame.
    if ( this->name != frame_out->name ) {
       std::ostringstream errmsg;
-      errmsg << "SpaceFOM::RefFrameData::transform_to_parent() ERROR:%d Frame name mismatch: %s/%s!" << endl;
+      errmsg << "SpaceFOM::RefFrameData::transform_to_parent() ERROR:%d Frame name mismatch: %s/%s!\n";
       message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__, this->name.c_str(), frame_out->name.c_str() );
       return ( false );
    }
    if ( this->parent_name != frame_to.name ) {
       std::ostringstream errmsg;
-      errmsg << "SpaceFOM::RefFrameData::transform_to_parent() ERROR:%d Frame incompatibility: %s/%s!" << endl;
+      errmsg << "SpaceFOM::RefFrameData::transform_to_parent() ERROR:%d Frame incompatibility: %s/%s!\n";
       message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__, this->parent_name.c_str(), frame_to.name.c_str() );
       return ( false );
    }
    if ( frame_to.parent_name != frame_out->parent_name ) {
       std::ostringstream errmsg;
-      errmsg << "SpaceFOM::RefFrameData::transform_to_parent() ERROR:%d Frame parent: %s/%s!" << endl;
+      errmsg << "SpaceFOM::RefFrameData::transform_to_parent() ERROR:%d Frame parent: %s/%s!\n";
       message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__, frame_to.parent_name.c_str(), frame_out->parent_name.c_str() );
       return ( false );
    }
@@ -170,7 +170,7 @@ bool RefFrameData::transform_to_child(
    // Check for null reference to transformed frame data.
    if ( frame_out == NULL ) {
       std::ostringstream errmsg;
-      errmsg << "SpaceFOM::RefFrameData::transform_to_child() ERROR:%d NULL transformed frame reference!" << endl;
+      errmsg << "SpaceFOM::RefFrameData::transform_to_child() ERROR:%d NULL transformed frame reference!\n";
       message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__ );
       return ( false );
    }
@@ -185,19 +185,19 @@ bool RefFrameData::transform_to_child(
    // Check for frame compatibility.
    if ( this->name != frame_out->name ) {
       std::ostringstream errmsg;
-      errmsg << "SpaceFOM::RefFrameData::transform_to_child() ERROR:%d Frame name mismatch: %s/%s!" << endl;
+      errmsg << "SpaceFOM::RefFrameData::transform_to_child() ERROR:%d Frame name mismatch: %s/%s!\n";
       message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__, this->name.c_str(), frame_out->name.c_str() );
       return ( false );
    }
    if ( this->name != frame_to.parent_name ) {
       std::ostringstream errmsg;
-      errmsg << "SpaceFOM::RefFrameData::transform_to_child() ERROR:%d Frame incompatibility: %s/%s!" << endl;
+      errmsg << "SpaceFOM::RefFrameData::transform_to_child() ERROR:%d Frame incompatibility: %s/%s!\n";
       message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__, this->name.c_str(), frame_to.parent_name.c_str() );
       return ( false );
    }
    if ( frame_to.name != frame_out->parent_name ) {
       std::ostringstream errmsg;
-      errmsg << "SpaceFOM::RefFrameData::transform_to_child() ERROR:%d Frame parent: %s/%s!" << endl;
+      errmsg << "SpaceFOM::RefFrameData::transform_to_child() ERROR:%d Frame parent: %s/%s!\n";
       message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__, frame_to.name.c_str(), frame_out->parent_name.c_str() );
       return ( false );
    }
@@ -214,8 +214,8 @@ void RefFrameData::print_data( std::ostream &stream ) const
    // Set the print precision.
    stream.precision( 15 );
 
-   stream << "                name: '" << name << "'" << endl
-          << "              parent: '" << parent_name << "'" << endl;
+   stream << "                name: '" << name << "'\n"
+          << "              parent: '" << parent_name << "'\n";
    RefFrameDataState::print_data( stream );
 
    return;

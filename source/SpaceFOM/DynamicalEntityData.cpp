@@ -117,23 +117,23 @@ void DynamicalEntityData::print_data( std::ostream &stream ) const
    // Set the print precision.
    stream.precision( 15 );
 
-   stream << "        mass: '" << mass << "'" << endl
-          << "   mass_rate: '" << mass_rate << "'" << endl;
+   stream << "        mass: '" << mass << "'\n"
+          << "   mass_rate: '" << mass_rate << "'\n";
    stream << "       force: "
           << "\t" << force[0] << ", "
           << "\t\t" << force[1] << ", "
-          << "\t\t" << force[2] << endl;
+          << "\t\t" << force[2] << "\n";
    stream << "      torque: "
           << "\t" << torque[0] << ", "
           << "\t\t" << torque[1] << ", "
-          << "\t\t" << torque[2] << endl;
+          << "\t\t" << torque[2] << "\n";
    stream << "     inertia: "
-          << "\t" << inertia[0][0] << ", " << inertia[1][0] << ", " << inertia[2][0] << endl
-          << "              \t" << inertia[0][1] << ", " << inertia[1][1] << ", " << inertia[2][1] << endl
-          << "              \t" << inertia[0][2] << ", " << inertia[1][2] << ", " << inertia[2][2] << endl;
+          << "\t" << inertia[0][0] << ", " << inertia[1][0] << ", " << inertia[2][0] << "\n"
+          << "              \t" << inertia[0][1] << ", " << inertia[1][1] << ", " << inertia[2][1] << "\n"
+          << "              \t" << inertia[0][2] << ", " << inertia[1][2] << ", " << inertia[2][2] << "\n";
    stream << "inertia rate: "
-          << "\t" << inertia_rate[0][0] << ", " << inertia_rate[1][0] << ", " << inertia_rate[2][0] << endl
-          << "              \t" << inertia_rate[0][1] << ", " << inertia_rate[1][1] << ", " << inertia_rate[2][1] << endl
-          << "              \t" << inertia_rate[0][2] << ", " << inertia_rate[1][2] << ", " << inertia_rate[2][2] << endl;
+          << "\t" << inertia_rate[0][0] << ", " << inertia_rate[1][0] << ", " << inertia_rate[2][0] << "\n"
+          << "              \t" << inertia_rate[0][1] << ", " << inertia_rate[1][1] << ", " << inertia_rate[2][1] << "\n"
+          << "              \t" << inertia_rate[0][2] << ", " << inertia_rate[1][2] << ", " << inertia_rate[2][2] << "\n";
    return;
 }

@@ -245,7 +245,7 @@ void ExecutionControlBase::initialize()
                 << " ERROR: The CTE timeline is specified, but it is not"
                 << " configured as the Trick real time clock! Make sure"
                 << " the CTETimelineBase class constructor is calling"
-                << " real_time_change_clock( this );" << endl;
+                << " real_time_change_clock( this );\n";
          DebugHandler::terminate( errmsg.str() );
       }
 
@@ -282,7 +282,7 @@ void ExecutionControlBase::initialize()
    if ( ( federate != NULL ) && !federate->time_management_service.verify_time_constraints() ) {
       ostringstream errmsg;
       errmsg << "ExecutionControlBase::initialize():" << __LINE__
-             << " ERROR: Time constraints verification failed!" << endl;
+             << " ERROR: Time constraints verification failed!\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -300,7 +300,7 @@ Trick simulation time as the default scenario-timeline.\n",
          ostringstream errmsg;
          errmsg << "ExecutionControlBase::initialize():" << __LINE__
                 << " FAILED to allocate enough memory for ScenarioTimeline class!"
-                << endl;
+                << "\n";
          DebugHandler::terminate( errmsg.str() );
          return;
       }
@@ -422,7 +422,7 @@ bool ExecutionControlBase::object_instance_name_reservation_failed(
                 << " FAILED to reserve the ExecutionConfiguration object instance name: '"
                 << execution_configuration->get_name()
                 << "'! This conflicts with this being the designated Master federate!"
-                << endl;
+                << "\n";
          DebugHandler::terminate( errmsg.str() );
       }
 
@@ -508,7 +508,7 @@ void ExecutionControlBase::add_multiphase_init_sync_points()
          ostringstream errmsg;
          errmsg << "ExecutionControlBase::add_multiphase_init_sync_points:" << __LINE__
                 << " ERROR: User specified multiphase init sync-point label '"
-                << user_sync_pt_labels[i] << "' already added!" << endl;
+                << user_sync_pt_labels[i] << "' already added!\n";
          DebugHandler::terminate( errmsg.str() );
       } else {
          add_sync_point( ws_label, TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST );
@@ -605,7 +605,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
              << " is not configured to send at least one object attribute. Make"
              << " sure at least one ExecutionConfiguration attribute has 'publish = true'"
              << " set. Please check your input or modified-data files to make"
-             << " sure the 'publish' value is correctly specified." << endl;
+             << " sure the 'publish' value is correctly specified.\n";
       DebugHandler::terminate( errmsg.str() );
    }
 }
@@ -662,7 +662,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
                          << " This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!" << endl;
+                         << " the Central RTI Component (CRC) level!\n";
                   DebugHandler::terminate( errmsg.str() );
                }
             }
@@ -691,7 +691,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
              << " Make sure at least one ExecutionConfiguration attribute has"
              << " 'subscribe = true' set. Please check your input or modified-data"
              << " files to make sure the 'subscribe' value is correctly specified."
-             << endl;
+             << "\n";
       DebugHandler::terminate( errmsg.str() );
    }
 }
@@ -873,7 +873,7 @@ double ExecutionControlBase::get_sim_time() const
       errmsg << "ExecutionControlBase::get_sim_time():" << __LINE__
              << " WARNING: The simulation timeline has not been set!"
              << " Please make sure you specify a sim-timeline in your input"
-             << " file. Returning Trick simulation time instead!" << endl;
+             << " file. Returning Trick simulation time instead!\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
    return exec_get_sim_time();
@@ -890,7 +890,7 @@ double ExecutionControlBase::get_scenario_time() const
       errmsg << "ExecutionControlBase::get_scenario_time():" << __LINE__
              << " WARNING: The scenario timeline has not been set!"
              << " Please make sure you specify a scenario timeline in your input"
-             << " file. Returning simulation elapsed time instead!" << endl;
+             << " file. Returning simulation elapsed time instead!\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
    return get_sim_time();
@@ -1131,7 +1131,7 @@ void ExecutionControlBase::save_process()
          ostringstream errmsg;
          errmsg << "Federate::freeze_save():" << __LINE__
                 << " ERROR: Unknown Save state = "
-                << static_cast< int >( save_restore_service->save_state ) << endl;
+                << static_cast< int >( save_restore_service->save_state ) << "\n";
          DebugHandler::terminate( errmsg.str() );
          break;
    }
@@ -1215,9 +1215,9 @@ void ExecutionControlBase::save_at_SET(
          StringUtilities::to_string( label_str, label );
          ostringstream errmsg;
          errmsg << "ExecutionControlBase::save_at_SET():" << __LINE__
-                << " ERROR: SaveRetore NOT supported!" << endl
-                << " Label:'" << label_str << "'" << endl
-                << " sim_time:" << sim_time << endl;
+                << " ERROR: SaveRetore NOT supported!\n"
+                << " Label:'" << label_str << "'\n"
+                << " sim_time:" << sim_time << "\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
       return;
@@ -1242,9 +1242,9 @@ void ExecutionControlBase::save_at_SST(
          StringUtilities::to_string( label_str, label );
          ostringstream errmsg;
          errmsg << "ExecutionControlBase::save_at_SST():" << __LINE__
-                << " ERROR: SaveRetore NOT supported!" << endl
-                << " Label:'" << label_str << "'" << endl
-                << " scenario_time:" << scenario_time << endl;
+                << " ERROR: SaveRetore NOT supported!\n"
+                << " Label:'" << label_str << "'\n"
+                << " scenario_time:" << scenario_time << "\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
       return;
@@ -1271,9 +1271,9 @@ void ExecutionControlBase::save_at_HLT(
          StringUtilities::to_string( time_str, time.toString() );
          ostringstream errmsg;
          errmsg << "ExecutionControlBase::save_at_HLT():" << __LINE__
-                << " ERROR: SaveRetore NOT supported!" << endl
-                << " Label:'" << label_str << "'" << endl
-                << " time:" << time_str << endl;
+                << " ERROR: SaveRetore NOT supported!\n"
+                << " Label:'" << label_str << "'\n"
+                << " time:" << time_str << "\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
       return;
@@ -1396,7 +1396,7 @@ void ExecutionControlBase::restore_process()
          ostringstream errmsg;
          errmsg << "ExecutionControlBase::restore_process():" << __LINE__
                 << " ERROR: Unknown Restore state = "
-                << static_cast< int >( save_restore_service->restore_state ) << endl;
+                << static_cast< int >( save_restore_service->restore_state ) << "\n";
          DebugHandler::terminate( errmsg.str() );
          break;
    }
@@ -1480,15 +1480,9 @@ void ExecutionControlBase::restore_waiting_for_initiated()
  *  @job_class{freeze}
  */
 void ExecutionControlBase::restore_initiated(
-#if defined( IEEE_1516_2025 )
    wstring const        &label,
    wstring const        &federate_name,
    FederateHandle const &new_federate_handle )
-#else
-   wstring const &label,
-   wstring const &federate_name,
-   FederateHandle new_federate_handle )
-#endif // IEEE_1516_2025
 {
    save_restore_service->restore_initiated( label, federate_name, new_federate_handle );
    return;
@@ -1554,8 +1548,8 @@ bool ExecutionControlBase::restore( wstring const &label )
          StringUtilities::to_string( label_str, label );
          ostringstream errmsg;
          errmsg << "ExecutionControlBase::restore():" << __LINE__
-                << " ERROR: SaveRetore NOT supported!" << endl
-                << " Label:'" << label_str << "'" << endl;
+                << " ERROR: SaveRetore NOT supported!\n"
+                << " Label:'" << label_str << "'\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
       return ( false );
@@ -1621,7 +1615,7 @@ void ExecutionControlBase::convert_data_before_checkpoint()
    if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream msg;
       msg << "ExecutionControlBase::convert_data_before_checkpoint():"
-          << __LINE__ << ": Converting data for checkpointing." << endl;
+          << __LINE__ << " Converting data for checkpointing.\n";
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
@@ -1653,7 +1647,7 @@ void ExecutionControlBase::restore_data_after_checkpoint()
    if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream msg;
       msg << "ExecutionControlBase::restore_data_after_checkpoint():"
-          << __LINE__ << ": Restoring data after checkpoint loading." << endl;
+          << __LINE__ << " Restoring data after checkpoint loading.\n";
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
@@ -1681,7 +1675,7 @@ void ExecutionControlBase::free_converted_data_for_checkpoint()
    if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream msg;
       msg << "ExecutionControlBase::free_converted_data_for_checkpoint():"
-          << __LINE__ << ": Freeing data allocated for checkpointing." << endl;
+          << __LINE__ << " Freeing data allocated for checkpointing.\n";
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
@@ -1717,7 +1711,7 @@ void ExecutionControlBase::checkpoint_before()
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream msg;
       msg << "ExecutionControlBase::checkpoint_before():"
-          << __LINE__ << ": Preparing for a checkpoint." << endl;
+          << __LINE__ << " Preparing for a checkpoint.\n";
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
@@ -1735,7 +1729,7 @@ void ExecutionControlBase::checkpoint_after()
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream msg;
       msg << "ExecutionControlBase::checkpoint_after():"
-          << __LINE__ << ": Cleaning up after a checkpoint." << endl;
+          << __LINE__ << " Cleaning up after a checkpoint.\n";
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
@@ -1755,9 +1749,9 @@ void ExecutionControlBase::checkpoint_preload()
       StringUtilities::to_string( restore_label_str, save_restore_service->restore_label );
       ostringstream errmsg;
       errmsg << "ExecutionControlBase::checkpoint_preload():" << __LINE__
-             << ": ERROR: Unexpected Restore state for label: " << restore_label_str << endl
-             << "   Expected state: RESTORE_INITIATED" << endl
-             << "   Current state : " << TrickHLA::to_string( save_restore_service->restore_state ) << endl;
+             << " ERROR: Unexpected Restore state for label: " << restore_label_str << "\n"
+             << "   Expected state: RESTORE_INITIATED\n"
+             << "   Current state : " << TrickHLA::to_string( save_restore_service->restore_state ) << "\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
       return;
    }
@@ -1765,7 +1759,7 @@ void ExecutionControlBase::checkpoint_preload()
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream msg;
       msg << "ExecutionControlBase::checkpoint_preload():"
-          << __LINE__ << ": Preparing to load a checkpoint." << endl;
+          << __LINE__ << " Preparing to load a checkpoint.\n";
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
@@ -1789,14 +1783,14 @@ void ExecutionControlBase::checkpoint_restart()
    // SaveRestoreServices::save_process routine will pickup wherever the Save
    // process was when the checkpoint file was generateed.
    if ( save_restore_service->save_state != THLASaveProcessEnum::SAVE_NONE ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
          string label_str;
          StringUtilities::to_string( label_str, save_restore_service->restore_label );
          ostringstream errmsg;
          errmsg << "ExecutionControlBase::checkpoint_restart():" << __LINE__
-                << ": WARNING: Resetting Save state to THLASaveProcessEnum::SAVE_NONE!" << endl
-                << " Label: '" << label_str << "'" << endl
-                << " State: '" << TrickHLA::to_string( save_restore_service->save_state ) << "'" << endl;
+                << " WARNING: Resetting Save state to THLASaveProcessEnum::SAVE_NONE!\n"
+                << " Label: '" << label_str << "'\n"
+                << " State: '" << TrickHLA::to_string( save_restore_service->save_state ) << "'\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
       save_restore_service->save_state = THLASaveProcessEnum::SAVE_NONE;
@@ -1813,7 +1807,7 @@ void ExecutionControlBase::checkpoint_restart()
       StringUtilities::to_string( restore_label_str, save_restore_service->restore_label );
       ostringstream errmsg;
       errmsg << "ExecutionControlBase::checkpoint_restart():" << __LINE__
-             << ": ERROR: Restore failed for label: " << restore_label_str << endl;
+             << " ERROR: Restore failed for label: " << restore_label_str << "\n";
       message_publish( MSG_ERROR, errmsg.str().c_str() );
 
       // Return and let the restore_process handle the failure.
@@ -1827,9 +1821,9 @@ void ExecutionControlBase::checkpoint_restart()
       StringUtilities::to_string( restore_label_str, save_restore_service->restore_label );
       ostringstream errmsg;
       errmsg << "ExecutionControlBase::checkpoint_restart():" << __LINE__
-             << ": ERROR: Unexpected Restore state for label: " << restore_label_str << endl
-             << "   Expected state: RESTORE_INITIATED" << endl
-             << "   Current state : " << TrickHLA::to_string( save_restore_service->restore_state ) << endl;
+             << " ERROR: Unexpected Restore state for label: " << restore_label_str << "\n"
+             << "   Expected state: RESTORE_INITIATED\n"
+             << "   Current state : " << TrickHLA::to_string( save_restore_service->restore_state ) << "\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
       return;
    }
@@ -1837,7 +1831,7 @@ void ExecutionControlBase::checkpoint_restart()
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream msg;
       msg << "ExecutionControlBase::checkpoint_restart():"
-          << __LINE__ << ": Restarting after loading a checkpoint." << endl;
+          << __LINE__ << " Restarting after loading a checkpoint.\n";
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 

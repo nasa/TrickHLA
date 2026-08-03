@@ -131,10 +131,10 @@ bool PhysicalInterfaceConditionalBase::should_send(
       ostringstream errmsg;
       errmsg << "PhysicalInterfaceConditionalBase::should_send():" << __LINE__
 #if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
-             << " ERROR: The initialize() function has not been called!" << endl;
+             << " ERROR: The initialize() function has not been called!\n";
       DebugHandler::terminate( errmsg.str() );
 #else
-             << " WARNING: The initialize() function has not been called!" << endl;
+             << " WARNING: The initialize() function has not been called!\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
 #endif
    }
@@ -198,7 +198,7 @@ bool PhysicalInterfaceConditionalBase::should_send(
       errmsg << "PhysicalInterfaceConditionalBase::should_send("
              << attr->get_FOM_name() << "):" << __LINE__
              << "ERROR: Could not find the data for the specified FOM attribute!"
-             << endl;
+             << "\n";
       // Print message and terminate.
       DebugHandler::terminate( errmsg.str() );
    }

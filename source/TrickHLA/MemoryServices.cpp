@@ -32,15 +32,24 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
+#include <climits>
 #include <cstddef>
+#include <cstdlib>
+#include <cstring>
+#include <cwchar>
+#include <ostream>
 #include <sstream>
+#include <string>
 
 // Trick includes.
+#include "trick/MemoryManager.hh"
 #include "trick/message_proto.h"
+#include "trick/message_type.h"
 
 // TrickHLA includes.
-#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/MemoryServices.hh"
+#include "TrickHLA/Types.hh"
 
 using namespace std;
 using namespace TrickHLA;
@@ -64,34 +73,33 @@ void *MemoryServices::declare_var( char const *enh_type_spec, size_t n_elems )
    return ( trick_MM->declare_var( enh_type_spec, n_elems ) );
 }
 
-bool MemoryServices::delete_var( std::string const & var_name )
+bool MemoryServices::delete_var( std::string const &var_name )
 {
    // Delete the variable name in Trick memory.
    // NOTE: trick_MM->delete_var returns 0 on success and 1 on failure!
-   if ( trick_MM->delete_var( const_cast<std::string&>(var_name) ) ) {
-      // FIXME: Should we add a DEBUG_SOURCE_MEMORY debug type?
-      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
+   if ( trick_MM->delete_var( const_cast< std::string & >( var_name ) ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_MEMORY_SERVICES ) ) {
          ostringstream msg;
          msg << "MemoryServices::delete_var():" << __LINE__
-             << ": Error deleting variable: " << var_name << endl;
+             << " WARNING: Could not delete variable: " << var_name << "\n";
          message_publish( MSG_WARNING, msg.str().c_str() );
       }
-      return( false );
+      return ( false );
    }
-   return( true );
+   return ( true );
 }
 
-char * MemoryServices::cstrdup( const char * input )
+char *MemoryServices::cstrdup( char const *input )
 {
-   return( trick_MM->mm_strdup( input ) );
+   return ( trick_MM->mm_strdup( input ) );
 }
 
-char * MemoryServices::cstrdup( std::string const &input )
+char *MemoryServices::cstrdup( std::string const &input )
 {
-   return( cstrdup( const_cast< char * >( input.c_str() ) ) );
+   return ( cstrdup( const_cast< char * >( input.c_str() ) ) );
 }
 
-wchar_t * MemoryServices::cwstrdup( const char * input )
+wchar_t *MemoryServices::cwstrdup( char const *input )
 {
    std::size_t const len  = strlen( input ) + 1;
    std::size_t       size = ( len <= INT_MAX ) ? (int)len : INT_MAX;
@@ -99,11 +107,11 @@ wchar_t * MemoryServices::cwstrdup( const char * input )
 
    /** @li Allocate the duplicate character string */
    wchar_t *addr = nullptr;
-   addr = MemoryServices::declare_var( addr, "", 0, "", 1, &size );
+   addr          = MemoryServices::declare_var( addr, "", 0, "", 1, &size );
 
    /** @li Copy the contents of the original character string to the duplicate. */
    ret = mbstowcs( addr, input, size );
-   if ( ret == -1 ){
+   if ( ret == -1 ) {
       // Delete the allocated memory.
       MemoryServices::delete_var( addr );
       addr = nullptr;
@@ -113,21 +121,21 @@ wchar_t * MemoryServices::cwstrdup( const char * input )
    return ( addr );
 }
 
-wchar_t * MemoryServices::cwstrdup( const wchar_t * input )
+wchar_t *MemoryServices::cwstrdup( wchar_t const *input )
 {
    std::size_t const len  = wcslen( input ) + 1;
    std::size_t       size = ( len <= INT_MAX ) ? (int)len : INT_MAX;
 
    /** @li Allocate the duplicate character string */
    wchar_t *addr = nullptr;
-   addr = MemoryServices::declare_var( addr, "", 0, "", 1, &size );
+   addr          = MemoryServices::declare_var( addr, "", 0, "", 1, &size );
 
    /** @li Copy the contents of the original character string to the duplicate. */
    /** @li Return the address of the new allocation.*/
    return ( wcscpy( addr, input ) );
 }
 
-wchar_t * MemoryServices::cwstrdup( std::wstring const &input )
+wchar_t *MemoryServices::cwstrdup( std::wstring const &input )
 {
-   return( cwstrdup( const_cast< wchar_t * >( input.c_str() ) ) );
+   return ( cwstrdup( const_cast< wchar_t * >( input.c_str() ) ) );
 }

@@ -72,9 +72,9 @@ void PhysicalEntityLagCompInteg::initialize()
    if ( this->integ_dt < this->integ_tol ) {
       ostringstream errmsg;
 
-      errmsg << "SpaceFOM::PhysicalEntityLagCompInteg::initialize():" << __LINE__ << endl
+      errmsg << "SpaceFOM::PhysicalEntityLagCompInteg::initialize():" << __LINE__ << "\n"
              << " ERROR: Tolerance must be less that the dt!: dt = "
-             << this->integ_dt << "; tolerance = " << this->integ_tol << endl;
+             << this->integ_dt << "; tolerance = " << this->integ_tol << "\n";
       // Print message and terminate.
       DebugHandler::terminate( errmsg.str() );
    }

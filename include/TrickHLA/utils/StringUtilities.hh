@@ -124,7 +124,7 @@ class StringUtilities
 
       /** @li Allocate the duplicate character string */
       wchar_t *addr = nullptr;
-      addr = MemoryServices::declare_var( addr, "", 0, "", 1, &size );
+      addr          = MemoryServices::declare_var( addr, "", 0, "", 1, &size );
 
       /** @li Copy the contents of the original character string to the duplicate. */
       /** @li Return the address of the new allocation.*/
@@ -160,7 +160,7 @@ class StringUtilities
    static char *mm_strdup_string(
       std::string const &input )
    {
-      return( MemoryServices::cstrdup( input ) );
+      return ( MemoryServices::cstrdup( input ) );
    }
 
    /*! @brief C++ wide string to C (char *) string conversion routine with the
@@ -174,7 +174,7 @@ class StringUtilities
    {
       std::string s;
       s.assign( input.begin(), input.end() );
-      return( MemoryServices::cstrdup( s ) );
+      return ( MemoryServices::cstrdup( s ) );
    }
 
    /*! @brief Formatted time double string.

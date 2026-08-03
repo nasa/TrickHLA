@@ -73,7 +73,7 @@ extern "C" {
 // Include the Trick generated ATTRIBUTES for the ExecutionConfiguration class.
 // This is used to set up Trick based simulation variable mapping into the
 // TrickHLA::Object associated with this class.
-extern ATTRIBUTES attrTrickHLA__ExecutionConfigurationBase[];
+extern ATTRIBUTES attrTrickHLA__ExecutionConfigurationBase[]; // NOLINT(bugprone-reserved-identifier)
 #ifdef __cplusplus
 }
 #endif
@@ -265,11 +265,11 @@ void ExecutionConfigurationBase::wait_for_registration()
          // Build the summary as an output string stream.
          ostringstream summary;
          summary << "ExecutionConfigurationBase::wait_for_registration()"
-                 << __LINE__ << endl
+                 << __LINE__ << "\n"
                  << "OBJECTS: " << total_obj_cnt;
 
          // Execution-Configuration object
-         summary << endl
+         summary << "\n"
                  << "  1:Object instance '" << get_name() << "' ";
 
          if ( is_instance_handle_valid() ) {
@@ -281,7 +281,7 @@ void ExecutionConfigurationBase::wait_for_registration()
                  << ( is_required() ? "REQUIRED" : "not required" )
                  << " and is "
                  << ( is_instance_handle_valid() ? "REGISTERED" : "Not Registered" )
-                 << endl;
+                 << "\n";
          // Display the summary.
          message_publish( MSG_NORMAL, summary.str().c_str() );
       }
@@ -310,7 +310,7 @@ void ExecutionConfigurationBase::wait_for_registration()
                          << " This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!" << endl;
+                         << " the Central RTI Component (CRC) level!\n";
                   DebugHandler::terminate( errmsg.str() );
                }
             }
@@ -366,7 +366,7 @@ bool ExecutionConfigurationBase::wait_for_update() // RETURN: -- None.
                          << " This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!" << endl;
+                         << " the Central RTI Component (CRC) level!\n";
                   DebugHandler::terminate( errmsg.str() );
                }
             }
@@ -395,7 +395,7 @@ bool ExecutionConfigurationBase::wait_for_update() // RETURN: -- None.
              << " Make sure at least one 'exec_config' attribute has"
              << " 'subscribe = true' set. Please check your input or modified-data"
              << " files to make sure the 'subscribe' value is correctly specified."
-             << endl;
+             << "\n";
       DebugHandler::terminate( errmsg.str() );
    }
 

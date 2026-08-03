@@ -37,8 +37,8 @@ NASA, Johnson Space Center\n
 
 // TrickHLA includes.
 #include "TrickHLA/HLAStandardSupport.hh"
-#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/Item.hh"
+#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/ParameterItem.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
@@ -107,7 +107,7 @@ ParameterItem::~ParameterItem()
 void ParameterItem::clear()
 {
    if ( data != NULL ) {
-      if (     MemoryServices::is_alloced( data )
+      if ( MemoryServices::is_alloced( data )
            && !MemoryServices::delete_var( data ) ) {
          message_publish( MSG_WARNING, "ParameterItem::clear():%d WARNING failed to delete Trick Memory for 'data'\n", __LINE__ );
       }

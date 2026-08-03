@@ -58,16 +58,17 @@ NASA, Johnson Space Center\n
 #include "trick/message_type.h"
 
 // SpaceFOM includes.
+#include "SpaceFOM/ExecutionConfiguration.hh"
 #include "SpaceFOM/ExecutionConfiguration2.hh"
 #include "SpaceFOM/Types.hh"
 
 // TrickHLA includes.
-#include "TrickHLA/HLAStandardSupport.hh"
-#include "TrickHLA/MemoryServices.hh"
-#include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Attribute.hh"
+#include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
+#include "TrickHLA/HLAStandardSupport.hh"
+#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/CTETimelineBase.hh"
@@ -85,7 +86,7 @@ extern "C" {
 // Include the Trick generated ATTRIBUTES for the ExecutionConfiguration2 class.
 // This is used to set up Trick based simulation variable mapping into the
 // TrickHLA::Object associated with this class.
-extern ATTRIBUTES attrSpaceFOM__ExecutionConfiguration2[];
+extern ATTRIBUTES attrSpaceFOM__ExecutionConfiguration2[]; // NOLINT(bugprone-reserved-identifier)
 
 #ifdef __cplusplus
 }
@@ -132,7 +133,7 @@ void ExecutionConfiguration2::configure_attributes()
    if ( S_define_name.empty() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionConfiguration2::configure_attributes():" << __LINE__
-             << " ERROR: Unexpected empty S_define_name." << endl;
+             << " ERROR: Unexpected empty S_define_name.\n";
       DebugHandler::terminate( errmsg.str() );
       return;
    }
@@ -157,61 +158,54 @@ void ExecutionConfiguration2::configure_attributes()
    this->attributes = MemoryServices::declare_var( this->attributes, this->attr_count );
 
    // FIXME:
-   if ( this->attributes == nullptr ){
+   if ( this->attributes == nullptr ) {
       ostringstream msg;
       msg << "SpaceFOM::ExecutionConfiguration2::configure_attributes():" << __LINE__
-          << " Error: Memory allocation failed." << endl;
-      message_publish( MSG_ERROR, msg.str().c_str() );
+          << " ERROR: Memory allocation failed.\n";
+      DebugHandler::terminate( msg.str() );
+      return;
    }
 
    //
    // Specify the ExCO attributes.
    //
    this->attributes[0].FOM_name     = "root_frame_name";
-   string trick_name_str            = S_define_name + string( ".root_frame_name" );
-   this->attributes[0].trick_name   = trick_name_str;
+   this->attributes[0].trick_name   = S_define_name + string( ".root_frame_name" );
    this->attributes[0].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[0].rti_encoding = ENCODING_UNICODE_STRING;
 
    this->attributes[1].FOM_name     = "scenario_time_epoch";
-   trick_name_str                   = S_define_name + string( ".scenario_time_epoch" );
-   this->attributes[1].trick_name   = trick_name_str;
+   this->attributes[1].trick_name   = S_define_name + string( ".scenario_time_epoch" );
    this->attributes[1].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[1].rti_encoding = ENCODING_LITTLE_ENDIAN;
 
    this->attributes[2].FOM_name     = "next_mode_scenario_time";
-   trick_name_str                   = S_define_name + string( ".next_mode_scenario_time" );
-   this->attributes[2].trick_name   = trick_name_str;
+   this->attributes[2].trick_name   = S_define_name + string( ".next_mode_scenario_time" );
    this->attributes[2].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[2].rti_encoding = ENCODING_LITTLE_ENDIAN;
 
    this->attributes[3].FOM_name     = "next_mode_cte_time";
-   trick_name_str                   = S_define_name + string( ".next_mode_cte_time" );
-   this->attributes[3].trick_name   = trick_name_str;
+   this->attributes[3].trick_name   = S_define_name + string( ".next_mode_cte_time" );
    this->attributes[3].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[3].rti_encoding = ENCODING_LITTLE_ENDIAN;
 
    this->attributes[4].FOM_name     = "current_execution_mode";
-   trick_name_str                   = S_define_name + string( ".current_execution_mode" );
-   this->attributes[4].trick_name   = trick_name_str;
+   this->attributes[4].trick_name   = S_define_name + string( ".current_execution_mode" );
    this->attributes[4].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[4].rti_encoding = ENCODING_LITTLE_ENDIAN;
 
    this->attributes[5].FOM_name     = "next_execution_mode";
-   trick_name_str                   = S_define_name + string( ".next_execution_mode" );
-   this->attributes[5].trick_name   = trick_name_str;
+   this->attributes[5].trick_name   = S_define_name + string( ".next_execution_mode" );
    this->attributes[5].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[5].rti_encoding = ENCODING_LITTLE_ENDIAN;
 
    this->attributes[6].FOM_name     = "least_common_time_step";
-   trick_name_str                   = S_define_name + string( ".least_common_time_step" );
-   this->attributes[6].trick_name   = trick_name_str;
+   this->attributes[6].trick_name   = S_define_name + string( ".least_common_time_step" );
    this->attributes[6].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[6].rti_encoding = ENCODING_BIG_ENDIAN;
 
    this->attributes[7].FOM_name     = "hla_base_time_multiplier";
-   trick_name_str                   = S_define_name + string( ".hla_base_time_multiplier" );
-   this->attributes[7].trick_name   = trick_name_str;
+   this->attributes[7].trick_name   = S_define_name + string( ".hla_base_time_multiplier" );
    this->attributes[7].config       = CONFIG_INITIALIZE_AND_INTERMITTENT;
    this->attributes[7].rti_encoding = ENCODING_LITTLE_ENDIAN;
 }
@@ -229,13 +223,13 @@ void ExecutionConfiguration2::pack()
 
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       ostringstream msg;
-      msg << endl
-          << "=============================================================" << endl
-          << "SpaceFOM::ExecutionConfiguration2::pack():" << __LINE__ << endl
-          << "-- Extended ExCO Attributes --" << endl
+      msg << "\n"
+          << "=============================================================\n"
+          << "SpaceFOM::ExecutionConfiguration2::pack():" << __LINE__ << "\n"
+          << "-- Extended ExCO Attributes --\n"
           << "   hla_base_time_multiplier: " << hla_base_time_multiplier
-          << " " << Int64BaseTime::get_base_unit() << endl
-          << "=============================================================" << endl;
+          << " " << Int64BaseTime::get_base_unit() << "\n"
+          << "=============================================================\n";
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 }
@@ -253,13 +247,13 @@ void ExecutionConfiguration2::unpack()
 
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       ostringstream msg;
-      msg << endl
-          << "=============================================================" << endl
-          << "SpaceFOM::ExecutionConfiguration2::unpack():" << __LINE__ << endl
-          << "-- Extended ExCO Attributes --" << endl
+      msg << "\n"
+          << "=============================================================\n"
+          << "SpaceFOM::ExecutionConfiguration2::unpack():" << __LINE__ << "\n"
+          << "-- Extended ExCO Attributes --\n"
           << "   hla_base_time_multiplier: " << hla_base_time_multiplier
-          << " " << Int64BaseTime::get_base_unit() << endl
-          << "=============================================================" << endl;
+          << " " << Int64BaseTime::get_base_unit() << "\n"
+          << "=============================================================\n";
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 }
@@ -275,25 +269,25 @@ void ExecutionConfiguration2::print_execution_configuration() const
 {
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       ostringstream msg;
-      msg << endl
-          << "=============================================================" << endl
-          << "SpaceFOM::ExecutionConfiguration2::print_exec_config():" << __LINE__ << endl
-          << "              Object-Name: '" << get_name() << "'" << endl
-          << "          root_frame_name: '" << root_frame_name << "'" << endl
-          << "      scenario_time_epoch: " << StringUtilities::format_time( scenario_time_epoch ) << endl
-          << "  next_mode_scenario_time: " << StringUtilities::format_time( next_mode_scenario_time ) << endl
-          << "       next_mode_cte_time: " << StringUtilities::format_time( next_mode_cte_time ) << endl;
+      msg << "\n"
+          << "=============================================================\n"
+          << "SpaceFOM::ExecutionConfiguration2::print_exec_config():" << __LINE__ << "\n"
+          << "              Object-Name: '" << get_name() << "'\n"
+          << "          root_frame_name: '" << root_frame_name << "'\n"
+          << "      scenario_time_epoch: " << StringUtilities::format_time( scenario_time_epoch ) << "\n"
+          << "  next_mode_scenario_time: " << StringUtilities::format_time( next_mode_scenario_time ) << "\n"
+          << "       next_mode_cte_time: " << StringUtilities::format_time( next_mode_cte_time ) << "\n";
       if ( execution_control->does_cte_timeline_exist() ) {
-         msg << "         current-cte-time: " << StringUtilities::format_time( execution_control->cte_timeline->get_time() ) << endl;
+         msg << "         current-cte-time: " << StringUtilities::format_time( execution_control->cte_timeline->get_time() ) << "\n";
       } else {
-         msg << "         current-cte-time: Not Enabled" << endl;
+         msg << "         current-cte-time: Not Enabled\n";
       }
-      msg << "   current_execution_mode: " << SpaceFOM::execution_mode_enum_to_string( SpaceFOM::execution_mode_int16_to_enum( current_execution_mode ) ) << endl
-          << "      next_execution_mode: " << SpaceFOM::execution_mode_enum_to_string( SpaceFOM::execution_mode_int16_to_enum( next_execution_mode ) ) << endl
-          << "   least_common_time_step: " << least_common_time_step << " " << Int64BaseTime::get_base_unit() << endl
-          << "-- Extended ExCO Attributes --" << endl
-          << " hla_base_time_multiplier: " << hla_base_time_multiplier << " " << Int64BaseTime::get_base_unit() << endl
-          << "=============================================================" << endl;
+      msg << "   current_execution_mode: " << SpaceFOM::execution_mode_enum_to_string( SpaceFOM::execution_mode_int16_to_enum( current_execution_mode ) ) << "\n"
+          << "      next_execution_mode: " << SpaceFOM::execution_mode_enum_to_string( SpaceFOM::execution_mode_int16_to_enum( next_execution_mode ) ) << "\n"
+          << "   least_common_time_step: " << least_common_time_step << " " << Int64BaseTime::get_base_unit() << "\n"
+          << "-- Extended ExCO Attributes --\n"
+          << " hla_base_time_multiplier: " << hla_base_time_multiplier << " " << Int64BaseTime::get_base_unit() << "\n"
+          << "=============================================================\n";
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 }

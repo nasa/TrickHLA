@@ -134,11 +134,11 @@ void QuaternionData::print_data( std::ostream &stream ) const
           << "\t" << scalar << "; "
           << "\t\t" << vector[0] << ", "
           << "\t\t" << vector[1] << ", "
-          << "\t\t" << vector[2] << endl
+          << "\t\t" << vector[2] << "\n"
           << " attitude (RPY){deg}: "
           << "\t" << euler_angles[0] << ", "
           << "\t\t" << euler_angles[1] << ", "
-          << "\t\t" << euler_angles[2] << endl;
+          << "\t\t" << euler_angles[2] << "\n";
 
    return;
 }

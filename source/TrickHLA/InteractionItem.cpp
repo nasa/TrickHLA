@@ -49,10 +49,10 @@ NASA, Johnson Space Center\n
 
 // TrickHLA includes.
 #include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/InteractionItem.hh"
 #include "TrickHLA/Item.hh"
+#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/Parameter.hh"
 #include "TrickHLA/ParameterItem.hh"
 #include "TrickHLA/Types.hh"
@@ -167,7 +167,7 @@ InteractionItem::InteractionItem(
 InteractionItem::~InteractionItem()
 {
    if ( user_supplied_tag != NULL ) {
-      if (     MemoryServices::is_alloced( user_supplied_tag )
+      if ( MemoryServices::is_alloced( user_supplied_tag )
            && !MemoryServices::delete_var( user_supplied_tag ) ) {
          message_publish( MSG_WARNING, "InteractionItem::~InteractionItem():%d WARNING failed to delete Trick Memory for 'user_supplied_tag'\n",
                           __LINE__ );
@@ -213,7 +213,7 @@ void InteractionItem::initialize(
    }
    // Free the Trick allocated memory for the user supplied tag.
    if ( user_supplied_tag != NULL ) {
-      if (     MemoryServices::is_alloced( user_supplied_tag )
+      if ( MemoryServices::is_alloced( user_supplied_tag )
            && !MemoryServices::delete_var( user_supplied_tag ) ) {
          message_publish( MSG_WARNING, "InteractionItem::initialize():%d WARNING failed to delete Trick Memory for 'user_supplied_tag'\n",
                           __LINE__ );
@@ -244,7 +244,7 @@ void InteractionItem::checkpoint_queue()
          ostringstream errmsg;
          errmsg << "InteractionItem::checkpoint_queue():" << __LINE__
                 << " ERROR: Failed to allocate enough memory for a parm_items linear"
-                << " array of " << parm_items_count << " elements" << endl;
+                << " array of " << parm_items_count << " elements\n";
          DebugHandler::terminate( errmsg.str() );
       }
 
@@ -275,7 +275,7 @@ void InteractionItem::clear_parm_items()
       for ( size_t i = 0; i < parm_items_count; ++i ) {
          parm_items[i].clear();
       }
-      if (     MemoryServices::is_alloced( parm_items )
+      if ( MemoryServices::is_alloced( parm_items )
            && !MemoryServices::delete_var( parm_items ) ) {
          message_publish( MSG_WARNING, "InteractionItem::clear_parm_items():%d WARNING failed to delete Trick Memory for 'parm_items'\n",
                           __LINE__ );

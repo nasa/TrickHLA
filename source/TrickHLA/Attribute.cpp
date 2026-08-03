@@ -130,7 +130,7 @@ void Attribute::initialize(
       if ( !get_FOM_name().empty() ) {
          errmsg << " For FOM Attribute Named '" << get_FOM_name() << "'.";
       }
-      errmsg << endl;
+      errmsg << "\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -142,7 +142,7 @@ void Attribute::initialize(
              << " FOM name for the attribute. Make sure THLA.federate.object_service.objects["
              << object_index << "].attributes[" << attribute_index
              << "].FOM_name' in either your input.py file or modified-data files"
-             << " is correctly specified." << endl;
+             << " is correctly specified.\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -156,7 +156,7 @@ void Attribute::initialize(
                 << " for the attribute. Make sure THLA.federate.object_service.objects["
                 << object_index << "].attributes[" << attribute_index
                 << "].trick_name' in either your input.py file or modified-data files"
-                << " is correctly specified." << endl;
+                << " is correctly specified.\n";
          DebugHandler::terminate( errmsg.str() );
       }
    }
@@ -171,7 +171,7 @@ void Attribute::initialize(
              << " which is out of the valid range of " << ENCODING_FIRST_VALUE
              << " to " << ENCODING_LAST_VALUE << ". Please check your input or"
              << " modified-data files to make sure the value for the 'rti_encoding'"
-             << " is correctly specified." << endl;
+             << " is correctly specified.\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -184,7 +184,7 @@ void Attribute::initialize(
              << get_trick_name() << "' has an invalid 'preferred_order' and it must be"
              << " one of TRANSPORT_TYPE_SPECIFIED_IN_FOM, THLA_TIMESTAMP_ORDER or"
              << " THLA_RECEIVE_ORDER. Please check your input or modified-data"
-             << " files to make sure the 'preferred_order' is correctly specified." << endl;
+             << " files to make sure the 'preferred_order' is correctly specified.\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -198,7 +198,7 @@ void Attribute::initialize(
              << " which is out of the valid range of " << CONFIG_NONE
              << " to " << CONFIG_MAX_VALUE << ". Please check your input or"
              << " modified-data files to make sure the value for 'config'"
-             << " is correctly specified." << endl;
+             << " is correctly specified.\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -209,7 +209,7 @@ void Attribute::initialize(
          errmsg << "Attribute::initialize():" << __LINE__
                 << " WARNING: FOM Object Attribute '"
                 << obj_FOM_name << "'->'" << get_FOM_name() << "' with Trick name '"
-                << get_trick_name() << "' has a 'config' value of CONFIG_TYPE_NONE." << endl;
+                << get_trick_name() << "' has a 'config' value of CONFIG_TYPE_NONE.\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
    }
@@ -225,7 +225,7 @@ void Attribute::initialize(
              << "' has a 'cycle_time' value of " << this->cycle_time
              << " seconds, which is not valid. The 'cycle_time' must be > 0."
              << " Please check your input or modified-data files to make sure"
-             << " the value for the 'cycle_time' is correctly specified." << endl;
+             << " the value for the 'cycle_time' is correctly specified.\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -237,13 +237,13 @@ void Attribute::initialize(
       errmsg << "Attribute::initialize():" << __LINE__
              << " ERROR: Unexpected NULL encoder for Trick variable '"
              << get_trick_name() << "' with an 'rti_encoding' value of "
-             << encoding_enum_to_string( rti_encoding ) << "." << endl;
+             << encoding_enum_to_string( rti_encoding ) << ".\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
       ostringstream msg;
-      msg << "Attribute::initialize():" << __LINE__ << endl;
+      msg << "Attribute::initialize():" << __LINE__ << "\n";
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
@@ -251,16 +251,16 @@ void Attribute::initialize(
       string attr_handle_string;
       StringUtilities::to_string( attr_handle_string, this->attr_handle );
       ostringstream msg;
-      msg << "Attribute::initialize():" << __LINE__ << endl
-          << "========================================================" << endl
-          << "  FOM_name:'" << get_FOM_name() << "'" << endl
-          << "  trick_name:'" << get_trick_name() << "'" << endl
-          << "  AttributeHandle:" << attr_handle_string << endl
-          << "  publish:" << publish << endl
-          << "  subscribe:" << subscribe << endl
-          << "  locally_owned:" << locally_owned << endl
-          << "  rti_encoding:" << rti_encoding << endl
-          << "  changed:" << ( is_changed() ? "Yes" : "No" ) << endl;
+      msg << "Attribute::initialize():" << __LINE__ << "\n"
+          << "========================================================\n"
+          << "  FOM_name:'" << get_FOM_name() << "'\n"
+          << "  trick_name:'" << get_trick_name() << "'\n"
+          << "  AttributeHandle:" << attr_handle_string << "\n"
+          << "  publish:" << publish << "\n"
+          << "  subscribe:" << subscribe << "\n"
+          << "  locally_owned:" << locally_owned << "\n"
+          << "  rti_encoding:" << rti_encoding << "\n"
+          << "  changed:" << ( is_changed() ? "Yes" : "No" ) << "\n";
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -279,7 +279,7 @@ VariableLengthData &Attribute::encode()
       errmsg << "Attribute::encode():" << __LINE__
              << " ERROR: Unexpected error encoding HLA data for Trick variable '"
              << get_trick_name() << "' and FOM name '" << get_FOM_name()
-             << "' with error: " << err_details << endl;
+             << "' with error: " << err_details << "\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -298,7 +298,7 @@ bool Attribute::decode(
       errmsg << "Attribute::decode():" << __LINE__
              << " ERROR: Unexpected error decoding HLA data for Trick variable '"
              << get_trick_name() << "' and FOM name '" << get_FOM_name()
-             << "' with error: " << err_details << endl;
+             << "' with error: " << err_details << "\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -333,7 +333,7 @@ void Attribute::determine_cycle_ratio(
                 << " seconds) for the send_cyclic_and_requested_data() job"
                 << " must be > 0. Please make sure your S_define and/or THLA.sm"
                 << " simulation module specifies a valid cycle time for the"
-                << " send_cyclic_and_requested_data() job." << endl;
+                << " send_cyclic_and_requested_data() job.\n";
          DebugHandler::terminate( errmsg.str() );
       }
 
@@ -349,7 +349,7 @@ void Attribute::determine_cycle_ratio(
                 << " seconds (i.e. the core job cycle time for the"
                 << " send_cyclic_and_requested_data() job). Please check your"
                 << " input or modified-data files to make sure the value for"
-                << " the attribute 'cycle_time' is specified correctly." << endl;
+                << " the attribute 'cycle_time' is specified correctly.\n";
          DebugHandler::terminate( errmsg.str() );
       }
 
@@ -372,18 +372,18 @@ void Attribute::determine_cycle_ratio(
                 << this->cycle_ratio << " + " << fmod( this->cycle_time, core_job_cycle_time )
                 << "), which is not an integer. Please check your input or"
                 << " modified-data files to make sure the value for the attribute"
-                << " 'cycle_time' is specified correctly." << endl;
+                << " 'cycle_time' is specified correctly.\n";
          DebugHandler::terminate( errmsg.str() );
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
          ostringstream msg;
-         msg << "Attribute::determine_cycle_ratio():" << __LINE__ << endl
-             << "  FOM_name:'" << get_FOM_name() << "'" << endl
-             << "  trick_name:'" << get_trick_name() << "'" << endl
-             << "  core_job_cycle_time:" << core_job_cycle_time << " seconds" << endl
-             << "  cyle_time:" << this->cycle_time << " seconds" << endl
-             << "  cycle_ratio:" << this->cycle_ratio << endl;
+         msg << "Attribute::determine_cycle_ratio():" << __LINE__ << "\n"
+             << "  FOM_name:'" << get_FOM_name() << "'\n"
+             << "  trick_name:'" << get_trick_name() << "'\n"
+             << "  core_job_cycle_time:" << core_job_cycle_time << " seconds\n"
+             << "  cyle_time:" << this->cycle_time << " seconds\n"
+             << "  cycle_ratio:" << this->cycle_ratio << "\n";
          message_publish( MSG_NORMAL, msg.str().c_str() );
       }
    }

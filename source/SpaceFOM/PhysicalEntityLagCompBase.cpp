@@ -161,10 +161,10 @@ void PhysicalEntityLagCompBase::send_lag_compensation()
       ostringstream errmsg;
       errmsg << "PhysicalEntityLagCompBase::send_lag_compensation():" << __LINE__
 #if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
-             << " ERROR: The initialize() function has not been called!" << endl;
+             << " ERROR: The initialize() function has not been called!\n";
       DebugHandler::terminate( errmsg.str() );
 #else
-             << " WARNING: The initialize() function has not been called!" << endl;
+             << " WARNING: The initialize() function has not been called!\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
 #endif
    }
@@ -178,10 +178,10 @@ void PhysicalEntityLagCompBase::send_lag_compensation()
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
       ostringstream errmsg;
-      errmsg << "******* PhysicalEntityLagCompInteg::send_lag_compensation():" << __LINE__ << endl
-             << " scenario-time:" << get_scenario_time() << endl
-             << "     lookahead:" << this->compensate_dt << endl
-             << " adjusted-time:" << end_t << endl;
+      errmsg << "******* PhysicalEntityLagCompInteg::send_lag_compensation():" << __LINE__ << "\n"
+             << " scenario-time:" << get_scenario_time() << "\n"
+             << "     lookahead:" << this->compensate_dt << "\n"
+             << " adjusted-time:" << end_t << "\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
 
@@ -193,7 +193,7 @@ void PhysicalEntityLagCompBase::send_lag_compensation()
    // Print out debug information if desired.
    if ( debug ) {
       ostringstream msg;
-      msg << "Send data before compensation:" << endl;
+      msg << "Send data before compensation:\n";
       print_lag_comp_data( msg );
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
@@ -204,7 +204,7 @@ void PhysicalEntityLagCompBase::send_lag_compensation()
    // Print out debug information if desired.
    if ( debug ) {
       ostringstream msg;
-      msg << "Send data after compensation:" << endl;
+      msg << "Send data after compensation:\n";
       print_lag_comp_data( msg );
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
@@ -224,10 +224,10 @@ void PhysicalEntityLagCompBase::receive_lag_compensation()
       ostringstream errmsg;
       errmsg << "PhysicalEntityLagCompBase::receive_lag_compensation():" << __LINE__
 #if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
-             << " ERROR: The initialize() function has not been called!" << endl;
+             << " ERROR: The initialize() function has not been called!\n";
       DebugHandler::terminate( errmsg.str() );
 #else
-             << " WARNING: The initialize() function has not been called!" << endl;
+             << " WARNING: The initialize() function has not been called!\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
 #endif
    }
@@ -242,10 +242,10 @@ void PhysicalEntityLagCompBase::receive_lag_compensation()
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
       ostringstream errmsg;
-      errmsg << "******* PhysicalEntityLagCompInteg::receive_lag_compensation():" << __LINE__ << endl
-             << "  scenario-time:" << end_t << endl
-             << "      data-time:" << data_t << endl
-             << " comp-time-step:" << this->compensate_dt << endl;
+      errmsg << "******* PhysicalEntityLagCompInteg::receive_lag_compensation():" << __LINE__ << "\n"
+             << "  scenario-time:" << end_t << "\n"
+             << "      data-time:" << data_t << "\n"
+             << " comp-time-step:" << this->compensate_dt << "\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
 
@@ -260,7 +260,7 @@ void PhysicalEntityLagCompBase::receive_lag_compensation()
       // Print out debug information if desired.
       if ( debug ) {
          ostringstream msg;
-         msg << "Receive data before compensation:" << endl;
+         msg << "Receive data before compensation:\n";
          print_lag_comp_data( msg );
          message_publish( MSG_NORMAL, msg.str().c_str() );
       }
@@ -271,7 +271,7 @@ void PhysicalEntityLagCompBase::receive_lag_compensation()
       // Print out debug information if desired.
       if ( debug ) {
          ostringstream msg;
-         msg << "Receive data after compensation:" << endl;
+         msg << "Receive data after compensation:\n";
          print_lag_comp_data( msg );
          message_publish( MSG_NORMAL, msg.str().c_str() );
       }
@@ -358,51 +358,51 @@ void PhysicalEntityLagCompBase::print_lag_comp_data( std::ostream &stream ) cons
    // Compute the attitude Euler angles.
    lag_comp_data.att.get_Euler_deg( Roll_Pitch_Yaw, euler_angles );
 
-   stream << "\tScenario time: " << get_scenario_time() << endl;
-   stream << "\tLag comp time: " << this->lag_comp_data.time << endl;
+   stream << "\tScenario time: " << get_scenario_time() << "\n";
+   stream << "\tLag comp time: " << this->lag_comp_data.time << "\n";
    stream << "\tposition: "
           << "\t\t" << this->lag_comp_data.pos[0] << ", "
           << "\t\t" << this->lag_comp_data.pos[1] << ", "
-          << "\t\t" << this->lag_comp_data.pos[2] << endl;
+          << "\t\t" << this->lag_comp_data.pos[2] << "\n";
    stream << "\tvelocity: "
           << "\t\t" << this->lag_comp_data.vel[0] << ", "
           << "\t\t" << this->lag_comp_data.vel[1] << ", "
-          << "\t\t" << this->lag_comp_data.vel[2] << endl;
+          << "\t\t" << this->lag_comp_data.vel[2] << "\n";
    stream << "\tacceleration: "
           << "\t\t" << this->accel[0] << ", "
           << "\t\t" << this->accel[1] << ", "
-          << "\t\t" << this->accel[2] << endl;
+          << "\t\t" << this->accel[2] << "\n";
    stream << "\tattitude (s;v): "
           << "\t\t" << this->lag_comp_data.att.scalar << "; "
           << "\t\t" << this->lag_comp_data.att.vector[0] << ", "
           << "\t\t" << this->lag_comp_data.att.vector[1] << ", "
-          << "\t\t" << this->lag_comp_data.att.vector[2] << endl;
+          << "\t\t" << this->lag_comp_data.att.vector[2] << "\n";
    stream << "\tattitude (RPY){deg}: "
           << "\t\t" << euler_angles[0] << ", "
           << "\t\t" << euler_angles[1] << ", "
-          << "\t\t" << euler_angles[2] << endl;
+          << "\t\t" << euler_angles[2] << "\n";
    stream << "\tangular velocity: "
           << "\t\t" << this->lag_comp_data.ang_vel[0] << ", "
           << "\t\t" << this->lag_comp_data.ang_vel[1] << ", "
-          << "\t\t" << this->lag_comp_data.ang_vel[2] << endl;
+          << "\t\t" << this->lag_comp_data.ang_vel[2] << "\n";
    stream << "\tattitude rate (s;v): "
           << "\t\t" << this->Q_dot.scalar << "; "
           << "\t\t" << this->Q_dot.vector[0] << ", "
           << "\t\t" << this->Q_dot.vector[1] << ", "
-          << "\t\t" << this->Q_dot.vector[2] << endl;
+          << "\t\t" << this->Q_dot.vector[2] << "\n";
    stream << "\tangular acceleration: "
           << "\t\t" << this->ang_accel[0] << ", "
           << "\t\t" << this->ang_accel[1] << ", "
-          << "\t\t" << this->ang_accel[2] << endl;
+          << "\t\t" << this->ang_accel[2] << "\n";
    stream << "\tcenter of mass: "
           << "\t\t" << this->cm[0] << ", "
           << "\t\t" << this->cm[1] << ", "
-          << "\t\t" << this->cm[2] << endl;
+          << "\t\t" << this->cm[2] << "\n";
    stream << "\tbody wrt. struct (s;v): "
           << "\t\t" << this->body_wrt_struct.scalar << "; "
           << "\t\t" << this->body_wrt_struct.vector[0] << ", "
           << "\t\t" << this->body_wrt_struct.vector[1] << ", "
-          << "\t\t" << this->body_wrt_struct.vector[2] << endl;
+          << "\t\t" << this->body_wrt_struct.vector[2] << "\n";
 
    // Return to the calling routine.
    return;

@@ -63,11 +63,11 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
 #include "TrickHLA/Conditional.hh"
 #include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/LagCompensation.hh"
+#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/ObjectDeletedHandler.hh"
 #include "TrickHLA/ObjectServices.hh"
@@ -195,8 +195,8 @@ Object::~Object()
       // blocking threads go.
       set_to_unblocking_cyclic_reads();
 
-      if (      this->thread_ids_array != NULL
-             && MemoryServices::is_alloced( this->thread_ids_array ) ) {
+      if ( this->thread_ids_array != NULL
+           && MemoryServices::is_alloced( this->thread_ids_array ) ) {
          if ( !MemoryServices::delete_var( this->thread_ids_array ) ) {
             message_publish( MSG_WARNING, "Object::~Object():%d WARNING failed to delete Trick Memory for 'this->thread_ids_array'\n",
                              __LINE__ );
@@ -241,7 +241,7 @@ void Object::initialize(
    if ( federate == NULL ) {
       ostringstream errmsg;
       errmsg << "Object::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL TrickHLA::Federate!" << endl;
+             << " ERROR: Unexpected NULL TrickHLA::Federate!\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -250,7 +250,7 @@ void Object::initialize(
       msg << "Object::initialize():" << __LINE__
           << " Name:'" << name << "' FOM_name:'" << get_FOM_name()
           << "' create_HLA_instance:"
-          << ( is_create_HLA_instance() ? "True" : "False" ) << endl;
+          << ( is_create_HLA_instance() ? "True" : "False" ) << "\n";
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
@@ -264,7 +264,7 @@ void Object::initialize(
              << " A valid object instance name is required if you are creating"
              << " an HLA instance of this object (i.e. 'create_HLA_instance'"
              << " field is set to true) or if the 'name_required' field is set"
-             << " to true, which is the default." << endl;
+             << " to true, which is the default.\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -274,7 +274,7 @@ void Object::initialize(
       errmsg << "Object::initialize():" << __LINE__
              << " ERROR: Object '" << name << "' is missing the Object FOM Name."
              << " Please check your input or modified-data files to make sure"
-             << " the object FOM name is correctly specified." << endl;
+             << " the object FOM name is correctly specified.\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -287,7 +287,7 @@ void Object::initialize(
              << " range of " << LAG_COMPENSATION_FIRST_VALUE << " to "
              << LAG_COMPENSATION_LAST_VALUE << ". Please check your input"
              << " or modified-data files to make sure the 'lag_comp_type' value"
-             << " is correctly specified." << endl;
+             << " is correctly specified.\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -298,7 +298,7 @@ void Object::initialize(
              << " ERROR: For object '" << name << "', Lag-Compensation 'lag_comp_type'"
              << " is specified, but 'lag_comp' is NULL! Please check your input"
              << " or modified-data files to make sure the Lag-Compensation type"
-             << " and object are correctly specified." << endl;
+             << " and object are correctly specified.\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -309,7 +309,7 @@ void Object::initialize(
              << " ERROR: For object '" << name << "', the 'attr_count' is "
              << attr_count << " but no 'attributes' are"
              << " specified. Please check your input or modified-data files to"
-             << " make sure the attributes are correctly specified." << endl;
+             << " make sure the attributes are correctly specified.\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -321,7 +321,7 @@ void Object::initialize(
              << " ERROR: For object '" << name << "', the 'attr_count' is "
              << attr_count << " but 'attributes' have been"
              << " specified. Please check your input or modified-data files to"
-             << " make sure the attributes are correctly specified." << endl;
+             << " make sure the attributes are correctly specified.\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -334,7 +334,7 @@ void Object::initialize(
              << " the 'packing' setting does not point to a class that"
              << " extends the Packing class. Please check your input"
              << " or modified-data files to make sure the attributes are"
-             << " correctly specified." << endl;
+             << " correctly specified.\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -347,7 +347,7 @@ void Object::initialize(
              << " the 'ownership' setting does not point to a class that"
              << " extends the OwnershipHandler class. Please check"
              << " your input or modified-data files to make sure the"
-             << " attributes are correctly specified." << endl;
+             << " attributes are correctly specified.\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -359,7 +359,7 @@ void Object::initialize(
              << " ERROR: For object '" << name << "', the 'deleted' setting does not"
              << " point to a class that extends the ObjectDeletedHandler"
              << " class. Please check your input or modified-data files to make"
-             << " sure the attributes are correctly specified." << endl;
+             << " sure the attributes are correctly specified.\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -392,7 +392,7 @@ void Object::initialize(
                 << " the 'config' setting, which can lead to deadlock. Please"
                 << " configure all the Attributes of this object to use one of"
                 << " CONFIG_CYCLIC, CONFIG_ZERO_LOOKAHEAD or CONFIG_BLOCKING_IO"
-                << " for the Attribute 'config' setting." << endl;
+                << " for the Attribute 'config' setting.\n";
          DebugHandler::terminate( errmsg.str() );
       }
       if ( any_cyclic_attr && any_blocking_io_attr ) {
@@ -403,7 +403,7 @@ void Object::initialize(
                 << " the 'config' setting, which can lead to deadlock. Please"
                 << " configure all the Attributes of this object to use one of"
                 << " CONFIG_CYCLIC, CONFIG_ZERO_LOOKAHEAD or CONFIG_BLOCKING_IO"
-                << " for the Attribute 'config' setting." << endl;
+                << " for the Attribute 'config' setting.\n";
          DebugHandler::terminate( errmsg.str() );
       }
       if ( any_zero_lookahead_attr && any_blocking_io_attr ) {
@@ -414,7 +414,7 @@ void Object::initialize(
                 << " the 'config' setting, which can lead to deadlock. Please"
                 << " configure all the Attributes of this object to use one of"
                 << " CONFIG_CYCLIC, CONFIG_ZERO_LOOKAHEAD or CONFIG_BLOCKING_IO"
-                << " for the Attribute 'config' setting." << endl;
+                << " for the Attribute 'config' setting.\n";
          DebugHandler::terminate( errmsg.str() );
       }
    }
@@ -432,7 +432,7 @@ void Object::initialize(
              << " Please check your input or modified-data files to make sure"
              << " the Lag-Compensation type 'lag_comp_type' is set to"
              << " LAG_COMPENSATION_NONE to disable Lag-Compensation when using"
-             << " zero-lookahead configured object attributes." << endl;
+             << " zero-lookahead configured object attributes.\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -449,7 +449,7 @@ void Object::initialize(
              << " Please check your input or modified-data files to make sure"
              << " the Lag-Compensation type 'lag_comp_type' is set to"
              << " LAG_COMPENSATION_NONE to disable Lag-Compensation when using"
-             << " blocking I/O configured object attributes." << endl;
+             << " blocking I/O configured object attributes.\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -465,7 +465,7 @@ void Object::initialize(
              << federate->get_lookahead().get_base_time() << " "
              << Int64BaseTime::get_base_unit() << "). The lookahead time must be"
              << " set to zero to support zero-lookahead data exchanges, which"
-             << " is what this object is configured for." << endl;
+             << " is what this object is configured for.\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -501,7 +501,7 @@ void Object::initialize(
                 << " ERROR: Object '" << name << "' has a missing Attribute"
                 << " FOM Name at array index " << i << ". Please check your input"
                 << " or modified-data files to make sure the object attribute"
-                << " FOM name is correctly specified." << endl;
+                << " FOM name is correctly specified.\n";
          DebugHandler::terminate( errmsg.str() );
       }
 
@@ -517,7 +517,7 @@ void Object::initialize(
                    << " that have the same FOM Name '" << attributes[i].get_FOM_name()
                    << "'. Please check your input or modified-data files to"
                    << " make sure the object attributes do not use duplicate"
-                   << " FOM names." << endl;
+                   << " FOM names.\n";
             DebugHandler::terminate( errmsg.str() );
          }
       }
@@ -534,7 +534,7 @@ void Object::initialize(
              << " ERROR: For object '" << name << "', the 'lag_comp' setting does not"
              << " point to a class that extends the LagCompensation"
              << " class. Please check your input or modified-data files to make"
-             << " sure the attributes are correctly specified." << endl;
+             << " sure the attributes are correctly specified.\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -616,7 +616,7 @@ void Object::remove()
          ostringstream errmsg;
          errmsg << "Object::remove():" << __LINE__
                 << " Object '" << get_name() << "'"
-                << " DeletePrivilegeNotHeld: " << rti_err_msg << endl;
+                << " DeletePrivilegeNotHeld: " << rti_err_msg << "\n";
          DebugHandler::terminate( errmsg.str() );
       } catch ( ObjectInstanceNotKnown const &e ) {
          string rti_err_msg;
@@ -624,7 +624,7 @@ void Object::remove()
          ostringstream errmsg;
          errmsg << "Object::remove():" << __LINE__
                 << " Object '" << get_name() << "'"
-                << " ObjectInstanceNotKnown: " << rti_err_msg << endl;
+                << " ObjectInstanceNotKnown: " << rti_err_msg << "\n";
          DebugHandler::terminate( errmsg.str() );
       } catch ( FederateNotExecutionMember const &e ) {
          string rti_err_msg;
@@ -632,7 +632,7 @@ void Object::remove()
          ostringstream errmsg;
          errmsg << "Object::remove():" << __LINE__
                 << " Object '" << get_name() << "'"
-                << " FederateNotExecutionMember: " << rti_err_msg << endl;
+                << " FederateNotExecutionMember: " << rti_err_msg << "\n";
          DebugHandler::terminate( errmsg.str() );
       } catch ( SaveInProgress const &e ) {
          string rti_err_msg;
@@ -640,7 +640,7 @@ void Object::remove()
          ostringstream errmsg;
          errmsg << "Object::remove():" << __LINE__
                 << " Object '" << get_name() << "'"
-                << " SaveInProgress: " << rti_err_msg << endl;
+                << " SaveInProgress: " << rti_err_msg << "\n";
          DebugHandler::terminate( errmsg.str() );
       } catch ( RestoreInProgress const &e ) {
          string rti_err_msg;
@@ -648,7 +648,7 @@ void Object::remove()
          ostringstream errmsg;
          errmsg << "Object::remove():" << __LINE__
                 << " Object '" << get_name() << "'"
-                << " RestoreInProgress: " << rti_err_msg << endl;
+                << " RestoreInProgress: " << rti_err_msg << "\n";
          DebugHandler::terminate( errmsg.str() );
       } catch ( NotConnected const &e ) {
          string rti_err_msg;
@@ -656,7 +656,7 @@ void Object::remove()
          ostringstream errmsg;
          errmsg << "Object::remove():" << __LINE__
                 << " Object '" << get_name() << "'"
-                << " NotConnected: " << rti_err_msg << endl;
+                << " NotConnected: " << rti_err_msg << "\n";
          DebugHandler::terminate( errmsg.str() );
          if ( federate != NULL ) {
             federate->set_connection_lost();
@@ -667,7 +667,7 @@ void Object::remove()
          ostringstream errmsg;
          errmsg << "Object::remove():" << __LINE__
                 << " Object '" << get_name() << "'"
-                << " RTIinternalError: " << rti_err_msg << endl;
+                << " RTIinternalError: " << rti_err_msg << "\n";
          DebugHandler::terminate( errmsg.str() );
       } catch ( RTI1516_NAMESPACE::Exception const &e ) {
          string rti_err_msg;
@@ -675,7 +675,7 @@ void Object::remove()
          ostringstream errmsg;
          errmsg << "Object::remove():" << __LINE__
                 << " Object '" << get_name() << "'"
-                << " Exception: " << rti_err_msg << endl;
+                << " Exception: " << rti_err_msg << "\n";
          DebugHandler::terminate( errmsg.str() );
       }
 
@@ -763,7 +763,7 @@ void Object::mark_all_attributes_as_nonlocal()
       StringUtilities::to_string( id_str, instance_handle );
 
       msg << "Object::mark_all_attributes_as_nonlocal():"
-          << __LINE__ << endl
+          << __LINE__ << "\n"
           << "  Object:'" << get_name() << "'"
           << " FOM-Name:'" << get_FOM_name()
           << " Instance-ID:" << id_str;
@@ -773,7 +773,7 @@ void Object::mark_all_attributes_as_nonlocal()
          attributes[i].unmark_locally_owned();
       }
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-         msg << endl
+         msg << "\n"
              << "   " << ( i + 1 ) << "/" << attr_count
              << " FOM-Attribute:'" << attributes[i].get_FOM_name() << "'"
              << " Trick-Name:'" << attributes[i].get_trick_name() << "'"
@@ -781,7 +781,7 @@ void Object::mark_all_attributes_as_nonlocal()
       }
    }
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-      msg << endl;
+      msg << "\n";
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 }
@@ -831,7 +831,7 @@ void Object::publish_object_attributes()
       ostringstream errmsg;
       errmsg << "Object::publish_object_attributes():" << __LINE__
              << " Object '" << get_name() << "'"
-             << " ObjectClassNotDefined: " << rti_err_msg << endl;
+             << " ObjectClassNotDefined: " << rti_err_msg << "\n";
       DebugHandler::terminate( errmsg.str() );
    } catch ( AttributeNotDefined const &e ) {
       string rti_err_msg;
@@ -839,7 +839,7 @@ void Object::publish_object_attributes()
       ostringstream errmsg;
       errmsg << "Object::publish_object_attributes():" << __LINE__
              << " Object '" << get_name() << "'"
-             << " AttributeNotDefined: " << rti_err_msg << endl;
+             << " AttributeNotDefined: " << rti_err_msg << "\n";
       DebugHandler::terminate( errmsg.str() );
    } catch ( FederateNotExecutionMember const &e ) {
       string rti_err_msg;
@@ -847,7 +847,7 @@ void Object::publish_object_attributes()
       ostringstream errmsg;
       errmsg << "Object::publish_object_attributes():" << __LINE__
              << " Object '" << get_name() << "'"
-             << " FederateNotExecutionMember: " << rti_err_msg << endl;
+             << " FederateNotExecutionMember: " << rti_err_msg << "\n";
       DebugHandler::terminate( errmsg.str() );
    } catch ( SaveInProgress const &e ) {
       string rti_err_msg;
@@ -855,7 +855,7 @@ void Object::publish_object_attributes()
       ostringstream errmsg;
       errmsg << "Object::publish_object_attributes():" << __LINE__
              << " Object '" << get_name() << "'"
-             << " SaveInProgress: " << rti_err_msg << endl;
+             << " SaveInProgress: " << rti_err_msg << "\n";
       DebugHandler::terminate( errmsg.str() );
    } catch ( RestoreInProgress const &e ) {
       string rti_err_msg;
@@ -863,7 +863,7 @@ void Object::publish_object_attributes()
       ostringstream errmsg;
       errmsg << "Object::publish_object_attributes():" << __LINE__
              << " Object '" << get_name() << "'"
-             << " RestoreInProgress: " << rti_err_msg << endl;
+             << " RestoreInProgress: " << rti_err_msg << "\n";
       DebugHandler::terminate( errmsg.str() );
    } catch ( NotConnected const &e ) {
       string rti_err_msg;
@@ -871,7 +871,7 @@ void Object::publish_object_attributes()
       ostringstream errmsg;
       errmsg << "Object::publish_object_attributes():" << __LINE__
              << " Object '" << get_name() << "'"
-             << " NotConnected: " << rti_err_msg << endl;
+             << " NotConnected: " << rti_err_msg << "\n";
       DebugHandler::terminate( errmsg.str() );
       if ( federate != NULL ) {
          federate->set_connection_lost();
@@ -882,7 +882,7 @@ void Object::publish_object_attributes()
       ostringstream errmsg;
       errmsg << "Object::publish_object_attributes():" << __LINE__
              << " Object '" << get_name() << "'"
-             << " RTIinternalError: " << rti_err_msg << endl;
+             << " RTIinternalError: " << rti_err_msg << "\n";
       DebugHandler::terminate( errmsg.str() );
    } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       string rti_err_msg;
@@ -890,7 +890,7 @@ void Object::publish_object_attributes()
       ostringstream errmsg;
       errmsg << "Object::publish_object_attributes():" << __LINE__
              << " Object '" << get_name() << "'"
-             << " Exception: " << rti_err_msg << endl;
+             << " Exception: " << rti_err_msg << "\n";
       DebugHandler::terminate( errmsg.str() );
    }
    // Macro to restore the saved FPU Control Word register value.
@@ -933,7 +933,7 @@ void Object::unpublish_all_object_attributes()
          ostringstream errmsg;
          errmsg << "Object::unpublish_all_object_attributes():" << __LINE__
                 << " Object '" << get_name() << "'"
-                << " ObjectClassNotDefined: " << rti_err_msg << endl;
+                << " ObjectClassNotDefined: " << rti_err_msg << "\n";
          DebugHandler::terminate( errmsg.str() );
       } catch ( RTI1516_NAMESPACE::OwnershipAcquisitionPending const &e ) {
          string rti_err_msg;
@@ -941,7 +941,7 @@ void Object::unpublish_all_object_attributes()
          ostringstream errmsg;
          errmsg << "Object::unpublish_all_object_attributes():" << __LINE__
                 << " Object '" << get_name() << "'"
-                << " OwnershipAcquisitionPending: " << rti_err_msg << endl;
+                << " OwnershipAcquisitionPending: " << rti_err_msg << "\n";
          DebugHandler::terminate( errmsg.str() );
       } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
          string rti_err_msg;
@@ -949,7 +949,7 @@ void Object::unpublish_all_object_attributes()
          ostringstream errmsg;
          errmsg << "Object::unpublish_all_object_attributes():" << __LINE__
                 << " Object '" << get_name() << "'"
-                << " FederateNotExecutionMember: " << rti_err_msg << endl;
+                << " FederateNotExecutionMember: " << rti_err_msg << "\n";
          DebugHandler::terminate( errmsg.str() );
       } catch ( RTI1516_NAMESPACE::SaveInProgress const &e ) {
          string rti_err_msg;
@@ -957,7 +957,7 @@ void Object::unpublish_all_object_attributes()
          ostringstream errmsg;
          errmsg << "Object::unpublish_all_object_attributes():" << __LINE__
                 << " Object '" << get_name() << "'"
-                << " SaveInProgress: " << rti_err_msg << endl;
+                << " SaveInProgress: " << rti_err_msg << "\n";
          DebugHandler::terminate( errmsg.str() );
       } catch ( RTI1516_NAMESPACE::RestoreInProgress const &e ) {
          string rti_err_msg;
@@ -965,7 +965,7 @@ void Object::unpublish_all_object_attributes()
          ostringstream errmsg;
          errmsg << "Object::unpublish_all_object_attributes():" << __LINE__
                 << " Object '" << get_name() << "'"
-                << " RestoreInProgress: " << rti_err_msg << endl;
+                << " RestoreInProgress: " << rti_err_msg << "\n";
          DebugHandler::terminate( errmsg.str() );
       } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
          string rti_err_msg;
@@ -973,7 +973,7 @@ void Object::unpublish_all_object_attributes()
          ostringstream errmsg;
          errmsg << "Object::unpublish_all_object_attributes():" << __LINE__
                 << " Object '" << get_name() << "'"
-                << " NotConnected: " << rti_err_msg << endl;
+                << " NotConnected: " << rti_err_msg << "\n";
          DebugHandler::terminate( errmsg.str() );
          if ( federate != NULL ) {
             federate->set_connection_lost();
@@ -984,7 +984,7 @@ void Object::unpublish_all_object_attributes()
          ostringstream errmsg;
          errmsg << "Object::unpublish_all_object_attributes():" << __LINE__
                 << " Object '" << get_name() << "'"
-                << " RTIinternalError: " << rti_err_msg << endl;
+                << " RTIinternalError: " << rti_err_msg << "\n";
          DebugHandler::terminate( errmsg.str() );
       } catch ( RTI1516_NAMESPACE::Exception const &e ) {
          string rti_err_msg;
@@ -992,7 +992,7 @@ void Object::unpublish_all_object_attributes()
          ostringstream errmsg;
          errmsg << "Object::unpublish_all_object_attributes():" << __LINE__
                 << " Object '" << get_name() << "'"
-                << " Exception: " << rti_err_msg << endl;
+                << " Exception: " << rti_err_msg << "\n";
          DebugHandler::terminate( errmsg.str() );
       }
       // Macro to restore the saved FPU Control Word register value.
@@ -1051,7 +1051,7 @@ void Object::subscribe_to_object_attributes()
       ostringstream errmsg;
       errmsg << "Object::subscribe_to_object_attributes():" << __LINE__
              << " Object '" << get_name() << "'"
-             << " ObjectClassNotDefined: " << rti_err_msg << endl;
+             << " ObjectClassNotDefined: " << rti_err_msg << "\n";
       DebugHandler::terminate( errmsg.str() );
    } catch ( AttributeNotDefined const &e ) {
       string rti_err_msg;
@@ -1059,7 +1059,7 @@ void Object::subscribe_to_object_attributes()
       ostringstream errmsg;
       errmsg << "Object::subscribe_to_object_attributes():" << __LINE__
              << " Object '" << get_name() << "'"
-             << " AttributeNotDefined: " << rti_err_msg << endl;
+             << " AttributeNotDefined: " << rti_err_msg << "\n";
       DebugHandler::terminate( errmsg.str() );
    } catch ( FederateNotExecutionMember const &e ) {
       string rti_err_msg;
@@ -1067,7 +1067,7 @@ void Object::subscribe_to_object_attributes()
       ostringstream errmsg;
       errmsg << "Object::subscribe_to_object_attributes():" << __LINE__
              << " Object '" << get_name() << "'"
-             << " FederateNotExecutionMember: " << rti_err_msg << endl;
+             << " FederateNotExecutionMember: " << rti_err_msg << "\n";
       DebugHandler::terminate( errmsg.str() );
    } catch ( SaveInProgress const &e ) {
       string rti_err_msg;
@@ -1075,7 +1075,7 @@ void Object::subscribe_to_object_attributes()
       ostringstream errmsg;
       errmsg << "Object::subscribe_to_object_attributes():" << __LINE__
              << " Object '" << get_name() << "'"
-             << " SaveInProgress: " << rti_err_msg << endl;
+             << " SaveInProgress: " << rti_err_msg << "\n";
       DebugHandler::terminate( errmsg.str() );
    } catch ( RestoreInProgress const &e ) {
       string rti_err_msg;
@@ -1083,7 +1083,7 @@ void Object::subscribe_to_object_attributes()
       ostringstream errmsg;
       errmsg << "Object::subscribe_to_object_attributes():" << __LINE__
              << " Object '" << get_name() << "'"
-             << " RestoreInProgress: " << rti_err_msg << endl;
+             << " RestoreInProgress: " << rti_err_msg << "\n";
       DebugHandler::terminate( errmsg.str() );
    } catch ( InvalidUpdateRateDesignator const &e ) {
       string rti_err_msg;
@@ -1091,7 +1091,7 @@ void Object::subscribe_to_object_attributes()
       ostringstream errmsg;
       errmsg << "Object::subscribe_to_object_attributes():" << __LINE__
              << " Object '" << get_name() << "'"
-             << " InvalidUpdateRateDesignator: " << rti_err_msg << endl;
+             << " InvalidUpdateRateDesignator: " << rti_err_msg << "\n";
       DebugHandler::terminate( errmsg.str() );
    } catch ( NotConnected const &e ) {
       string rti_err_msg;
@@ -1099,7 +1099,7 @@ void Object::subscribe_to_object_attributes()
       ostringstream errmsg;
       errmsg << "Object::subscribe_to_object_attributes():" << __LINE__
              << " Object '" << get_name() << "'"
-             << " NotConnected: " << rti_err_msg << endl;
+             << " NotConnected: " << rti_err_msg << "\n";
       DebugHandler::terminate( errmsg.str() );
       if ( federate != NULL ) {
          federate->set_connection_lost();
@@ -1110,7 +1110,7 @@ void Object::subscribe_to_object_attributes()
       ostringstream errmsg;
       errmsg << "Object::subscribe_to_object_attributes():" << __LINE__
              << " Object '" << get_name() << "'"
-             << " RTIinternalError: " << rti_err_msg << endl;
+             << " RTIinternalError: " << rti_err_msg << "\n";
       DebugHandler::terminate( errmsg.str() );
    } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       string rti_err_msg;
@@ -1118,7 +1118,7 @@ void Object::subscribe_to_object_attributes()
       ostringstream errmsg;
       errmsg << "Object::subscribe_to_object_attributes():" << __LINE__
              << " Object '" << get_name() << "'"
-             << " Exception: " << rti_err_msg << endl;
+             << " Exception: " << rti_err_msg << "\n";
       DebugHandler::terminate( errmsg.str() );
    }
    // Macro to restore the saved FPU Control Word register value.
@@ -1162,7 +1162,7 @@ void Object::unsubscribe_all_object_attributes()
          ostringstream errmsg;
          errmsg << "Object::unsubscribe_all_object_attributes():" << __LINE__
                 << " Object '" << get_name() << "'"
-                << " ObjectClassNotDefined: " << rti_err_msg << endl;
+                << " ObjectClassNotDefined: " << rti_err_msg << "\n";
          DebugHandler::terminate( errmsg.str() );
       } catch ( RTI1516_NAMESPACE::FederateNotExecutionMember const &e ) {
          string rti_err_msg;
@@ -1170,7 +1170,7 @@ void Object::unsubscribe_all_object_attributes()
          ostringstream errmsg;
          errmsg << "Object::unsubscribe_all_object_attributes():" << __LINE__
                 << " Object '" << get_name() << "'"
-                << " FederateNotExecutionMember: " << rti_err_msg << endl;
+                << " FederateNotExecutionMember: " << rti_err_msg << "\n";
          DebugHandler::terminate( errmsg.str() );
       } catch ( RTI1516_NAMESPACE::SaveInProgress const &e ) {
          string rti_err_msg;
@@ -1178,7 +1178,7 @@ void Object::unsubscribe_all_object_attributes()
          ostringstream errmsg;
          errmsg << "Object::unsubscribe_all_object_attributes():" << __LINE__
                 << " Object '" << get_name() << "'"
-                << " SaveInProgress: " << rti_err_msg << endl;
+                << " SaveInProgress: " << rti_err_msg << "\n";
          DebugHandler::terminate( errmsg.str() );
       } catch ( RTI1516_NAMESPACE::RestoreInProgress const &e ) {
          string rti_err_msg;
@@ -1186,7 +1186,7 @@ void Object::unsubscribe_all_object_attributes()
          ostringstream errmsg;
          errmsg << "Object::unsubscribe_all_object_attributes():" << __LINE__
                 << " Object '" << get_name() << "'"
-                << " RestoreInProgress: " << rti_err_msg << endl;
+                << " RestoreInProgress: " << rti_err_msg << "\n";
          DebugHandler::terminate( errmsg.str() );
       } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
          string rti_err_msg;
@@ -1194,7 +1194,7 @@ void Object::unsubscribe_all_object_attributes()
          ostringstream errmsg;
          errmsg << "Object::unsubscribe_all_object_attributes():" << __LINE__
                 << " Object '" << get_name() << "'"
-                << " NotConnected: " << rti_err_msg << endl;
+                << " NotConnected: " << rti_err_msg << "\n";
          DebugHandler::terminate( errmsg.str() );
          if ( federate != NULL ) {
             federate->set_connection_lost();
@@ -1205,7 +1205,7 @@ void Object::unsubscribe_all_object_attributes()
          ostringstream errmsg;
          errmsg << "Object::unsubscribe_all_object_attributes():" << __LINE__
                 << " Object '" << get_name() << "'"
-                << " RTIinternalError: " << rti_err_msg << endl;
+                << " RTIinternalError: " << rti_err_msg << "\n";
          DebugHandler::terminate( errmsg.str() );
       } catch ( RTI1516_NAMESPACE::Exception const &e ) {
          string rti_err_msg;
@@ -1213,7 +1213,7 @@ void Object::unsubscribe_all_object_attributes()
          ostringstream errmsg;
          errmsg << "Object::unsubscribe_all_object_attributes():" << __LINE__
                 << " Object '" << get_name() << "'"
-                << " Exception: " << rti_err_msg << endl;
+                << " Exception: " << rti_err_msg << "\n";
          DebugHandler::terminate( errmsg.str() );
       }
       // Macro to restore the saved FPU Control Word register value.
@@ -1282,7 +1282,7 @@ Requesting reservation of Object instance name '%s'.\n",
          ostringstream errmsg;
          errmsg << "Object::reserve_object_name_with_RTI():" << __LINE__
                 << " Object '" << get_name() << "'"
-                << " IllegalName: " << rti_err_msg << endl;
+                << " IllegalName: " << rti_err_msg << "\n";
          DebugHandler::terminate( errmsg.str() );
       } catch ( FederateNotExecutionMember const &e ) {
          string rti_err_msg;
@@ -1290,7 +1290,7 @@ Requesting reservation of Object instance name '%s'.\n",
          ostringstream errmsg;
          errmsg << "Object::reserve_object_name_with_RTI():" << __LINE__
                 << " Object '" << get_name() << "'"
-                << " FederateNotExecutionMember: " << rti_err_msg << endl;
+                << " FederateNotExecutionMember: " << rti_err_msg << "\n";
          DebugHandler::terminate( errmsg.str() );
       } catch ( SaveInProgress const &e ) {
          string rti_err_msg;
@@ -1298,7 +1298,7 @@ Requesting reservation of Object instance name '%s'.\n",
          ostringstream errmsg;
          errmsg << "Object::SaveInProgress():" << __LINE__
                 << " Object '" << get_name() << "'"
-                << " FederateNotExecutionMember: " << rti_err_msg << endl;
+                << " FederateNotExecutionMember: " << rti_err_msg << "\n";
          DebugHandler::terminate( errmsg.str() );
       } catch ( RestoreInProgress const &e ) {
          string rti_err_msg;
@@ -1306,7 +1306,7 @@ Requesting reservation of Object instance name '%s'.\n",
          ostringstream errmsg;
          errmsg << "Object::SaveInProgress():" << __LINE__
                 << " Object '" << get_name() << "'"
-                << " RestoreInProgress: " << rti_err_msg << endl;
+                << " RestoreInProgress: " << rti_err_msg << "\n";
          DebugHandler::terminate( errmsg.str() );
       } catch ( NotConnected const &e ) {
          string rti_err_msg;
@@ -1314,7 +1314,7 @@ Requesting reservation of Object instance name '%s'.\n",
          ostringstream errmsg;
          errmsg << "Object::SaveInProgress():" << __LINE__
                 << " Object '" << get_name() << "'"
-                << " NotConnected: " << rti_err_msg << endl;
+                << " NotConnected: " << rti_err_msg << "\n";
          DebugHandler::terminate( errmsg.str() );
          if ( federate != NULL ) {
             federate->set_connection_lost();
@@ -1325,7 +1325,7 @@ Requesting reservation of Object instance name '%s'.\n",
          ostringstream errmsg;
          errmsg << "Object::SaveInProgress():" << __LINE__
                 << " Object '" << get_name() << "'"
-                << " RTIinternalError: " << rti_err_msg << endl;
+                << " RTIinternalError: " << rti_err_msg << "\n";
          DebugHandler::terminate( errmsg.str() );
       } catch ( RTI1516_NAMESPACE::Exception const &e ) {
          string rti_err_msg;
@@ -1333,7 +1333,7 @@ Requesting reservation of Object instance name '%s'.\n",
          ostringstream errmsg;
          errmsg << "Object::SaveInProgress():" << __LINE__
                 << " Object '" << get_name() << "'"
-                << " Exception: " << rti_err_msg << endl;
+                << " Exception: " << rti_err_msg << "\n";
          DebugHandler::terminate( errmsg.str() );
       }
       // Macro to restore the saved FPU Control Word register value.
@@ -1396,7 +1396,7 @@ Waiting on reservation of Object Instance Name '%s'.\n",
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!" << endl;
+                      << " the Central RTI Component (CRC) level!\n";
                DebugHandler::terminate( errmsg.str() );
             }
          }
@@ -1468,7 +1468,7 @@ Detected object already registered '%s' Instance-ID:%s\n",
          ostringstream errmsg;
          errmsg << "Object::register_object_with_RTI():" << __LINE__
                 << " Object '" << get_name() << "'"
-                << " ObjectInstanceNameInUse: " << rti_err_msg << endl;
+                << " ObjectInstanceNameInUse: " << rti_err_msg << "\n";
          DebugHandler::terminate( errmsg.str() );
       } catch ( ObjectInstanceNameNotReserved const &e ) {
          string rti_err_msg;
@@ -1476,7 +1476,7 @@ Detected object already registered '%s' Instance-ID:%s\n",
          ostringstream errmsg;
          errmsg << "Object::register_object_with_RTI():" << __LINE__
                 << " Object '" << get_name() << "'"
-                << " ObjectInstanceNameNotReserved: " << rti_err_msg << endl;
+                << " ObjectInstanceNameNotReserved: " << rti_err_msg << "\n";
          DebugHandler::terminate( errmsg.str() );
       } catch ( ObjectClassNotDefined const &e ) {
          string rti_err_msg;
@@ -1484,7 +1484,7 @@ Detected object already registered '%s' Instance-ID:%s\n",
          ostringstream errmsg;
          errmsg << "Object::register_object_with_RTI():" << __LINE__
                 << " Object '" << get_name() << "'"
-                << " ObjectClassNotDefined: " << rti_err_msg << endl;
+                << " ObjectClassNotDefined: " << rti_err_msg << "\n";
          DebugHandler::terminate( errmsg.str() );
       } catch ( ObjectClassNotPublished const &e ) {
          string rti_err_msg;
@@ -1492,7 +1492,7 @@ Detected object already registered '%s' Instance-ID:%s\n",
          ostringstream errmsg;
          errmsg << "Object::register_object_with_RTI():" << __LINE__
                 << " Object '" << get_name() << "'"
-                << " ObjectClassNotPublished: " << rti_err_msg << endl;
+                << " ObjectClassNotPublished: " << rti_err_msg << "\n";
          DebugHandler::terminate( errmsg.str() );
       } catch ( FederateNotExecutionMember const &e ) {
          string rti_err_msg;
@@ -1500,7 +1500,7 @@ Detected object already registered '%s' Instance-ID:%s\n",
          ostringstream errmsg;
          errmsg << "Object::register_object_with_RTI():" << __LINE__
                 << " Object '" << get_name() << "'"
-                << " FederateNotExecutionMember: " << rti_err_msg << endl;
+                << " FederateNotExecutionMember: " << rti_err_msg << "\n";
          DebugHandler::terminate( errmsg.str() );
       } catch ( SaveInProgress const &e ) {
          string rti_err_msg;
@@ -1508,7 +1508,7 @@ Detected object already registered '%s' Instance-ID:%s\n",
          ostringstream errmsg;
          errmsg << "Object::register_object_with_RTI():" << __LINE__
                 << " Object '" << get_name() << "'"
-                << " SaveInProgress: " << rti_err_msg << endl;
+                << " SaveInProgress: " << rti_err_msg << "\n";
          DebugHandler::terminate( errmsg.str() );
       } catch ( RestoreInProgress const &e ) {
          string rti_err_msg;
@@ -1516,7 +1516,7 @@ Detected object already registered '%s' Instance-ID:%s\n",
          ostringstream errmsg;
          errmsg << "Object::register_object_with_RTI():" << __LINE__
                 << " Object '" << get_name() << "'"
-                << " RestoreInProgress: " << rti_err_msg << endl;
+                << " RestoreInProgress: " << rti_err_msg << "\n";
          DebugHandler::terminate( errmsg.str() );
       } catch ( NotConnected const &e ) {
          string rti_err_msg;
@@ -1524,7 +1524,7 @@ Detected object already registered '%s' Instance-ID:%s\n",
          ostringstream errmsg;
          errmsg << "Object::register_object_with_RTI():" << __LINE__
                 << " Object '" << get_name() << "'"
-                << " NotConnected: " << rti_err_msg << endl;
+                << " NotConnected: " << rti_err_msg << "\n";
          DebugHandler::terminate( errmsg.str() );
          if ( federate != NULL ) {
             federate->set_connection_lost();
@@ -1535,7 +1535,7 @@ Detected object already registered '%s' Instance-ID:%s\n",
          ostringstream errmsg;
          errmsg << "Object::register_object_with_RTI():" << __LINE__
                 << " Object '" << get_name() << "'"
-                << " RTIinternalError: " << rti_err_msg << endl;
+                << " RTIinternalError: " << rti_err_msg << "\n";
          DebugHandler::terminate( errmsg.str() );
       } catch ( RTI1516_NAMESPACE::Exception const &e ) {
          string rti_err_msg;
@@ -1543,7 +1543,7 @@ Detected object already registered '%s' Instance-ID:%s\n",
          ostringstream errmsg;
          errmsg << "Object::register_object_with_RTI():" << __LINE__
                 << " Object '" << get_name() << "'"
-                << " Exception: " << rti_err_msg << endl;
+                << " Exception: " << rti_err_msg << "\n";
          DebugHandler::terminate( errmsg.str() );
       }
 
@@ -1568,7 +1568,7 @@ Detected object already registered '%s' Instance-ID:%s\n",
             ostringstream errmsg;
             errmsg << "Object::register_object_with_RTI():" << __LINE__
                    << " Object '" << get_name() << "'"
-                   << " ObjectInstanceNotKnown: " << rti_err_msg << endl;
+                   << " ObjectInstanceNotKnown: " << rti_err_msg << "\n";
             DebugHandler::terminate( errmsg.str() );
          } catch ( FederateNotExecutionMember const &e ) {
             string rti_err_msg;
@@ -1576,7 +1576,7 @@ Detected object already registered '%s' Instance-ID:%s\n",
             ostringstream errmsg;
             errmsg << "Object::register_object_with_RTI():" << __LINE__
                    << " Object '" << get_name() << "'"
-                   << " FederateNotExecutionMember: " << rti_err_msg << endl;
+                   << " FederateNotExecutionMember: " << rti_err_msg << "\n";
             DebugHandler::terminate( errmsg.str() );
          } catch ( NotConnected const &e ) {
             string rti_err_msg;
@@ -1584,7 +1584,7 @@ Detected object already registered '%s' Instance-ID:%s\n",
             ostringstream errmsg;
             errmsg << "Object::register_object_with_RTI():" << __LINE__
                    << " Object '" << get_name() << "'"
-                   << " NotConnected: " << rti_err_msg << endl;
+                   << " NotConnected: " << rti_err_msg << "\n";
             DebugHandler::terminate( errmsg.str() );
             if ( federate != NULL ) {
                federate->set_connection_lost();
@@ -1595,7 +1595,7 @@ Detected object already registered '%s' Instance-ID:%s\n",
             ostringstream errmsg;
             errmsg << "Object::register_object_with_RTI():" << __LINE__
                    << " Object '" << get_name() << "'"
-                   << " RTIinternalError: " << rti_err_msg << endl;
+                   << " RTIinternalError: " << rti_err_msg << "\n";
             DebugHandler::terminate( errmsg.str() );
          } catch ( RTI1516_NAMESPACE::Exception const &e ) {
             string rti_err_msg;
@@ -1603,7 +1603,7 @@ Detected object already registered '%s' Instance-ID:%s\n",
             ostringstream errmsg;
             errmsg << "Object::register_object_with_RTI():" << __LINE__
                    << " Object '" << get_name() << "'"
-                   << " Exception: " << rti_err_msg << endl;
+                   << " Exception: " << rti_err_msg << "\n";
             DebugHandler::terminate( errmsg.str() );
          }
          // Macro to restore the saved FPU Control Word register value.
@@ -1655,7 +1655,7 @@ void Object::wait_for_object_registration()
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!" << endl;
+                      << " the Central RTI Component (CRC) level!\n";
                DebugHandler::terminate( errmsg.str() );
             }
          }
@@ -1689,12 +1689,12 @@ void Object::setup_preferred_order_with_RTI()
 
    ostringstream msg;
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-      msg << "Object::setup_preferred_order_with_RTI():" << __LINE__ << endl
+      msg << "Object::setup_preferred_order_with_RTI():" << __LINE__ << "\n"
           << "--------- Setup Preferred-Order of Locally-Owned Attributes ---------\n"
           << " Object:'" << get_name() << "'"
           << " FOM-Name:'" << get_FOM_name() << "'"
           << " Create HLA Instance:" << ( is_create_HLA_instance() ? "Yes" : "No" )
-          << endl;
+          << "\n";
    }
 
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
@@ -1712,7 +1712,7 @@ void Object::setup_preferred_order_with_RTI()
             msg << "   " << ( i + 1 ) << "/" << attr_count
                 << " FOM-Attribute:'" << attributes[i].get_FOM_name() << "'"
                 << " Trick-Name:'" << attributes[i].get_trick_name() << "'"
-                << " Preferred-Order:TIMESTAMP" << endl;
+                << " Preferred-Order:TIMESTAMP\n";
          }
          TSO_attr_handle_set.insert( attributes[i].get_attribute_handle() );
       }
@@ -1726,7 +1726,7 @@ void Object::setup_preferred_order_with_RTI()
             msg << "   " << ( i + 1 ) << "/" << attr_count
                 << " FOM-Attribute:'" << attributes[i].get_FOM_name() << "'"
                 << " Trick-Name:'" << attributes[i].get_trick_name() << "'"
-                << " Preferred-Order:RECEIVE" << endl;
+                << " Preferred-Order:RECEIVE\n";
          }
          RO_attr_handle_set.insert( attributes[i].get_attribute_handle() );
       }
@@ -1765,7 +1765,7 @@ void Object::setup_preferred_order_with_RTI()
       ostringstream errmsg;
       errmsg << "Object::setup_preferred_order_with_RTI():" << __LINE__
              << " Object '" << get_name() << "'"
-             << " ObjectInstanceNotKnown: " << rti_err_msg << endl;
+             << " ObjectInstanceNotKnown: " << rti_err_msg << "\n";
       DebugHandler::terminate( errmsg.str() );
    } catch ( AttributeNotOwned const &e ) {
       string rti_err_msg;
@@ -1773,7 +1773,7 @@ void Object::setup_preferred_order_with_RTI()
       ostringstream errmsg;
       errmsg << "Object::setup_preferred_order_with_RTI():" << __LINE__
              << " Object '" << get_name() << "'"
-             << " AttributeNotOwned: " << rti_err_msg << endl;
+             << " AttributeNotOwned: " << rti_err_msg << "\n";
       DebugHandler::terminate( errmsg.str() );
    } catch ( AttributeNotDefined const &e ) {
       string rti_err_msg;
@@ -1781,7 +1781,7 @@ void Object::setup_preferred_order_with_RTI()
       ostringstream errmsg;
       errmsg << "Object::setup_preferred_order_with_RTI():" << __LINE__
              << " Object '" << get_name() << "'"
-             << " AttributeNotDefined: " << rti_err_msg << endl;
+             << " AttributeNotDefined: " << rti_err_msg << "\n";
       DebugHandler::terminate( errmsg.str() );
    } catch ( FederateNotExecutionMember const &e ) {
       string rti_err_msg;
@@ -1789,7 +1789,7 @@ void Object::setup_preferred_order_with_RTI()
       ostringstream errmsg;
       errmsg << "Object::setup_preferred_order_with_RTI():" << __LINE__
              << " Object '" << get_name() << "'"
-             << " FederateNotExecutionMember: " << rti_err_msg << endl;
+             << " FederateNotExecutionMember: " << rti_err_msg << "\n";
       DebugHandler::terminate( errmsg.str() );
    } catch ( SaveInProgress const &e ) {
       string rti_err_msg;
@@ -1797,7 +1797,7 @@ void Object::setup_preferred_order_with_RTI()
       ostringstream errmsg;
       errmsg << "Object::setup_preferred_order_with_RTI():" << __LINE__
              << " Object '" << get_name() << "'"
-             << " SaveInProgress: " << rti_err_msg << endl;
+             << " SaveInProgress: " << rti_err_msg << "\n";
       DebugHandler::terminate( errmsg.str() );
    } catch ( RestoreInProgress const &e ) {
       string rti_err_msg;
@@ -1805,7 +1805,7 @@ void Object::setup_preferred_order_with_RTI()
       ostringstream errmsg;
       errmsg << "Object::setup_preferred_order_with_RTI():" << __LINE__
              << " Object '" << get_name() << "'"
-             << " RestoreInProgress: " << rti_err_msg << endl;
+             << " RestoreInProgress: " << rti_err_msg << "\n";
       DebugHandler::terminate( errmsg.str() );
    } catch ( NotConnected const &e ) {
       string rti_err_msg;
@@ -1813,7 +1813,7 @@ void Object::setup_preferred_order_with_RTI()
       ostringstream errmsg;
       errmsg << "Object::setup_preferred_order_with_RTI():" << __LINE__
              << " Object '" << get_name() << "'"
-             << " NotConnected: " << rti_err_msg << endl;
+             << " NotConnected: " << rti_err_msg << "\n";
       DebugHandler::terminate( errmsg.str() );
       if ( federate != NULL ) {
          federate->set_connection_lost();
@@ -1824,7 +1824,7 @@ void Object::setup_preferred_order_with_RTI()
       ostringstream errmsg;
       errmsg << "Object::setup_preferred_order_with_RTI():" << __LINE__
              << " Object '" << get_name() << "'"
-             << " RTIinternalError: " << rti_err_msg << endl;
+             << " RTIinternalError: " << rti_err_msg << "\n";
       DebugHandler::terminate( errmsg.str() );
    } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       string rti_err_msg;
@@ -1832,7 +1832,7 @@ void Object::setup_preferred_order_with_RTI()
       ostringstream errmsg;
       errmsg << "Object::setup_preferred_order_with_RTI():" << __LINE__
              << " Object '" << get_name() << "'"
-             << " Exception: " << rti_err_msg << endl;
+             << " Exception: " << rti_err_msg << "\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -1878,7 +1878,7 @@ void Object::request_attribute_value_update()
       ostringstream errmsg;
       errmsg << "Object::request_attribute_value_update():" << __LINE__
              << " Object '" << get_name() << "'"
-             << " AttributeNotDefined: " << rti_err_msg << endl;
+             << " AttributeNotDefined: " << rti_err_msg << "\n";
       DebugHandler::terminate( errmsg.str() );
    } catch ( ObjectInstanceNotKnown const &e ) {
       string rti_err_msg;
@@ -1886,7 +1886,7 @@ void Object::request_attribute_value_update()
       ostringstream errmsg;
       errmsg << "Object::request_attribute_value_update():" << __LINE__
              << " Object '" << get_name() << "'"
-             << " ObjectInstanceNotKnown: " << rti_err_msg << endl;
+             << " ObjectInstanceNotKnown: " << rti_err_msg << "\n";
       DebugHandler::terminate( errmsg.str() );
    } catch ( FederateNotExecutionMember const &e ) {
       string rti_err_msg;
@@ -1894,7 +1894,7 @@ void Object::request_attribute_value_update()
       ostringstream errmsg;
       errmsg << "Object::request_attribute_value_update():" << __LINE__
              << " Object '" << get_name() << "'"
-             << " FederateNotExecutionMember: " << rti_err_msg << endl;
+             << " FederateNotExecutionMember: " << rti_err_msg << "\n";
       DebugHandler::terminate( errmsg.str() );
    } catch ( SaveInProgress const &e ) {
       string rti_err_msg;
@@ -1902,7 +1902,7 @@ void Object::request_attribute_value_update()
       ostringstream errmsg;
       errmsg << "Object::request_attribute_value_update():" << __LINE__
              << " Object '" << get_name() << "'"
-             << " SaveInProgress: " << rti_err_msg << endl;
+             << " SaveInProgress: " << rti_err_msg << "\n";
       DebugHandler::terminate( errmsg.str() );
    } catch ( RestoreInProgress const &e ) {
       string rti_err_msg;
@@ -1910,7 +1910,7 @@ void Object::request_attribute_value_update()
       ostringstream errmsg;
       errmsg << "Object::request_attribute_value_update():" << __LINE__
              << " Object '" << get_name() << "'"
-             << " RestoreInProgress: " << rti_err_msg << endl;
+             << " RestoreInProgress: " << rti_err_msg << "\n";
       DebugHandler::terminate( errmsg.str() );
    } catch ( NotConnected const &e ) {
       string rti_err_msg;
@@ -1918,7 +1918,7 @@ void Object::request_attribute_value_update()
       ostringstream errmsg;
       errmsg << "Object::request_attribute_value_update():" << __LINE__
              << " Object '" << get_name() << "'"
-             << " NotConnected: " << rti_err_msg << endl;
+             << " NotConnected: " << rti_err_msg << "\n";
       DebugHandler::terminate( errmsg.str() );
       if ( federate != NULL ) {
          federate->set_connection_lost();
@@ -1929,7 +1929,7 @@ void Object::request_attribute_value_update()
       ostringstream errmsg;
       errmsg << "Object::request_attribute_value_update():" << __LINE__
              << " Object '" << get_name() << "'"
-             << " RTIinternalError: " << rti_err_msg << endl;
+             << " RTIinternalError: " << rti_err_msg << "\n";
       DebugHandler::terminate( errmsg.str() );
    } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       string rti_err_msg;
@@ -1937,7 +1937,7 @@ void Object::request_attribute_value_update()
       ostringstream errmsg;
       errmsg << "Object::request_attribute_value_update():" << __LINE__
              << " Object '" << get_name() << "'"
-             << " Exception: " << rti_err_msg << endl;
+             << " Exception: " << rti_err_msg << "\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -2115,7 +2115,7 @@ exception for '%s' with error message '%s'.\n",
       ostringstream errmsg;
       errmsg << "Object::send_requested_data():" << __LINE__
              << " Exception: InvalidLogicalTime\n"
-             << "  instance_id=" << id_str << endl
+             << "  instance_id=" << id_str << "\n"
              << "      granted=" << time_service->get_granted_time().get_time_in_seconds() << " ("
              << time_service->get_granted_time().get_base_time() << " " << Int64BaseTime::get_base_unit()
              << ")\n"
@@ -2124,7 +2124,7 @@ exception for '%s' with error message '%s'.\n",
              << ")\n"
              << "  update_time=" << update_time.get_time_in_seconds() << " ("
              << update_time.get_base_time() << " " << Int64BaseTime::get_base_unit()
-             << ")" << endl;
+             << ")\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } catch ( AttributeNotOwned const &e ) {
       string id_str;
@@ -2135,10 +2135,10 @@ exception for '%s' with error message '%s'.\n",
       ostringstream errmsg;
       errmsg << "Object::send_requested_data():" << __LINE__
              << " Exception: AttributeNotOwned\n"
-             << "  instance_id=" << id_str << endl
-             << "      granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
-             << "    lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
-             << "  update_time=" << update_time.get_time_in_seconds() << endl;
+             << "  instance_id=" << id_str << "\n"
+             << "      granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
+             << "    lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
+             << "  update_time=" << update_time.get_time_in_seconds() << "\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } catch ( ObjectInstanceNotKnown const &e ) {
       string id_str;
@@ -2149,10 +2149,10 @@ exception for '%s' with error message '%s'.\n",
       ostringstream errmsg;
       errmsg << "Object::send_requested_data():" << __LINE__
              << " Exception: ObjectInstanceNotKnown\n"
-             << "  instance_id=" << id_str << endl
-             << "      granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
-             << "    lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
-             << "  update_time=" << update_time.get_time_in_seconds() << endl;
+             << "  instance_id=" << id_str << "\n"
+             << "      granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
+             << "    lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
+             << "  update_time=" << update_time.get_time_in_seconds() << "\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } catch ( AttributeNotDefined const &e ) {
       string id_str;
@@ -2162,10 +2162,10 @@ exception for '%s' with error message '%s'.\n",
       ostringstream errmsg;
       errmsg << "Object::send_requested_data():" << __LINE__
              << " Exception: AttributeNotDefined\n"
-             << "  instance_id=" << id_str << endl
-             << "      granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
-             << "    lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
-             << "  update_time=" << update_time.get_time_in_seconds() << endl;
+             << "  instance_id=" << id_str << "\n"
+             << "      granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
+             << "    lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
+             << "  update_time=" << update_time.get_time_in_seconds() << "\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } catch ( FederateNotExecutionMember const &e ) {
       string id_str;
@@ -2175,10 +2175,10 @@ exception for '%s' with error message '%s'.\n",
       ostringstream errmsg;
       errmsg << "Object::send_requested_data():" << __LINE__
              << " Exception:FederateNotExecutionMember\n"
-             << "  instance_id=" << id_str << endl
-             << "      granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
-             << "    lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
-             << "  update_time=" << update_time.get_time_in_seconds() << endl;
+             << "  instance_id=" << id_str << "\n"
+             << "      granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
+             << "    lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
+             << "  update_time=" << update_time.get_time_in_seconds() << "\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } catch ( SaveInProgress const &e ) {
       string id_str;
@@ -2188,10 +2188,10 @@ exception for '%s' with error message '%s'.\n",
       ostringstream errmsg;
       errmsg << "Object::send_requested_data():" << __LINE__
              << " Exception: SaveInProgress\n"
-             << "  instance_id=" << id_str << endl
-             << "      granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
-             << "    lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
-             << "  update_time=" << update_time.get_time_in_seconds() << endl;
+             << "  instance_id=" << id_str << "\n"
+             << "      granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
+             << "    lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
+             << "  update_time=" << update_time.get_time_in_seconds() << "\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } catch ( RestoreInProgress const &e ) {
       string id_str;
@@ -2201,10 +2201,10 @@ exception for '%s' with error message '%s'.\n",
       ostringstream errmsg;
       errmsg << "Object::send_requested_data():" << __LINE__
              << " Exception: RestoreInProgress\n"
-             << "  instance_id=" << id_str << endl
-             << "      granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
-             << "    lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
-             << "  update_time=" << update_time.get_time_in_seconds() << endl;
+             << "  instance_id=" << id_str << "\n"
+             << "      granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
+             << "    lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
+             << "  update_time=" << update_time.get_time_in_seconds() << "\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } catch ( NotConnected const &e ) {
       string id_str;
@@ -2214,10 +2214,10 @@ exception for '%s' with error message '%s'.\n",
       ostringstream errmsg;
       errmsg << "Object::send_requested_data():" << __LINE__
              << " Exception: NotConnected\n"
-             << "  instance_id=" << id_str << endl
-             << "      granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
-             << "    lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
-             << "  update_time=" << update_time.get_time_in_seconds() << endl;
+             << "  instance_id=" << id_str << "\n"
+             << "      granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
+             << "    lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
+             << "  update_time=" << update_time.get_time_in_seconds() << "\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
       federate->set_connection_lost();
    } catch ( RTIinternalError const &e ) {
@@ -2228,10 +2228,10 @@ exception for '%s' with error message '%s'.\n",
       ostringstream errmsg;
       errmsg << "Object::send_requested_data():" << __LINE__
              << " Exception: RTIinternalError\n"
-             << "  instance_id=" << id_str << endl
-             << "      granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
-             << "    lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
-             << "  update_time=" << update_time.get_time_in_seconds() << endl;
+             << "  instance_id=" << id_str << "\n"
+             << "      granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
+             << "    lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
+             << "  update_time=" << update_time.get_time_in_seconds() << "\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       string id_str;
@@ -2243,10 +2243,10 @@ exception for '%s' with error message '%s'.\n",
       ostringstream errmsg;
       errmsg << "Object::send_requested_data():" << __LINE__
              << " Exception\n"
-             << "  instance_id=" << id_str << endl
-             << "      granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
-             << "    lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
-             << "  update_time=" << update_time.get_time_in_seconds() << endl;
+             << "  instance_id=" << id_str << "\n"
+             << "      granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
+             << "    lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
+             << "  update_time=" << update_time.get_time_in_seconds() << "\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
 
@@ -2369,7 +2369,7 @@ exception for '%s' with error message '%s'.\n",
          ostringstream errmsg;
          errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
                 << " Exception: InvalidLogicalTime\n"
-                << "  instance_id=" << id_str << endl
+                << "  instance_id=" << id_str << "\n"
                 << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << " ("
                 << time_service->get_granted_time().get_base_time() << " " << Int64BaseTime::get_base_unit()
                 << ")\n"
@@ -2378,7 +2378,7 @@ exception for '%s' with error message '%s'.\n",
                 << ")\n"
                 << "  update_time=" << update_time.get_time_in_seconds() << " ("
                 << update_time.get_base_time() << " " << Int64BaseTime::get_base_unit()
-                << ")" << endl;
+                << ")\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( AttributeNotOwned const &e ) {
          string id_str;
@@ -2388,10 +2388,10 @@ exception for '%s' with error message '%s'.\n",
          ostringstream errmsg;
          errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
                 << " Exception: AttributeNotOwned\n"
-                << "  instance_id=" << id_str << endl
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
-                << "  update_time=" << update_time.get_time_in_seconds() << endl;
+                << "  instance_id=" << id_str << "\n"
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
+                << "  update_time=" << update_time.get_time_in_seconds() << "\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( ObjectInstanceNotKnown const &e ) {
          string id_str;
@@ -2401,10 +2401,10 @@ exception for '%s' with error message '%s'.\n",
          ostringstream errmsg;
          errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
                 << " Exception: ObjectInstanceNotKnown\n"
-                << "  instance_id=" << id_str << endl
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
-                << "  update_time=" << update_time.get_time_in_seconds() << endl;
+                << "  instance_id=" << id_str << "\n"
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
+                << "  update_time=" << update_time.get_time_in_seconds() << "\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( AttributeNotDefined const &e ) {
          string id_str;
@@ -2414,10 +2414,10 @@ exception for '%s' with error message '%s'.\n",
          ostringstream errmsg;
          errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
                 << " Exception: AttributeNotDefined\n"
-                << "  instance_id=" << id_str << endl
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
-                << "  update_time=" << update_time.get_time_in_seconds() << endl;
+                << "  instance_id=" << id_str << "\n"
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
+                << "  update_time=" << update_time.get_time_in_seconds() << "\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( FederateNotExecutionMember const &e ) {
          string id_str;
@@ -2427,10 +2427,10 @@ exception for '%s' with error message '%s'.\n",
          ostringstream errmsg;
          errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
                 << " Exception: FederateNotExecutionMember\n"
-                << "  instance_id=" << id_str << endl
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
-                << "  update_time=" << update_time.get_time_in_seconds() << endl;
+                << "  instance_id=" << id_str << "\n"
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
+                << "  update_time=" << update_time.get_time_in_seconds() << "\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( SaveInProgress const &e ) {
          string id_str;
@@ -2440,10 +2440,10 @@ exception for '%s' with error message '%s'.\n",
          ostringstream errmsg;
          errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
                 << " Exception: SaveInProgress\n"
-                << "  instance_id=" << id_str << endl
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
-                << "  update_time=" << update_time.get_time_in_seconds() << endl;
+                << "  instance_id=" << id_str << "\n"
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
+                << "  update_time=" << update_time.get_time_in_seconds() << "\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( RestoreInProgress const &e ) {
          string id_str;
@@ -2453,10 +2453,10 @@ exception for '%s' with error message '%s'.\n",
          ostringstream errmsg;
          errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
                 << " Exception: RestoreInProgress\n"
-                << "  instance_id=" << id_str << endl
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
-                << "  update_time=" << update_time.get_time_in_seconds() << endl;
+                << "  instance_id=" << id_str << "\n"
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
+                << "  update_time=" << update_time.get_time_in_seconds() << "\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( NotConnected const &e ) {
          string id_str;
@@ -2466,10 +2466,10 @@ exception for '%s' with error message '%s'.\n",
          ostringstream errmsg;
          errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
                 << " Exception: NotConnected\n"
-                << "  instance_id=" << id_str << endl
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
-                << "  update_time=" << update_time.get_time_in_seconds() << endl;
+                << "  instance_id=" << id_str << "\n"
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
+                << "  update_time=" << update_time.get_time_in_seconds() << "\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
          federate->set_connection_lost();
       } catch ( RTIinternalError const &e ) {
@@ -2480,10 +2480,10 @@ exception for '%s' with error message '%s'.\n",
          ostringstream errmsg;
          errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
                 << " Exception: RTIinternalError\n"
-                << "  instance_id=" << id_str << endl
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
-                << "  update_time=" << update_time.get_time_in_seconds() << endl;
+                << "  instance_id=" << id_str << "\n"
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
+                << "  update_time=" << update_time.get_time_in_seconds() << "\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( RTI1516_NAMESPACE::Exception const &e ) {
          string id_str;
@@ -2495,10 +2495,10 @@ exception for '%s' with error message '%s'.\n",
          ostringstream errmsg;
          errmsg << "Object::send_cyclic_and_requested_data():" << __LINE__
                 << " Exception\n"
-                << "  instance_id=" << id_str << endl
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
-                << "  update_time=" << update_time.get_time_in_seconds() << endl;
+                << "  instance_id=" << id_str << "\n"
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
+                << "  update_time=" << update_time.get_time_in_seconds() << "\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
    }
@@ -2550,7 +2550,7 @@ void Object::send_zero_lookahead_and_requested_data(
                    << " modified-data files to make sure the Lag-Compensation"
                    << " type 'lag_comp_type' is set to LAG_COMPENSATION_NONE"
                    << " to disable Lag-Compensation when sending zero-lookahead"
-                   << " configured object attributes." << endl;
+                   << " configured object attributes.\n";
             DebugHandler::terminate( errmsg.str() );
             break;
          }
@@ -2577,7 +2577,7 @@ void Object::send_zero_lookahead_and_requested_data(
                 << " data. Please check your input or modified-data files to make"
                 << " sure at least attribute is configured for zero-lookahead and"
                 << " if you are using the TrickHLA::Conditional API make sure you"
-                << " enable at least one attribute to be sent." << endl;
+                << " enable at least one attribute to be sent.\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
    } else {
@@ -2640,8 +2640,8 @@ Invalid logical time exception for '%s' with error message '%s'.\n",
          ostringstream errmsg;
          errmsg << "Object::send_zero_lookahead_and_requested_data():" << __LINE__
                 << " Exception: InvalidLogicalTime\n"
-                << "  instance_id=" << id_str << endl
-                << "  send-with-timestamp=" << ( send_with_timestamp ? "True" : "False" ) << endl
+                << "  instance_id=" << id_str << "\n"
+                << "  send-with-timestamp=" << ( send_with_timestamp ? "True" : "False" ) << "\n"
                 << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << " ("
                 << time_service->get_granted_time().get_base_time() << " " << Int64BaseTime::get_base_unit()
                 << ")\n"
@@ -2650,7 +2650,7 @@ Invalid logical time exception for '%s' with error message '%s'.\n",
                 << ")\n"
                 << "  update_time=" << update_time.get_time_in_seconds() << " ("
                 << update_time.get_base_time() << " " << Int64BaseTime::get_base_unit()
-                << ")" << endl;
+                << ")\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( AttributeNotOwned const &e ) {
          string id_str;
@@ -2660,10 +2660,10 @@ Invalid logical time exception for '%s' with error message '%s'.\n",
          ostringstream errmsg;
          errmsg << "Object::send_zero_lookahead_and_requested_data():" << __LINE__
                 << " Exception: AttributeNotOwned\n"
-                << "  instance_id=" << id_str << endl
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
-                << "  update_time=" << update_time.get_time_in_seconds() << endl;
+                << "  instance_id=" << id_str << "\n"
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
+                << "  update_time=" << update_time.get_time_in_seconds() << "\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( ObjectInstanceNotKnown const &e ) {
          string id_str;
@@ -2673,10 +2673,10 @@ Invalid logical time exception for '%s' with error message '%s'.\n",
          ostringstream errmsg;
          errmsg << "Object::send_zero_lookahead_and_requested_data():" << __LINE__
                 << " Exception: ObjectInstanceNotKnown\n"
-                << "  instance_id=" << id_str << endl
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
-                << "  update_time=" << update_time.get_time_in_seconds() << endl;
+                << "  instance_id=" << id_str << "\n"
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
+                << "  update_time=" << update_time.get_time_in_seconds() << "\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( AttributeNotDefined const &e ) {
          string id_str;
@@ -2686,10 +2686,10 @@ Invalid logical time exception for '%s' with error message '%s'.\n",
          ostringstream errmsg;
          errmsg << "Object::send_zero_lookahead_and_requested_data():" << __LINE__
                 << " Exception: AttributeNotDefined\n"
-                << "  instance_id=" << id_str << endl
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
-                << "  update_time=" << update_time.get_time_in_seconds() << endl;
+                << "  instance_id=" << id_str << "\n"
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
+                << "  update_time=" << update_time.get_time_in_seconds() << "\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( FederateNotExecutionMember const &e ) {
          string id_str;
@@ -2699,10 +2699,10 @@ Invalid logical time exception for '%s' with error message '%s'.\n",
          ostringstream errmsg;
          errmsg << "Object::send_zero_lookahead_and_requested_data():" << __LINE__
                 << " Exception: FederateNotExecutionMember\n"
-                << "  instance_id=" << id_str << endl
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
-                << "  update_time=" << update_time.get_time_in_seconds() << endl;
+                << "  instance_id=" << id_str << "\n"
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
+                << "  update_time=" << update_time.get_time_in_seconds() << "\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( SaveInProgress const &e ) {
          string id_str;
@@ -2712,10 +2712,10 @@ Invalid logical time exception for '%s' with error message '%s'.\n",
          ostringstream errmsg;
          errmsg << "Object::send_zero_lookahead_and_requested_data():" << __LINE__
                 << " Exception: SaveInProgress\n"
-                << "  instance_id=" << id_str << endl
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
-                << "  update_time=" << update_time.get_time_in_seconds() << endl;
+                << "  instance_id=" << id_str << "\n"
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
+                << "  update_time=" << update_time.get_time_in_seconds() << "\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( RestoreInProgress const &e ) {
          string id_str;
@@ -2725,10 +2725,10 @@ Invalid logical time exception for '%s' with error message '%s'.\n",
          ostringstream errmsg;
          errmsg << "Object::send_zero_lookahead_and_requested_data():" << __LINE__
                 << " Exception: RestoreInProgress\n"
-                << "  instance_id=" << id_str << endl
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
-                << "  update_time=" << update_time.get_time_in_seconds() << endl;
+                << "  instance_id=" << id_str << "\n"
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
+                << "  update_time=" << update_time.get_time_in_seconds() << "\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( NotConnected const &e ) {
          string id_str;
@@ -2738,10 +2738,10 @@ Invalid logical time exception for '%s' with error message '%s'.\n",
          ostringstream errmsg;
          errmsg << "Object::send_zero_lookahead_and_requested_data():" << __LINE__
                 << " Exception: NotConnected\n"
-                << "  instance_id=" << id_str << endl
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
-                << "  update_time=" << update_time.get_time_in_seconds() << endl;
+                << "  instance_id=" << id_str << "\n"
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
+                << "  update_time=" << update_time.get_time_in_seconds() << "\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
          federate->set_connection_lost();
       } catch ( RTIinternalError const &e ) {
@@ -2752,10 +2752,10 @@ Invalid logical time exception for '%s' with error message '%s'.\n",
          ostringstream errmsg;
          errmsg << "Object::send_zero_lookahead_and_requested_data():" << __LINE__
                 << " Exception: RTIinternalError\n"
-                << "  instance_id=" << id_str << endl
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
-                << "  update_time=" << update_time.get_time_in_seconds() << endl;
+                << "  instance_id=" << id_str << "\n"
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
+                << "  update_time=" << update_time.get_time_in_seconds() << "\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( RTI1516_NAMESPACE::Exception const &e ) {
          string id_str;
@@ -2767,10 +2767,10 @@ Invalid logical time exception for '%s' with error message '%s'.\n",
          ostringstream errmsg;
          errmsg << "Object::send_zero_lookahead_and_requested_data():" << __LINE__
                 << " Exception\n"
-                << "  instance_id=" << id_str << endl
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl
-                << "  update_time=" << update_time.get_time_in_seconds() << endl;
+                << "  instance_id=" << id_str << "\n"
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
+                << "  update_time=" << update_time.get_time_in_seconds() << "\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
    }
@@ -2821,7 +2821,7 @@ void Object::send_blocking_io_data()
                    << " modified-data files to make sure the Lag-Compensation"
                    << " type 'lag_comp_type' is set to LAG_COMPENSATION_NONE"
                    << " to disable Lag-Compensation when sending blocking I/O"
-                   << " configured object attributes." << endl;
+                   << " configured object attributes.\n";
             DebugHandler::terminate( errmsg.str() );
             break;
          }
@@ -2847,7 +2847,7 @@ void Object::send_blocking_io_data()
                 << " data. Please check your input or modified-data files to make"
                 << " sure at least attribute is configured for blocking I/O and"
                 << " if you are using the TrickHLA::Conditional API make sure you"
-                << " enable at least one attribute to be sent." << endl;
+                << " enable at least one attribute to be sent.\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
    } else {
@@ -2888,13 +2888,13 @@ exception for '%s' with error message '%s'.\n",
          ostringstream errmsg;
          errmsg << "Object::send_blocking_io_data():" << __LINE__
                 << " Exception: InvalidLogicalTime\n"
-                << "  instance_id=" << id_str << endl
+                << "  instance_id=" << id_str << "\n"
                 << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << " ("
                 << time_service->get_granted_time().get_base_time() << " " << Int64BaseTime::get_base_unit()
                 << ")\n"
                 << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << " ("
                 << time_service->get_lookahead().get_base_time() << " " << Int64BaseTime::get_base_unit()
-                << ")" << endl;
+                << ")\n";
          ;
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( AttributeNotOwned const &e ) {
@@ -2905,9 +2905,9 @@ exception for '%s' with error message '%s'.\n",
          ostringstream errmsg;
          errmsg << "Object::send_blocking_io_data():" << __LINE__
                 << " Exception: AttributeNotOwned\n"
-                << "  instance_id=" << id_str << endl
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl;
+                << "  instance_id=" << id_str << "\n"
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( ObjectInstanceNotKnown const &e ) {
          string id_str;
@@ -2917,9 +2917,9 @@ exception for '%s' with error message '%s'.\n",
          ostringstream errmsg;
          errmsg << "Object::send_blocking_io_data():" << __LINE__
                 << " Exception: ObjectInstanceNotKnown\n"
-                << "  instance_id=" << id_str << endl
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl;
+                << "  instance_id=" << id_str << "\n"
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( AttributeNotDefined const &e ) {
          string id_str;
@@ -2929,9 +2929,9 @@ exception for '%s' with error message '%s'.\n",
          ostringstream errmsg;
          errmsg << "Object::send_blocking_io_data():" << __LINE__
                 << " Exception: AttributeNotDefined\n"
-                << "  instance_id=" << id_str << endl
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl;
+                << "  instance_id=" << id_str << "\n"
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( FederateNotExecutionMember const &e ) {
          string id_str;
@@ -2941,9 +2941,9 @@ exception for '%s' with error message '%s'.\n",
          ostringstream errmsg;
          errmsg << "Object::send_blocking_io_data():" << __LINE__
                 << " Exception: FederateNotExecutionMember\n"
-                << "  instance_id=" << id_str << endl
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl;
+                << "  instance_id=" << id_str << "\n"
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( SaveInProgress const &e ) {
          string id_str;
@@ -2953,9 +2953,9 @@ exception for '%s' with error message '%s'.\n",
          ostringstream errmsg;
          errmsg << "Object::send_blocking_io_data():" << __LINE__
                 << " Exception: SaveInProgress\n"
-                << "  instance_id=" << id_str << endl
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl;
+                << "  instance_id=" << id_str << "\n"
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( RestoreInProgress const &e ) {
          string id_str;
@@ -2965,9 +2965,9 @@ exception for '%s' with error message '%s'.\n",
          ostringstream errmsg;
          errmsg << "Object::send_blocking_io_data():" << __LINE__
                 << " Exception: RestoreInProgress\n"
-                << "  instance_id=" << id_str << endl
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl;
+                << "  instance_id=" << id_str << "\n"
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( NotConnected const &e ) {
          string id_str;
@@ -2977,9 +2977,9 @@ exception for '%s' with error message '%s'.\n",
          ostringstream errmsg;
          errmsg << "Object::send_blocking_io_data():" << __LINE__
                 << " Exception: NotConnected\n"
-                << "  instance_id=" << id_str << endl
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl;
+                << "  instance_id=" << id_str << "\n"
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
          federate->set_connection_lost();
       } catch ( RTIinternalError const &e ) {
@@ -2990,9 +2990,9 @@ exception for '%s' with error message '%s'.\n",
          ostringstream errmsg;
          errmsg << "Object::send_blocking_io_data():" << __LINE__
                 << " Exception: RTIinternalError\n"
-                << "  instance_id=" << id_str << endl
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl;
+                << "  instance_id=" << id_str << "\n"
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       } catch ( RTI1516_NAMESPACE::Exception const &e ) {
          string id_str;
@@ -3004,9 +3004,9 @@ exception for '%s' with error message '%s'.\n",
          ostringstream errmsg;
          errmsg << "Object::send_blocking_io_data():" << __LINE__
                 << " Exception\n"
-                << "  instance_id=" << id_str << endl
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl;
+                << "  instance_id=" << id_str << "\n"
+                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
+                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
    }
@@ -3203,7 +3203,7 @@ void Object::receive_zero_lookahead_data()
                       << " modified-data files to make sure the Lag-Compensation"
                       << " type 'lag_comp_type' is set to LAG_COMPENSATION_NONE"
                       << " to disable Lag-Compensation when sending zero-lookahead"
-                      << " configured object attributes." << endl;
+                      << " configured object attributes.\n";
                DebugHandler::terminate( errmsg.str() );
                break;
             }
@@ -3278,7 +3278,7 @@ void Object::receive_blocking_io_data()
                       << " modified-data files to make sure the Lag-Compensation"
                       << " type 'lag_comp_type' is set to LAG_COMPENSATION_NONE"
                       << " to disable Lag-Compensation when receiving blocking I/O"
-                      << " configured object attributes." << endl;
+                      << " configured object attributes.\n";
                DebugHandler::terminate( errmsg.str() );
                break;
             }
@@ -3370,13 +3370,13 @@ void Object::send_init_data()
       ostringstream errmsg;
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception: InvalidLogicalTime\n"
-             << "  instance_id=" << id_str << endl
+             << "  instance_id=" << id_str << "\n"
              << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << " ("
              << time_service->get_granted_time().get_base_time() << " " << Int64BaseTime::get_base_unit()
              << ")\n"
              << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << " ("
              << time_service->get_lookahead().get_base_time() << " " << Int64BaseTime::get_base_unit()
-             << ")" << endl;
+             << ")\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } catch ( AttributeNotOwned const &e ) {
       string id_str;
@@ -3386,9 +3386,9 @@ void Object::send_init_data()
       ostringstream errmsg;
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception: AttributeNotOwned\n"
-             << "  instance_id=" << id_str << endl
-             << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl;
+             << "  instance_id=" << id_str << "\n"
+             << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
+             << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } catch ( ObjectInstanceNotKnown const &e ) {
       string id_str;
@@ -3398,9 +3398,9 @@ void Object::send_init_data()
       ostringstream errmsg;
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception: ObjectInstanceNotKnown\n"
-             << "  instance_id=" << id_str << endl
-             << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl;
+             << "  instance_id=" << id_str << "\n"
+             << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
+             << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } catch ( AttributeNotDefined const &e ) {
       string id_str;
@@ -3410,9 +3410,9 @@ void Object::send_init_data()
       ostringstream errmsg;
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception: AttributeNotDefined\n"
-             << "  instance_id=" << id_str << endl
-             << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl;
+             << "  instance_id=" << id_str << "\n"
+             << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
+             << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } catch ( FederateNotExecutionMember const &e ) {
       string id_str;
@@ -3422,9 +3422,9 @@ void Object::send_init_data()
       ostringstream errmsg;
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception: FederateNotExecutionMember\n"
-             << "  instance_id=" << id_str << endl
-             << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl;
+             << "  instance_id=" << id_str << "\n"
+             << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
+             << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } catch ( SaveInProgress const &e ) {
       string id_str;
@@ -3434,9 +3434,9 @@ void Object::send_init_data()
       ostringstream errmsg;
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception: SaveInProgress\n"
-             << "  instance_id=" << id_str << endl
-             << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl;
+             << "  instance_id=" << id_str << "\n"
+             << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
+             << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } catch ( RestoreInProgress const &e ) {
       string id_str;
@@ -3446,9 +3446,9 @@ void Object::send_init_data()
       ostringstream errmsg;
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception: RestoreInProgress\n"
-             << "  instance_id=" << id_str << endl
-             << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl;
+             << "  instance_id=" << id_str << "\n"
+             << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
+             << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } catch ( NotConnected const &e ) {
       string id_str;
@@ -3458,9 +3458,9 @@ void Object::send_init_data()
       ostringstream errmsg;
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception: NotConnected\n"
-             << "  instance_id=" << id_str << endl
-             << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl;
+             << "  instance_id=" << id_str << "\n"
+             << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
+             << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
       federate->set_connection_lost();
    } catch ( RTIinternalError const &e ) {
@@ -3471,9 +3471,9 @@ void Object::send_init_data()
       ostringstream errmsg;
       errmsg << "Object::send_init_data():" << __LINE__
              << " Exception: RTIinternalError\n"
-             << "  instance_id=" << id_str << endl
-             << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl;
+             << "  instance_id=" << id_str << "\n"
+             << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
+             << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       string id_str;
@@ -3484,10 +3484,10 @@ void Object::send_init_data()
                        __LINE__, rti_err_msg.c_str() );
       ostringstream errmsg;
       errmsg << "Object::send_init_data():" << __LINE__
-             << " Exception:" << endl
-             << "  instance_id=" << id_str << endl
-             << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << endl
-             << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << endl;
+             << " Exception:\n"
+             << "  instance_id=" << id_str << "\n"
+             << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
+             << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
 
@@ -4117,7 +4117,7 @@ void Object::pull_ownership_at_init(
       ostringstream errmsg;
       errmsg << "Object::pull_ownership_at_init():" << __LINE__
              << " ERROR: No attributes found to pull ownership for object '"
-             << get_name() << "'!" << endl;
+             << get_name() << "'!\n";
       DebugHandler::terminate( errmsg.str() );
       return;
    }
@@ -4141,7 +4141,7 @@ void Object::pull_ownership_at_init(
             errmsg << "Object::pull_ownership_at_init():" << __LINE__
                    << " ERROR: For object '" << get_name()
                    << "', no TrickHLA-Attribute found for attribute FOM name '"
-                   << attr_name_vector[i] << "'!" << endl;
+                   << attr_name_vector[i] << "'!\n";
             DebugHandler::terminate( errmsg.str() );
             return;
          }
@@ -4258,7 +4258,7 @@ object '%s' because of error: '%s'\n",
                          << " member. This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!" << endl;
+                         << " the Central RTI Component (CRC) level!\n";
                   DebugHandler::terminate( errmsg.str() );
                }
             }
@@ -4330,7 +4330,7 @@ void Object::handle_pulled_ownership_at_init()
                       << " member. This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!" << endl;
+                      << " the Central RTI Component (CRC) level!\n";
                DebugHandler::terminate( errmsg.str() );
             }
          }
@@ -4671,7 +4671,7 @@ void Object::negotiated_attribute_ownership_divestiture(
       ostringstream errmsg;
       errmsg << "Object::negotiated_attribute_ownership_divestiture():" << __LINE__
              << " Object '" << get_name() << "'"
-             << " ObjectInstanceNotKnown: " << rti_err_msg << endl;
+             << " ObjectInstanceNotKnown: " << rti_err_msg << "\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } catch ( AttributeNotDefined const &e ) {
       string rti_err_msg;
@@ -4679,7 +4679,7 @@ void Object::negotiated_attribute_ownership_divestiture(
       ostringstream errmsg;
       errmsg << "Object::negotiated_attribute_ownership_divestiture():" << __LINE__
              << " Object '" << get_name() << "'"
-             << " AttributeNotDefined: " << rti_err_msg << endl;
+             << " AttributeNotDefined: " << rti_err_msg << "\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } catch ( AttributeNotOwned const &e ) {
       string rti_err_msg;
@@ -4687,7 +4687,7 @@ void Object::negotiated_attribute_ownership_divestiture(
       ostringstream errmsg;
       errmsg << "Object::negotiated_attribute_ownership_divestiture():" << __LINE__
              << " Object '" << get_name() << "'"
-             << " AttributeNotOwned: " << rti_err_msg << endl;
+             << " AttributeNotOwned: " << rti_err_msg << "\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
 
       // TODO: Need to handle this exception, however every effort has been
@@ -4702,7 +4702,7 @@ void Object::negotiated_attribute_ownership_divestiture(
       ostringstream errmsg;
       errmsg << "Object::negotiated_attribute_ownership_divestiture():" << __LINE__
              << " Object '" << get_name() << "'"
-             << " AttributeAlreadyBeingDivested: " << rti_err_msg << endl;
+             << " AttributeAlreadyBeingDivested: " << rti_err_msg << "\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } catch ( FederateNotExecutionMember const &e ) {
       string rti_err_msg;
@@ -4710,7 +4710,7 @@ void Object::negotiated_attribute_ownership_divestiture(
       ostringstream errmsg;
       errmsg << "Object::negotiated_attribute_ownership_divestiture():" << __LINE__
              << " Object '" << get_name() << "'"
-             << " FederateNotExecutionMember: " << rti_err_msg << endl;
+             << " FederateNotExecutionMember: " << rti_err_msg << "\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } catch ( SaveInProgress const &e ) {
       string rti_err_msg;
@@ -4718,7 +4718,7 @@ void Object::negotiated_attribute_ownership_divestiture(
       ostringstream errmsg;
       errmsg << "Object::negotiated_attribute_ownership_divestiture():" << __LINE__
              << " Object '" << get_name() << "'"
-             << " SaveInProgress: " << rti_err_msg << endl;
+             << " SaveInProgress: " << rti_err_msg << "\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } catch ( RestoreInProgress const &e ) {
       // Be patient. Evidently it's in progress already (perhaps due to
@@ -4728,7 +4728,7 @@ void Object::negotiated_attribute_ownership_divestiture(
       ostringstream errmsg;
       errmsg << "Object::negotiated_attribute_ownership_divestiture():" << __LINE__
              << " Object '" << get_name() << "'"
-             << " RestoreInProgress: " << rti_err_msg << endl;
+             << " RestoreInProgress: " << rti_err_msg << "\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } catch ( NotConnected const &e ) {
       string rti_err_msg;
@@ -4736,7 +4736,7 @@ void Object::negotiated_attribute_ownership_divestiture(
       ostringstream errmsg;
       errmsg << "Object::negotiated_attribute_ownership_divestiture():" << __LINE__
              << " Object '" << get_name() << "'"
-             << " NotConnected: " << rti_err_msg << endl;
+             << " NotConnected: " << rti_err_msg << "\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
       if ( federate != NULL ) {
          federate->set_connection_lost();
@@ -4747,7 +4747,7 @@ void Object::negotiated_attribute_ownership_divestiture(
       ostringstream errmsg;
       errmsg << "Object::negotiated_attribute_ownership_divestiture():" << __LINE__
              << " Object '" << get_name() << "'"
-             << " RTIinternalError: " << rti_err_msg << endl;
+             << " RTIinternalError: " << rti_err_msg << "\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       string rti_err_msg;
@@ -4755,7 +4755,7 @@ void Object::negotiated_attribute_ownership_divestiture(
       ostringstream errmsg;
       errmsg << "Object::negotiated_attribute_ownership_divestiture():" << __LINE__
              << " Object '" << get_name() << "'"
-             << " RTIinternalError: " << rti_err_msg << endl;
+             << " RTIinternalError: " << rti_err_msg << "\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
    // Macro to restore the saved FPU Control Word register value.
@@ -4912,7 +4912,7 @@ for Attributes of object '%s'.\n",
       if ( ret ) {
          ostringstream errmsg;
          errmsg << "Object::push_ownership():" << __LINE__
-                << " ERROR: Failed to create ownership divestiture pthread!" << endl;
+                << " ERROR: Failed to create ownership divestiture pthread!\n";
          DebugHandler::terminate( errmsg.str() );
       }
    }
@@ -4950,7 +4950,7 @@ void Object::push_ownership_at_init(
       ostringstream errmsg;
       errmsg << "Object::push_ownership_at_init():" << __LINE__
              << " ERROR: No attributes found to push ownership for object '"
-             << get_name() << "'!" << endl;
+             << get_name() << "'!\n";
       DebugHandler::terminate( errmsg.str() );
       return;
    }
@@ -4977,7 +4977,7 @@ void Object::push_ownership_at_init(
             errmsg << "Object::push_ownership_at_init():" << __LINE__
                    << " ERROR: For object '" << get_name()
                    << "', no TrickHLA-Attribute found for attribute FOM name '"
-                   << attr_name_vector[i] << "'!" << endl;
+                   << attr_name_vector[i] << "'!\n";
             DebugHandler::terminate( errmsg.str() );
             return;
          }
@@ -5038,7 +5038,7 @@ push Attribute '%s'->'%s' of object '%s' because it is already remotely owned.\n
       if ( ret ) {
          ostringstream errmsg;
          errmsg << "Object::push_ownership_at_init():" << __LINE__
-                << " ERROR: Failed to create ownership divestiture pthread!" << endl;
+                << " ERROR: Failed to create ownership divestiture pthread!\n";
          DebugHandler::terminate( errmsg.str() );
       }
 
@@ -5081,7 +5081,7 @@ push Attribute '%s'->'%s' of object '%s' because it is already remotely owned.\n
                          << " member. This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!" << endl;
+                         << " the Central RTI Component (CRC) level!\n";
                   DebugHandler::terminate( errmsg.str() );
                }
             }
@@ -5153,7 +5153,7 @@ void Object::handle_pushed_ownership_at_init()
                       << " member. This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
-                      << " the Central RTI Component (CRC) level!" << endl;
+                      << " the Central RTI Component (CRC) level!\n";
                DebugHandler::terminate( errmsg.str() );
             }
          }
@@ -5661,7 +5661,7 @@ Unable to pull ownership for the attributes of object '%s' because of error: '%s
                ostringstream errmsg;
                errmsg << "Object::pull_ownership_upon_rejoin():" << __LINE__
                       << " Object '" << get_name() << "'"
-                      << " ObjectInstanceNotKnown: " << rti_err_msg << endl;
+                      << " ObjectInstanceNotKnown: " << rti_err_msg << "\n";
                message_publish( MSG_WARNING, errmsg.str().c_str() );
             } catch ( AttributeNotDefined const &e ) {
                string rti_err_msg;
@@ -5669,7 +5669,7 @@ Unable to pull ownership for the attributes of object '%s' because of error: '%s
                ostringstream errmsg;
                errmsg << "Object::pull_ownership_upon_rejoin():" << __LINE__
                       << " Object '" << get_name() << "'"
-                      << " AttributeNotDefined: " << rti_err_msg << endl;
+                      << " AttributeNotDefined: " << rti_err_msg << "\n";
                message_publish( MSG_WARNING, errmsg.str().c_str() );
             } catch ( FederateNotExecutionMember const &e ) {
                string rti_err_msg;
@@ -5677,7 +5677,7 @@ Unable to pull ownership for the attributes of object '%s' because of error: '%s
                ostringstream errmsg;
                errmsg << "Object::pull_ownership_upon_rejoin():" << __LINE__
                       << " Object '" << get_name() << "'"
-                      << " FederateNotExecutionMember: " << rti_err_msg << endl;
+                      << " FederateNotExecutionMember: " << rti_err_msg << "\n";
                message_publish( MSG_WARNING, errmsg.str().c_str() );
             } catch ( SaveInProgress const &e ) {
                string rti_err_msg;
@@ -5685,7 +5685,7 @@ Unable to pull ownership for the attributes of object '%s' because of error: '%s
                ostringstream errmsg;
                errmsg << "Object::pull_ownership_upon_rejoin():" << __LINE__
                       << " Object '" << get_name() << "'"
-                      << " SaveInProgress: " << rti_err_msg << endl;
+                      << " SaveInProgress: " << rti_err_msg << "\n";
                message_publish( MSG_WARNING, errmsg.str().c_str() );
             } catch ( RestoreInProgress const &e ) {
                string rti_err_msg;
@@ -5693,7 +5693,7 @@ Unable to pull ownership for the attributes of object '%s' because of error: '%s
                ostringstream errmsg;
                errmsg << "Object::pull_ownership_upon_rejoin():" << __LINE__
                       << " Object '" << get_name() << "'"
-                      << " RestoreInProgress: " << rti_err_msg << endl;
+                      << " RestoreInProgress: " << rti_err_msg << "\n";
                message_publish( MSG_WARNING, errmsg.str().c_str() );
             } catch ( RTIinternalError const &e ) {
                string rti_err_msg;
@@ -5701,7 +5701,7 @@ Unable to pull ownership for the attributes of object '%s' because of error: '%s
                ostringstream errmsg;
                errmsg << "Object::pull_ownership_upon_rejoin():" << __LINE__
                       << " Object '" << get_name() << "'"
-                      << " RTIinternalError: " << rti_err_msg << endl;
+                      << " RTIinternalError: " << rti_err_msg << "\n";
                message_publish( MSG_WARNING, errmsg.str().c_str() );
             }
          } // end of 'for' loop
@@ -5725,7 +5725,7 @@ Unable to pull ownership for the attributes of object '%s' because of error: '%s
                          << " This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!" << endl;
+                         << " the Central RTI Component (CRC) level!\n";
                   DebugHandler::terminate( errmsg.str() );
                }
             }
@@ -5778,7 +5778,7 @@ void Object::initialize_thread_ID_array()
       errmsg << "Object::initialize_thread_ID_array():" << __LINE__
              << " ERROR: Could not allocate memory for 'thread_ids_array'"
              << " for requested size " << this->thread_ids_array_count
-             << "!" << endl;
+             << "!\n";
       DebugHandler::terminate( errmsg.str() );
    }
    for ( unsigned int id = 0; id < this->thread_ids_array_count; ++id ) {
@@ -5817,7 +5817,7 @@ void Object::initialize_thread_ID_array()
                    << " Trick child thread does not exist in the S_define file!"
                    << " Valid Trick thread-ID range is 0 to "
                    << ( this->thread_ids_array_count - 1 )
-                   << "!" << endl;
+                   << "!\n";
             DebugHandler::terminate( errmsg.str() );
          }
       }

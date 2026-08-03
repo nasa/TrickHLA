@@ -46,12 +46,12 @@ NASA, Johnson Space Center\n
 #include "trick/message_type.h"
 
 // TrickHLA includes.
-#include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
-#include "TrickHLA/MemoryServices.hh"
-#include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/Types.hh"
 #include "TrickHLA/Attribute.hh"
+#include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
+#include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/Object.hh"
+#include "TrickHLA/Types.hh"
 
 // SpaceFOM includes.
 #include "SpaceFOM/RefFrameBase.hh"
@@ -115,11 +115,11 @@ void RefFrameBase::base_config(
    if ( mngr_object == NULL ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          ostringstream errmsg;
-         errmsg << "RefFrameBase::base_config() Warning: " << endl
-                << "\tThe TrickHLA::Object associated with object \'" << ref_frame_fed_name << "\' is NULL." << endl
-                << "\tEither of the two things are possible:" << endl
-                << "\t1). We are configuring in the input file, which is okay." << endl
-                << "\t2). We are configuring in default_data but forgot to allocate and" << endl
+         errmsg << "RefFrameBase::base_config() Warning: \n"
+                << "\tThe TrickHLA::Object associated with object \'" << ref_frame_fed_name << "\' is NULL.\n"
+                << "\tEither of the two things are possible:\n"
+                << "\t1). We are configuring in the input file, which is okay.\n"
+                << "\t2). We are configuring in default_data but forgot to allocate and\n"
                 << "\t    assign the associated object in the 'create_connections()' routine.";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
@@ -135,7 +135,7 @@ void RefFrameBase::base_config(
    } else {
       ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameBase::base_config():" << __LINE__
-             << " ERROR: Unexpected empty federation instance frame name!" << endl;
+             << " ERROR: Unexpected empty federation instance frame name!\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -217,7 +217,7 @@ void RefFrameBase::initialize()
              << "' with Attribute Trick name '" << trick_name
              << "' and FOM name '" << fom_name
              << "', detected unexpected NULL federation instance name!"
-             << endl;
+             << "\n";
 
       // Print message and terminate.
       DebugHandler::terminate( errmsg.str() );
@@ -240,7 +240,7 @@ void RefFrameBase::initialize()
                 << "' with Attribute Trick name '" << trick_name
                 << "' and FOM name '" << fom_name
                 << "', detected unexpected empty federation instance parent frame name!"
-                << endl;
+                << "\n";
 
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
@@ -267,7 +267,7 @@ void RefFrameBase::initialize()
              << ( ( object != NULL ) ? object->get_name() : "" )
              << "' with Attribute Trick name '" << trick_name
              << "' and FOM name '" << fom_name
-             << "', detected unexpected NULL parent frame reference!" << endl;
+             << "', detected unexpected NULL parent frame reference!\n";
 
       // Print message and terminate.
       DebugHandler::terminate( errmsg.str() );
@@ -278,7 +278,7 @@ void RefFrameBase::initialize()
       ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameBase::initialize():" << __LINE__
              << " ERROR: Unexpected NULL THLAManager object for ReferenceFrame \""
-             << this->packing_data.name << "\"!" << endl;
+             << this->packing_data.name << "\"!\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -329,7 +329,7 @@ void RefFrameBase::set_name( std::string const &new_name )
    if ( initialized ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameBase::set_name():" << __LINE__
-             << " ERROR: The initialize() function has already been called" << endl;
+             << " ERROR: The initialize() function has already been called\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -349,7 +349,7 @@ void RefFrameBase::set_parent_name( std::string const &name )
    if ( initialized ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameBase::set_parent_name():" << __LINE__
-             << " ERROR: The initialize() function has already been called" << endl;
+             << " ERROR: The initialize() function has already been called\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -373,7 +373,7 @@ void RefFrameBase::set_parent_frame( RefFrameBase *pframe_ptr )
    if ( initialized ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameBase::set_parent_frame():" << __LINE__
-             << " ERROR: The initialize() function has already been called" << endl;
+             << " ERROR: The initialize() function has already been called\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -454,13 +454,13 @@ void RefFrameBase::publish()
    if ( this->initialized ) {
       ostringstream errmsg;
       errmsg << "RefFrameBase::publish():" << __LINE__
-             << " WARNING: Ignoring, reference frame already initialized!" << endl;
+             << " WARNING: Ignoring, reference frame already initialized!\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } else {
       if ( object == NULL ) {
          ostringstream errmsg;
          errmsg << "RefFrameBase::publish():" << __LINE__
-                << " ERROR: Unexpected NULL Object reference!" << endl;
+                << " ERROR: Unexpected NULL Object reference!\n";
          DebugHandler::terminate( errmsg.str() );
          return;
       }
@@ -468,7 +468,7 @@ void RefFrameBase::publish()
          ostringstream errmsg;
          errmsg << "RefFrameBase::publish():" << __LINE__
                 << " ERROR: For Object '" << object->get_name()
-                << "', unexpected NULL object attribute reference!" << endl;
+                << "', unexpected NULL object attribute reference!\n";
          DebugHandler::terminate( errmsg.str() );
          return;
       }
@@ -477,7 +477,7 @@ void RefFrameBase::publish()
          errmsg << "RefFrameBase::publish():" << __LINE__
                 << " ERROR: For Object '" << object->get_name()
                 << "', unexpected non-zero object attribute count ("
-                << object->attr_count << ")" << endl;
+                << object->attr_count << ")\n";
          DebugHandler::terminate( errmsg.str() );
          return;
       }
@@ -501,13 +501,13 @@ void RefFrameBase::subscribe()
    if ( this->initialized ) {
       ostringstream errmsg;
       errmsg << "RefFrameBase::subscribe():" << __LINE__
-             << " WARNING: Ignoring, reference frame already initialized!" << endl;
+             << " WARNING: Ignoring, reference frame already initialized!\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } else {
       if ( object == NULL ) {
          ostringstream errmsg;
          errmsg << "RefFrameBase::subscribe():" << __LINE__
-                << " ERROR: Unexpected NULL Object reference!" << endl;
+                << " ERROR: Unexpected NULL Object reference!\n";
          DebugHandler::terminate( errmsg.str() );
          return;
       }
@@ -515,7 +515,7 @@ void RefFrameBase::subscribe()
          ostringstream errmsg;
          errmsg << "RefFrameBase::subscribe():" << __LINE__
                 << " ERROR: For Object '" << object->get_name()
-                << "', unexpected NULL object attribute reference!" << endl;
+                << "', unexpected NULL object attribute reference!\n";
          DebugHandler::terminate( errmsg.str() );
          return;
       }
@@ -524,7 +524,7 @@ void RefFrameBase::subscribe()
          errmsg << "RefFrameBase::subscribe():" << __LINE__
                 << " ERROR: For Object '" << object->get_name()
                 << "', unexpected non-zero object attribute count ("
-                << object->attr_count << ")" << endl;
+                << object->attr_count << ")\n";
          DebugHandler::terminate( errmsg.str() );
          return;
       }
@@ -550,10 +550,10 @@ void RefFrameBase::pack()
       ostringstream errmsg;
       errmsg << "RefFrameBase::pack():" << __LINE__
 #if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
-             << " ERROR: The initialize() function has not been called!" << endl;
+             << " ERROR: The initialize() function has not been called!\n";
       DebugHandler::terminate( errmsg.str() );
 #else
-             << " WARNING: The initialize() function has not been called!" << endl;
+             << " WARNING: The initialize() function has not been called!\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
 #endif
    }
@@ -566,7 +566,7 @@ void RefFrameBase::pack()
    // Print out debug information if desired.
    if ( debug ) {
       ostringstream msg;
-      msg << "RefFrameBase::pack():" << __LINE__ << endl;
+      msg << "RefFrameBase::pack():" << __LINE__ << "\n";
       print_data( msg );
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
@@ -588,10 +588,10 @@ void RefFrameBase::unpack()
       ostringstream errmsg;
       errmsg << "RefFrameBase::unpack():" << __LINE__
 #if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
-             << " ERROR: The initialize() function has not been called!" << endl;
+             << " ERROR: The initialize() function has not been called!\n";
       DebugHandler::terminate( errmsg.str() );
 #else
-             << " WARNING: The initialize() function has not been called!" << endl;
+             << " WARNING: The initialize() function has not been called!\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
 #endif
    }
@@ -607,7 +607,7 @@ void RefFrameBase::unpack()
    // Print out debug information if desired.
    if ( debug ) {
       ostringstream msg;
-      msg << "RefFrameBase::unpack():" << __LINE__ << endl;
+      msg << "RefFrameBase::unpack():" << __LINE__ << "\n";
       print_data( msg );
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
@@ -623,10 +623,10 @@ void RefFrameBase::print_data( std::ostream &stream ) const
    // Set the print precision.
    stream.precision( 15 );
 
-   stream << "         Object-Name: '" << object->get_name() << "'" << endl;
-   stream << "                time: " << packing_data.state.time << endl;
+   stream << "         Object-Name: '" << object->get_name() << "'\n";
+   stream << "                time: " << packing_data.state.time << "\n";
    packing_data.print_data( stream );
-   stream << endl;
+   stream << "\n";
 
    return;
 }

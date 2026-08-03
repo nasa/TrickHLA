@@ -34,11 +34,11 @@ NASA, Johnson Space Center\n
 // Trick includes.
 
 // TrickHLA includes.
-#include "TrickHLA/MemoryServices.hh"
-#include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/Types.hh"
 #include "TrickHLA/Attribute.hh"
+#include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/RecordElement.hh"
+#include "TrickHLA/Types.hh"
 
 // SpaceFOM includes.
 #include "SpaceFOM/QuaternionConfig.hh"
@@ -62,7 +62,7 @@ void QuaternionConfig::configure(
    if ( attribute == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::QuaternionConfig::configure():" << __LINE__
-             << " ERROR: Unexpected NULL attribute specified!" << endl;
+             << " ERROR: Unexpected NULL attribute specified!\n";
       DebugHandler::terminate( errmsg.str() );
       return;
    }
@@ -87,7 +87,7 @@ void QuaternionConfig::configure(
    if ( rec_element == NULL ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::QuaternionConfig::configure():" << __LINE__
-             << " ERROR: Unexpected NULL rec_element specified!" << endl;
+             << " ERROR: Unexpected NULL rec_element specified!\n";
       DebugHandler::terminate( errmsg.str() );
       return;
    }

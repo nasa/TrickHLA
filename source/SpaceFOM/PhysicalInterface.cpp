@@ -88,7 +88,7 @@ void PhysicalInterface::initialize()
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterface::initialize():" << __LINE__
              << " ERROR: Unexpected NULL PhysicalInterfaceData: "
-             << packing_data.name << endl;
+             << packing_data.name << "\n";
       // Print message and terminate.
       DebugHandler::terminate( errmsg.str() );
       return;
@@ -218,7 +218,7 @@ void PhysicalInterface::set_data( PhysicalInterfaceData *interface_data_ptr )
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterface::set_data():" << __LINE__
              << " ERROR: Unexpected NULL PhysicalInterfaceData: "
-             << packing_data.name << endl;
+             << packing_data.name << "\n";
       // Print message and terminate.
       DebugHandler::terminate( errmsg.str() );
       return;

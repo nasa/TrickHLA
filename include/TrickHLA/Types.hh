@@ -208,27 +208,28 @@ typedef enum {
 */
 typedef enum {
 
-   DEBUG_SOURCE_NO_MODULES         = 0x00000000, ///< No code selected for debug messages.
-   DEBUG_SOURCE_FED_AMB            = 0x00000001, ///< Adds TrickHLA::FedAmb debug messages
-   DEBUG_SOURCE_FEDERATE           = 0x00000002, ///< Adds TrickHLA::Federate debug messages
-   DEBUG_SOURCE_OBJ_SERVICES       = 0x00000004, ///< Adds TrickHLA::ObjectServices debug messages
-   DEBUG_SOURCE_OBJECT             = 0x00000008, ///< Adds TrickHLA::Object (and subclass) debug messages
-   DEBUG_SOURCE_INTER_SERVICES     = 0x00000010, ///< Adds TrickHLA::InteractionServices debug messages
-   DEBUG_SOURCE_INTERACTION        = 0x00000020, ///< Adds TrickHLA::Interaction (and subclass) debug messages
-   DEBUG_SOURCE_ATTRIBUTE          = 0x00000040, ///< Adds TrickHLA::Attribute debug messages
-   DEBUG_SOURCE_PARAMETER          = 0x00000080, ///< Adds TrickHLA::Parameter debug messages
-   DEBUG_SOURCE_SYNCPOINT          = 0x00000100, ///< Adds TrickHLA::SyncPoint debug messages
-   DEBUG_SOURCE_OWNERSHIP          = 0x00000200, ///< Adds TrickHLA::OwnershipHandler debug messages
-   DEBUG_SOURCE_PACKING            = 0x00000400, ///< Adds TrickHLA::Packing (and subclass) debug messages
-   DEBUG_SOURCE_LAG_COMPENSATION   = 0x00000800, ///< Adds TrickHLA::LagCompensation (and subclass) debug messages
-   DEBUG_SOURCE_CONDITIONAL        = 0x00001000, ///< Adds TrickHLA::Conditional (and subclass) debug messages
-   DEBUG_SOURCE_EXECUTION_CONTROL  = 0x00002000, ///< Adds TrickHLA::ExecutionControl (and subclass) debug messages
-   DEBUG_SOURCE_EXECUTION_CONFIG   = 0x00004000, ///< Adds TrickHLA::ExecutionConfiguration (and subclass) debug messages
-   DEBUG_SOURCE_THREAD_COORDINATOR = 0x00008000, ///< Adds TrickHLA::TrickThreadCoordinator (and subclass) debug messages
-   DEBUG_SOURCE_TIME_MANAGEMENT    = 0x00010000, ///< Adds Time Management Services debug messages
-   DEBUG_SOURCE_SAVE_RESTORE       = 0x00020000, ///< Adds Save and Restore Services debug messages
-   DEBUG_SOURCE_HLA_ENCODERS       = 0x00040000, ///< Adds HLA Encoders (and subclass) debug messages
-   DEBUG_SOURCE_ALL_MODULES        = 0x7FFFFFFF  ///< Default: Add debug messages from all code modules
+   DEBUG_SOURCE_NO_MODULES            = 0x00000000, ///< No code selected for debug messages.
+   DEBUG_SOURCE_MEMORY_SERVICES       = 0x00000001, ///< Adds TrickHLA::MemoryServices debug messages
+   DEBUG_SOURCE_OBJ_SERVICES          = 0x00000002, ///< Adds TrickHLA::ObjectServices debug messages
+   DEBUG_SOURCE_INTER_SERVICES        = 0x00000004, ///< Adds TrickHLA::InteractionServices debug messages
+   DEBUG_SOURCE_TIME_MGMT_SERVICES    = 0x00000008, ///< Adds TrickHLA::TimeManagementServices debug messages
+   DEBUG_SOURCE_SAVE_RESTORE_SERVICES = 0x00000010, ///< Adds TrickHLA::SaveRestoreServices debug messages
+   DEBUG_SOURCE_FEDERATE              = 0x00000020, ///< Adds TrickHLA::Federate debug messages
+   DEBUG_SOURCE_FED_AMB               = 0x00000040, ///< Adds TrickHLA::FedAmb debug messages
+   DEBUG_SOURCE_EXECUTION_CONTROL     = 0x00000080, ///< Adds TrickHLA::ExecutionControl (and subclass) debug messages
+   DEBUG_SOURCE_EXECUTION_CONFIG      = 0x00000100, ///< Adds TrickHLA::ExecutionConfiguration (and subclass) debug messages
+   DEBUG_SOURCE_OBJECT                = 0x00000200, ///< Adds TrickHLA::Object (and subclass) debug messages
+   DEBUG_SOURCE_ATTRIBUTE             = 0x00000400, ///< Adds TrickHLA::Attribute debug messages
+   DEBUG_SOURCE_INTERACTION           = 0x00000800, ///< Adds TrickHLA::Interaction (and subclass) debug messages
+   DEBUG_SOURCE_PARAMETER             = 0x00001000, ///< Adds TrickHLA::Parameter debug messages
+   DEBUG_SOURCE_OWNERSHIP             = 0x00002000, ///< Adds TrickHLA::OwnershipHandler debug messages
+   DEBUG_SOURCE_PACKING               = 0x00004000, ///< Adds TrickHLA::Packing (and subclass) debug messages
+   DEBUG_SOURCE_LAG_COMPENSATION      = 0x00008000, ///< Adds TrickHLA::LagCompensation (and subclass) debug messages
+   DEBUG_SOURCE_CONDITIONAL           = 0x00010000, ///< Adds TrickHLA::Conditional (and subclass) debug messages
+   DEBUG_SOURCE_SYNCPOINT             = 0x00020000, ///< Adds TrickHLA::SyncPoint debug messages
+   DEBUG_SOURCE_THREAD_COORDINATOR    = 0x00040000, ///< Adds TrickHLA::TrickThreadCoordinator (and subclass) debug messages
+   DEBUG_SOURCE_HLA_ENCODERS          = 0x00080000, ///< Adds TrickHLA HLA Encoders (and subclass) debug messages
+   DEBUG_SOURCE_ALL_MODULES           = 0x7FFFFFFF  ///< Default: Add debug messages for all code
 
 } DebugSourceEnum;
 

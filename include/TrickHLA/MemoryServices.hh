@@ -74,36 +74,36 @@ class MemoryServices
    /*! @brief Delete the memory at the named allocation address.
     * @param  var_name Name of the Trick memory allocation.
     * @return Returns true if deallocation succeeded, false otherwise. */
-   static bool delete_var( std::string const & var_name );
+   static bool delete_var( std::string const &var_name );
 
    //--------------------------------------------------------------------------
    // String memory management functions.
    //--------------------------------------------------------------------------
-   
+
    /*! @brief Allocate for a duplicate of an input C string (char*).
     * @param input The C string (char *) to be duplicated.
     * @return An address to the allocated C string or NULL on failure. */
-   static char * cstrdup( const char * input );
-   
+   static char *cstrdup( char const *input );
+
    /*! @brief Allocate for a duplicate of an input C++ string (std::string).
     * @param input The string to be duplicated.
     * @return An address to the allocated C string or NULL on failure. */
-   static char * cstrdup( std::string const &input );
-   
+   static char *cstrdup( std::string const &input );
+
    /*! @brief Allocate for a duplicate of an input C string (char*).
     * @param input The C wide string (wchar_t *) to be duplicated.
     * @return An address to the allocated C wide string or NULL on failure. */
-   static wchar_t * cwstrdup( const char * input );
-   
+   static wchar_t *cwstrdup( char const *input );
+
    /*! @brief Allocate for a duplicate of an input C wide string (char*).
     * @param input The C wide string (wchar_t *) to be duplicated.
     * @return An address to the allocated C wide string or NULL on failure. */
-   static wchar_t * cwstrdup( const wchar_t * input );
-   
+   static wchar_t *cwstrdup( wchar_t const *input );
+
    /*! @brief Allocate for a duplicate of an input C++ wide string (std::wstring).
     * @param input The wide string to be duplicated.
     * @return An address to the allocated C wide string or NULL on failure. */
-   static wchar_t * cwstrdup( std::wstring const &input );
+   static wchar_t *cwstrdup( std::wstring const &input );
 
    //--------------------------------------------------------------------------
    // Template functions.
@@ -180,7 +180,7 @@ class MemoryServices
     * @param  n_elems       The number of items of the given type to allocate.
     * @return An address to the allocated memory or NULL on failure.  */
    template < typename T >
-   static T resize_array( T address, size_t n_elems);
+   static T resize_array( T address, size_t n_elems );
 
    /*! @brief Delete the memory at the specified address.
     * @tparam T    Template type parameter.
@@ -198,7 +198,7 @@ class MemoryServices
     * @param  address The address to be tested.
     * @return Returns true if allocation exists, false otherwise. */
    template < typename T >
-   static bool is_alloced( T address);
+   static bool is_alloced( T address );
 
    /*! @brief Get the size of the given allocation in Trick managed memory.
     * @tparam T       Template type parameter.
@@ -226,7 +226,6 @@ class MemoryServices
     * @return Returns an integer value equivalent to the TRICK_TYPE enum value. */
    template < typename T >
    static int get_trick_type( T type );
-
 };
 
 // Allow external access to the TrickHLA::MemoryServices instance.

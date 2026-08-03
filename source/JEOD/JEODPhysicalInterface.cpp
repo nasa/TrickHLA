@@ -52,9 +52,9 @@ NASA, Johnson Space Center\n
 #include "SpaceFOM/QuaternionData.hh"
 
 // TrickHLA includes.
-#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/Attribute.hh"
 #include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/MemoryServices.hh"
 
 using namespace std;
 using namespace TrickHLA;

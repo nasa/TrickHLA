@@ -121,7 +121,7 @@ void QuaternionEncoder::encode() // Return: -- Nothing.
       std::string   what_s;
       StringUtilities::to_string( what_s, e.what() );
       errmsg << "SpaceFOM::QuaternionEncoder::encode():" << __LINE__
-             << " Error: Encoder exception!" << endl;
+             << " Error: Encoder exception!\n";
       errmsg << what_s;
       // Print message and terminate.
       DebugHandler::terminate( errmsg.str() );
@@ -165,7 +165,7 @@ void QuaternionEncoder::decode() // Return: -- Nothing.
       std::string   what_s;
       StringUtilities::to_string( what_s, e.what() );
       errmsg << "SpaceFOM::QuaternionEncoder::decode():" << __LINE__
-             << " Error: Encoder exception!" << endl;
+             << " Error: Encoder exception!\n";
       errmsg << what_s;
       // Print message and terminate.
       DebugHandler::terminate( errmsg.str() );

@@ -65,7 +65,7 @@ ObjectCallbackBase::ObjectCallbackBase(
    string name )
    : initialized( false ),
      object( NULL ),
-     callback_name( name ),
+     callback_name( name ), // NOLINT(performance-unnecessary-value-param)
      exec_control( NULL )
 {
    return;
@@ -88,7 +88,7 @@ void ObjectCallbackBase::initialize()
       ostringstream errmsg;
       errmsg << "TrickHLA::ObjectCallbackBase::initialize():" << __LINE__
              << " ERROR: No Object name found, and it needs to be set"
-             << " before calling the initialize() function!" << endl;
+             << " before calling the initialize() function!\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -117,7 +117,7 @@ void ObjectCallbackBase::set_object(
       ostringstream errmsg;
       errmsg << "TrickHLA::ObjectCallbackBase::set_object():" << __LINE__
              << " ERROR: The initialize() function has already been called!"
-             << endl;
+             << "\n";
       // Print message and terminate.
       DebugHandler::terminate( errmsg.str() );
    }
@@ -150,7 +150,7 @@ Attribute *ObjectCallbackBase::get_attribute_and_validate(
    if ( attr_FOM_name.empty() ) {
       ostringstream errmsg;
       errmsg << "ObjectCallbackBase::get_attribute_and_validate():" << __LINE__
-             << " ERROR: No attribute FOM name specified." << endl;
+             << " ERROR: No attribute FOM name specified.\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -167,7 +167,7 @@ Attribute *ObjectCallbackBase::get_attribute_and_validate(
              << " '" << attr_FOM_name << "'. Make sure the FOM attribute name is"
              << " correct, the FOM contains an attribute named '"
              << attr_FOM_name << "' and that your input.py file is properly"
-             << " configured for this attribute." << endl;
+             << " configured for this attribute.\n";
       DebugHandler::terminate( errmsg.str() );
    }
    return attr;

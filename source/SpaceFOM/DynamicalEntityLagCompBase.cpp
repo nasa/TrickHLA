@@ -163,10 +163,10 @@ void DynamicalEntityLagCompBase::send_lag_compensation()
       ostringstream errmsg;
       errmsg << "DynamicalEntityLagCompBase::send_lag_compensation():" << __LINE__
 #if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
-             << " ERROR: The initialize() function has not been called!" << endl;
+             << " ERROR: The initialize() function has not been called!\n";
       DebugHandler::terminate( errmsg.str() );
 #else
-             << " WARNING: The initialize() function has not been called!" << endl;
+             << " WARNING: The initialize() function has not been called!\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
 #endif
    }
@@ -180,10 +180,10 @@ void DynamicalEntityLagCompBase::send_lag_compensation()
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
       ostringstream errmsg;
-      errmsg << "******* DynamicalEntityLagCompInteg::send_lag_compensation():" << __LINE__ << endl
-             << " scenario-time:" << get_scenario_time() << endl
-             << "     lookahead:" << this->compensate_dt << endl
-             << " adjusted-time:" << end_t << endl;
+      errmsg << "******* DynamicalEntityLagCompInteg::send_lag_compensation():" << __LINE__ << "\n"
+             << " scenario-time:" << get_scenario_time() << "\n"
+             << "     lookahead:" << this->compensate_dt << "\n"
+             << " adjusted-time:" << end_t << "\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
 
@@ -195,7 +195,7 @@ void DynamicalEntityLagCompBase::send_lag_compensation()
    // Print out debug information if desired.
    if ( debug ) {
       ostringstream msg;
-      msg << "Send data before compensation: " << endl;
+      msg << "Send data before compensation: \n";
       print_lag_comp_data( msg );
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
@@ -206,7 +206,7 @@ void DynamicalEntityLagCompBase::send_lag_compensation()
    // Print out debug information if desired.
    if ( debug ) {
       ostringstream msg;
-      msg << "Send data after compensation: " << endl;
+      msg << "Send data after compensation: \n";
       print_lag_comp_data( msg );
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
@@ -226,10 +226,10 @@ void DynamicalEntityLagCompBase::receive_lag_compensation()
       ostringstream errmsg;
       errmsg << "DynamicalEntityLagCompBase::receive_lag_compensation():" << __LINE__
 #if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
-             << " ERROR: The initialize() function has not been called!" << endl;
+             << " ERROR: The initialize() function has not been called!\n";
       DebugHandler::terminate( errmsg.str() );
 #else
-             << " WARNING: The initialize() function has not been called!" << endl;
+             << " WARNING: The initialize() function has not been called!\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
 #endif
    }
@@ -244,10 +244,10 @@ void DynamicalEntityLagCompBase::receive_lag_compensation()
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
       ostringstream errmsg;
-      errmsg << "******* DynamicalEntityLagCompInteg::receive_lag_compensation():" << __LINE__ << endl
-             << "  scenario-time:" << end_t << endl
-             << "      data-time:" << data_t << endl
-             << " comp-time-step:" << this->compensate_dt << endl;
+      errmsg << "******* DynamicalEntityLagCompInteg::receive_lag_compensation():" << __LINE__ << "\n"
+             << "  scenario-time:" << end_t << "\n"
+             << "      data-time:" << data_t << "\n"
+             << " comp-time-step:" << this->compensate_dt << "\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    }
 
@@ -262,7 +262,7 @@ void DynamicalEntityLagCompBase::receive_lag_compensation()
       // Print out debug information if desired.
       if ( debug ) {
          ostringstream msg;
-         msg << "Receive data before compensation: " << endl;
+         msg << "Receive data before compensation: \n";
          print_lag_comp_data( msg );
          message_publish( MSG_NORMAL, msg.str().c_str() );
       }
@@ -273,7 +273,7 @@ void DynamicalEntityLagCompBase::receive_lag_compensation()
       // Print out debug information if desired.
       if ( debug ) {
          ostringstream msg;
-         msg << "Receive data after compensation: " << endl;
+         msg << "Receive data after compensation: \n";
          print_lag_comp_data( msg );
          message_publish( MSG_NORMAL, msg.str().c_str() );
       }
@@ -281,9 +281,9 @@ void DynamicalEntityLagCompBase::receive_lag_compensation()
    } else {
       if ( debug ) {
          ostringstream errmsg;
-         errmsg << "DynamicalEntityLagCompInteg::receive_lag_compensation(): No state data received." << endl
+         errmsg << "DynamicalEntityLagCompInteg::receive_lag_compensation(): No state data received.\n"
                 << "\tvalue_changed: " << state_attr->is_changed()
-                << "; locally owned: " << state_attr->locally_owned << endl;
+                << "; locally owned: " << state_attr->locally_owned << "\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
    }
@@ -427,36 +427,36 @@ void DynamicalEntityLagCompBase::print_lag_comp_data( std::ostream &stream ) con
    stream.precision( 15 );
 
    // Print out the DynamicalEntity data.
-   stream << "\tmass: " << this->mass << endl;
-   stream << "\tmass_rate: " << this->mass_rate << endl;
-   stream << "\tinertia: " << endl
+   stream << "\tmass: " << this->mass << "\n";
+   stream << "\tmass_rate: " << this->mass_rate << "\n";
+   stream << "\tinertia: \n"
           << "\t\t" << this->inertia[0][0] << ", "
           << this->inertia[0][1] << ", "
-          << this->inertia[0][2] << endl
+          << this->inertia[0][2] << "\n"
           << "\t\t" << this->inertia[1][0] << ", "
           << this->inertia[1][1] << ", "
-          << this->inertia[1][2] << endl
+          << this->inertia[1][2] << "\n"
           << "\t\t" << this->inertia[2][0] << ", "
           << this->inertia[2][1] << ", "
-          << this->inertia[2][2] << endl;
-   stream << "\tinertia rate: " << endl
+          << this->inertia[2][2] << "\n";
+   stream << "\tinertia rate: \n"
           << "\t\t" << this->inertia_rate[0][0] << ", "
           << this->inertia_rate[0][1] << ", "
-          << this->inertia_rate[0][2] << endl
+          << this->inertia_rate[0][2] << "\n"
           << "\t\t" << this->inertia_rate[1][0] << ", "
           << this->inertia_rate[1][1] << ", "
-          << this->inertia_rate[1][2] << endl
+          << this->inertia_rate[1][2] << "\n"
           << "\t\t" << this->inertia_rate[2][0] << ", "
           << this->inertia_rate[2][1] << ", "
-          << this->inertia_rate[2][2] << endl;
+          << this->inertia_rate[2][2] << "\n";
    stream << "\tforce: "
           << this->force[0] << ", "
           << this->force[1] << ", "
-          << this->force[2] << endl;
+          << this->force[2] << "\n";
    stream << "\ttorque: "
           << this->torque[0] << ", "
           << this->torque[1] << ", "
-          << this->torque[2] << endl;
+          << this->torque[2] << "\n";
 
    // Return to the calling routine.
    return;

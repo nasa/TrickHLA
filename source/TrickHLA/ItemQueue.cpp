@@ -182,7 +182,7 @@ void ItemQueue::dump_linked_list(
    for ( Item const *item = head; item != NULL; item = item->next ) {
       msg << item << "->";
    }
-   msg << "NULL" << endl;
+   msg << "NULL\n";
 
    message_publish( MSG_NORMAL, msg.str().c_str() );
 }

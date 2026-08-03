@@ -142,7 +142,7 @@ void FedAmb::connectionLost(
          ostringstream errmsg;
          errmsg << "FedAmb::connectionLost():" << __LINE__
                 << " WARNING: Lost the connection to the RTI. Reason:'"
-                << fault_msg << "'" << endl;
+                << fault_msg << "'\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
 
@@ -154,7 +154,7 @@ void FedAmb::connectionLost(
       ostringstream errmsg;
       errmsg << "FedAmb::connectionLost():" << __LINE__
              << " ERROR: Lost the connection to the RTI. Reason:'"
-             << fault_msg << "' Terminating the simulation!" << endl;
+             << fault_msg << "' Terminating the simulation!\n";
       DebugHandler::terminate( errmsg.str() );
       exit( -1 );
    }
@@ -428,7 +428,7 @@ void FedAmb::federationRestoreBegun()
       StringUtilities::to_string( label_str, save_restore_service->restore_get_label() );
       ostringstream errmsg;
       errmsg << "FedAmb::federationRestoreBegun():" << __LINE__
-             << " : Restore begun for Label '" << label_str << "'." << endl;
+             << " : Restore begun for Label '" << label_str << "'.\n";
       message_publish( MSG_NORMAL, errmsg.str().c_str(), __LINE__ );
    }
 
@@ -464,7 +464,7 @@ void FedAmb::initiateFederateRestore(
       StringUtilities::to_string( label_str, save_restore_service->restore_get_label() );
       ostringstream errmsg;
       errmsg << "FedAmb::initiateFederateRestore():" << __LINE__
-             << " : Restore initiated for Label '" << label_str << "'." << endl;
+             << " : Restore initiated for Label '" << label_str << "'.\n";
       message_publish( MSG_NORMAL, errmsg.str().c_str(), __LINE__ );
    }
 
@@ -474,9 +474,9 @@ void FedAmb::initiateFederateRestore(
       StringUtilities::to_string( label_str, save_restore_service->restore_get_label() );
       ostringstream errmsg;
       errmsg << "FedAmb::initiateFederateRestore():" << __LINE__
-             << " : Federate name change for Restore Label '" << label_str << "'." << endl;
-      errmsg << "\tOld name: " << federate->name << endl
-             << "\tNew name: " << new_federate_name_str << endl;
+             << " : Federate name change for Restore Label '" << label_str << "'.\n";
+      errmsg << "\tOld name: " << federate->name << "\n"
+             << "\tNew name: " << new_federate_name_str << "\n";
       message_publish( MSG_NORMAL, errmsg.str().c_str(), __LINE__ );
    }
 
@@ -853,14 +853,14 @@ void FedAmb::reflectAttributeValues(
       ostringstream summary;
       summary << "FedAmb::reflectAttributeValues():" << __LINE__
               << " Received update to Unknown Object Instance:"
-              << handle_str << endl;
+              << handle_str << "\n";
 
       AttributeHandleValueMap::const_iterator attr_iter;
       for ( attr_iter = attributeValues.begin();
             attr_iter != attributeValues.end();
             ++attr_iter ) {
          StringUtilities::to_string( handle_str, attr_iter->first );
-         summary << "   + Attribute-Handle:" << handle_str << endl;
+         summary << "   + Attribute-Handle:" << handle_str << "\n";
       }
       message_publish( MSG_NORMAL, summary.str().c_str() );
    }

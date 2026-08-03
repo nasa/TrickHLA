@@ -51,11 +51,11 @@ NASA, Johnson Space Center\n
 #include "trick/message_type.h"
 
 // TrickHLA includes.
-#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/Attribute.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
+#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/OwnershipHandler.hh"
 #include "TrickHLA/OwnershipItem.hh"
@@ -123,7 +123,7 @@ void OwnershipHandler::convert_data_before_checkpoint()
          ostringstream errmsg;
          errmsg << "OwnershipHandler::convert_data_before_checkpoint():" << __LINE__
                 << " CERROR: ould not allocate memory for pull_items (array of OwnershipItem type)!"
-                << endl;
+                << "\n";
          DebugHandler::terminate( errmsg.str() );
       }
 
@@ -161,7 +161,7 @@ void OwnershipHandler::convert_data_before_checkpoint()
          ostringstream errmsg;
          errmsg << "OwnershipHandler::convert_data_before_checkpoint():" << __LINE__
                 << "ERROR:  Could not allocate memory for push_items (array of OwnershipItem type)!"
-                << endl;
+                << "\n";
          DebugHandler::terminate( errmsg.str() );
       }
 

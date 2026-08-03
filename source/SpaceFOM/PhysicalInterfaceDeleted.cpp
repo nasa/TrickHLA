@@ -68,6 +68,6 @@ void PhysicalInterfaceDeleted::deleted()
    ostringstream msg;
    msg << "SpaceFOM::PhysicalInterfaceDeleted::deleted():" << __LINE__
        << " Object '" << object->get_name() << "' deleted from the federation."
-       << endl;
+       << "\n";
    message_publish( MSG_NORMAL, msg.str().c_str() );
 }

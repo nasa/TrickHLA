@@ -49,8 +49,8 @@ NASA, Johnson Space Center\n
 #include "SpaceFOM/SpaceTimeCoordinateData.hh"
 
 // TrickHLA includes.
-#include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/MemoryServices.hh"
 
 using namespace std;
 using namespace TrickHLA;
@@ -109,7 +109,7 @@ void DynamicalEntityLagComp::initialize()
       ostringstream errmsg;
 
       errmsg << "SpaceFOM::DynamicalEntityLagComp::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL Trick integrator!" << endl;
+             << " ERROR: Unexpected NULL Trick integrator!\n";
       // Print message and terminate.
       DebugHandler::terminate( errmsg.str() );
    }
