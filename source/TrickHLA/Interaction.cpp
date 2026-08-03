@@ -326,7 +326,7 @@ void Interaction::remove() // RETURN: -- None.
 
             // Un-publish the Interaction.
             try {
-               if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_INTERACTION ) ) {
+               if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
                   message_publish( MSG_NORMAL, "Interaction::remove():%d Unpublish Interaction '%s'.\n",
                                    __LINE__, get_FOM_name().c_str() );
                }
@@ -366,7 +366,7 @@ void Interaction::setup_preferred_order_with_RTI()
       return;
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_INTERACTION ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
       message_publish( MSG_NORMAL, "Interaction::setup_preferred_order_with_RTI():%d \
 Published Interaction '%s' Preferred-Order:%s\n",
                        __LINE__, get_FOM_name().c_str(),
@@ -496,7 +496,7 @@ void Interaction::publish_interaction()
       return;
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_INTERACTION ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
       message_publish( MSG_NORMAL, "Interaction::publish_interaction():%d Interaction '%s'.\n",
                        __LINE__, get_FOM_name().c_str() );
    }
@@ -600,7 +600,7 @@ void Interaction::unpublish_interaction()
    // Subscribe to the interaction.
    if ( is_publish() ) {
 
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_INTERACTION ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
          message_publish( MSG_NORMAL, "Interaction::unpublish_interaction():%d Interaction '%s'\n",
                           __LINE__, get_FOM_name().c_str() );
       }
@@ -705,7 +705,7 @@ void Interaction::subscribe_to_interaction()
    // Subscribe to the interaction.
    if ( is_subscribe() ) {
 
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_INTERACTION ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
          message_publish( MSG_NORMAL, "Interaction::subscribe_to_interaction():%d Interaction '%s'\n",
                           __LINE__, get_FOM_name().c_str() );
       }
@@ -821,7 +821,7 @@ void Interaction::unsubscribe_from_interaction()
    // Make sure we only unsubscribe an interaction that was subscribed to.
    if ( is_subscribe() ) {
 
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_INTERACTION ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
          message_publish( MSG_NORMAL, "Interaction::unsubscribe_from_interaction():%d Interaction '%s'\n",
                           __LINE__, get_FOM_name().c_str() );
       }
@@ -949,7 +949,7 @@ bool Interaction::send(
       // Release mutex lock as auto_unlock_mutex goes out of scope
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_INTERACTION ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
       message_publish( MSG_NORMAL, "Interaction::send():%d As Receive-Order: Interaction '%s'\n",
                        __LINE__, get_FOM_name().c_str() );
    }
@@ -1015,7 +1015,7 @@ bool Interaction::send(
 
       // Add all the parameter values to the map.
       for ( int i = 0; i < param_count; ++i ) {
-         if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SRC_INTERACTION ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
             message_publish( MSG_NORMAL, "Interaction::send():%d Adding '%s' to parameter map.\n",
                              __LINE__, parameters[i].get_FOM_name().c_str() );
          }
@@ -1044,7 +1044,7 @@ bool Interaction::send(
          // See IEEE-1516.1-2010, Sections 6.6 and 8.1.1.
          if ( send_with_timestamp ) {
 
-            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_INTERACTION ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
                message_publish( MSG_NORMAL, "Interaction::send():%d As Timestamp-Order: Interaction '%s' sent for time %lf seconds.\n",
                                 __LINE__, get_FOM_name().c_str(), time.get_time_in_seconds() );
             }
@@ -1059,7 +1059,7 @@ bool Interaction::send(
             successfuly_sent = true;
 
          } else {
-            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_INTERACTION ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
                message_publish( MSG_NORMAL, "Interaction::send():%d As Receive-Order: \
 Interaction '%s' is time-regulating:%s, preferred-order:%s.\n",
                                 __LINE__, get_FOM_name().c_str(),
@@ -1128,7 +1128,7 @@ void Interaction::process_interaction()
          return;
       }
 
-      if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SRC_INTERACTION ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
          string handle_str;
          StringUtilities::to_string( handle_str, class_handle );
          if ( received_as_TSO ) {
@@ -1166,7 +1166,7 @@ bool Interaction::decode(
       return false;
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SRC_INTERACTION ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
       string handle_str;
       StringUtilities::to_string( handle_str, class_handle );
       message_publish( MSG_NORMAL, "Interaction::decode():%d ID:%s, FOM_name:'%s'\n",
@@ -1208,7 +1208,7 @@ bool Interaction::decode(
       // Determine if we have a valid parameter-item.
       if ( ( param_item != NULL ) && ( param_item->index < (size_t)param_count ) ) {
 
-         if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SRC_INTERACTION ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
             message_publish( MSG_NORMAL, "Interaction::decode():%d Decoding '%s' from parameter map.\n",
                              __LINE__, parameters[param_item->index].get_FOM_name().c_str() );
          }

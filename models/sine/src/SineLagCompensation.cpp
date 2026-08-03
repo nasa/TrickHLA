@@ -152,7 +152,7 @@ void SineLagCompensation::send_lag_compensation()
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
-   if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SRC_LAG_COMPENSATION ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
       string const obj_name = ( this->object != NULL ) ? object->get_name() : "";
 
       ostringstream msg;
@@ -190,7 +190,7 @@ void SineLagCompensation::bypass_send_lag_compensation()
 {
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
-   if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SRC_LAG_COMPENSATION ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
       string const obj_name = ( this->object != NULL ) ? object->get_name() : "";
 
       ostringstream msg;
@@ -232,7 +232,7 @@ void SineLagCompensation::receive_lag_compensation()
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
-   if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SRC_LAG_COMPENSATION ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
       string const obj_name = ( this->object != NULL ) ? object->get_name() : "";
 
       ostringstream msg;
@@ -318,7 +318,7 @@ void SineLagCompensation::receive_lag_compensation()
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
-   if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SRC_LAG_COMPENSATION ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
       ostringstream msg;
       msg << "SineLagCompensation::receive_lag_compensation():" << __LINE__ << "\n"
           << " AFTER LAG COMPENSATION:\n"
@@ -347,7 +347,7 @@ void SineLagCompensation::bypass_receive_lag_compensation()
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
-   if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SRC_LAG_COMPENSATION ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
       string const obj_name = ( this->object != NULL ) ? object->get_name() : "";
 
       ostringstream msg;
@@ -429,7 +429,7 @@ void SineLagCompensation::bypass_receive_lag_compensation()
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
-   if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SRC_LAG_COMPENSATION ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
       ostringstream msg;
       msg << "SineLagCompensation::bypass_receive_lag_compensation():" << __LINE__ << "\n"
           << " AFTER BYPASSING LAG COMPENSATION:\n"

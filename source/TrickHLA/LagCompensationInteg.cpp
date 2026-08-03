@@ -77,7 +77,7 @@ int LagCompensationInteg::integrate(
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
-   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SRC_LAG_COMPENSATION ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
       ostringstream msg;
       msg << "LagCompensationInteg::integrate(): " << __LINE__
           << " Compensate: t_begin, t_end, dt_go: "
@@ -95,7 +95,7 @@ int LagCompensationInteg::integrate(
 
       // Use the inherited debug-handler to allow debug comments to be turned
       // on and off from a setting in the input file.
-      if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SRC_LAG_COMPENSATION ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
          ostringstream msg;
          msg << "LagCompensationInteg::integrate(): " << __LINE__
              << "Integ dt, tol, t, dt_go: "

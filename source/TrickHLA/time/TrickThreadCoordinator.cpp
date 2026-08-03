@@ -259,7 +259,7 @@ void TrickThreadCoordinator::initialize_thread_coordinator(
             // and including any API's for this child thread.
             thread_state[thread_id] = TrickHLA::THREAD_STATE_DISABLED;
 
-            if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SRC_THREAD_COORDINATOR ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
                message_publish( MSG_NORMAL, "TrickThreadCoordinator::initialize_thread_coordinator():%d Disabled Trick child thread association (thread-id:%d).\n",
                                 __LINE__, thread_id );
             }
@@ -339,7 +339,7 @@ void TrickThreadCoordinator::initialize_thread_coordinator(
       }
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SRC_THREAD_COORDINATOR ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
       message_publish( MSG_NORMAL, "TrickThreadCoordinator::initialize_thread_coordinator():%d Trick main thread (id:0, data_cycle:%.9f).\n",
                        __LINE__, main_thread_data_cycle_time );
    }
@@ -416,7 +416,7 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
 
    // Just return if this trick child thread association has been disabled.
    if ( thread_state[thread_id] == TrickHLA::THREAD_STATE_DISABLED ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SRC_THREAD_COORDINATOR ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
          message_publish( MSG_NORMAL, "TrickThreadCoordinator::associate_to_trick_child_thread():%d Disabled thread_id:%d.\n",
                           __LINE__, thread_id );
       }
@@ -559,7 +559,7 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
       summary << "  (No objects explicitly associated to thread-id:"
               << thread_id << ")\n";
    }
-   if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SRC_THREAD_COORDINATOR ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
       message_publish( MSG_NORMAL, summary.str().c_str() );
    }
 
@@ -680,7 +680,7 @@ void TrickThreadCoordinator::verify_trick_thread_associations()
    // mutex even if there is an exception.
    MutexProtection const auto_unlock_mutex( &mutex );
 
-   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SRC_THREAD_COORDINATOR ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
       ostringstream summary;
       summary << "TrickThreadCoordinator::verify_trick_thread_associations():"
               << __LINE__;
@@ -798,7 +798,7 @@ void TrickThreadCoordinator::refresh_thread_base_times()
  */
 void TrickThreadCoordinator::announce_data_available()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SRC_THREAD_COORDINATOR ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
       message_publish( MSG_NORMAL, "TrickThreadCoordinator::announce_data_available():%d\n",
                        __LINE__ );
    }
@@ -832,7 +832,7 @@ void TrickThreadCoordinator::announce_data_available()
  */
 void TrickThreadCoordinator::announce_data_sent()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SRC_THREAD_COORDINATOR ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
       message_publish( MSG_NORMAL, "TrickThreadCoordinator::announce_data_sent():%d\n",
                        __LINE__ );
    }
@@ -856,7 +856,7 @@ void TrickThreadCoordinator::announce_data_sent()
  */
 void TrickThreadCoordinator::wait_to_send_data()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SRC_THREAD_COORDINATOR ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
       message_publish( MSG_NORMAL, "TrickThreadCoordinator::wait_to_send_data():%d\n",
                        __LINE__ );
    }
@@ -885,7 +885,7 @@ void TrickThreadCoordinator::wait_to_send_data()
  */
 void TrickThreadCoordinator::wait_to_send_data_for_main_thread()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SRC_THREAD_COORDINATOR ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
       message_publish( MSG_NORMAL, "TrickThreadCoordinator::wait_to_send_data_for_main_thread():%d Waiting...\n",
                        __LINE__ );
    }
@@ -1014,7 +1014,7 @@ void TrickThreadCoordinator::wait_to_send_data_for_main_thread()
       } while ( !all_ready_to_send );
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SRC_THREAD_COORDINATOR ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
       message_publish( MSG_NORMAL, "TrickThreadCoordinator::wait_to_send_data_for_main_thread():%d Done\n",
                        __LINE__ );
    }
@@ -1028,14 +1028,14 @@ void TrickThreadCoordinator::wait_to_send_data_for_child_thread(
 {
    // Just return if this thread association is disabled.
    if ( thread_state[thread_id] == TrickHLA::THREAD_STATE_DISABLED ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SRC_THREAD_COORDINATOR ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
          message_publish( MSG_NORMAL, "TrickThreadCoordinator::wait_to_send_data_for_child_thread():%d Child Thread:%d, Disabled, Done\n",
                           __LINE__, thread_id );
       }
       return;
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SRC_THREAD_COORDINATOR ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
       message_publish( MSG_NORMAL, "TrickThreadCoordinator::wait_to_send_data_for_child_thread():%d Child Thread:%d, waiting...\n",
                        __LINE__, thread_id );
    }
@@ -1109,7 +1109,7 @@ void TrickThreadCoordinator::wait_to_send_data_for_child_thread(
       } while ( !sent_data );
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SRC_THREAD_COORDINATOR ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
       message_publish( MSG_NORMAL, "TrickThreadCoordinator::wait_to_send_data_for_child_thread():%d Child Thread:%d, Done\n",
                        __LINE__, thread_id );
    }
@@ -1120,7 +1120,7 @@ void TrickThreadCoordinator::wait_to_receive_data()
 {
    // Don't process Trick child thread states associated to TrickHLA if none exist.
    if ( !any_child_thread_associated ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SRC_THREAD_COORDINATOR ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
          message_publish( MSG_NORMAL, "TrickThreadCoordinator::wait_to_receive_data():%d Done\n",
                           __LINE__ );
       }
@@ -1132,7 +1132,7 @@ void TrickThreadCoordinator::wait_to_receive_data()
 
    // Just return if this thread association is disabled.
    if ( thread_state[thread_id] == TrickHLA::THREAD_STATE_DISABLED ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SRC_THREAD_COORDINATOR ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
          message_publish( MSG_NORMAL, "TrickThreadCoordinator::wait_to_receive_data():%d %s Thread:%d, Disabled, Done\n",
                           __LINE__, ( ( thread_id == 0 ) ? "Main" : "Child" ),
                           thread_id );
@@ -1140,7 +1140,7 @@ void TrickThreadCoordinator::wait_to_receive_data()
       return;
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SRC_THREAD_COORDINATOR ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
       message_publish( MSG_NORMAL, "TrickThreadCoordinator::wait_to_receive_data():%d %s Thread:%d, waiting...\n",
                        __LINE__, ( ( thread_id == 0 ) ? "Main" : "Child" ),
                        thread_id );
@@ -1205,7 +1205,7 @@ void TrickThreadCoordinator::wait_to_receive_data()
       } while ( !ready_to_receive );
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SRC_THREAD_COORDINATOR ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
       message_publish( MSG_NORMAL, "TrickThreadCoordinator::wait_to_receive_data():%d %s Thread:%d, Done\n",
                        __LINE__, ( ( thread_id == 0 ) ? "Main" : "Child" ),
                        thread_id );

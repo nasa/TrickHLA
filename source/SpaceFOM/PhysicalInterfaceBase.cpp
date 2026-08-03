@@ -112,7 +112,7 @@ void PhysicalInterfaceBase::base_config(
    // 2). We are configuring in default_data but forgot to allocate and
    //     assign the associated object in the 'create_connections()' routine.
    if ( mngr_object == NULL ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_OBJECT ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          ostringstream errmsg;
          errmsg << "PhysicalInterfaceBase::base_config() Warning: \n"
                 << "\tThe TrickHLA::Object associated with object \'" << interface_fed_name << "\' is NULL.\n"

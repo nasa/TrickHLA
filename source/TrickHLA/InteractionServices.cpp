@@ -117,7 +117,7 @@ void InteractionServices::restart_initialization()
       return;
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_INTER_SERVICES ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTER_SERVICES ) ) {
       message_publish( MSG_NORMAL, "InteractionServices::restart_initialization():%d\n", __LINE__ );
    }
 
@@ -261,7 +261,7 @@ void InteractionServices::verify_interaction_arrays()
  */
 void InteractionServices::setup_interaction_ref_attributes()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_INTER_SERVICES ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTER_SERVICES ) ) {
       message_publish( MSG_NORMAL, "InteractionServices::setup_interaction_ref_attributes():%d\n",
                        __LINE__ );
    }
@@ -270,7 +270,7 @@ void InteractionServices::setup_interaction_ref_attributes()
    for ( int n = 0; n < inter_count; ++n ) {
       ostringstream msg;
 
-      if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SRC_INTER_SERVICES ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_INTER_SERVICES ) ) {
          msg << "InteractionServices::setup_interaction_ref_attributes():" << __LINE__ << "\n"
              << "--------------- Trick REF-Attributes ---------------\n"
              << " FOM-Interaction:'" << interactions[n].get_FOM_name() << "'\n";
@@ -285,7 +285,7 @@ void InteractionServices::setup_interaction_ref_attributes()
       // Process the attributes for this object.
       for ( int i = 0; i < param_count; ++i ) {
 
-         if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SRC_INTER_SERVICES ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_INTER_SERVICES ) ) {
             msg << "   " << ( i + 1 ) << "/" << param_count
                 << " FOM-Parameter:'" << params[i].get_FOM_name() << "'"
                 << " Trick-Name:'" << params[i].get_trick_name() << "'\n";
@@ -295,7 +295,7 @@ void InteractionServices::setup_interaction_ref_attributes()
          params[i].initialize( interactions[n].get_FOM_name(), n, i );
       }
 
-      if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SRC_INTER_SERVICES ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_INTER_SERVICES ) ) {
          message_publish( MSG_NORMAL, msg.str().c_str() );
       }
    }
@@ -310,7 +310,7 @@ void InteractionServices::setup_interaction_ref_attributes()
  */
 void InteractionServices::setup_interaction_RTI_handles()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_INTER_SERVICES ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTER_SERVICES ) ) {
       message_publish( MSG_NORMAL, "InteractionServices::setup_interaction_RTI_handles():%d\n",
                        __LINE__ );
    }
@@ -349,7 +349,7 @@ void InteractionServices::setup_interaction_RTI_handles(
       return;
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_INTER_SERVICES ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTER_SERVICES ) ) {
       message_publish( MSG_NORMAL, "InteractionServices::setup_interaction_RTI_handles():%d\n",
                        __LINE__ );
    }
@@ -371,7 +371,7 @@ void InteractionServices::setup_interaction_RTI_handles(
          inter_FOM_name = in_interactions[n].get_FOM_name();
          StringUtilities::to_wstring( ws_FOM_name, inter_FOM_name );
 
-         if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SRC_INTER_SERVICES ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_INTER_SERVICES ) ) {
             msg << "InteractionServices::setup_interaction_RTI_handles():" << __LINE__ << "\n"
                 << "----------------- RTI Handles (Interactions & Parameters) ---------------\n"
                 << "Getting RTI Interaction-Class-Handle for"
@@ -381,7 +381,7 @@ void InteractionServices::setup_interaction_RTI_handles(
          // Get the Interaction class handle.
          in_interactions[n].set_class_handle( rti_amb->getInteractionClassHandle( ws_FOM_name ) );
 
-         if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SRC_INTER_SERVICES ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_INTER_SERVICES ) ) {
             string handle_str;
             StringUtilities::to_string( handle_str, in_interactions[n].get_class_handle() );
             msg << "  Result for Interaction"
@@ -401,7 +401,7 @@ void InteractionServices::setup_interaction_RTI_handles(
             param_FOM_name = params[i].get_FOM_name();
             StringUtilities::to_wstring( ws_FOM_name, param_FOM_name );
 
-            if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SRC_INTER_SERVICES ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_INTER_SERVICES ) ) {
                msg << "\tGetting RTI Parameter-Handle for '"
                    << inter_FOM_name << "'->'" << param_FOM_name << "'\n";
             }
@@ -412,7 +412,7 @@ void InteractionServices::setup_interaction_RTI_handles(
                   in_interactions[n].get_class_handle(),
                   ws_FOM_name ) );
 
-            if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SRC_INTER_SERVICES ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_INTER_SERVICES ) ) {
                string handle_str;
                StringUtilities::to_string( handle_str, params[i].get_parameter_handle() );
                msg << "\t  Result for Parameter '"
@@ -421,7 +421,7 @@ void InteractionServices::setup_interaction_RTI_handles(
             }
          }
 
-         if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SRC_INTER_SERVICES ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_INTER_SERVICES ) ) {
             message_publish( MSG_NORMAL, msg.str().c_str() );
          }
       }
@@ -601,7 +601,7 @@ void InteractionServices::unsubscribe()
  */
 void InteractionServices::setup_preferred_order_with_RTI()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_INTER_SERVICES ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTER_SERVICES ) ) {
       message_publish( MSG_NORMAL, "InteractionServices::setup_preferred_order_with_RTI():%d\n",
                        __LINE__ );
    }
@@ -625,7 +625,7 @@ void InteractionServices::process_interactions()
       return;
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_INTER_SERVICES ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTER_SERVICES ) ) {
       message_publish( MSG_NORMAL, "InteractionServices::process_interactions():%d\n", __LINE__ );
    }
 
@@ -713,7 +713,7 @@ void InteractionServices::receive_interaction(
             // Add the interaction item to the queue.
             interactions_queue.push( item );
 
-            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_INTER_SERVICES ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTER_SERVICES ) ) {
                string handle;
                StringUtilities::to_string( handle, theInteraction );
 
@@ -753,7 +753,7 @@ void InteractionServices::convert_data_before_checkpoint()
    MutexProtection const auto_unlock_mutex( &interactions_queue.mutex );
 
    if ( !interactions_queue.empty() ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_INTER_SERVICES ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTER_SERVICES ) ) {
          message_publish( MSG_NORMAL, "InteractionServices::convert_data_before_checkpoint():%d interactions_queue.size():%d\n",
                           __LINE__, interactions_queue.size() );
       }
@@ -772,7 +772,7 @@ void InteractionServices::convert_data_before_checkpoint()
          return;
       }
 
-      if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SRC_INTER_SERVICES ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_11_TRACE, DEBUG_SOURCE_INTER_SERVICES ) ) {
          interactions_queue.dump_linked_list( "InteractionServices::convert_data_before_checkpoint()" );
       }
 
@@ -784,7 +784,7 @@ void InteractionServices::convert_data_before_checkpoint()
             ( i < check_interactions_count ) && ( item != NULL );
             ++i, item = static_cast< InteractionItem * >( item->next ) ) {
 
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_INTER_SERVICES ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTER_SERVICES ) ) {
             message_publish( MSG_NORMAL, "InteractionServices::convert_data_before_checkpoint():%d \
    Checkpointing into check_interactions[%d] from interaction index %d.\n",
                              __LINE__, i, item->index );
@@ -819,7 +819,7 @@ void InteractionServices::convert_data_before_checkpoint()
 void InteractionServices::restore_data_after_checkpoint()
 {
    if ( check_interactions_count > 0 ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_INTER_SERVICES ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTER_SERVICES ) ) {
          message_publish( MSG_NORMAL, "InteractionServices::restore_data_after_checkpoint():%d check_interactions_count=%d\n",
                           __LINE__, check_interactions_count );
       }
@@ -835,7 +835,7 @@ void InteractionServices::restore_data_after_checkpoint()
       if ( check_interactions != NULL ) {
          for ( size_t i = 0; i < check_interactions_count; ++i ) {
 
-            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_INTER_SERVICES ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTER_SERVICES ) ) {
                message_publish( MSG_NORMAL, "InteractionServices::restore_data_after_checkpoint():%d \
 restoring check_interactions[%d] into interaction index %d, parm_count=%d\n",
                                 __LINE__, i, check_interactions[i].index,

@@ -114,7 +114,7 @@ void OwnershipHandler::convert_data_before_checkpoint()
 
    // If there are any pull_request entries, encode them to get checkpointed.
    if ( pull_items_cnt > 0 ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SRC_OWNERSHIP ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
          message_publish( MSG_NORMAL, "OwnershipHandler::convert_data_before_checkpoint():%d Checkpointing %d pull_request elements.\n",
                           __LINE__, pull_items_cnt );
       }
@@ -152,7 +152,7 @@ void OwnershipHandler::convert_data_before_checkpoint()
 
    // If there are any push_request entries, encode them to get checkpointed.
    if ( push_items_cnt > 0 ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SRC_OWNERSHIP ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
          message_publish( MSG_NORMAL, "OwnershipHandler::convert_data_before_checkpoint():%d Checkpointing %d push_request elements.\n",
                           __LINE__, push_items_cnt );
       }
@@ -211,7 +211,7 @@ void OwnershipHandler::restore_data_after_checkpoint()
          // Add the attribute to the map, using the FOM_name as the key.
          attr_map->insert( make_pair( pull_items[count].FOM_name, attribute ) );
 
-         if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SRC_OWNERSHIP ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
             message_publish( MSG_NORMAL, "OwnershipHandler::restore_data_after_checkpoint():%d Restoring ownership pull item attribute \"%s\"\n",
                              __LINE__, pull_items[count].FOM_name.c_str() );
          }
@@ -240,7 +240,7 @@ void OwnershipHandler::restore_data_after_checkpoint()
          // Add the attribute to the map, using the FOM_name as the key.
          attr_map->insert( make_pair( push_items[count].FOM_name, attribute ) );
 
-         if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SRC_OWNERSHIP ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
             message_publish( MSG_NORMAL, "OwnershipHandler::restore_data_after_checkpoint():%d Restoring ownership push item attribute \"%s\"\n",
                              __LINE__, push_items[count].FOM_name.c_str() );
          }
@@ -349,7 +349,7 @@ void OwnershipHandler::pull_ownership(
       return;
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SRC_OWNERSHIP ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
       message_publish( MSG_NORMAL, "OwnershipHandler::pull_ownership(time=%G):%d scenario-time=%G, granted_time=%G, lookahead=%G\n",
                        time, __LINE__, get_scenario_time(),
                        get_granted_time().get_time_in_seconds(),
@@ -407,7 +407,7 @@ void OwnershipHandler::pull_ownership(
       return;
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SRC_OWNERSHIP ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
       message_publish( MSG_NORMAL, "OwnershipHandler::pull_ownership(%s, time=%G):%d scenario-time=%G, granted_time=%G, lookahead=%G\n",
                        attribute_FOM_name.c_str(), time, __LINE__, get_scenario_time(),
                        get_granted_time().get_time_in_seconds(),
@@ -452,7 +452,7 @@ void OwnershipHandler::push_ownership(
       return;
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SRC_OWNERSHIP ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
       message_publish( MSG_NORMAL, "OwnershipHandler::push_ownership(time=%G):%d sim-time=%G, granted_time=%G, lookahead=%G\n",
                        time, __LINE__, get_scenario_time(),
                        get_granted_time().get_time_in_seconds(),
@@ -510,7 +510,7 @@ void OwnershipHandler::push_ownership(
       return;
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SRC_OWNERSHIP ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
       message_publish( MSG_NORMAL, "OwnershipHandler::push_ownership(%s, time=%G):%d sim-time=%G, granted_time=%G, lookahead=%G\n",
                        attribute_FOM_name.c_str(), time, __LINE__, get_scenario_time(),
                        get_granted_time().get_time_in_seconds(),

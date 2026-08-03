@@ -205,7 +205,7 @@ void ExecutionControl::initialize()
    print_clock_summary( "ExecutionControl::initialize():" + std::to_string( __LINE__ ) + endl );
 #endif
 
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       ostringstream msg;
       msg << "SpaceFOM::ExecutionControl::initialize():" << __LINE__
           << " Initialization-Scheme:'" << get_type() << "'\n";
@@ -260,7 +260,7 @@ void ExecutionControl::initialize()
       DebugHandler::terminate( errmsg.str() );
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       if ( is_master() ) {
          message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::initialize():%d\n    I AM THE PRESET MASTER\n",
                           __LINE__ );
@@ -374,7 +374,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
            &attrSpaceFOM__MTRInteractionHandler[attr_index],
            sizeof( ATTRIBUTES ) );
 
-   if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       ostringstream msg2;
       msg2 << "SpaceFOM::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__ << "\n"
            << "--------------- Trick REF-Attributes ---------------\n"
@@ -385,7 +385,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
    // Initialize the TrickHLA Interaction before we use it.
    mtr_interaction->initialize( this->federate );
 
-   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       ostringstream msg2;
       msg2 << "SpaceFOM::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__
            << " FOM-Parameter:'" << tParm[0].get_FOM_name() << "'"
@@ -455,7 +455,7 @@ void ExecutionControl::sync_point_announced(
    if ( !contains_sync_point( label ) || contains_sync_point( label, TrickHLA::UNKNOWN_SYNC_POINT_LIST ) ) {
 
       // Unrecognized sync-point. Achieve all unrecognized sync-points.
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          string label_str;
          StringUtilities::to_string( label_str, label );
          message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::sync_point_announced():%d Unrecognized sync-point:'%s', which will be achieved.\n",
@@ -475,7 +475,7 @@ void ExecutionControl::sync_point_announced(
 
       // Mark known sync-point as announced.
       if ( mark_sync_point_announced( label, user_supplied_tag ) ) {
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             string label_str;
             StringUtilities::to_string( label_str, label );
             message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::sync_point_announced():%d Marked sync-point announced:'%s'\n",
@@ -503,7 +503,7 @@ void ExecutionControl::sync_point_announced(
 
             // Achieve all other sync-points.
             if ( achieve_sync_point( label, user_supplied_tag ) ) {
-               if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+               if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                   string label_str;
                   StringUtilities::to_string( label_str, label );
                   message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::sync_point_announced():%d SpaceFOM designated late joiner, achieved sync-point:'%s'\n",
@@ -606,7 +606,7 @@ bool ExecutionControl::receive_interaction(
    if ( mtr_interaction->is_subscribe()
         && ( mtr_interaction->get_class_handle() == theInteraction ) ) {
 
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          string handle;
          StringUtilities::to_string( handle, theInteraction );
 
@@ -700,13 +700,13 @@ void ExecutionControl::role_determination_process()
 
       // Print out diagnostic message if appropriate.
       if ( !this->late_joiner_determined ) {
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::role_determination_process():%d Waiting...\n",
                              __LINE__ );
          }
       }
 
-      bool         print_summary = DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SRC_EXECUTION_CONTROL );
+      bool         print_summary = DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL );
       SleepTimeout print_timer;
       SleepTimeout sleep_timer;
 
@@ -751,7 +751,7 @@ void ExecutionControl::role_determination_process()
                   sleep_timer.reset();
 
                   if ( !print_summary ) {
-                     print_summary = DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SRC_EXECUTION_CONTROL );
+                     print_summary = DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL );
                   }
 
                   // Check that we maintain federation membership.
@@ -791,7 +791,7 @@ void ExecutionControl::role_determination_process()
       }
 
       // Display a status message for the role of this federate.
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          if ( this->late_joiner ) {
             if ( is_designated_late_joiner() ) {
                message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::role_determination_process():%d This is a Designated Late Joining Federate.\n",
@@ -910,13 +910,13 @@ void ExecutionControl::designated_late_joiner_init_process()
 
    // Print out diagnostic message if appropriate.
    if ( !is_sync_point_announced( SpaceFOM::INIT_COMPLETED_SYNC_POINT ) ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::designated_late_joiner_init_process():%d Waiting...\n",
                           __LINE__ );
       }
    }
 
-   bool         print_summary = DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SRC_EXECUTION_CONTROL );
+   bool         print_summary = DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL );
    SleepTimeout print_timer;
    SleepTimeout sleep_timer;
 
@@ -940,7 +940,7 @@ void ExecutionControl::designated_late_joiner_init_process()
             sleep_timer.reset();
 
             if ( !print_summary ) {
-               print_summary = DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SRC_EXECUTION_CONTROL );
+               print_summary = DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL );
             }
 
             // Check that we maintain federation membership.
@@ -978,7 +978,7 @@ void ExecutionControl::designated_late_joiner_init_process()
    }
 
    // Print out diagnostic message if appropriate.
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::designated_late_joiner_init_process():%d This is a Designated Late Joining Federate.\n",
                        __LINE__ );
    }
@@ -1021,7 +1021,7 @@ void ExecutionControl::late_joiner_hla_init_process()
    scenario_timeline->set_epoch( ExCO->get_scenario_time_epoch() );
 
    // Print diagnostic message if appropriate.
-   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       ostringstream msg;
       msg << "SpaceFOM::ExecutionControl::late_joiner_hla_init_process():" << __LINE__ << "\n"
           << "     current_scenario_time: " << StringUtilities::format_time( scenario_timeline->get_time() ) << "\n"
@@ -1117,7 +1117,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
                 << " federate must have the root_ref_frame reference set.\n";
          DebugHandler::terminate( errmsg.str() );
       } else {
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             message_publish( MSG_WARNING, "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():%d WARNING: No root reference frame!\n",
                              __LINE__ );
          }
@@ -1269,7 +1269,7 @@ void ExecutionControl::post_multi_phase_init_processes()
       scenario_timeline->set_sim_offset( federate->get_requested_time().get_time_in_seconds() );
 
       // Print diagnostic message if appropriate.
-      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          ostringstream msg;
          msg << "SpaceFOM::ExecutionControl::post_multi_phase_init_processes():" << __LINE__ << "\n"
              << "     current_scenario_time: " << StringUtilities::format_time( scenario_timeline->get_time() ) << "\n"
@@ -1321,7 +1321,7 @@ void ExecutionControl::post_multi_phase_init_processes()
          }
          case EXECUTION_CONTROL_SHUTDOWN: {
 
-            if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::post_multi_phase_init_process():%d Commanding Trick Exec to stop.\n",
                                 __LINE__ );
             }
@@ -1653,7 +1653,7 @@ void ExecutionControl::set_next_execution_control_mode(
          this->scenario_freeze_time   = this->next_mode_scenario_time;
          this->simulation_freeze_time = scenario_timeline->compute_simulation_time( this->next_mode_scenario_time );
 
-         if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             ostringstream msg;
             msg << "SpaceFOM::ExecutionControl::set_next_execution_control_mode():" << __LINE__ << "\n"
                 << "       Requested-Mode: EXECUTION_CONTROL_FREEZE\n"
@@ -1686,7 +1686,7 @@ void ExecutionControl::set_next_execution_control_mode(
 
       default: {
          this->requested_execution_control_mode = EXECUTION_CONTROL_UNINITIALIZED;
-         if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             ostringstream errmsg;
             errmsg << "SpaceFOM::ExecutionControl::set_next_execution_control_mode():" << __LINE__
                    << " WARNING: Unknown execution mode value: " << exec_control
@@ -1748,7 +1748,7 @@ bool ExecutionControl::process_mode_transition_request()
    ExecutionConfiguration *ExCO = get_execution_configuration();
 
    // Print diagnostic message if appropriate.
-   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       ostringstream msg;
       msg << "=============================================================\n"
           << "SpaceFOM::ExecutionControl::process_mode_transition_request():" << __LINE__ << "\n"
@@ -1826,7 +1826,7 @@ bool ExecutionControl::process_mode_transition_request()
          // Announce the shutdown.
          shutdown_mode_announce();
 
-         if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::process_mode_transition_request():%d MTR_GOTO_SHUTDOWN\n",
                              __LINE__ );
          }
@@ -1889,7 +1889,7 @@ bool ExecutionControl::process_execution_control_updates()
 
       // Determine we have a valid value that is being updated and warn the user.
       if ( ( this->least_common_time_step > 0 )
-           && DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+           && DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          ostringstream errmsg;
          errmsg << "SpaceFOM::ExecutionControl::process_execution_control_updates():" << __LINE__
                 << " WARNING: Updating existing Least Common Time Step (LCTS) value of "
@@ -1990,7 +1990,7 @@ bool ExecutionControl::process_execution_control_updates()
                this->current_execution_control_mode = EXECUTION_CONTROL_SHUTDOWN;
                ExCO->current_execution_mode         = EXECUTION_MODE_SHUTDOWN;
 
-               if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+               if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                   message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::process_execution_control_updates():%d EXECUTION_CONTROL_SHUTDOWN\n",
                                    __LINE__ );
                }
@@ -2026,7 +2026,7 @@ bool ExecutionControl::process_execution_control_updates()
                this->current_execution_control_mode = EXECUTION_CONTROL_SHUTDOWN;
                ExCO->current_execution_mode         = EXECUTION_MODE_SHUTDOWN;
 
-               if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+               if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                   message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::process_execution_control_updates():%d EXECUTION_CONTROL_SHUTDOWN\n",
                                    __LINE__ );
                }
@@ -2090,7 +2090,7 @@ bool ExecutionControl::process_execution_control_updates()
                this->current_execution_control_mode = EXECUTION_CONTROL_SHUTDOWN;
                ExCO->current_execution_mode         = EXECUTION_MODE_SHUTDOWN;
 
-               if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+               if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                   message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::process_execution_control_updates():%d EXECUTION_CONTROL_SHUTDOWN\n",
                                    __LINE__ );
                }
@@ -2103,7 +2103,7 @@ bool ExecutionControl::process_execution_control_updates()
             }
             case EXECUTION_CONTROL_FREEZE: {
                // Print diagnostic message if appropriate.
-               if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+               if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                   ostringstream msg;
                   msg << "SpaceFOM::ExecutionControl::process_execution_control_updates():" << __LINE__ << "\n"
                       << "     current_scenario_time: " << StringUtilities::format_time( scenario_timeline->get_time() ) << "\n"
@@ -2139,7 +2139,7 @@ bool ExecutionControl::process_execution_control_updates()
                break;
             }
             default: {
-               if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+               if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                   ostringstream errmsg;
                   errmsg << "SpaceFOM::ExecutionControl::process_execution_control_updates():" << __LINE__
                          << " WARNING: Execution mode mismatch between current mode ("
@@ -2164,7 +2164,7 @@ bool ExecutionControl::process_execution_control_updates()
                this->current_execution_control_mode = EXECUTION_CONTROL_SHUTDOWN;
                ExCO->current_execution_mode         = EXECUTION_MODE_SHUTDOWN;
 
-               if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+               if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                   message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::process_execution_control_updates():%d EXECUTION_CONTROL_SHUTDOWN\n",
                                    __LINE__ );
                }
@@ -2185,7 +2185,7 @@ bool ExecutionControl::process_execution_control_updates()
                break;
             }
             default: {
-               if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+               if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                   ostringstream errmsg;
                   errmsg << "SpaceFOM::ExecutionControl::process_execution_control_updates():" << __LINE__
                          << " WARNING: Execution mode mismatch between current mode ("
@@ -2204,7 +2204,7 @@ bool ExecutionControl::process_execution_control_updates()
       }
       case EXECUTION_CONTROL_SHUTDOWN: {
 
-         if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             // Once in SHUTDOWN, we cannot do anything else.
             ostringstream errmsg;
             errmsg << "SpaceFOM::ExecutionControl::process_execution_control_updates():" << __LINE__
@@ -2234,7 +2234,7 @@ bool ExecutionControl::process_execution_control_updates()
  */
 void ExecutionControl::wait_for_root_frame_discovered_synchronization()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::wait_for_root_frame_discovered_synchronization():%d\n",
                        __LINE__ );
    }
@@ -2319,7 +2319,7 @@ bool ExecutionControl::run_mode_transition()
 
          cte_time_diff = go_to_run_time - cte_time;
          if ( fmod( cte_time_diff, 1.0 ) == 0.0 ) {
-            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                ostringstream msg;
                msg << "SpaceFOM::ExecutionControl::run_mode_transition():" << __LINE__
                    << " Going to run in " << cte_time_diff << " seconds.\n";
@@ -2332,7 +2332,7 @@ bool ExecutionControl::run_mode_transition()
 
       cte_time_diff = cte_time - go_to_run_time;
 
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          ostringstream msg;
          msg << "SpaceFOM::ExecutionControl::run_mode_transition():" << __LINE__ << "\n"
              << " Go to RUN at CTE time: " << StringUtilities::format_time( go_to_run_time ) << "\n"
@@ -2343,7 +2343,7 @@ bool ExecutionControl::run_mode_transition()
 
       // Always show a warning message if the object_service does not have a big
       // enough time padding specified by the user when using CTE.
-      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          if ( cte_time_diff >= 0.1 ) {
             if ( is_master() ) {
                ostringstream msg;
@@ -2445,7 +2445,7 @@ void ExecutionControl::shutdown_mode_transition()
       return;
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::shutdown_mode_transition():%d Registered 'mtr_shutdown' synchronization point.\n",
                        __LINE__ );
    }
@@ -2462,7 +2462,7 @@ void ExecutionControl::shutdown_mode_transition()
  */
 bool ExecutionControl::check_for_shutdown()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_FULL_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_FULL_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::check_for_shutdown():%d Checking for shutdown\n",
                        __LINE__ );
    }
@@ -2480,7 +2480,7 @@ bool ExecutionControl::check_for_shutdown()
  */
 bool ExecutionControl::check_for_shutdown_with_termination()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_FULL_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_FULL_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::check_for_shutdown_with_termination():%d Checking for shutdown.\n",
                        __LINE__ );
    }
@@ -2501,7 +2501,7 @@ bool ExecutionControl::check_for_shutdown_with_termination()
       errmsg << " for the '" << federate->get_federation_name()
              << "' Federation.\n";
 
-      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
 
@@ -2546,7 +2546,7 @@ void ExecutionControl::freeze_init()
 
 void ExecutionControl::enter_freeze()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       string exec_cmd_str;
       switch ( exec_get_exec_command() ) {
          case NoCmd: {
@@ -2595,7 +2595,7 @@ void ExecutionControl::enter_freeze()
          // once before the scheduled freeze time, so go back to run.
          exec_run();
 
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::enter_freeze():%d Detected duplicate Freeze command, ignoring.\n",
                              __LINE__ );
          }
@@ -2645,7 +2645,7 @@ void ExecutionControl::enter_freeze()
       // Federate::freeze_init() job.
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::enter_freeze():%d Freeze Announced:%s, Freeze Pending:%s\n",
                        __LINE__, ( is_freeze_announced() ? "Yes" : "No" ),
                        ( is_freeze_pending() ? "Yes" : "No" ) );
@@ -2673,7 +2673,7 @@ bool ExecutionControl::check_freeze_exit()
       // Check for Trick shutdown command.
       if ( the_exec->get_exec_command() == ExitCmd ) {
 
-         if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::check_freeze_exit():%d Trick shutdown commanded.\n",
                              __LINE__ );
          }
@@ -2694,7 +2694,7 @@ bool ExecutionControl::check_freeze_exit()
 
       // Check for shutdown.
       if ( this->current_execution_control_mode == EXECUTION_CONTROL_SHUTDOWN ) {
-         if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::check_freeze_exit():%d Execution Control Shutdown commanded.\n",
                              __LINE__ );
          }
@@ -2818,7 +2818,7 @@ void ExecutionControl::epoch_and_root_frame_discovery_process()
       // The received LCTS from the Master federate should be sane value as
       // compared to what this federate is configured for in the input file,
       // or it should be an integer multiple of the LCTS.
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          if ( ExCO->least_common_time_step <= 0 ) {
             ostringstream errmsg;
             errmsg << "SpaceFOM::ExecutionControl::epoch_and_root_frame_discovery_process():" << __LINE__
@@ -2913,7 +2913,7 @@ void ExecutionControl::send_init_root_ref_frame()
 
    // Late joining federates cannot be root frame publishers so just return.
    if ( federate->is_late_joining_federate() ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::send_init_root_ref_frame():%d Late joining \
 federate so the data will not be sent for '%s'.\n",
                           __LINE__, execution_configuration->get_name().c_str() );
@@ -2954,7 +2954,7 @@ void ExecutionControl::send_root_ref_frame()
       return;
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::send_root_ref_frame():%d\n",
                        __LINE__ );
    }
@@ -2984,7 +2984,7 @@ void ExecutionControl::receive_init_root_ref_frame()
 {
    // Late joining federates will get root reference frame from ExCO update.
    if ( federate->is_late_joining_federate() ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::receive_init_root_ref_frame():%d Late joining federate so skipping data for '%s'\n",
                           __LINE__, root_ref_frame->get_name().c_str() );
       }
@@ -3021,7 +3021,7 @@ void ExecutionControl::receive_root_ref_frame()
       return;
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::receive_root_ref_frame():%d Waiting...\n",
                        __LINE__ );
    }
@@ -3067,7 +3067,7 @@ void ExecutionControl::receive_root_ref_frame()
          }
       }
 
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          message_publish( MSG_NORMAL, "SpaceFOM::ExectionControl::receive_root_ref_frame():%d Received data.\n",
                           __LINE__ );
       }
@@ -3139,7 +3139,7 @@ void ExecutionControl::set_least_common_time_step(
       this->least_common_time_step         = Int64BaseTime::to_base_time( lcts );
       ExCO->set_least_common_time_step( lcts );
    } else {
-      if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SRC_EXECUTION_CONFIG ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
          ostringstream msg;
          msg << "SpaceFOM::ExecutionControl::set_least_common_time_step():" << __LINE__
              << " This is not a Master federate so this setting will be ignored."

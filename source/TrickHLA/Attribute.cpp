@@ -204,7 +204,7 @@ void Attribute::initialize(
 
    // Warn the user if the object attribute has a CONFIG_TYPE_NONE configuration.
    if ( config == CONFIG_NONE ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_ATTRIBUTE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
          ostringstream errmsg;
          errmsg << "Attribute::initialize():" << __LINE__
                 << " WARNING: FOM Object Attribute '"
@@ -241,13 +241,13 @@ void Attribute::initialize(
       DebugHandler::terminate( errmsg.str() );
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SRC_ATTRIBUTE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
       ostringstream msg;
       msg << "Attribute::initialize():" << __LINE__ << "\n";
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SRC_ATTRIBUTE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
       string attr_handle_string;
       StringUtilities::to_string( attr_handle_string, this->attr_handle );
       ostringstream msg;
@@ -304,7 +304,7 @@ bool Attribute::decode(
 
    update_after_decode();
 
-   if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SRC_ATTRIBUTE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
       message_publish( MSG_NORMAL, "Attribute::decode():%d Decoded '%s' (trick_name '%s') from attribute map.\n",
                        __LINE__, get_FOM_name().c_str(), get_trick_name().c_str() );
    }
@@ -376,7 +376,7 @@ void Attribute::determine_cycle_ratio(
          DebugHandler::terminate( errmsg.str() );
       }
 
-      if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SRC_ATTRIBUTE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
          ostringstream msg;
          msg << "Attribute::determine_cycle_ratio():" << __LINE__ << "\n"
              << "  FOM_name:'" << get_FOM_name() << "'\n"

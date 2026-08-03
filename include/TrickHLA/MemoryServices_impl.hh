@@ -79,7 +79,7 @@ T MemoryServices::declare_var(
    // Check to make sure the incoming type is a pointer.
    // If not, then return null.
    if ( !std::is_pointer< T >::value ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_MEMORY_SERVICES ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_MEMORY_SERVICES ) ) {
          std::ostringstream msg;
          msg << "MemoryServices::declare_var():" << __LINE__
              << " WARNING: Type is not a pointer: " << typeid( T ).name() << "\n";
@@ -100,7 +100,7 @@ T MemoryServices::declare_var(
    if ( trick_type == TRICK_STRUCTURED ) {
       // Trick has to have a class name for structered types.
       if ( class_name.empty() ) {
-         if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_MEMORY_SERVICES ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_MEMORY_SERVICES ) ) {
             std::ostringstream msg;
             msg << "MemoryServices::declare_var():" << __LINE__
                 << " WARNING: Empty class_name for type allocation: "
@@ -128,7 +128,7 @@ T MemoryServices::declare_var(
    // Check to make sure the incoming type is a pointer.
    // If not, then return null.
    if ( !std::is_pointer< T >::value ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_MEMORY_SERVICES ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_MEMORY_SERVICES ) ) {
          std::ostringstream msg;
          msg << "MemoryServices::declare_var():" << __LINE__
              << " WARNING: Type is not a pointer: " << typeid( T ).name() << "\n";
@@ -147,7 +147,7 @@ T MemoryServices::declare_var(
    // Check to make sure the incoming type is a pointer.
    // If not, then return null.
    if ( !std::is_pointer< T >::value ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_MEMORY_SERVICES ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_MEMORY_SERVICES ) ) {
          std::ostringstream msg;
          msg << "MemoryServices::declare_var():" << __LINE__
              << " WARNING: Type is not a pointer: " << typeid( T ).name() << "\n";
@@ -168,7 +168,7 @@ T MemoryServices::declare_var(
    // Check to make sure the incoming type is a pointer.
    // If not, then return null.
    if ( !std::is_pointer< T >::value ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_MEMORY_SERVICES ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_MEMORY_SERVICES ) ) {
          std::ostringstream msg;
          msg << "MemoryServices::declare_var():" << __LINE__
              << " WARNING: Type is not a pointer: " << typeid( T ).name() << "\n";
@@ -187,7 +187,7 @@ T MemoryServices::declare_var(
    // Check to make sure the incoming type is a pointer.
    // If not, then return null.
    if ( !std::is_pointer< T >::value ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_MEMORY_SERVICES ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_MEMORY_SERVICES ) ) {
          std::ostringstream msg;
          msg << "MemoryServices::declare_var():" << __LINE__
              << " WARNING: Type is not a pointer: " << typeid( T ).name() << "\n";
@@ -204,7 +204,7 @@ T MemoryServices::resize_array( T address, size_t n_elems )
    // Check to make sure the incoming type is a pointer.
    // If not, then return null.
    if ( !std::is_pointer< T >::value ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_MEMORY_SERVICES ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_MEMORY_SERVICES ) ) {
          std::ostringstream msg;
          msg << "MemoryServices::declare_var():" << __LINE__
              << " WARNING: Type is not a pointer: " << typeid( T ).name() << "\n";
@@ -222,7 +222,7 @@ bool MemoryServices::delete_var( T addr )
    // Check to make sure the incoming type is a pointer.
    // If not, then return null.
    if ( !std::is_pointer< T >::value ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_MEMORY_SERVICES ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_MEMORY_SERVICES ) ) {
          std::ostringstream msg;
          msg << "MemoryServices::delete_var():" << __LINE__
              << " WARNING: Type is not a pointer: " << typeid( T ).name() << "\n";
@@ -234,7 +234,7 @@ bool MemoryServices::delete_var( T addr )
    // Delete the address in Trick memory.
    // NOTE: trick_MM->delete_var returns 0 on success and 1 on failure!
    if ( trick_MM->delete_var( static_cast< void * >( addr ) ) ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SRC_MEMORY_SERVICES ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_MEMORY_SERVICES ) ) {
          std::ostringstream msg;
          msg << "MemoryServices::delete_var():" << __LINE__
              << " WARNING: Could not delete variable at address: " << addr << "\n";
@@ -252,7 +252,7 @@ bool MemoryServices::is_alloced( T addr )
    // Check to make sure the incoming type is a pointer.
    // If not, then return false.
    if ( !std::is_pointer< T >::value ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_MEMORY_SERVICES ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_MEMORY_SERVICES ) ) {
          std::ostringstream msg;
          msg << "MemoryServices::is_alloced():" << __LINE__
              << " WARNING: Type is not a pointer: " << typeid( T ).name() << "\n";
@@ -274,7 +274,7 @@ std::size_t MemoryServices::get_size( T addr )
    // Check to make sure the incoming type is a pointer.
    // If not, then return false.
    if ( !std::is_pointer< T >::value ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_MEMORY_SERVICES ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_MEMORY_SERVICES ) ) {
          std::ostringstream msg;
          msg << "MemoryServices::get_size():" << __LINE__
              << " WARNING: Type is not a pointer: " << typeid( T ).name() << "\n";
@@ -314,7 +314,7 @@ std::string MemoryServices::get_class_name( T type )
       return ( std::string( "TrickHLA::RecordElement" ) );
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SRC_MEMORY_SERVICES ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_MEMORY_SERVICES ) ) {
       std::ostringstream msg;
       msg << "MemoryServices::get_class_name():" << __LINE__
           << " WARNING: Unrecognized TrickHLA type: " << typeid( T ).name() << "\n";

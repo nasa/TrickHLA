@@ -168,7 +168,7 @@ void Parameter::initialize(
    // Make a copy.
    this->interaction_FOM_name = string( interaction_fom_name );
 
-   if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SRC_PARAMETER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
       string param_handle_string;
       StringUtilities::to_string( param_handle_string, this->param_handle );
       ostringstream msg;
@@ -223,7 +223,7 @@ void Parameter::initialize(
       DebugHandler::terminate( errmsg.str() );
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SRC_PARAMETER ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
       string param_handle_string;
       StringUtilities::to_string( param_handle_string, this->param_handle );
       ostringstream msg;
@@ -278,7 +278,7 @@ bool Parameter::decode(
 
    update_after_decode();
 
-   if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SRC_ATTRIBUTE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
       message_publish( MSG_NORMAL, "Parameter::decode():%d Decoded '%s' (trick_name '%s') from attribute map.\n",
                        __LINE__, get_FOM_name().c_str(), get_trick_name().c_str() );
    }

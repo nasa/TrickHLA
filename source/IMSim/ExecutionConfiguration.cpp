@@ -311,7 +311,7 @@ IMSim::ExecutionControl *ExecutionConfiguration::get_imsim_control()
 */
 void ExecutionConfiguration::pack()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_EXECUTION_CONFIG ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       ostringstream msg;
       msg << "=============================================================\n"
           << "IMSim::ExecutionConfiguration::pack():" << __LINE__ << "\n"
@@ -331,7 +331,7 @@ void ExecutionConfiguration::pack()
 */
 void ExecutionConfiguration::unpack()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_EXECUTION_CONFIG ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       ostringstream msg;
       msg << "=============================================================\n"
           << "IMSim::ExecutionConfiguration::unpack():" << __LINE__ << "\n"
@@ -425,7 +425,7 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
       return false;
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONFIG ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       message_publish( MSG_NORMAL, "IMSim::ExecutionConfiguration::wait_for_update():%d Waiting...\n",
                        __LINE__ );
    }
@@ -471,7 +471,7 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
          }
       }
 
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONFIG ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
          message_publish( MSG_NORMAL, "IMSim::ExecutionConfiguration::wait_for_update():%d Received data.\n",
                           __LINE__ );
       }

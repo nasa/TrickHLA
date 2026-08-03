@@ -96,7 +96,7 @@ void FixedRecPacking::pack()
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_PACKING ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_PACKING ) ) {
       string        obj_name = ( this->object != NULL ) ? object->get_name() : "";
       ostringstream msg;
       msg << "FixedRecPacking::pack():" << __LINE__ << "\n"
@@ -137,7 +137,7 @@ void FixedRecPacking::unpack()
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_PACKING ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_PACKING ) ) {
 
       string obj_name = ( this->object != NULL ) ? object->get_name() : "";
 

@@ -266,7 +266,7 @@ void SpaceTimeCoordinatePacking::pack()
 {
    // Check for initialization.
    if ( !initialized ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SRC_PACKING ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_PACKING ) ) {
          ostringstream errmsg;
          errmsg << "SpaceTimeCoordinatePacking::pack() Warning: The initialize() function has not"
                 << " been called!\n";
@@ -301,7 +301,7 @@ void SpaceTimeCoordinatePacking::pack()
 void SpaceTimeCoordinatePacking::unpack()
 {
    if ( !initialized ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SRC_PACKING ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_PACKING ) ) {
          ostringstream errmsg;
          errmsg << "SpaceTimeCoordinatePacking::unpack():" << __LINE__
                 << " Warning: The initialize() function has not been called!\n";

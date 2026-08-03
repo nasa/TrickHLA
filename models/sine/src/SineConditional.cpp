@@ -215,7 +215,7 @@ bool SineConditional::should_send(
       DebugHandler::terminate( errmsg.str() );
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SRC_CONDITIONAL ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_CONDITIONAL ) ) {
       message_publish( MSG_NORMAL, "SineConditional::should_send('%s'):%d %s\n",
                        attr->get_FOM_name().c_str(), __LINE__,
                        ( send_attr ? "Yes" : "No" ) );

@@ -150,7 +150,7 @@ void EncodingTest::char_test(
    CharData          &data2,
    EncodingEnum const rti_encoding )
 {
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg1;
       msg1 << "========================================\n"
            << "EncodingTest::char_test():" << __LINE__ << "\n"
@@ -200,7 +200,7 @@ void EncodingTest::char_test(
    EncoderBase *data2_ptr_char_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
       data2_trick_base_name + ".ptr_char", rti_encoding ) );
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg2;
       msg2 << "\n"
            << "----------------------------------------\n"
@@ -252,7 +252,7 @@ void EncodingTest::char_test(
               << " Encoded-length:" << data1_ptr_char_encoder->getEncodedLength()
               << "\n";
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       DebugHandler::print_message( encode_msg.str() );
    }
 
@@ -268,19 +268,19 @@ void EncodingTest::char_test(
 
    if ( data1.compare( data2, explanation ) ) {
       compare_msg << "char_data1 == char_data2\n";
-      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
          compare_msg << explanation;
       }
       DebugHandler::print_message( compare_msg.str(), MSG_INFO );
    } else {
       compare_msg << "char_data1 != char_data2\n";
-      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
          compare_msg << explanation;
       }
       DebugHandler::print_message( compare_msg.str(), MSG_ERROR );
    }
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg3;
       msg3 << "EncodingTest::char_test():" << __LINE__ << "\n"
            << "AFTER encode/decode:\n"
@@ -298,7 +298,7 @@ void EncodingTest::string_test(
    StringData        &data2,
    EncodingEnum const rti_encoding )
 {
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg1;
       msg1 << "========================================\n"
            << "EncodingTest::string_test():" << __LINE__ << "\n"
@@ -333,7 +333,7 @@ void EncodingTest::string_test(
    EncoderBase *data2_ptr_string_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
       data2_trick_base_name + ".ptr_string", rti_encoding ) );
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg2;
       msg2 << "\n"
            << "----------------------------------------\n"
@@ -372,19 +372,19 @@ void EncodingTest::string_test(
 
    if ( data1.compare( data2, explanation ) ) {
       compare_msg << "string_data1 == string_data2\n";
-      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
          compare_msg << explanation;
       }
       DebugHandler::print_message( compare_msg.str(), MSG_INFO );
    } else {
       compare_msg << "string_data1 != string_data2\n";
-      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
          compare_msg << explanation;
       }
       DebugHandler::print_message( compare_msg.str(), MSG_ERROR );
    }
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg3;
       msg3 << "\n";
 
@@ -421,7 +421,7 @@ void EncodingTest::string_test(
       message_publish( MSG_DEBUG, msg3.str().c_str() );
    }
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg4;
       msg4 << "EncodingTest::string_test():" << __LINE__ << "\n"
            << "AFTER encode/decode:\n"
@@ -439,7 +439,7 @@ void EncodingTest::wchar_test(
    WCharData         &data2,
    EncodingEnum const rti_encoding )
 {
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg1;
       msg1 << "========================================\n"
            << "EncodingTest::wchar_test():" << __LINE__ << "\n"
@@ -474,7 +474,7 @@ void EncodingTest::wchar_test(
    EncoderBase *data2_ptr_wchar_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
       data2_trick_base_name + ".ptr_wchar", rti_encoding ) );
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg2;
       msg2 << "\n"
            << "----------------------------------------\n"
@@ -513,19 +513,19 @@ void EncodingTest::wchar_test(
 
    if ( data1.compare( data2, explanation ) ) {
       compare_msg << "wchar_data1 == wchar_data2\n";
-      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
          compare_msg << explanation;
       }
       DebugHandler::print_message( compare_msg.str(), MSG_INFO );
    } else {
       compare_msg << "wchar_data1 != wchar_data2\n";
-      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
          compare_msg << explanation;
       }
       DebugHandler::print_message( compare_msg.str(), MSG_ERROR );
    }
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg3;
       msg3 << "EncodingTest::wchar_test():" << __LINE__ << "\n"
            << "AFTER encode/decode:\n"
@@ -543,7 +543,7 @@ void EncodingTest::wstring_test(
    WStringData       &data2,
    EncodingEnum const rti_encoding )
 {
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg1;
       msg1 << "========================================\n"
            << "EncodingTest::wstring_test():" << __LINE__ << "\n"
@@ -578,7 +578,7 @@ void EncodingTest::wstring_test(
    EncoderBase *data2_ptr_wstring_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
       data2_trick_base_name + ".ptr_wstring", rti_encoding ) );
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg2;
       msg2 << "\n"
            << "----------------------------------------\n"
@@ -617,19 +617,19 @@ void EncodingTest::wstring_test(
 
    if ( data1.compare( data2, explanation ) ) {
       compare_msg << "wstring_data1 == wstring_data2\n";
-      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
          compare_msg << explanation;
       }
       DebugHandler::print_message( compare_msg.str(), MSG_INFO );
    } else {
       compare_msg << "wstring_data1 != wstring_data2\n";
-      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
          compare_msg << explanation;
       }
       DebugHandler::print_message( compare_msg.str(), MSG_ERROR );
    }
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg3;
       msg3 << "EncodingTest::wstring_test():" << __LINE__ << "\n"
            << "AFTER encode/decode:\n"
@@ -647,7 +647,7 @@ void EncodingTest::int16_test(
    Int16Data         &data2,
    EncodingEnum const rti_encoding )
 {
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg1;
       msg1 << "========================================\n"
            << "EncodingTest::int16_test():" << __LINE__ << "\n"
@@ -682,7 +682,7 @@ void EncodingTest::int16_test(
    EncoderBase *data2_ptr_i16_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
       data2_trick_base_name + ".ptr_i16", rti_encoding ) );
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg2;
       msg2 << "\n"
            << "----------------------------------------\n"
@@ -721,19 +721,19 @@ void EncodingTest::int16_test(
 
    if ( data1.compare( data2, explanation ) ) {
       compare_msg << "int16_data1 == int16_data2\n";
-      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
          compare_msg << explanation;
       }
       DebugHandler::print_message( compare_msg.str(), MSG_INFO );
    } else {
       compare_msg << "int16_data1 != int16_data2\n";
-      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
          compare_msg << explanation;
       }
       DebugHandler::print_message( compare_msg.str(), MSG_ERROR );
    }
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg3;
       msg3 << "EncodingTest::int16_test():" << __LINE__ << "\n"
            << "AFTER encode/decode:\n"
@@ -751,7 +751,7 @@ void EncodingTest::uint16_test(
    UInt16Data        &data2,
    EncodingEnum const rti_encoding )
 {
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg1;
       msg1 << "========================================\n"
            << "EncodingTest::uint16_test():" << __LINE__ << "\n"
@@ -786,7 +786,7 @@ void EncodingTest::uint16_test(
    EncoderBase *data2_ptr_ui16_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
       data2_trick_base_name + ".ptr_ui16", rti_encoding ) );
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg2;
       msg2 << "\n"
            << "----------------------------------------\n"
@@ -825,19 +825,19 @@ void EncodingTest::uint16_test(
 
    if ( data1.compare( data2, explanation ) ) {
       compare_msg << "uint16_data1 == uint16_data2\n";
-      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
          compare_msg << explanation;
       }
       DebugHandler::print_message( compare_msg.str(), MSG_INFO );
    } else {
       compare_msg << "uint16_data1 != uint16_data2\n";
-      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
          compare_msg << explanation;
       }
       DebugHandler::print_message( compare_msg.str(), MSG_ERROR );
    }
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg3;
       msg3 << "EncodingTest::uint16_test():" << __LINE__ << "\n"
            << "AFTER encode/decode:\n"
@@ -855,7 +855,7 @@ void EncodingTest::int32_test(
    Int32Data         &data2,
    EncodingEnum const rti_encoding )
 {
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg1;
       msg1 << "========================================\n"
            << "EncodingTest::int32_test():" << __LINE__ << "\n"
@@ -890,7 +890,7 @@ void EncodingTest::int32_test(
    EncoderBase *data2_ptr_i32_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
       data2_trick_base_name + ".ptr_i32", rti_encoding ) );
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg2;
       msg2 << "\n"
            << "----------------------------------------\n"
@@ -929,19 +929,19 @@ void EncodingTest::int32_test(
 
    if ( data1.compare( data2, explanation ) ) {
       compare_msg << "int32_data1 == int32_data2\n";
-      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
          compare_msg << explanation;
       }
       DebugHandler::print_message( compare_msg.str(), MSG_INFO );
    } else {
       compare_msg << "int32_data1 != int32_data2\n";
-      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
          compare_msg << explanation;
       }
       DebugHandler::print_message( compare_msg.str(), MSG_ERROR );
    }
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg3;
       msg3 << "EncodingTest::int32_test():" << __LINE__ << "\n"
            << "AFTER encode/decode:\n"
@@ -959,7 +959,7 @@ void EncodingTest::uint32_test(
    UInt32Data        &data2,
    EncodingEnum const rti_encoding )
 {
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg1;
       msg1 << "========================================\n"
            << "EncodingTest::uint32_test():" << __LINE__ << "\n"
@@ -994,7 +994,7 @@ void EncodingTest::uint32_test(
    EncoderBase *data2_ptr_ui32_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
       data2_trick_base_name + ".ptr_ui32", rti_encoding ) );
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg2;
       msg2 << "\n"
            << "----------------------------------------\n"
@@ -1033,19 +1033,19 @@ void EncodingTest::uint32_test(
 
    if ( data1.compare( data2, explanation ) ) {
       compare_msg << "uint32_data1 == uint32_data2\n";
-      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
          compare_msg << explanation;
       }
       DebugHandler::print_message( compare_msg.str(), MSG_INFO );
    } else {
       compare_msg << "uint32_data1 != uint32_data2\n";
-      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
          compare_msg << explanation;
       }
       DebugHandler::print_message( compare_msg.str(), MSG_ERROR );
    }
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg3;
       msg3 << "EncodingTest::uint32_test():" << __LINE__ << "\n"
            << "AFTER encode/decode:\n"
@@ -1063,7 +1063,7 @@ void EncodingTest::int64_test(
    Int64Data         &data2,
    EncodingEnum const rti_encoding )
 {
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg1;
       msg1 << "========================================\n"
            << "EncodingTest::int64_test():" << __LINE__ << "\n"
@@ -1098,7 +1098,7 @@ void EncodingTest::int64_test(
    EncoderBase *data2_ptr_i64_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
       data2_trick_base_name + ".ptr_i64", rti_encoding ) );
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg2;
       msg2 << "\n"
            << "----------------------------------------\n"
@@ -1137,19 +1137,19 @@ void EncodingTest::int64_test(
 
    if ( data1.compare( data2, explanation ) ) {
       compare_msg << "int64_data1 == int64_data2\n";
-      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
          compare_msg << explanation;
       }
       DebugHandler::print_message( compare_msg.str(), MSG_INFO );
    } else {
       compare_msg << "int64_data1 != int64_data2\n";
-      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
          compare_msg << explanation;
       }
       DebugHandler::print_message( compare_msg.str(), MSG_ERROR );
    }
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg3;
       msg3 << "EncodingTest::int64_test():" << __LINE__ << "\n"
            << "AFTER encode/decode:\n"
@@ -1167,7 +1167,7 @@ void EncodingTest::uint64_test(
    UInt64Data        &data2,
    EncodingEnum const rti_encoding )
 {
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg1;
       msg1 << "========================================\n"
            << "EncodingTest::uint64_test():" << __LINE__ << "\n"
@@ -1202,7 +1202,7 @@ void EncodingTest::uint64_test(
    EncoderBase *data2_ptr_ui64_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
       data2_trick_base_name + ".ptr_ui64", rti_encoding ) );
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg2;
       msg2 << "\n"
            << "----------------------------------------\n"
@@ -1241,19 +1241,19 @@ void EncodingTest::uint64_test(
 
    if ( data1.compare( data2, explanation ) ) {
       compare_msg << "uint64_data1 == uint64_data2\n";
-      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
          compare_msg << explanation;
       }
       DebugHandler::print_message( compare_msg.str(), MSG_INFO );
    } else {
       compare_msg << "uint64_data1 != uint64_data2\n";
-      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
          compare_msg << explanation;
       }
       DebugHandler::print_message( compare_msg.str(), MSG_ERROR );
    }
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg3;
       msg3 << "EncodingTest::uint64_test():" << __LINE__ << "\n"
            << "AFTER encode/decode:\n"
@@ -1271,7 +1271,7 @@ void EncodingTest::long_test(
    LongData          &data2,
    EncodingEnum const rti_encoding )
 {
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg1;
       msg1 << "========================================\n"
            << "EncodingTest::long_test():" << __LINE__ << "\n"
@@ -1306,7 +1306,7 @@ void EncodingTest::long_test(
    EncoderBase *data2_ptr_long_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
       data2_trick_base_name + ".ptr_long", rti_encoding ) );
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg2;
       msg2 << "\n"
            << "----------------------------------------\n"
@@ -1345,19 +1345,19 @@ void EncodingTest::long_test(
 
    if ( data1.compare( data2, explanation ) ) {
       compare_msg << "long_data1 == long_data2\n";
-      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
          compare_msg << explanation;
       }
       DebugHandler::print_message( compare_msg.str(), MSG_INFO );
    } else {
       compare_msg << "long_data1 != long_data2\n";
-      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
          compare_msg << explanation;
       }
       DebugHandler::print_message( compare_msg.str(), MSG_ERROR );
    }
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg3;
       msg3 << "EncodingTest::long_test():" << __LINE__ << "\n"
            << "AFTER encode/decode:\n"
@@ -1375,7 +1375,7 @@ void EncodingTest::ulong_test(
    ULongData         &data2,
    EncodingEnum const rti_encoding )
 {
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg1;
       msg1 << "========================================\n"
            << "EncodingTest::ulong_test():" << __LINE__ << "\n"
@@ -1410,7 +1410,7 @@ void EncodingTest::ulong_test(
    EncoderBase *data2_ptr_ulong_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
       data2_trick_base_name + ".ptr_ulong", rti_encoding ) );
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg2;
       msg2 << "\n"
            << "----------------------------------------\n"
@@ -1449,19 +1449,19 @@ void EncodingTest::ulong_test(
 
    if ( data1.compare( data2, explanation ) ) {
       compare_msg << "ulong_data1 == ulong_data2\n";
-      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
          compare_msg << explanation;
       }
       DebugHandler::print_message( compare_msg.str(), MSG_INFO );
    } else {
       compare_msg << "ulong_data1 != ulong_data2\n";
-      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
          compare_msg << explanation;
       }
       DebugHandler::print_message( compare_msg.str(), MSG_ERROR );
    }
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg3;
       msg3 << "EncodingTest::ulong_test():" << __LINE__ << "\n"
            << "AFTER encode/decode:\n"
@@ -1479,7 +1479,7 @@ void EncodingTest::float32_test(
    Float32Data       &data2,
    EncodingEnum const rti_encoding )
 {
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg1;
       msg1 << "========================================\n"
            << "EncodingTest::float32_test():" << __LINE__ << "\n"
@@ -1514,7 +1514,7 @@ void EncodingTest::float32_test(
    EncoderBase *data2_ptr_f32_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
       data2_trick_base_name + ".ptr_f32", rti_encoding ) );
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg2;
       msg2 << "\n"
            << "----------------------------------------\n"
@@ -1553,19 +1553,19 @@ void EncodingTest::float32_test(
 
    if ( data1.compare( data2, explanation ) ) {
       compare_msg << "float32_data1 == float32_data2\n";
-      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
          compare_msg << explanation;
       }
       DebugHandler::print_message( compare_msg.str(), MSG_INFO );
    } else {
       compare_msg << "float32_data1 != float32_data2\n";
-      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
          compare_msg << explanation;
       }
       DebugHandler::print_message( compare_msg.str(), MSG_ERROR );
    }
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg3;
       msg3 << "EncodingTest::float32_test():" << __LINE__ << "\n"
            << "AFTER encode/decode:\n"
@@ -1583,7 +1583,7 @@ void EncodingTest::float64_test(
    Float64Data       &data2,
    EncodingEnum const rti_encoding )
 {
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg1;
       msg1 << "========================================\n"
            << "EncodingTest::float64_test():" << __LINE__ << "\n"
@@ -1618,7 +1618,7 @@ void EncodingTest::float64_test(
    EncoderBase *data2_ptr_f64_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
       data2_trick_base_name + ".ptr_f64", rti_encoding ) );
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg2;
       msg2 << "\n"
            << "----------------------------------------\n"
@@ -1657,19 +1657,19 @@ void EncodingTest::float64_test(
 
    if ( data1.compare( data2, explanation ) ) {
       compare_msg << "float64_data1 == float64_data2\n";
-      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
          compare_msg << explanation;
       }
       DebugHandler::print_message( compare_msg.str(), MSG_INFO );
    } else {
       compare_msg << "float64_data1 != float64_data2\n";
-      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
          compare_msg << explanation;
       }
       DebugHandler::print_message( compare_msg.str(), MSG_ERROR );
    }
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg3;
       msg3 << "EncodingTest::float64_test():" << __LINE__ << "\n"
            << "AFTER encode/decode:\n"
@@ -1687,7 +1687,7 @@ void EncodingTest::bool_test(
    BoolData          &data2,
    EncodingEnum const rti_encoding )
 {
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg1;
       msg1 << "========================================\n"
            << "EncodingTest::bool_test():" << __LINE__ << "\n"
@@ -1722,7 +1722,7 @@ void EncodingTest::bool_test(
    EncoderBase *data2_ptr_bool_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
       data2_trick_base_name + ".ptr_bool", rti_encoding ) );
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg2;
       msg2 << "\n"
            << "----------------------------------------\n"
@@ -1761,19 +1761,19 @@ void EncodingTest::bool_test(
 
    if ( data1.compare( data2, explanation ) ) {
       compare_msg << "bool_data1 == bool_data2\n";
-      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
          compare_msg << explanation;
       }
       DebugHandler::print_message( compare_msg.str(), MSG_INFO );
    } else {
       compare_msg << "bool_data1 != bool_data2\n";
-      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
          compare_msg << explanation;
       }
       DebugHandler::print_message( compare_msg.str(), MSG_ERROR );
    }
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg3;
       msg3 << "EncodingTest::bool_test():" << __LINE__ << "\n"
            << "AFTER encode/decode:\n"
@@ -1791,7 +1791,7 @@ void EncodingTest::enum8_test(
    Enum8Data         &data2,
    EncodingEnum const rti_encoding )
 {
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg1;
       msg1 << "========================================\n"
            << "EncodingTest::enum8_test():" << __LINE__ << "\n"
@@ -1826,7 +1826,7 @@ void EncodingTest::enum8_test(
    EncoderBase *data2_ptr_enum8_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
       data2_trick_base_name + ".ptr_enum8", rti_encoding ) );
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg2;
       msg2 << "\n"
            << "----------------------------------------\n"
@@ -1865,19 +1865,19 @@ void EncodingTest::enum8_test(
 
    if ( data1.compare( data2, explanation ) ) {
       compare_msg << "enum8_data1 == enum8_data2\n";
-      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
          compare_msg << explanation;
       }
       DebugHandler::print_message( compare_msg.str(), MSG_INFO );
    } else {
       compare_msg << "enum8_data1 != enum8_data2\n";
-      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
          compare_msg << explanation;
       }
       DebugHandler::print_message( compare_msg.str(), MSG_ERROR );
    }
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg3;
       msg3 << "EncodingTest::enum8_test():" << __LINE__ << "\n"
            << "AFTER encode/decode:\n"
@@ -1895,7 +1895,7 @@ void EncodingTest::enum16_test(
    Enum16Data        &data2,
    EncodingEnum const rti_encoding )
 {
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg1;
       msg1 << "========================================\n"
            << "EncodingTest::enum16_test():" << __LINE__ << "\n"
@@ -1930,7 +1930,7 @@ void EncodingTest::enum16_test(
    EncoderBase *data2_ptr_enum16_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
       data2_trick_base_name + ".ptr_enum16", rti_encoding ) );
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg2;
       msg2 << "\n"
            << "----------------------------------------\n"
@@ -1969,19 +1969,19 @@ void EncodingTest::enum16_test(
 
    if ( data1.compare( data2, explanation ) ) {
       compare_msg << "enum16_data1 == enum16_data2\n";
-      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
          compare_msg << explanation;
       }
       DebugHandler::print_message( compare_msg.str(), MSG_INFO );
    } else {
       compare_msg << "enum16_data1 != enum16_data2\n";
-      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
          compare_msg << explanation;
       }
       DebugHandler::print_message( compare_msg.str(), MSG_ERROR );
    }
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg3;
       msg3 << "EncodingTest::enum16_test():" << __LINE__ << "\n"
            << "AFTER encode/decode:\n"
@@ -1999,7 +1999,7 @@ void EncodingTest::enum32_test(
    Enum32Data        &data2,
    EncodingEnum const rti_encoding )
 {
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg1;
       msg1 << "========================================\n"
            << "EncodingTest::enum32_test():" << __LINE__ << "\n"
@@ -2034,7 +2034,7 @@ void EncodingTest::enum32_test(
    EncoderBase *data2_ptr_enum32_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
       data2_trick_base_name + ".ptr_enum32", rti_encoding ) );
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg2;
       msg2 << "\n"
            << "----------------------------------------\n"
@@ -2073,19 +2073,19 @@ void EncodingTest::enum32_test(
 
    if ( data1.compare( data2, explanation ) ) {
       compare_msg << "enum32_data1 == enum32_data2\n";
-      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
          compare_msg << explanation;
       }
       DebugHandler::print_message( compare_msg.str(), MSG_INFO );
    } else {
       compare_msg << "enum32_data1 != enum32_data2\n";
-      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
          compare_msg << explanation;
       }
       DebugHandler::print_message( compare_msg.str(), MSG_ERROR );
    }
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg3;
       msg3 << "EncodingTest::enum32_test():" << __LINE__ << "\n"
            << "AFTER encode/decode:\n"
@@ -2103,7 +2103,7 @@ void EncodingTest::enum64_test(
    Enum64Data        &data2,
    EncodingEnum const rti_encoding )
 {
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg1;
       msg1 << "========================================\n"
            << "EncodingTest::enum64_test():" << __LINE__ << "\n"
@@ -2138,7 +2138,7 @@ void EncodingTest::enum64_test(
    EncoderBase *data2_ptr_enum64_encoder = dynamic_cast< EncoderBase * >( EncoderFactory::create(
       data2_trick_base_name + ".ptr_enum64", rti_encoding ) );
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg2;
       msg2 << "\n"
            << "----------------------------------------\n"
@@ -2177,19 +2177,19 @@ void EncodingTest::enum64_test(
 
    if ( data1.compare( data2, explanation ) ) {
       compare_msg << "enum64_data1 == enum64_data2\n";
-      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
          compare_msg << explanation;
       }
       DebugHandler::print_message( compare_msg.str(), MSG_INFO );
    } else {
       compare_msg << "enum64_data1 != enum64_data2\n";
-      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
          compare_msg << explanation;
       }
       DebugHandler::print_message( compare_msg.str(), MSG_ERROR );
    }
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg3;
       msg3 << "EncodingTest::enum64_test():" << __LINE__ << "\n"
            << "AFTER encode/decode:\n"
@@ -2206,7 +2206,7 @@ void EncodingTest::fixed_record_test(
    string const &data2_trick_base_name,
    FixedRecData &data2 )
 {
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg1;
       msg1 << "========================================\n"
            << "EncodingTest::fixed_record_test():" << __LINE__ << "\n"
@@ -2344,19 +2344,19 @@ void EncodingTest::fixed_record_test(
 
    if ( data1.compare( data2, explanation ) ) {
       compare_msg << "(ENCODING_FIXED_RECORD) fixed_rec_data1 == fixed_rec_data2\n";
-      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
          compare_msg << explanation;
       }
       DebugHandler::print_message( compare_msg.str(), MSG_INFO );
    } else {
       compare_msg << "(ENCODING_FIXED_RECORD) fixed_rec_data1 != fixed_rec_data2\n";
-      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
          compare_msg << explanation;
       }
       DebugHandler::print_message( compare_msg.str(), MSG_ERROR );
    }
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg3;
       msg3 << "EncodingTest::fixed_record_test():" << __LINE__ << "\n"
            << "AFTER encode/decode:\n"
@@ -2481,19 +2481,19 @@ void EncodingTest::fixed_record_attribute_test(
 
    if ( data1.compare( data2, explanation ) ) {
       compare_msg << "(ENCODING_FIXED_RECORD) attribute_fixed_rec_data1 == attribute_fixed_rec_data2\n";
-      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
          compare_msg << explanation;
       }
       DebugHandler::print_message( compare_msg.str(), MSG_INFO );
    } else {
       compare_msg << "(ENCODING_FIXED_RECORD) attribute_fixed_rec_data1 != attribute_fixed_rec_data2\n";
-      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+      if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_1_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
          compare_msg << explanation;
       }
       DebugHandler::print_message( compare_msg.str(), MSG_ERROR );
    }
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg3;
       msg3 << "EncodingTest::fixed_record_attribute_test():" << __LINE__ << "\n"
            << "AFTER encode/decode:\n"
@@ -2568,7 +2568,7 @@ void EncodingTest::stc_fixed_record_attribute_test(
       DebugHandler::print_message( compare_msg.str(), MSG_ERROR );
    }
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg3;
       msg3 << "EncodingTest::stc_fixed_record_attribute_test():" << __LINE__ << "\n"
            << "AFTER encode/decode:\n"
@@ -2587,7 +2587,7 @@ void EncodingTest::float64_logical_time_test(
    std::string const &data2_trick_base_name,
    Float64Data       &data2 )
 {
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg1;
       msg1 << "========================================\n"
            << "EncodingTest::float64_logical_time_test():" << __LINE__ << "\n"
@@ -2606,7 +2606,7 @@ void EncodingTest::float64_logical_time_test(
    EncoderBase *data2_f64_logical_time_encoder = EncoderFactory::create(
       data2_trick_base_name + ".f64", rti_encoding );
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg2;
       msg2 << "\n"
            << "----------------------------------------\n"
@@ -2631,7 +2631,7 @@ void EncodingTest::float64_logical_time_test(
       DebugHandler::print_message( compare_msg.str(), MSG_ERROR );
    }
 
-   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SRC_HLA_ENCODERS ) ) {
+   if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg3;
       msg3 << "EncodingTest::float64_logical_time_test():" << __LINE__ << "\n"
            << "AFTER encode/decode:\n"

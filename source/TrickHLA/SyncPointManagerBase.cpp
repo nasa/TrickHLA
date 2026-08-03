@@ -653,7 +653,7 @@ bool SyncPointManagerBase::wait_for_announced(
       }
    }
 
-   bool         print_summary = DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SRC_FEDERATE );
+   bool         print_summary = DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE );
    SleepTimeout print_timer;
    SleepTimeout sleep_timer;
 
@@ -710,7 +710,7 @@ bool SyncPointManagerBase::wait_for_announced(
       }
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SRC_FEDERATE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       // Get the current sync-point status.
       ostringstream message;
       message << "SyncPointManagerBase::wait_for_announced():" << __LINE__
@@ -807,7 +807,7 @@ bool SyncPointManagerBase::achieve_sync_point(
       return false;
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_FEDERATE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream msg;
       msg << "SyncPointManagerBase::achieve_sync_point():" << __LINE__
           << " Known Sync-point " << sp->to_string() << "\n";
@@ -865,7 +865,7 @@ bool SyncPointManagerBase::achieve_sync_point(
 
       // If the synchronization point is already achieved then print out
       // a message.
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_FEDERATE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          string label_str;
          StringUtilities::to_string( label_str, sp->get_label() );
          ostringstream errmsg;
@@ -880,7 +880,7 @@ bool SyncPointManagerBase::achieve_sync_point(
    } else if ( sp->is_synchronized() ) {
       // If the synchronization point is already synchronized, then print
       // out a message and return.
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_FEDERATE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          string label_str;
          StringUtilities::to_string( label_str, sp->get_label() );
          ostringstream errmsg;
@@ -893,7 +893,7 @@ bool SyncPointManagerBase::achieve_sync_point(
       achieved = true;
 
    } else if ( sp->is_registered() ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_FEDERATE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          string label_str;
          StringUtilities::to_string( label_str, sp->get_label() );
          ostringstream errmsg;
@@ -903,7 +903,7 @@ bool SyncPointManagerBase::achieve_sync_point(
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
    } else if ( sp->is_known() ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_FEDERATE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          string label_str;
          StringUtilities::to_string( label_str, sp->get_label() );
          ostringstream errmsg;
@@ -914,7 +914,7 @@ bool SyncPointManagerBase::achieve_sync_point(
       }
    } else {
       // Sync-point is unknown.
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_FEDERATE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          string label_str;
          StringUtilities::to_string( label_str, sp->get_label() );
          ostringstream errmsg;
@@ -1050,7 +1050,7 @@ bool SyncPointManagerBase::wait_for_synchronized(
       return false;
    }
 
-   bool         print_summary = DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_FEDERATE );
+   bool         print_summary = DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE );
    bool         synchronized;
    SleepTimeout print_timer;
    SleepTimeout sleep_timer;
@@ -1115,7 +1115,7 @@ bool SyncPointManagerBase::wait_for_synchronized(
 bool SyncPointManagerBase::achieve_sync_point_and_wait_for_synchronization(
    wstring const &label )
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_FEDERATE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       string label_str;
       StringUtilities::to_string( label_str, label );
       message_publish( MSG_NORMAL, "SyncPointManagerBase::achieve_sync_point_and_wait_for_synchronization():%d Label:'%s'\n",
@@ -1142,7 +1142,7 @@ bool SyncPointManagerBase::achieve_sync_point_and_wait_for_synchronization(
       return false;
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_FEDERATE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       print_sync_points();
    }
    return true;
@@ -1211,7 +1211,7 @@ void SyncPointManagerBase::sync_point_registration_succeeded(
    wstring const &label )
 {
    if ( mark_sync_point_registered( label ) ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_FEDERATE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          string label_str;
          StringUtilities::to_string( label_str, label );
          message_publish( MSG_NORMAL, "SyncPointManagerBase::sync_point_registration_succeeded():%d Label:'%s'\n",
@@ -1241,7 +1241,7 @@ void SyncPointManagerBase::sync_point_registration_failed(
       // we did not do it.
       if ( reason == SYNCHRONIZATION_POINT_LABEL_NOT_UNIQUE ) {
          if ( mark_sync_point_registered( label ) ) {
-            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_FEDERATE ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
                string label_str;
                StringUtilities::to_string( label_str, label );
                message_publish( MSG_NORMAL, "SyncPointManagerBase::sync_point_registration_failed():%d Label:'%s' already exists.\n",
@@ -1291,7 +1291,7 @@ void SyncPointManagerBase::sync_point_announced(
    if ( !contains_sync_point( label ) || contains_sync_point( label, TrickHLA::UNKNOWN_SYNC_POINT_LIST ) ) {
 
       // Unrecognized sync-point. Achieve all unrecognized sync-points.
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          string label_str;
          StringUtilities::to_string( label_str, label );
          message_publish( MSG_NORMAL, "SyncPointManagerBase::sync_point_announced():%d Unrecognized sync-point:'%s', which will be achieved.\n",
@@ -1311,7 +1311,7 @@ void SyncPointManagerBase::sync_point_announced(
 
       // Mark known sync-point as announced.
       if ( mark_sync_point_announced( label, user_supplied_tag ) ) {
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_FEDERATE ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
             string label_str;
             StringUtilities::to_string( label_str, label );
             message_publish( MSG_NORMAL, "SyncPointManagerBase::sync_point_announced():%d Marked sync-point announced:'%s'\n",
@@ -1335,7 +1335,7 @@ void SyncPointManagerBase::sync_point_federation_synchronized(
 {
    // Mark the sync-point as synchronized.
    if ( mark_sync_point_synchronized( label ) ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_FEDERATE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          string label_str;
          StringUtilities::to_string( label_str, label );
          message_publish( MSG_NORMAL, "SyncPointManagerBase::sync_point_federation_synchronized():%d Sync-point synchronized:'%s'\n",

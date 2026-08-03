@@ -234,7 +234,7 @@ void SineData::adjust_phase() // RETURN: -- None.
       }
       phase -= fmod( ( freq * time ), ( 2.0 * M_PI ) );
 
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_ALL_MODULES ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
          message_publish( MSG_NORMAL, "SineData::adjust_phase():%d Adjusting phase, old=%f, new=%f\n",
                           __LINE__, old_phase, phase );
       }

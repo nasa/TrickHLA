@@ -186,8 +186,8 @@ federate = SpaceFOMFederateConfig(
 if ( verbose == True ):
    # federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_4_TRACE )
    federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_6_TRACE )
-   federate.set_debug_source( trick.TrickHLA.DEBUG_SRC_ALL_MODULES )
-   # federate.set_debug_source( trick.TrickHLA.DEBUG_SRC_OBJECT + trick.TrickHLA.DEBUG_SRC_ATTRIBUTE )
+   federate.set_debug_source( trick.TrickHLA.DEBUG_SOURCE_ALL_MODULES )
+   # federate.set_debug_source( trick.TrickHLA.DEBUG_SOURCE_OBJECT + trick.TrickHLA.DEBUG_SOURCE_ATTRIBUTE )
 else:
    # federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )
    federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_1_TRACE )

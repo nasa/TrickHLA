@@ -178,7 +178,7 @@ EncoderBase *EncoderFactory::create(
 #if defined( IEEE_1516_2025 )
          encoder = create_uint16_encoder( address, attr, hla_encoding, data_name );
 #else
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_HLA_ENCODERS ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_HLA_ENCODERS ) ) {
             ostringstream errmsg;
             errmsg << "EncoderFactory::create():" << __LINE__
                    << " WARNING: Trick attributes for the variable '" << data_name
@@ -201,7 +201,7 @@ EncoderBase *EncoderFactory::create(
 #if defined( IEEE_1516_2025 )
          encoder = create_uint32_encoder( address, attr, hla_encoding, data_name );
 #else
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_HLA_ENCODERS ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_HLA_ENCODERS ) ) {
             ostringstream errmsg;
             errmsg << "EncoderFactory::create():" << __LINE__
                    << " WARNING: Trick attributes for the variable '" << data_name
@@ -245,7 +245,7 @@ EncoderBase *EncoderFactory::create(
 #if defined( IEEE_1516_2025 )
                encoder = create_uint32_encoder( address, attr, hla_encoding, data_name );
 #else
-               if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_HLA_ENCODERS ) ) {
+               if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_HLA_ENCODERS ) ) {
                   ostringstream errmsg;
                   errmsg << "EncoderFactory::create():" << __LINE__
                          << " WARNING: Trick attributes for the variable '" << data_name
@@ -262,7 +262,7 @@ EncoderBase *EncoderFactory::create(
 #if defined( IEEE_1516_2025 )
                encoder = create_uint64_encoder( address, attr, hla_encoding, data_name );
 #else
-               if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_HLA_ENCODERS ) ) {
+               if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_HLA_ENCODERS ) ) {
                   ostringstream errmsg;
                   errmsg << "EncoderFactory::create():" << __LINE__
                          << " WARNING: Trick attributes for the variable '" << data_name
@@ -328,7 +328,7 @@ EncoderBase *EncoderFactory::create(
 #if defined( IEEE_1516_2025 )
          encoder = create_uint64_encoder( address, attr, hla_encoding, data_name );
 #else
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_HLA_ENCODERS ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_HLA_ENCODERS ) ) {
             ostringstream errmsg;
             errmsg << "EncoderFactory::create():" << __LINE__
                    << " WARNING: Trick attributes for the variable '" << data_name
@@ -1092,7 +1092,7 @@ EncoderBase *EncoderFactory::create_enum_encoder(
    switch ( attr->size ) {
       case 1: {
          if ( ( hla_encoding != ENCODING_BYTE )
-              && DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_HLA_ENCODERS ) ) {
+              && DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_HLA_ENCODERS ) ) {
             ostringstream msg;
             msg << "EncoderFactory::create_enum_encoder():" << __LINE__
                 << " WARNING: HLA encoding (" << encoding_enum_to_string( hla_encoding )
