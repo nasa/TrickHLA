@@ -117,7 +117,7 @@ void RefFrameLagCompInteg::send_lag_compensation()
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
-   if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SRC_LAG_COMPENSATION ) ) {
       ostringstream errmsg;
       errmsg << "****** RefFrameLagCompInteg::send_lag_compensation():" << __LINE__ << "\n"
              << " scenario-time:" << get_scenario_time() << "\n"
@@ -181,7 +181,7 @@ void RefFrameLagCompInteg::receive_lag_compensation()
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
-   if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SRC_LAG_COMPENSATION ) ) {
       ostringstream errmsg;
       errmsg << "******* RefFrameLagCompInteg::receive_lag_compensation():" << __LINE__ << "\n"
              << "  scenario-time:" << end_t << "\n"

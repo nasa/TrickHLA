@@ -45,7 +45,7 @@ using namespace TrickHLA;
 
 // Initialize the DebugHandler level and code section values.
 DebugLevelEnum  DebugHandler::debug_level  = DEBUG_LEVEL_NO_TRACE;
-DebugSourceEnum DebugHandler::code_section = DEBUG_SOURCE_ALL_MODULES;
+DebugSourceEnum DebugHandler::code_section = DEBUG_SRC_ALL_MODULES;
 
 bool DebugHandler::show(
    DebugLevelEnum const  level,
@@ -65,10 +65,10 @@ void DebugHandler::set(
    } else {
       debug_level = level;
    }
-   if ( code <= DEBUG_SOURCE_NO_MODULES ) {
-      code_section = DEBUG_SOURCE_NO_MODULES;
-   } else if ( code >= DEBUG_SOURCE_ALL_MODULES ) {
-      code_section = DEBUG_SOURCE_ALL_MODULES;
+   if ( code <= DEBUG_SRC_NO_MODULES ) {
+      code_section = DEBUG_SRC_NO_MODULES;
+   } else if ( code >= DEBUG_SRC_ALL_MODULES ) {
+      code_section = DEBUG_SRC_ALL_MODULES;
    } else {
       code_section = code;
    }

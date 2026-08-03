@@ -206,7 +206,7 @@ int PhysicalEntityLagCompSA2::integrate(
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
-   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SRC_LAG_COMPENSATION ) ) {
       ostringstream msg;
       msg << "**** PhysicalEntityLagCompSA2::integrate(): "
           << "Compensate: t_begin, t_end, dt_go: "
@@ -224,7 +224,7 @@ int PhysicalEntityLagCompSA2::integrate(
 
       // Use the inherited debug-handler to allow debug comments to be turned
       // on and off from a setting in the input file.
-      if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SRC_LAG_COMPENSATION ) ) {
          ostringstream msg;
          msg << "****** PhysicalEntityLagCompSA2::integrate(): "
              << "Integ dt, tol, t, dt_go: "
@@ -263,7 +263,7 @@ int PhysicalEntityLagCompSA2::integrate(
    Q_dot.compute_omega( this->lag_comp_data.att, this->lag_comp_data.ang_vel );
 
    // Print out debug information if desired.
-   if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SRC_LAG_COMPENSATION ) ) {
       ostringstream msg;
       msg << "\tOmega: "
           << "\t\t" << this->lag_comp_data.ang_vel[0] << ", "

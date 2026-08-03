@@ -241,7 +241,7 @@ input.py files and reduce input.py file setting errors.
 */
 void ExecutionControl::initialize()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
       ostringstream msg;
       msg << "IMSim::ExecutionControl::initialize():" << __LINE__
           << " Initialization-Scheme:'" << get_type() << "'\n";
@@ -285,7 +285,7 @@ void ExecutionControl::initialize()
          this->use_preset_master = true;
       }
 
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
          if ( is_master() ) {
             message_publish( MSG_NORMAL, "IMSim::ExecutionControl::initialize():%d\n    I AM THE PRESET MASTER\n",
                      __LINE__ );
@@ -304,7 +304,7 @@ void ExecutionControl::initialize()
 */
 void ExecutionControl::pre_multi_phase_init_processes()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
       message_publish( MSG_NORMAL, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d\n",
                        __LINE__ );
    }
@@ -370,7 +370,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
    // Don't forget to enable asynchronous delivery of messages.
    federate->enable_async_delivery();
 
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
       if ( is_master() ) {
          message_publish( MSG_NORMAL, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d\n    I AM THE MASTER\n",
                           __LINE__ );
@@ -410,7 +410,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
             // the contents of 'known_feds'.
             save_restore_service->read_known_federates_from_file( tRestoreName );
 
-            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
                message_publish( MSG_NORMAL, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d \
 You indicated that you want a restore => I AM THE MASTER <= \
 Waiting for the required federates to join.\n",
@@ -450,7 +450,7 @@ Waiting for the required federates to join.\n",
             //
             save_restore_service->copy_running_feds_into_known_feds();
 
-            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
                message_publish( MSG_NORMAL, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d \
 You indicated that you want a restore => I AM THE MASTER <= \
 initiating restore request for '%s' with the RTI.\n",
@@ -518,7 +518,7 @@ initiating restore request for '%s' with the RTI.\n",
             // so we can achieve it later.
             if ( !contains_sync_point( IMSim::STARTUP_SYNC_POINT ) ) {
                add_sync_point( IMSim::STARTUP_SYNC_POINT, IMSim::IMSIM_SYNC_POINT_LIST );
-               if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+               if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
                   string label_str;
                   StringUtilities::to_string( label_str, IMSim::STARTUP_SYNC_POINT );
                   message_publish( MSG_NORMAL, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d Label: '%s'\n",
@@ -540,7 +540,7 @@ initiating restore request for '%s' with the RTI.\n",
             // federation synchronize on it.
             achieve_sync_point_and_wait_for_synchronization( IMSim::STARTUP_SYNC_POINT );
 
-            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
                if ( is_late_joiner() ) {
                   message_publish( MSG_NORMAL, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d\n\t\
 => I AM THE MASTER ** originally a late joining federate ** <= Federation restore is complete\n    \
@@ -658,7 +658,7 @@ Simulation has started and is now running...\n",
          // make sure that we have a valid absolute path to the files.
          save_restore_service->check_HLA_save_directory();
 
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
             message_publish( MSG_NORMAL, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d \
 You indicated that you want a restore => I AM NOT THE MASTER <= \
 loading of the federate from the checkpoint file '%s'.\n",
@@ -730,7 +730,7 @@ loading of the federate from the checkpoint file '%s'.\n",
          // to be synchronized on it.
          achieve_sync_point_and_wait_for_synchronization( IMSim::STARTUP_SYNC_POINT );
 
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
             if ( is_late_joiner() ) {
                message_publish( MSG_NORMAL, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d\n\t\
 => I AM NOT THE MASTER ** originally late joining federate ** <= Federation restore is complete\n    \
@@ -952,7 +952,7 @@ FederateJoinConstraintsEnum ExecutionControl::determine_if_late_joining_or_resto
 
    if ( late_joiner_determined ) {
 
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
          message_publish( MSG_NORMAL, "IMSim::ExecutionControl::determine_if_late_joining_or_restoring_federate_IMSim():%d Late Joining Federate:%s\n",
                           __LINE__, ( is_late_joiner() ? "Yes" : "No" ) );
       }
@@ -960,7 +960,7 @@ FederateJoinConstraintsEnum ExecutionControl::determine_if_late_joining_or_resto
 
    } else if ( is_restore_determined() ) {
 
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
          message_publish( MSG_NORMAL, "IMSim::ExecutionControl::determine_if_late_joining_or_restoring_federate_IMSim():%d Restoring the Federate!\n",
                           __LINE__ );
       }
@@ -1131,7 +1131,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
            &attrIMSim__FreezeInteractionHandler[attr_index],
            sizeof( ATTRIBUTES ) );
 
-   if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
       ostringstream msg2;
       msg2 << "IMSim::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__ << "\n"
            << "--------------- Trick REF-Attributes ---------------\n"
@@ -1142,7 +1142,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
    // Initialize the TrickHLA Interaction before we use it.
    freeze_interaction->initialize( this->federate );
 
-   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
       ostringstream msg2;
       msg2 << "IMSim::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__
            << " FOM-Parameter:'" << tParm[0].get_FOM_name() << "'"
@@ -1235,7 +1235,7 @@ void ExecutionControl::sync_point_announced(
 
    // Check for the case when the SyncPoint is FEDSAVE_SYNC_POINT.
    if ( label.compare( IMSim::FEDSAVE_SYNC_POINT ) == 0 ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
          ostringstream msg2;
          string        save_sp_label;
          StringUtilities::to_string( save_sp_label, IMSim::FEDSAVE_SYNC_POINT );
@@ -1368,7 +1368,7 @@ bool ExecutionControl::receive_interaction(
       if ( freeze_interaction[i].is_subscribe()
            && ( freeze_interaction[i].get_class_handle() == theInteraction ) ) {
 
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
             string handle;
             StringUtilities::to_string( handle, theInteraction );
 
@@ -1573,7 +1573,7 @@ void ExecutionControl::set_next_execution_control_mode(
       }
       default: {
          this->requested_execution_control_mode = TrickHLA::EXECUTION_CONTROL_UNINITIALIZED;
-         if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
             ostringstream errmsg;
             errmsg << "IMSim::ExecutionControl::set_next_execution_mode():"
                    << __LINE__ << " WARNING: Unknown execution mode value: "
@@ -1634,7 +1634,7 @@ bool ExecutionControl::process_mode_transition_request()
    ExecutionConfiguration *ExCO = get_execution_configuration();
 
    // Print diagnostic message if appropriate.
-   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
       ostringstream msg;
       msg << "=============================================================\n"
           << "IMSim::ExecutionControl::process_mode_transition_request()\n"
@@ -1933,7 +1933,7 @@ bool ExecutionControl::process_execution_control_updates()
             }
             case TrickHLA::EXECUTION_CONTROL_FREEZE: {
                // Print diagnostic message if appropriate.
-               if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+               if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
                   ostringstream msg;
                   msg << "ExecutionControl::process_execution_control_updates():" << __LINE__ << "\n"
                       << "\t current_scenario_time:     " << setprecision( 18 ) << scenario_timeline->get_time() << "\n"
@@ -2116,7 +2116,7 @@ bool ExecutionControl::run_mode_transition()
 
               diff = go_to_run_time - get_cte_time();
               if ( fmod( diff, 1.0 ) == 0.0 ) {
-                 if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+                 if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
                     message_publish( MSG_NORMAL, "IMSim::ExecutionControl::run_mode_transition():%d Going to run in %G seconds.\n",
                              __LINE__, diff );
                  }
@@ -2124,7 +2124,7 @@ bool ExecutionControl::run_mode_transition()
            }
 
            // Print debug message if appropriate.
-           if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+           if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
               double curr_cte_time = get_cte_time();
               diff                 = curr_cte_time - go_to_run_time;
               message_publish( MSG_NORMAL, "IMSim::ExecutionControl::run_mode_transition():%d\n  Going to run at CTE time %.18G seconds.\n  Current CTE time %.18G seconds.\n  Difference: %.9lf seconds.\n",
@@ -2237,7 +2237,7 @@ void ExecutionControl::enter_freeze()
       if ( ( !is_freeze_pending() ) && ( get_sim_time() > 0.0 ) ) {
          double freeze_scenario_time = -DBL_MAX; // freeze immediately
 
-         if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
             message_publish( MSG_NORMAL,
                              "IMSim::ExecutionControl::enter_freeze():%d announce_freeze:%s, freeze_federation:%s, freeze_scenario_time:%g\n",
                              __LINE__, ( is_freeze_announced() ? "Yes" : "No" ),
@@ -2290,7 +2290,7 @@ void ExecutionControl::check_pause( double const check_pause_delta )
    }
 
    if ( is_freeze_pending() ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
          message_publish( MSG_NORMAL, "IMSim::ExecutionControl::check_pause():%d Commanding Trick Executive to FREEZE.\n",
                           __LINE__ );
       }
@@ -2330,7 +2330,7 @@ void ExecutionControl::start_federation_save_at_SST(
 
    if ( freeze_interaction->get_handler() != NULL ) {
 
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
          message_publish( MSG_NORMAL, "IMSim::ExecutionControl::start_federation_save_at_scenario_time(%g, '%s'):%d\n",
                           freeze_sst, save_label.c_str(), __LINE__ );
       }
@@ -2344,7 +2344,7 @@ void ExecutionControl::start_federation_save_at_SST(
 
    } else {
 
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
          message_publish( MSG_NORMAL, "IMSim::ExecutionControl::start_federation_save_at_scenario_time(%g, '%s'):%d \
 freeze_interaction's HANLDER is NULL! Request was ignored!\n",
                           freeze_sst, save_label.c_str(), __LINE__ );
@@ -2451,7 +2451,7 @@ bool ExecutionControl::check_scenario_freeze_time()
             freeze_scenario_times.erase( iter );
             set_freeze_pending( true );
 
-            if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
                // Determine the freeze simulation-time for the equivalent freeze
                // scenario-time.
                double const freeze_sim_time = curr_sim_time + ( freeze_time - curr_scenario_time );

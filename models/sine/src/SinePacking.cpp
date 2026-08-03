@@ -166,7 +166,7 @@ void SinePacking::pack()
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_PACKING ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_PACKING ) ) {
       string const  obj_name = ( this->object != NULL ) ? object->get_name() : "";
       ostringstream msg;
       msg << "SinePacking::pack():" << __LINE__ << "\n"
@@ -232,7 +232,7 @@ void SinePacking::pack()
    }
 
    // Output more debug information for a higher debug-level.
-   if ( DebugHandler::show( DEBUG_LEVEL_10_TRACE, DEBUG_SOURCE_PACKING ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_10_TRACE, DEBUG_SRC_PACKING ) ) {
 
       ostringstream msg;
 
@@ -315,7 +315,7 @@ void SinePacking::unpack()
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_PACKING ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_PACKING ) ) {
 
       string const obj_name = ( this->object != NULL ) ? object->get_name() : "";
 
@@ -382,7 +382,7 @@ void SinePacking::unpack()
    }
 
    // Output more debug information for a higher debug-level.
-   if ( DebugHandler::show( DEBUG_LEVEL_10_TRACE, DEBUG_SOURCE_PACKING ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_10_TRACE, DEBUG_SRC_PACKING ) ) {
 
       ostringstream msg;
 

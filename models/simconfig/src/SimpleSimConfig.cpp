@@ -163,7 +163,7 @@ void SimpleSimConfig::pack()
 
    ostringstream msg;
 
-   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_PACKING ) ) {
       msg << "===================================================\n";
    }
 
@@ -172,7 +172,7 @@ void SimpleSimConfig::pack()
    // Set the stop/termination time of the Trick simulation based on the
    // run_duration setting.
    if ( terminate_time >= 1.0e20 ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_PACKING ) ) {
          msg << "SimpleSimConfig::pack():" << __LINE__
              << " Setting simulation termination time to "
              << run_duration << " seconds.\n";
@@ -186,7 +186,7 @@ void SimpleSimConfig::pack()
          run_duration = 0.0;
       }
 
-      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_PACKING ) ) {
          msg << "SimpleSimConfig::pack(:" << __LINE__
              << " Setting simulation duration to "
              << run_duration << " seconds.\n";
@@ -196,7 +196,7 @@ void SimpleSimConfig::pack()
    // Encode the run duration into a 64 bit integer in the base time.
    this->run_duration_base_time = Int64BaseTime::to_base_time( this->run_duration );
 
-   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_PACKING ) ) {
       msg << "SimpleSimConfig::pack():" << __LINE__ << "\n"
           << "\t Object-Name:'" << object->get_name() << "'\n"
           << "\t owner:'" << ( owner != NULL ? owner : "" ) << "'\n"
@@ -220,7 +220,7 @@ void SimpleSimConfig::unpack()
    }
 
    ostringstream msg;
-   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_PACKING ) ) {
       msg << "===================================================\n";
    }
 
@@ -230,7 +230,7 @@ void SimpleSimConfig::unpack()
    // Set the stop/termination time of the Trick simulation based on the
    // run_duration setting.
    if ( run_duration >= 0.0 ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_PACKING ) ) {
          msg << "SimpleSimConfig::unpack():" << __LINE__
              << " Setting simulation duration to "
              << run_duration << " seconds.\n";
@@ -238,7 +238,7 @@ void SimpleSimConfig::unpack()
       exec_set_terminate_time( this->run_duration );
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_PACKING ) ) {
       msg << "SimpleSimConfig::unpack():" << __LINE__ << "\n"
           << "\t Object-Name:'" << object->get_name() << "'\n"
           << "\t owner:'" << ( owner != NULL ? owner : "" ) << "'\n"

@@ -163,7 +163,7 @@ void MTRInteractionHandler::send_interaction(
    bool const was_sent = InteractionHandler::send_interaction( rti_user_supplied_tag );
 
    if ( was_sent ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_INTERACTION ) ) {
 
          string rti_user_supplied_tag_string;
          StringUtilities::to_string( rti_user_supplied_tag_string, rti_user_supplied_tag );
@@ -192,7 +192,7 @@ void MTRInteractionHandler::send_interaction(
    } else {
       // Use the inherited debug-handler to allow debug comments to be turned
       // on and off from a setting in the input.py file. Use a higher debug level.
-      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_INTERACTION ) ) {
 
          // Get the current time line values.
          scenario_time = get_scenario_time();
@@ -266,7 +266,7 @@ void MTRInteractionHandler::receive_interaction(
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input.py file.
-   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_INTERACTION ) ) {
 
       string user_supplied_tag_string;
       StringUtilities::to_string( user_supplied_tag_string, the_user_supplied_tag );

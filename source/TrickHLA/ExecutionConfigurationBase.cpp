@@ -219,7 +219,7 @@ void ExecutionConfigurationBase::set_master(
  */
 void ExecutionConfigurationBase::wait_for_registration()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONFIG ) ) {
       message_publish( MSG_NORMAL, "ExecutionConfigurationBase::wait_for_registration():%d\n",
                        __LINE__ );
    }
@@ -227,7 +227,7 @@ void ExecutionConfigurationBase::wait_for_registration()
    Federate *federate = get_federate();
 
    int       obj_reg_cnt   = 0;
-   bool      print_summary = DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG );
+   bool      print_summary = DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONFIG );
    bool      any_unregistered_obj;
    int const total_obj_cnt = 1;
 
@@ -253,7 +253,7 @@ void ExecutionConfigurationBase::wait_for_registration()
          if ( cnt > obj_reg_cnt ) {
             obj_reg_cnt = cnt;
             if ( !print_summary ) {
-               print_summary = DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG );
+               print_summary = DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONFIG );
             }
          }
       }
@@ -333,7 +333,7 @@ bool ExecutionConfigurationBase::wait_for_update() // RETURN: -- None.
       return false;
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONFIG ) ) {
       message_publish( MSG_NORMAL, "ExecutionConfigurationBase::wait_for_update():%d Waiting...\n",
                        __LINE__ );
    }
@@ -379,7 +379,7 @@ bool ExecutionConfigurationBase::wait_for_update() // RETURN: -- None.
          }
       }
 
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONFIG ) ) {
          message_publish( MSG_NORMAL, "ExecutionConfigurationBase::wait_for_update():%d Received data.\n",
                           __LINE__ );
       }

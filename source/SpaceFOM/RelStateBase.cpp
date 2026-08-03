@@ -107,7 +107,7 @@ bool RelStateBase::set_frame(
       return ( true );
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SRC_ALL_MODULES ) ) {
       ostringstream errmsg;
       errmsg << "RelStateBase::set_frame() Warning: Reference frame "
              << wrt_frame << " not found!\n";
@@ -131,7 +131,7 @@ bool RelStateBase::set_frame(
       return ( true );
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SRC_ALL_MODULES ) ) {
       ostringstream errmsg;
       errmsg << "RelStateBase::set_frame() Warning: Reference frame "
              << wrt_frame << " not found!\n";
@@ -176,7 +176,7 @@ bool RelStateBase::compute_state(
 
    // Check for NULL frame.
    if ( entity == NULL ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SRC_ALL_MODULES ) ) {
          ostringstream errmsg;
          errmsg << "RelStateBase::compute_state() Warning: PhysicalEntityData NULL!\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
@@ -187,7 +187,7 @@ bool RelStateBase::compute_state(
    // Find the entity parent frame in the tree.
    RefFrameBase const *entity_subject_frame = frame_tree->find_frame( entity->parent_frame );
    if ( entity_subject_frame == NULL ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SRC_ALL_MODULES ) ) {
          ostringstream errmsg;
          errmsg << "RelStateBase::compute_state() Warning: Could not find subject frame: %s!\n";
          message_publish( MSG_WARNING, entity->parent_frame.c_str(), errmsg.str().c_str() );
@@ -222,7 +222,7 @@ bool RelStateBase::compute_state(
    // Ask the Reference Frame Tree to build the transformation for the entity
    // subject reference frame with respect to the desired express (target) frame.
    if ( !frame_tree->build_transform( entity_subject_frame, express_frame, &path_transform ) ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SRC_ALL_MODULES ) ) {
          ostringstream errmsg;
          errmsg << "RelStateBase::compute_state() Warning: Could not build frame transformation: %s/%s!\n";
          message_publish( MSG_WARNING, entity->parent_frame.c_str(), express_frame->name.c_str(), errmsg.str().c_str() );
@@ -364,7 +364,7 @@ bool RelStateBase::compute_state(
 {
    // Check for NULL frame.
    if ( wrt_frame == NULL ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SRC_ALL_MODULES ) ) {
          ostringstream errmsg;
          errmsg << "RelStateBase::compute_state() Warning: Reference frame NULL!\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );

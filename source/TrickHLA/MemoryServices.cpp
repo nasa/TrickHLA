@@ -78,8 +78,7 @@ bool MemoryServices::delete_var( std::string const &var_name )
    // Delete the variable name in Trick memory.
    // NOTE: trick_MM->delete_var returns 0 on success and 1 on failure!
    if ( trick_MM->delete_var( const_cast< std::string & >( var_name ) ) ) {
-      // FIXME: Should we add a DEBUG_SOURCE_MEMORY debug type?
-      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_MEMORY_SERVICES ) ) {
          ostringstream msg;
          msg << "MemoryServices::delete_var():" << __LINE__
              << " WARNING: Could not delete variable: " << var_name << "\n";

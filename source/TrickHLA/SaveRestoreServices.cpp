@@ -258,7 +258,7 @@ bool SaveRestoreServices::check_HLA_save_directory()
    // Check for the existence of the path and that it is a directory.
    if ( stat( this->HLA_save_directory.c_str(), &info ) != 0 ) {
 
-      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_SAVE_RESTORE_SERVICES ) ) {
          ostringstream msg;
          msg << "SaveRestoreServices::check_HLA_save_directory():" << __LINE__
              << " ERROR: Save directory path \'" << this->HLA_save_directory
@@ -270,7 +270,7 @@ bool SaveRestoreServices::check_HLA_save_directory()
 
    } else if ( ( info.st_mode & S_IFDIR ) == 0 ) { // NOLINT(misc-include-cleaner)
 
-      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_SAVE_RESTORE_SERVICES ) ) {
          ostringstream msg;
          msg << "SaveRestoreServices::check_HLA_save_directory():" << __LINE__
              << " ERROR: Save directory path \'" << this->HLA_save_directory
@@ -297,7 +297,7 @@ bool SaveRestoreServices::save_set_state( THLASaveProcessEnum state )
    if ( ( !execution_control->is_save_and_restore_supported() )
         && ( state != THLASaveProcessEnum::SAVE_UNSUPPORTED ) ) {
 
-      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_SAVE_RESTORE_SERVICES ) ) {
          message_publish( MSG_WARNING,
                           "SaveRestoreServices::save_set_label():%d: HLA SaveRestore NOT supported!\n",
                           __LINE__ );
@@ -326,7 +326,7 @@ void SaveRestoreServices::save_set_time(
         && ( this->save_state != THLASaveProcessEnum::SAVE_REQUESTED )
         && ( this->save_state != THLASaveProcessEnum::SAVE_UNSUPPORTED ) ) {
 
-      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_SAVE_RESTORE_SERVICES ) ) {
          message_publish( MSG_WARNING, "SaveRestoreServices::save_set_time():%d: Save already in progress: \'%s\'!\n",
                           __LINE__, TrickHLA::to_string( save_state ).c_str() );
       }
@@ -337,7 +337,7 @@ void SaveRestoreServices::save_set_time(
    Int64Time const granted_time = time_management_service->get_granted_time();
    if ( time < granted_time ) {
 
-      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_SAVE_RESTORE_SERVICES ) ) {
          std::string label_str;
          StringUtilities::to_string( label_str, save_label );
          ostringstream msg;
@@ -369,7 +369,7 @@ void SaveRestoreServices::save_request(
 {
    // If Federation SaveRestore is not supported then return without action.
    if ( save_state == THLASaveProcessEnum::SAVE_UNSUPPORTED ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_SAVE_RESTORE_SERVICES ) ) {
          message_publish( MSG_WARNING, "SaveRestoreServices::save_request():%d: HLA SaveRestore NOT supported!\n",
                           __LINE__ );
       }
@@ -380,7 +380,7 @@ void SaveRestoreServices::save_request(
    if ( ( save_state != THLASaveProcessEnum::SAVE_NONE )
         && ( save_state != THLASaveProcessEnum::SAVE_UNSUPPORTED ) ) {
 
-      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_SAVE_RESTORE_SERVICES ) ) {
          message_publish( MSG_WARNING, "SaveRestoreServices::save_request():%d: Save already in progress: \'%s\'!\n",
                           __LINE__, TrickHLA::to_string( save_state ).c_str() );
       }
@@ -406,7 +406,7 @@ void SaveRestoreServices::save_request(
 
    // Make the RTI ambassador call to request a Federation Save.
    try {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_SAVE_RESTORE_SERVICES ) ) {
          string label_str;
          StringUtilities::to_string( label_str, this->save_label );
          message_publish( MSG_NORMAL, "SaveRestoreServices::save_request():%d: save_label: \'%s\'\n",
@@ -457,7 +457,7 @@ void SaveRestoreServices::save( wstring const &label )
 
    // If Federation SaveRestore is not supported then return without action.
    if ( save_state == THLASaveProcessEnum::SAVE_UNSUPPORTED ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SRC_SAVE_RESTORE_SERVICES ) ) {
          message_publish( MSG_WARNING, "SaveRestoreServices::save():%d: HLA SaveRestore NOT supported!\n",
                           __LINE__ );
       }
@@ -466,7 +466,7 @@ void SaveRestoreServices::save( wstring const &label )
 
    // Do a little sanity checking.
    if ( save_state != THLASaveProcessEnum::SAVE_REQUESTED ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_SAVE_RESTORE_SERVICES ) ) {
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::save():" << __LINE__
                 << " WARNING: Save state mismatch: "
@@ -544,7 +544,7 @@ void SaveRestoreServices::save( wstring const &label )
       // Make the call to the RTI Ambassador to mark our Save as complete.
       federate->get_RTI_ambassador()->federateSaveComplete();
 
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_SAVE_RESTORE_SERVICES ) ) {
          message_publish( MSG_NORMAL, "SaveRestoreServices::save():%d: Federate Save Completed.\n",
                           __LINE__ );
       }
@@ -585,7 +585,7 @@ bool SaveRestoreServices::save_in_progress_check()
 {
    // If Federation SaveRestore is not supported then return without action.
    if ( save_state == THLASaveProcessEnum::SAVE_UNSUPPORTED ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SRC_SAVE_RESTORE_SERVICES ) ) {
          message_publish( MSG_WARNING, "SaveRestoreServices::save_in_progress_check():%d: HLA SaveRestore NOT supported!\n",
                           __LINE__ );
       }
@@ -593,7 +593,7 @@ bool SaveRestoreServices::save_in_progress_check()
    }
 
    if ( save_state == THLASaveProcessEnum::SAVE_IN_PROGRESS ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_SAVE_RESTORE_SERVICES ) ) {
          std::string label_str;
          StringUtilities::to_string( label_str, save_label );
          message_publish( MSG_WARNING, "SaveRestoreServices::save_in_progress_check():%d: HLA Save for label \'%s\' in progress!\n",
@@ -614,7 +614,7 @@ void SaveRestoreServices::save_succeded()
 
    // If Federation SaveRestore is not supported then return without action.
    if ( save_state == THLASaveProcessEnum::SAVE_UNSUPPORTED ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SRC_SAVE_RESTORE_SERVICES ) ) {
          message_publish( MSG_WARNING, "SaveRestoreServices::save_succeded():%d: HLA SaveRestore NOT supported!\n",
                           __LINE__ );
       }
@@ -649,7 +649,7 @@ void SaveRestoreServices::save_failed()
 
    // If Federation SaveRestore is not supported then return without action.
    if ( save_state == THLASaveProcessEnum::SAVE_UNSUPPORTED ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SRC_SAVE_RESTORE_SERVICES ) ) {
          message_publish( MSG_WARNING, "SaveRestoreServices::save_failed():%d: HLA SaveRestore NOT supported!\n",
                           __LINE__ );
       }
@@ -669,7 +669,7 @@ void SaveRestoreServices::save_failed()
    }
 
    // Print out an error message.
-   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_SAVE_RESTORE_SERVICES ) ) {
       ostringstream msg;
       msg << "SaveRestoreServices::save_failed():" << __LINE__
           << " : Save for label \'" << label_str
@@ -791,7 +791,7 @@ void SaveRestoreServices::print_save_failure_reason(
  */
 void SaveRestoreServices::request_federation_save_status() // cppcheck-suppress [functionStatic, unmatchedSuppression]
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SRC_SAVE_RESTORE_SERVICES ) ) {
       message_publish( MSG_NORMAL, "SaveRestoreServices::request_federation_save_status():%d\n",
                        __LINE__ );
    }
@@ -1069,7 +1069,7 @@ bool SaveRestoreServices::restore_set_state( THLARestoreProcessEnum state )
    if ( ( !execution_control->is_save_and_restore_supported() )
         && ( state != THLARestoreProcessEnum::RESTORE_UNSUPPORTED ) ) {
 
-      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_SAVE_RESTORE_SERVICES ) ) {
          message_publish( MSG_WARNING, "SaveRestoreServices::restore_set_state():%d: HLA SaveRestore NOT supported!\n",
                           __LINE__ );
       }
@@ -1094,7 +1094,7 @@ void SaveRestoreServices::restore_request_status()
    // Just return if HLA save and restore is not supported by the simulation
    // initialization scheme selected by the user.
    if ( !execution_control->is_save_and_restore_supported() ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_SAVE_RESTORE_SERVICES ) ) {
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::restore_request_status():" << __LINE__
                 << " WARNING: SaveRestore NOT supported!\n";
@@ -1103,7 +1103,7 @@ void SaveRestoreServices::restore_request_status()
       return;
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SRC_SAVE_RESTORE_SERVICES ) ) {
       message_publish( MSG_NORMAL, "SaveRestoreServices::restore_request_status():%d\n",
                        __LINE__ );
    }
@@ -1155,7 +1155,7 @@ void SaveRestoreServices::restore_waiting_for_request_status()
    // Just return if HLA save and restore is not supported by the simulation
    // execution control scheme selected by the user.
    if ( !execution_control->is_save_and_restore_supported() ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_SAVE_RESTORE_SERVICES ) ) {
          ostringstream errmsg;
          errmsg << "SaveRestoreServices::restore_waiting_for_request_status():" << __LINE__
                 << " WARNING: SaveRestore NOT supported!\n";
@@ -1173,7 +1173,7 @@ void SaveRestoreServices::restore_waiting_for_request_status()
    if ( restore_status_response.empty() ) {
 
       // Check to see if we want to print out a wait message.
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_SAVE_RESTORE_SERVICES ) ) {
          if ( execution_control->process_timer.timeout( execution_control->process_timer.time() ) ) {
             execution_control->process_timer.reset();
             message_publish( MSG_NORMAL,
@@ -1223,7 +1223,7 @@ void SaveRestoreServices::restore_waiting_for_request_status()
       // Set the Restore status to indicate that the status request is complete.
       restore_state = THLARestoreProcessEnum::RESTORE_STATUS_COMPLETE;
 
-      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SRC_SAVE_RESTORE_SERVICES ) ) {
          ostringstream msg;
          msg << "SaveRestoreServices::restore_waiting_for_request_status():" << __LINE__
              << " Restore status response complete.\n";
@@ -1242,7 +1242,7 @@ void SaveRestoreServices::restore_request( wstring const &label )
    // Just return if HLA save and restore is not supported by the simulation
    // initialization scheme selected by the user.
    if ( !execution_control->is_save_and_restore_supported() ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_SAVE_RESTORE_SERVICES ) ) {
          string label_str;
          StringUtilities::to_string( label_str, label );
          ostringstream errmsg;
@@ -1272,7 +1272,7 @@ void SaveRestoreServices::restore_request( wstring const &label )
       this->restore_label = label;
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_SAVE_RESTORE_SERVICES ) ) {
       string name_str;
       StringUtilities::to_string( name_str, this->restore_label );
       message_publish( MSG_NORMAL,
@@ -1387,7 +1387,7 @@ void SaveRestoreServices::restore_waiting_for_request()
    // Just return if HLA save and restore is not supported by the simulation
    // initialization scheme selected by the user.
    if ( !execution_control->is_save_and_restore_supported() ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_SAVE_RESTORE_SERVICES ) ) {
          string label_str;
          StringUtilities::to_string( label_str, restore_label );
          ostringstream errmsg;
@@ -1408,7 +1408,7 @@ void SaveRestoreServices::restore_waiting_for_request()
    // RTIamb->requestFederationRestore call.
 
    // Check to see if we want to print out a wait message.
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_SAVE_RESTORE_SERVICES ) ) {
       if ( execution_control->process_timer.timeout( execution_control->process_timer.time() ) ) {
          execution_control->process_timer.reset();
          message_publish( MSG_NORMAL,
@@ -1428,7 +1428,7 @@ void SaveRestoreServices::restore_waiting_for_begun()
    // Just return if HLA save and restore is not supported by the simulation
    // initialization scheme selected by the user.
    if ( !execution_control->is_save_and_restore_supported() ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_SAVE_RESTORE_SERVICES ) ) {
          string label_str;
          StringUtilities::to_string( label_str, restore_label );
          ostringstream errmsg;
@@ -1445,7 +1445,7 @@ void SaveRestoreServices::restore_waiting_for_begun()
       return;
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_SAVE_RESTORE_SERVICES ) ) {
       if ( execution_control->process_timer.timeout( execution_control->process_timer.time() ) ) {
 
          execution_control->process_timer.reset();
@@ -1488,7 +1488,7 @@ void SaveRestoreServices::restore_begun()
 {
    // If Federation SaveRestore is not supported then return without action.
    if ( this->restore_state == THLARestoreProcessEnum::RESTORE_UNSUPPORTED ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SRC_SAVE_RESTORE_SERVICES ) ) {
          message_publish( MSG_WARNING, "SaveRestoreServices::restore_begun():%d: HLA SaveRestore NOT supported!\n",
                           __LINE__ );
       }
@@ -1513,7 +1513,7 @@ void SaveRestoreServices::restore_waiting_for_initiated()
    // Just return if HLA save and restore is not supported by the simulation
    // initialization scheme selected by the user.
    if ( !execution_control->is_save_and_restore_supported() ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_SAVE_RESTORE_SERVICES ) ) {
          string label_str;
          StringUtilities::to_string( label_str, restore_label );
          ostringstream errmsg;
@@ -1531,7 +1531,7 @@ void SaveRestoreServices::restore_waiting_for_initiated()
    }
 
    // Check to see if we want to print out a wait message.
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_SAVE_RESTORE_SERVICES ) ) {
       if ( execution_control->process_timer.timeout( execution_control->process_timer.time() ) ) {
          execution_control->process_timer.reset();
          message_publish( MSG_NORMAL,
@@ -1558,7 +1558,7 @@ void SaveRestoreServices::restore_initiated(
    // Just return if HLA save and restore is not supported by the simulation
    // initialization scheme selected by the user.
    if ( !execution_control->is_save_and_restore_supported() ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_SAVE_RESTORE_SERVICES ) ) {
          string label_str;
          StringUtilities::to_string( label_str, restore_label );
          string fed_name_str;
@@ -1615,7 +1615,7 @@ void SaveRestoreServices::restore_initiated(
    }
 
    // Report status to the user.
-   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_SAVE_RESTORE_SERVICES ) ) {
       message_publish( MSG_NORMAL, "SaveRestoreServices::restore_initiated():%d: Restoring from checkpoint file %s\n",
                        __LINE__, checkpoint_file_name.c_str() );
    }
@@ -1666,7 +1666,7 @@ void SaveRestoreServices::restore_waiting_for_checkpoint_load()
 {
    // If Federation SaveRestore is not supported then return without action.
    if ( this->restore_state == THLARestoreProcessEnum::RESTORE_UNSUPPORTED ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SRC_SAVE_RESTORE_SERVICES ) ) {
          message_publish( MSG_WARNING, "SaveRestoreServices::restore_waiting_for_completion():%d: HLA SaveRestore NOT supported!\n",
                           __LINE__ );
       }
@@ -1694,7 +1694,7 @@ void SaveRestoreServices::restore_waiting_for_checkpoint_load()
    // If so, the restore_state should be THLARestoreProcessEnum::RESTORE_INITIATED.
    // If not, then we are not in the Restore state we think we should be in.
    if ( this->restore_state == THLARestoreProcessEnum::RESTORE_INITIATED ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_SAVE_RESTORE_SERVICES ) ) {
          if ( execution_control->process_timer.timeout( execution_control->process_timer.time() ) ) {
             execution_control->process_timer.reset();
             string restore_label_str;
@@ -1728,7 +1728,7 @@ void SaveRestoreServices::restore_after_checkpoint_load()
 {
    // If Federation SaveRestore is not supported then return without action.
    if ( this->restore_state == THLARestoreProcessEnum::RESTORE_UNSUPPORTED ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SRC_SAVE_RESTORE_SERVICES ) ) {
          message_publish( MSG_WARNING, "SaveRestoreServices::restore_after_checkpoint_load():%d: HLA SaveRestore NOT supported!\n",
                           __LINE__ );
       }
@@ -1737,7 +1737,7 @@ void SaveRestoreServices::restore_after_checkpoint_load()
 
    // Make sure to reset the Save state.
    if ( save_state != THLASaveProcessEnum::SAVE_NONE ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_SAVE_RESTORE_SERVICES ) ) {
          string label_str;
          StringUtilities::to_string( label_str, restore_label );
          ostringstream errmsg;
@@ -1766,7 +1766,7 @@ void SaveRestoreServices::restore_after_checkpoint_load()
       return;
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_SAVE_RESTORE_SERVICES ) ) {
       message_publish( MSG_NORMAL, "SaveRestoreServices::restore_after_checkpoint_load():%d: Rebuilding HLA Handles.\n",
                        __LINE__ );
    }
@@ -1792,7 +1792,7 @@ void SaveRestoreServices::restore_after_checkpoint_load()
    // Restore interactions and sync points
    // reinstate_sync_pts();
 
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_SAVE_RESTORE_SERVICES ) ) {
       message_publish( MSG_NORMAL, "SaveRestoreServices::restore_after_checkpoint_load():%d: Rebuilt HLA federate state.\n",
                        __LINE__ );
    }
@@ -1811,7 +1811,7 @@ void SaveRestoreServices::restore_after_checkpoint_load()
  */
 void SaveRestoreServices::restore_success_notification()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SRC_SAVE_RESTORE_SERVICES ) ) {
       string restore_label_str;
       StringUtilities::to_string( restore_label_str, restore_label );
       message_publish( MSG_NORMAL,
@@ -1858,7 +1858,7 @@ void SaveRestoreServices::restore_success_notification()
  */
 void SaveRestoreServices::restore_failed_notification()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_SAVE_RESTORE_SERVICES ) ) {
       string restore_label_str;
       StringUtilities::to_string( restore_label_str, restore_label );
       message_publish( MSG_ERROR,
@@ -1907,7 +1907,7 @@ bool SaveRestoreServices::restore_waiting_for_completion()
 {
    // If Federation SaveRestore is not supported then return without action.
    if ( this->restore_state == THLARestoreProcessEnum::RESTORE_UNSUPPORTED ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SRC_SAVE_RESTORE_SERVICES ) ) {
          message_publish( MSG_WARNING, "SaveRestoreServices::restore_waiting_for_completion():%d: HLA SaveRestore NOT supported!\n",
                           __LINE__ );
       }
@@ -1945,7 +1945,7 @@ bool SaveRestoreServices::restore_waiting_for_completion()
       return ( false );
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_SAVE_RESTORE_SERVICES ) ) {
       if ( execution_control->process_timer.timeout( execution_control->process_timer.time() ) ) {
          execution_control->process_timer.reset();
          string restore_label_str;
@@ -1968,7 +1968,7 @@ void SaveRestoreServices::restore_succeded()
    // Just return if HLA save and restore is not supported by the simulation
    // initialization scheme selected by the user.
    if ( !execution_control->is_save_and_restore_supported() ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_SAVE_RESTORE_SERVICES ) ) {
          string label_str;
          StringUtilities::to_string( label_str, restore_label );
          ostringstream errmsg;
@@ -2042,7 +2042,7 @@ void SaveRestoreServices::restore_failed()
    // Just return if HLA save and restore is not supported by the simulation
    // initialization scheme selected by the user.
    if ( !execution_control->is_save_and_restore_supported() ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_SAVE_RESTORE_SERVICES ) ) {
          errmsg << "SaveRestoreServices::restore_failed():" << __LINE__
                 << " WARNING: SaveRestore NOT supported!\n"
                 << " Label:'" << restore_label_str << "'\n";
@@ -2172,7 +2172,7 @@ void SaveRestoreServices::restore_checkpoint(
  */
 void SaveRestoreServices::restart_checkpoint()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SRC_SAVE_RESTORE_SERVICES ) ) {
       message_publish( MSG_NORMAL, "SaveRestoreServices::restart_checkpoint():%d\n",
                        __LINE__ );
    }

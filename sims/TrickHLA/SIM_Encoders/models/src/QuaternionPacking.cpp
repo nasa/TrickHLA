@@ -266,7 +266,7 @@ void QuaternionPacking::pack()
 {
    // Check for initialization.
    if ( !initialized ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_PACKING ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SRC_PACKING ) ) {
          ostringstream errmsg;
          errmsg << "QuaternionPacking::pack() Warning: The initialize() function has not"
                 << " been called!\n";
@@ -301,7 +301,7 @@ void QuaternionPacking::pack()
 void QuaternionPacking::unpack()
 {
    if ( !initialized ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_PACKING ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SRC_PACKING ) ) {
          ostringstream errmsg;
          errmsg << "QuaternionPacking::unpack():" << __LINE__
                 << " Warning: The initialize() function has not been called!\n";

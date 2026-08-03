@@ -245,7 +245,7 @@ void ExecutionConfiguration::configure()
 */
 void ExecutionConfiguration::pack()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_EXECUTION_CONFIG ) ) {
       ostringstream msg;
       msg << "\n"
           << "=============================================================\n"
@@ -288,7 +288,7 @@ void ExecutionConfiguration::pack()
 */
 void ExecutionConfiguration::unpack()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_EXECUTION_CONFIG ) ) {
       ostringstream msg;
       msg << "\n"
           << "=============================================================\n"
@@ -435,7 +435,7 @@ void ExecutionConfiguration::set_least_common_time_step(
    if ( execution_control->is_master() ) {
       this->least_common_time_step = Int64BaseTime::to_base_time( lcts );
    } else {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONFIG ) ) {
          ostringstream msg;
          msg << "SpaceFOM::ExecutionConfiguration::set_least_common_time_step():" << __LINE__
              << " WARNING: This is not a Master federate so this setting will be ignored."
@@ -594,7 +594,7 @@ void ExecutionConfiguration::setup_ref_attributes(
    //                           &(this->root_frame_name),
    //                           (ATTRIBUTES *) exco_attr );
 
-   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SRC_EXECUTION_CONFIG ) ) {
       ostringstream msg;
       msg << "SpaceFOM::ExecutionConfiguration::setup_interaction_ref_attributes():" << __LINE__
           << " FOM-Parameter:'" << attributes[0].get_FOM_name() << "'"
@@ -603,7 +603,7 @@ void ExecutionConfiguration::setup_ref_attributes(
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SRC_EXECUTION_CONFIG ) ) {
       ostringstream msg;
       msg << "SpaceFOM::ExecutionConfiguration::setup_ref_attributes():" << __LINE__
           << "\n"
@@ -619,7 +619,7 @@ void ExecutionConfiguration::setup_ref_attributes(
 
 void ExecutionConfiguration::print_execution_configuration() const
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_EXECUTION_CONFIG ) ) {
       ostringstream msg;
       msg << "\n"
           << "=============================================================\n"
@@ -650,7 +650,7 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
       return false;
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONFIG ) ) {
       message_publish( MSG_NORMAL, "SpaceFOM::ExecutionConfiguration::wait_for_update():%d Waiting...\n",
                        __LINE__ );
    }
@@ -696,7 +696,7 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
          }
       }
 
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONFIG ) ) {
          message_publish( MSG_NORMAL, "SpaceFOM::ExecutionConfiguration::wait_for_update():%d Received data.\n",
                           __LINE__ );
       }

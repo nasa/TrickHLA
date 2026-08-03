@@ -85,11 +85,11 @@ bool RefFrameTree::add_frame( RefFrameBase *frame_ptr )
  */
 void RefFrameTree::print_tree( std::ostream &stream ) const
 {
-   if ( debug || DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
+   if ( debug || DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_ALL_MODULES ) ) {
       message_publish( MSG_NORMAL, "RefFrameTree::print_tree():%d\n", __LINE__ );
       print_nodes( stream );
    }
-   if ( debug || DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
+   if ( debug || DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SRC_ALL_MODULES ) ) {
       print_paths( stream );
    }
    return;
@@ -228,7 +228,7 @@ bool RefFrameTree::build_transform(
             // Error return.
             return ( false );
          } else {
-            if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SRC_FEDERATE ) ) {
                ostringstream errmsg;
                errmsg << "SpaceFOM::RefFrameTree::build_transform -> transform_to_parent:\n"
                       << "\tfrom " << current_frame->get_name() << " to " << next_frame->get_name() << "\n";
@@ -249,7 +249,7 @@ bool RefFrameTree::build_transform(
             // Error return.
             return ( false );
          } else {
-            if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SRC_FEDERATE ) ) {
                ostringstream errmsg;
                errmsg << "SpaceFOM::RefFrameTree::build_transform -> transform_to_child:\n"
                       << "\tfrom " << current_frame->get_name() << " to " << next_frame->get_name() << "\n";

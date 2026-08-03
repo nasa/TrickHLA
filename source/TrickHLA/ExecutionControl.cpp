@@ -136,7 +136,7 @@ ExecutionControl::~ExecutionControl()
  */
 void ExecutionControl::initialize()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
       ostringstream msg;
       msg << "TrickHLA::ExecutionControl::initialize():" << __LINE__
           << " Initialization-Scheme:'" << get_type() << "'\n";
@@ -160,7 +160,7 @@ void ExecutionControl::initialize()
 */
 void ExecutionControl::pre_multi_phase_init_processes()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
       message_publish( MSG_NORMAL, "TrickHLA::ExecutionControl::pre_multi_phase_init_processes():%d\n", __LINE__ );
    }
 
@@ -192,7 +192,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
    // the "Master" federate or not.
    execution_configuration->set_master( is_master() );
 
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
       if ( is_master() ) {
          message_publish( MSG_NORMAL, "TrickHLA::ExecutionControl::pre_multi_phase_init_processes():%d\n    I AM THE MASTER\n",
                           __LINE__ );
@@ -351,7 +351,7 @@ void ExecutionControl::add_initialization_sync_points()
  */
 void ExecutionControl::add_multiphase_init_sync_points()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControl::add_multiphase_init_sync_points():" << __LINE__
              << " This call will be ignored because this ExecutionControl does not"
@@ -365,7 +365,7 @@ void ExecutionControl::add_multiphase_init_sync_points()
  */
 void ExecutionControl::clear_multiphase_init_sync_points()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControl::clear_multiphase_init_sync_points():" << __LINE__
              << " This call will be ignored because this ExecutionControl does not"

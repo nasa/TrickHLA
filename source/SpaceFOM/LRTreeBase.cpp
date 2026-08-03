@@ -105,7 +105,7 @@ bool LRTreeBase::add_node( LRTreeNodeBase *node_ptr )
 
    // Make sure that the node is not already in the tree.
    if ( has_node( node_ptr ) ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_ALL_MODULES ) ) {
          message_publish( MSG_WARNING, "LRTreeBase::add_node():%d WARNING: Node \'%s\' is already in the tree.\n",
                           __LINE__, node_ptr->name.c_str() );
       }
@@ -121,7 +121,7 @@ bool LRTreeBase::add_node( LRTreeNodeBase *node_ptr )
 
    // Make sure that the node name is unique.
    if ( has_node( node_ptr->name ) ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_ALL_MODULES ) ) {
          message_publish( MSG_WARNING, "LRTreeBase::add_node():%d WARNING: Node \'%s\' duplicate name is already in the tree.\n",
                           __LINE__, node_ptr->name.c_str() );
       }
@@ -217,7 +217,7 @@ bool LRTreeBase::check_tree()
 
       // Check for node ID consistency.
       if ( node_ptr->node_id != iinc ) {
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_ALL_MODULES ) ) {
             message_publish( MSG_WARNING, "LRTreeBase::check_tree():%d WARNING: Node ID (%d) mismatch with index [%d]: \'%s\'!\n",
                              __LINE__, iinc, node_ptr->node_id, node_ptr->name.c_str() );
          }
@@ -230,7 +230,7 @@ bool LRTreeBase::check_tree()
 
          // Check is this is marked as a root node.
          if ( !( node_ptr->is_root_node ) ) {
-            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_ALL_MODULES ) ) {
                message_publish( MSG_WARNING, "LRTreeBase::check_tree():%d WARNING: Root node not marked as root node: \'%s\'!\n",
                                 __LINE__, node_ptr->name.c_str() );
             }
@@ -240,14 +240,14 @@ bool LRTreeBase::check_tree()
 
          // Check for a single unparented root node.
          if ( found_root ) {
-            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_ALL_MODULES ) ) {
                message_publish( MSG_WARNING, "LRTreeBase::check_tree():%d WARNING: More than one root node found: \'%s\'!\n",
                                 __LINE__, node_ptr->name.c_str() );
             }
             // Mark check state false since we already found a root node.
             check_state = false;
          } else {
-            if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SRC_ALL_MODULES ) ) {
                message_publish( MSG_NORMAL, "LRTreeBase::check_tree():%d INFO: Root node found: \'%s\'!\n",
                                 __LINE__, node_ptr->name.c_str() );
             }
@@ -258,12 +258,12 @@ bool LRTreeBase::check_tree()
 
          // Make sure that the parent node exists within the tree.
          if ( has_node( node_ptr->parent ) ) {
-            if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SRC_ALL_MODULES ) ) {
                message_publish( MSG_NORMAL, "LRTreeBase::check_tree():%d INFO: Parent \'%s\' found for node \'%s\'!\n",
                                 __LINE__, node_ptr->parent->name.c_str(), node_ptr->name.c_str() );
             }
          } else {
-            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_ALL_MODULES ) ) {
                message_publish( MSG_WARNING, "LRTreeBase::check_tree():%d WARNING: Parent \'%s\' not found for node \'%s\'!\n",
                                 __LINE__, node_ptr->parent->name.c_str(), node_ptr->name.c_str() );
             }
@@ -273,7 +273,7 @@ bool LRTreeBase::check_tree()
 
          // Make sure this node is NOT marked as a root node.
          if ( node_ptr->is_root_node ) {
-            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_ALL_MODULES ) ) {
                message_publish( MSG_WARNING, "LRTreeBase::check_tree():%d WARNING: Branch node marked as root node: \'%s\'!\n",
                                 __LINE__, node_ptr->name.c_str() );
             }
@@ -283,7 +283,7 @@ bool LRTreeBase::check_tree()
 
          // Need to check to make sure that tree is acyclic.
          if ( is_cyclic( node_ptr ) ) {
-            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_ALL_MODULES ) ) {
                message_publish( MSG_WARNING, "LRTreeBase::check_tree():%d WARNING: Branch node is part of a cyclic segment: \'%s\'!\n",
                                 __LINE__, node_ptr->name.c_str() );
             }
@@ -295,7 +295,7 @@ bool LRTreeBase::check_tree()
 
    // Return false if no root node found.
    if ( !found_root ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_ALL_MODULES ) ) {
          message_publish( MSG_WARNING, "LRTreeBase::check_tree():%d WARNING: No root node found!\n",
                           __LINE__ );
       }
@@ -320,7 +320,7 @@ bool LRTreeBase::has_node( size_t const node_id )
 bool LRTreeBase::has_node( char const *name )
 {
    if ( name == NULL ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_ALL_MODULES ) ) {
          message_publish( MSG_WARNING, "LRTreeBase::has_node():%d WARNING: NULL node name.\n",
                           __LINE__ );
       }
@@ -653,14 +653,14 @@ LRTreeNodeBase *LRTreeBase::find_root()
       if ( node_ptr->parent == NULL ) {
          // Check for a single unparented root node.
          if ( found_root ) {
-            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_ALL_MODULES ) ) {
                message_publish( MSG_WARNING, "LRTreeBase::find_root():%d WARNING: More than one root node found: \'%s\'!\n",
                                 __LINE__, node_ptr->name.c_str() );
             }
             // Return NULL since we already found a root node.
             return ( NULL );
          } else {
-            if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SRC_ALL_MODULES ) ) {
                message_publish( MSG_NORMAL, "LRTreeBase::find_root():%d INFO: Root node found: \'%s\'!\n",
                                 __LINE__, node_ptr->name.c_str() );
             }
@@ -673,7 +673,7 @@ LRTreeNodeBase *LRTreeBase::find_root()
 
    // Return NULL if no root node found.
    if ( !found_root ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_ALL_MODULES ) ) {
          message_publish( MSG_WARNING, "LRTreeBase::find_root():%d WARNING: No root node found!\n",
                           __LINE__ );
       }

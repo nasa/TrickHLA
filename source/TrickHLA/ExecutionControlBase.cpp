@@ -287,7 +287,7 @@ void ExecutionControlBase::initialize()
    }
 
    if ( !does_scenario_timeline_exist() ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
          message_publish( MSG_WARNING, "ExecutionControlBase::initialize():%d WARNING: \
 ExecutionControl 'scenario_timeline' not specified in the input.py file. Using the \
 Trick simulation time as the default scenario-timeline.\n",
@@ -347,7 +347,7 @@ void ExecutionControlBase::join_federation_process()
    // If shutdown sync-point is detected, then we must have entered into
    // a running federation execution that is shutting down. This is an
    // unlikely but possible race condition.
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
       message_publish( MSG_NORMAL, "ExecutionControl::join_federation_process():%d Checking for shutdown\n",
                        __LINE__ );
    }
@@ -380,7 +380,7 @@ bool ExecutionControlBase::object_instance_name_reservation_succeeded(
          // The name is successfully registered.
          execution_configuration->set_name_registered();
 
-         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
             string name_str;
             StringUtilities::to_string( name_str, obj_instance_name );
             message_publish( MSG_NORMAL, "ExecutionControlBase::object_instance_name_reservation_succeeded():%d Name:'%s'\n",
@@ -430,7 +430,7 @@ bool ExecutionControlBase::object_instance_name_reservation_failed(
       // which means that another federate has already registered it.
       execution_configuration->set_name_registered();
 
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
          string name_str;
          StringUtilities::to_string( name_str, obj_instance_name );
          message_publish( MSG_NORMAL, "ExecutionControlBase::object_instance_name_reservation_failed():%d Name:'%s'\n",
@@ -449,7 +449,7 @@ bool ExecutionControlBase::object_instance_name_reservation_failed(
  */
 void ExecutionControlBase::register_objects_with_RTI()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
       message_publish( MSG_NORMAL, "ExecutionControlBase::register_objects_with_RTI():%d\n",
                        __LINE__ );
    }
@@ -524,7 +524,7 @@ void ExecutionControlBase::clear_multiphase_init_sync_points()
    // Late joining federates do not get to participate in the multiphase
    // initialization process so just return.
    if ( federate->is_late_joining_federate() ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
          message_publish( MSG_NORMAL, "ExecutionControlBase::clear_multiphase_init_sync_points():%d Late \
 joining federate so this call will be ignored.\n",
                           __LINE__ );
@@ -532,7 +532,7 @@ joining federate so this call will be ignored.\n",
       return;
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
       message_publish( MSG_NORMAL, "ExecutionControlBase::clear_multiphase_init_sync_points():%d\n",
                        __LINE__ );
    }
@@ -544,7 +544,7 @@ joining federate so this call will be ignored.\n",
    // synchronized in the federation.
    wait_for_all_multiphase_init_sync_points();
 
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
       print_sync_points();
    }
 }
@@ -575,7 +575,7 @@ void ExecutionControlBase::wait_for_all_multiphase_init_sync_points()
 void ExecutionControlBase::send_execution_configuration()
 {
    if ( execution_configuration == NULL ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
          message_publish( MSG_NORMAL, "ExecutionControlBase::send_execution_configuration():%d This call \
 will be ignored because the Simulation Initialization Scheme does not support it.\n",
                           __LINE__ );
@@ -588,7 +588,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
       return;
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
       message_publish( MSG_NORMAL, "ExecutionControlBase::send_ssend_execution_configurationim_config():%d\n", __LINE__ );
    }
 
@@ -616,7 +616,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
 void ExecutionControlBase::receive_execution_configuration()
 {
    if ( execution_configuration == NULL ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
          message_publish( MSG_NORMAL, "ExecutionControlBase::receive_execution_configuration():%d This call \
 will be ignored because the Simulation Initialization Scheme does not support it.\n",
                           __LINE__ );
@@ -629,7 +629,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
       return;
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
       message_publish( MSG_NORMAL, "ExecutionControlBase::receive_execution_configuration():%d Waiting...\n",
                        __LINE__ );
    }
@@ -675,7 +675,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
          }
       }
 
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
          message_publish( MSG_NORMAL, "ExecutionControlBase::receive_execution_configuration():%d Received data.\n",
                           __LINE__ );
       }
@@ -836,7 +836,7 @@ bool ExecutionControlBase::mark_object_as_deleted_from_federation(
    // Remove the ExecitionControl object if present and the ID matches.
    if ( execution_configuration != NULL
         && ( execution_configuration->get_instance_handle() == instance_id ) ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
          string id_str;
          StringUtilities::to_string( id_str, instance_id );
          message_publish( MSG_NORMAL, "ExecutionControlBase::mark_object_as_deleted_from_federation():%d Object '%s' Instance-ID:%s Valid-ID:%s\n",
@@ -868,7 +868,7 @@ double ExecutionControlBase::get_sim_time() const
       return sim_timeline->get_time();
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
       ostringstream errmsg;
       errmsg << "ExecutionControlBase::get_sim_time():" << __LINE__
              << " WARNING: The simulation timeline has not been set!"
@@ -885,7 +885,7 @@ double ExecutionControlBase::get_scenario_time() const
       return scenario_timeline->get_time();
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
       ostringstream errmsg;
       errmsg << "ExecutionControlBase::get_scenario_time():" << __LINE__
              << " WARNING: The scenario timeline has not been set!"
@@ -941,7 +941,7 @@ void ExecutionControlBase::freeze_init()
 void ExecutionControlBase::enter_freeze()
 {
    // The default is to do nothing.
-   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
       message_publish( MSG_NORMAL, "ExecutionControlBase::enter_freeze():%d Freeze Announced:%s, Freeze Pending:%s\n",
                        __LINE__, ( is_freeze_announced() ? "Yes" : "No" ),
                        ( is_freeze_pending() ? "Yes" : "No" ) );
@@ -1082,7 +1082,7 @@ void ExecutionControlBase::save_process()
          } else {
 
             // The Save failed.
-            if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
                message_publish( MSG_ERROR, "ExecutionControlBase::save_process():%d Save: \'%s\' failed!\n",
                                 __LINE__, save_label_str.c_str() );
             }
@@ -1101,7 +1101,7 @@ void ExecutionControlBase::save_process()
 
       case THLASaveProcessEnum::SAVE_COMPLETE:
          // The Save was successfully completed.
-         if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
             message_publish( MSG_NORMAL, "ExecutionControlBase::save_process():%d Save: \'%s\' completed!\n",
                              __LINE__, save_label_str.c_str() );
          }
@@ -1114,7 +1114,7 @@ void ExecutionControlBase::save_process()
 
       case THLASaveProcessEnum::SAVE_FAILED:
          // The Save failed.
-         if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
             message_publish( MSG_ERROR, "ExecutionControlBase::save_process():%d Save: \'%s\' failed!\n",
                              __LINE__, save_label_str.c_str() );
          }
@@ -1153,7 +1153,7 @@ bool ExecutionControlBase::save( wstring const &label )
    // If Federation SaveRestore is not supported then return without action.
    if ( current_save_state == THLASaveProcessEnum::SAVE_UNSUPPORTED ) {
 
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_FEDERATE ) ) {
          message_publish( MSG_WARNING, "ExecutionControlBase::save():%d HLA SaveRetore NOT supported!\n",
                           __LINE__ );
       }
@@ -1168,7 +1168,7 @@ bool ExecutionControlBase::save( wstring const &label )
    if ( ( current_save_state != THLASaveProcessEnum::SAVE_NONE )
         && ( current_save_state != THLASaveProcessEnum::SAVE_REQUESTED ) ) {
 
-      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_FEDERATE ) ) {
          message_publish( MSG_WARNING, "ExecutionControlBase::save():%d : Save already in progress: \'%s\'!\n",
                           __LINE__, current_save_state_str.c_str() );
       }
@@ -1179,7 +1179,7 @@ bool ExecutionControlBase::save( wstring const &label )
    // Check to see if we are initiating the Save.
    if ( current_save_state == THLASaveProcessEnum::SAVE_NONE ) {
 
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_FEDERATE ) ) {
          message_publish( MSG_NORMAL, "ExecutionControlBase::save():%d : Initiating Save: \'%s\'!\n",
                           __LINE__, current_save_state_str.c_str() );
       }
@@ -1189,7 +1189,7 @@ bool ExecutionControlBase::save( wstring const &label )
 
    } else if ( current_save_state == THLASaveProcessEnum::SAVE_REQUESTED ) {
 
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_FEDERATE ) ) {
          message_publish( MSG_NORMAL, "ExecutionControlBase::save():%d : Save Requested: \'%s\'!\n",
                           __LINE__, current_save_state_str.c_str() );
       }
@@ -1210,7 +1210,7 @@ void ExecutionControlBase::save_at_SET(
 {
    // If Federation SaveRestore is not supported then return without action.
    if ( !is_save_and_restore_supported() ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_FEDERATE ) ) {
          string label_str;
          StringUtilities::to_string( label_str, label );
          ostringstream errmsg;
@@ -1237,7 +1237,7 @@ void ExecutionControlBase::save_at_SST(
 {
    // If Federation SaveRestore is not supported then return without action.
    if ( !is_save_and_restore_supported() ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_FEDERATE ) ) {
          string label_str;
          StringUtilities::to_string( label_str, label );
          ostringstream errmsg;
@@ -1264,7 +1264,7 @@ void ExecutionControlBase::save_at_HLT(
 {
    // If Federation SaveRestore is not supported then return without action.
    if ( !is_save_and_restore_supported() ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_FEDERATE ) ) {
          string label_str;
          StringUtilities::to_string( label_str, label );
          string time_str;
@@ -1366,7 +1366,7 @@ void ExecutionControlBase::restore_process()
 
       case THLARestoreProcessEnum::RESTORE_COMPLETE:
          // The Federation wide Restore was successfully completed.
-         if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
             message_publish( MSG_NORMAL, "ExecutionControlBase::restore_process():%d Restore: \'%s\' completed!\n",
                              __LINE__, restore_label_str.c_str() );
          }
@@ -1379,7 +1379,7 @@ void ExecutionControlBase::restore_process()
 
       case THLARestoreProcessEnum::RESTORE_FAILED:
          // The Restore failed.
-         if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+         if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_EXECUTION_CONTROL ) ) {
             message_publish( MSG_ERROR, "ExecutionControlBase::restore_process():%d Restore: \'%s\' failed!\n",
                              __LINE__, restore_label_str.c_str() );
          }
@@ -1543,7 +1543,7 @@ bool ExecutionControlBase::restore( wstring const &label )
 
    // If Federation SaveRestore is not supported then return without action.
    if ( !is_save_and_restore_supported() ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_FEDERATE ) ) {
          string label_str;
          StringUtilities::to_string( label_str, label );
          ostringstream errmsg;
@@ -1564,7 +1564,7 @@ bool ExecutionControlBase::restore( wstring const &label )
    // Check the Federation Restore state to ensure that a Restore is applicable .
    if ( current_restore_state != THLARestoreProcessEnum::RESTORE_NONE ) {
 
-      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_FEDERATE ) ) {
          message_publish( MSG_WARNING, "ExecutionControlBase::restore():%d : Restore already in progress: \'%s\'!\n",
                           __LINE__, current_restore_state_str.c_str() );
       }
@@ -1612,7 +1612,7 @@ std::string const ExecutionControlBase::map_label_to_checkpoint_file_name(
 
 void ExecutionControlBase::convert_data_before_checkpoint()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SRC_FEDERATE ) ) {
       ostringstream msg;
       msg << "ExecutionControlBase::convert_data_before_checkpoint():"
           << __LINE__ << " Converting data for checkpointing.\n";
@@ -1644,7 +1644,7 @@ void ExecutionControlBase::convert_data_before_checkpoint()
 
 void ExecutionControlBase::restore_data_after_checkpoint()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SRC_FEDERATE ) ) {
       ostringstream msg;
       msg << "ExecutionControlBase::restore_data_after_checkpoint():"
           << __LINE__ << " Restoring data after checkpoint loading.\n";
@@ -1672,7 +1672,7 @@ void ExecutionControlBase::restore_data_after_checkpoint()
 
 void ExecutionControlBase::free_converted_data_for_checkpoint()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SRC_FEDERATE ) ) {
       ostringstream msg;
       msg << "ExecutionControlBase::free_converted_data_for_checkpoint():"
           << __LINE__ << " Freeing data allocated for checkpointing.\n";
@@ -1708,7 +1708,7 @@ void ExecutionControlBase::checkpoint_before()
       return;
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SRC_FEDERATE ) ) {
       ostringstream msg;
       msg << "ExecutionControlBase::checkpoint_before():"
           << __LINE__ << " Preparing for a checkpoint.\n";
@@ -1726,7 +1726,7 @@ void ExecutionControlBase::checkpoint_before()
  */
 void ExecutionControlBase::checkpoint_after()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SRC_FEDERATE ) ) {
       ostringstream msg;
       msg << "ExecutionControlBase::checkpoint_after():"
           << __LINE__ << " Cleaning up after a checkpoint.\n";
@@ -1756,7 +1756,7 @@ void ExecutionControlBase::checkpoint_preload()
       return;
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SRC_FEDERATE ) ) {
       ostringstream msg;
       msg << "ExecutionControlBase::checkpoint_preload():"
           << __LINE__ << " Preparing to load a checkpoint.\n";
@@ -1783,7 +1783,7 @@ void ExecutionControlBase::checkpoint_restart()
    // SaveRestoreServices::save_process routine will pickup wherever the Save
    // process was when the checkpoint file was generateed.
    if ( save_restore_service->save_state != THLASaveProcessEnum::SAVE_NONE ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_SAVE_RESTORE_SERVICES ) ) {
          string label_str;
          StringUtilities::to_string( label_str, save_restore_service->restore_label );
          ostringstream errmsg;
@@ -1828,7 +1828,7 @@ void ExecutionControlBase::checkpoint_restart()
       return;
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SRC_FEDERATE ) ) {
       ostringstream msg;
       msg << "ExecutionControlBase::checkpoint_restart():"
           << __LINE__ << " Restarting after loading a checkpoint.\n";

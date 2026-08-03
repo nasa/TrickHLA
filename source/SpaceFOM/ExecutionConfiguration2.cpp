@@ -221,7 +221,7 @@ void ExecutionConfiguration2::pack()
    // Call the parent implementation.
    ExecutionConfiguration::pack();
 
-   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_EXECUTION_CONFIG ) ) {
       ostringstream msg;
       msg << "\n"
           << "=============================================================\n"
@@ -245,7 +245,7 @@ void ExecutionConfiguration2::unpack()
    // Call the parent implementation.
    ExecutionConfiguration::unpack();
 
-   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_EXECUTION_CONFIG ) ) {
       ostringstream msg;
       msg << "\n"
           << "=============================================================\n"
@@ -267,7 +267,7 @@ int64_t ExecutionConfiguration2::get_exco_base_time_multiplier() const
 
 void ExecutionConfiguration2::print_execution_configuration() const
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_EXECUTION_CONFIG ) ) {
       ostringstream msg;
       msg << "\n"
           << "=============================================================\n"

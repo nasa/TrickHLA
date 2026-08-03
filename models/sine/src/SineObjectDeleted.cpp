@@ -70,7 +70,7 @@ SineObjectDeleted::~SineObjectDeleted()
 
 void SineObjectDeleted::deleted()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SRC_OBJECT ) ) {
       ostringstream msg;
       msg << "SineObjectDeleted::deleted():" << __LINE__
           << " Object '" << object->get_name() << "' deleted from the federation.\n";

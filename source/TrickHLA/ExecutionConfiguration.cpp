@@ -225,7 +225,7 @@ void ExecutionConfiguration::configure()
 void ExecutionConfiguration::pack()
 {
    ostringstream msg;
-   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_EXECUTION_CONFIG ) ) {
       msg << "===================================================\n";
    }
 
@@ -234,7 +234,7 @@ void ExecutionConfiguration::pack()
    // Set the stop/termination time of the Trick simulation based on the
    // run_duration setting.
    if ( terminate_time >= 1.0e20 ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_EXECUTION_CONFIG ) ) {
          msg << "TrickHLA::ExecutionConfiguration::pack():" << __LINE__
              << " Setting simulation termination time to "
              << run_duration << " seconds.\n";
@@ -248,7 +248,7 @@ void ExecutionConfiguration::pack()
          run_duration = 0.0;
       }
 
-      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_EXECUTION_CONFIG ) ) {
          msg << "TrickHLA::ExecutionConfiguration::pack():" << __LINE__
              << " Setting simulation duration to "
              << run_duration << " seconds.\n";
@@ -258,7 +258,7 @@ void ExecutionConfiguration::pack()
    // Encode the run duration into a 64 bit integer base time.
    this->run_duration_base_time = Int64BaseTime::to_base_time( this->run_duration );
 
-   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_EXECUTION_CONFIG ) ) {
       string owner_str;
       StringUtilities::to_string( owner_str, owner );
       string required_feds_str;
@@ -281,7 +281,7 @@ void ExecutionConfiguration::pack()
 void ExecutionConfiguration::unpack()
 {
    ostringstream msg;
-   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_EXECUTION_CONFIG ) ) {
       msg << "===================================================\n";
    }
 
@@ -291,7 +291,7 @@ void ExecutionConfiguration::unpack()
    // Set the stop/termination time of the Trick simulation based on the
    // run_duration setting.
    if ( run_duration >= 0.0 ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_EXECUTION_CONFIG ) ) {
          msg << "TrickHLA::ExecutionConfiguration::unpack():" << __LINE__
              << " Setting simulation duration to "
              << run_duration << " seconds.\n";
@@ -299,7 +299,7 @@ void ExecutionConfiguration::unpack()
       exec_set_terminate_time( this->run_duration );
    }
 
-   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_EXECUTION_CONFIG ) ) {
       string owner_str;
       StringUtilities::to_string( owner_str, owner );
       string required_feds_str;
@@ -333,7 +333,7 @@ void ExecutionConfiguration::setup_ref_attributes(
 
 void ExecutionConfiguration::print_execution_configuration() const
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
+   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SRC_EXECUTION_CONFIG ) ) {
       string owner_str;
       StringUtilities::to_string( owner_str, owner );
       string required_feds_str;
