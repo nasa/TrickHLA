@@ -112,6 +112,49 @@ class TrickHLAObjectBaseSimObject : public Trick::SimObject {
       // Set the references to the TrickHLA object.
       thla_object = object;
       packing_base_ptr->set_object( object );
+
+      return;
+   }
+
+   virtual void set_required( bool on_off_state )
+   {
+      // Get the associated TrickHLA manager object.
+      TrickHLA::Object * pkg_obj_ptr = packing_base_ptr->get_object();
+      
+      // Check to make sure if the object has been allocated and set.
+      if ( pkg_obj_ptr == NULL ) {
+         std::ostringstream errmsg;
+         errmsg << "TrickHLAObjectBaseSimObject::set_required():" << __LINE__
+                << " ERROR: The TrickHLA::Object associated with object \'"
+                << name << "\' is NULL." << std::endl;
+         TrickHLA::DebugHandler::terminate( errmsg.str() );
+      }
+
+      // Check if the object reference has been set.
+      // If not, set it.
+      if ( thla_object == NULL ){
+         // Register the object with this SimObject.
+         thla_object = pkg_obj_ptr;
+      }
+      
+      // Set the required state for the TrickHLA object.
+      thla_object->required = on_off_state;
+
+      return;
+   }
+
+   virtual void set_instance_name( std::string const & instance_name )
+   {
+      object_fed_name = instance_name;
+      
+      // Check if the TrickHLA Object associated with the packing function
+      // has been instantiated and assigned.  If so, assign the name to
+      // it as well.
+      if ( thla_object != NULL ) {
+         thla_object->name = instance_name;
+      }
+
+      return;
    }
 
  protected:
