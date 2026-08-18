@@ -271,8 +271,6 @@ bool MemoryServices::is_alloced( T addr )
 template < typename T >
 std::size_t MemoryServices::get_size( T addr )
 {
-   std::size_t size = 0;
-
    // Check to make sure the incoming type is a pointer.
    // If not, then return 0.
    if ( !std::is_pointer< T >::value ) {
@@ -286,22 +284,22 @@ std::size_t MemoryServices::get_size( T addr )
    }
 
    // The Trick get_size() returns the number of elements in a dynamic array.
-   int num_items = trick_MM->get_size( static_cast<void*>(addr) );
+   int num_items = trick_MM->get_size( static_cast< void * >( addr ) );
 
-   // If this isn't a dynamic array, get the information from the 
+   // If this isn't a dynamic array, get the information from the
    // Trick allocation information.
    if ( num_items <= 0 ) {
       // Get the allocation info that contains the variable address.
-      ALLOC_INFO const *alloc_info = trick_MM->get_alloc_info_of( static_cast<void*>(addr) );
+      ALLOC_INFO const *alloc_info = trick_MM->get_alloc_info_of( static_cast< void * >( addr ) );
       if ( alloc_info != NULL ) {
          num_items = alloc_info->num;
       }
    }
 
    // Get a safe size value.
-   size = ( num_items >= 0 ) ? num_items : 0;
-   
-   return( size );
+   std::size_t size = ( num_items >= 0 ) ? num_items : 0;
+
+   return ( size );
 }
 
 template < typename T >

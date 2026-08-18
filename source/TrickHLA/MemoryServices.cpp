@@ -43,6 +43,7 @@ NASA, Johnson Space Center\n
 
 // Trick includes.
 #include "trick/MemoryManager.hh"
+#include "trick/attributes.h"
 #include "trick/message_proto.h"
 #include "trick/message_type.h"
 
@@ -126,14 +127,13 @@ wchar_t *MemoryServices::cwstrdup( char const *input )
 {
    std::size_t const len  = strlen( input ) + 1;
    std::size_t       size = ( len <= INT_MAX ) ? (int)len : INT_MAX;
-   std::size_t       ret;
 
    /** @li Allocate the duplicate character string */
    wchar_t *addr = nullptr;
    addr          = MemoryServices::declare_var( addr, "", 0, "", 1, &size );
 
    /** @li Copy the contents of the original character string to the duplicate. */
-   ret = mbstowcs( addr, input, size );
+   std::size_t const ret = mbstowcs( addr, input, size );
    if ( ret == -1 ) {
       // Delete the allocated memory.
       MemoryServices::delete_var( addr );

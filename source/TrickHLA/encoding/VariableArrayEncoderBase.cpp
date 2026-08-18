@@ -38,9 +38,7 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick include files.
-#include "trick/MemoryManager.hh"
 #include "trick/attributes.h"
-#include "trick/io_alloc.h"
 #include "trick/parameter_types.h"
 
 // TrickHLA include files.
@@ -49,7 +47,6 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/encoding/EncoderBase.hh"
 #include "TrickHLA/encoding/VariableArrayEncoderBase.hh"
-#include "TrickHLA/utils/Utilities.hh"
 
 using namespace RTI1516_NAMESPACE;
 using namespace std;

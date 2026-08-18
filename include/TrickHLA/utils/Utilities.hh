@@ -42,7 +42,6 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick includes.
-#include "trick/attributes.h"
 #include "trick/parameter_types.h"
 #include "trick/trick_byteswap.h"
 

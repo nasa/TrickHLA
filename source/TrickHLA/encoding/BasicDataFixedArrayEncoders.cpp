@@ -43,7 +43,6 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/encoding/BasicDataFixedArrayEncoders.hh"
 #include "TrickHLA/encoding/EncoderBase.hh"
-#include "TrickHLA/utils/Utilities.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we
 // need to silence the warnings coming from the IEEE 1516 declared functions.
@@ -73,7 +72,7 @@ using namespace TrickHLA;
       std::string const &name )                                                                                                        \
       : EncoderBase( name )                                                                                                            \
    {                                                                                                                                   \
-      std::size_t const length        = MemoryServices::get_static_var_element_count( attr );                                               \
+      std::size_t const length        = MemoryServices::get_static_var_element_count( attr );                                          \
       HLAfixedArray    *array_encoder = new HLAfixedArray( EncodableDataType(), length );                                              \
       this->data_encoder              = array_encoder;                                                                                 \
                                                                                                                                        \
