@@ -64,9 +64,9 @@ using namespace SpaceFOM;
  * @job_class{initialization}
  */
 JEODPhysicalInterface::JEODPhysicalInterface()
-   : dyn_body( NULL ),
-     vehicle_point_id( NULL ),
-     vehicle_point_data( NULL )
+   : dyn_body( nullptr ),
+     vehicle_point_id( nullptr ),
+     vehicle_point_data( nullptr )
 {
    return;
 }
@@ -77,8 +77,8 @@ JEODPhysicalInterface::JEODPhysicalInterface()
 JEODPhysicalInterface::JEODPhysicalInterface(
    jeod::DynBody &dyn_body_ref )
    : dyn_body( &dyn_body_ref ),
-     vehicle_point_id( NULL ),
-     vehicle_point_data( NULL )
+     vehicle_point_id( nullptr ),
+     vehicle_point_data( nullptr )
 {
    return;
 }
@@ -90,7 +90,7 @@ JEODPhysicalInterface::JEODPhysicalInterface(
    jeod::DynBody      &dyn_body_ref,
    jeod::BodyRefFrame &vehicle_point_ref )
    : dyn_body( &dyn_body_ref ),
-     vehicle_point_id( NULL ),
+     vehicle_point_id( nullptr ),
      vehicle_point_data( &vehicle_point_ref )
 {
    return;
@@ -101,15 +101,15 @@ JEODPhysicalInterface::JEODPhysicalInterface(
  */
 JEODPhysicalInterface::~JEODPhysicalInterface()
 {
-   dyn_body           = NULL;
-   vehicle_point_data = NULL;
+   dyn_body           = nullptr;
+   vehicle_point_data = nullptr;
 
-   if ( this->vehicle_point_id != NULL ) {
+   if ( this->vehicle_point_id != nullptr ) {
       if ( !MemoryServices::delete_var( this->vehicle_point_id ) ) {
          message_publish( MSG_WARNING, "SpaceFOM::JEODPhysicalInterface::~JEODPhysicalInterface():%d WARNING failed to delete Trick Memory for 'this->vehicle_point_id'\n",
                           __LINE__ );
       }
-      this->vehicle_point_id = NULL;
+      this->vehicle_point_id = nullptr;
    }
 }
 
@@ -119,35 +119,35 @@ JEODPhysicalInterface::~JEODPhysicalInterface()
 void JEODPhysicalInterface::initialize()
 {
    // Check if the DynBody is set.
-   if ( this->dyn_body == NULL ) {
+   if ( this->dyn_body == nullptr ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalInterface::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL dyn_body reference: for interface '"
+             << " ERROR: Unexpected nullptr dyn_body reference: for interface '"
              << this->packing_data.name << "'.\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
    // Make sure that we have a vehicle point ID to work with.
-   if ( this->vehicle_point_id == NULL ) {
+   if ( this->vehicle_point_id == nullptr ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalInterface::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL vehicle_point_id for interface '"
+             << " ERROR: Unexpected nullptr vehicle_point_id for interface '"
              << this->packing_data.name << "'.\n";
       // Print message and terminate.
       DebugHandler::terminate( errmsg.str() );
    }
 
    // Check to make sure the JEODPhysicalInterface data is set.
-   if ( this->vehicle_point_data == NULL ) {
+   if ( this->vehicle_point_data == nullptr ) {
       // It is not already set; so, let's try to look it up.
       this->vehicle_point_data = dyn_body->find_vehicle_point( vehicle_point_id );
    }
 
    // Make sure that we found the vehicle point.
-   if ( this->vehicle_point_data == NULL ) {
+   if ( this->vehicle_point_data == nullptr ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalInterface::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL vehicle_point_data for interface '"
+             << " ERROR: Unexpected nullptr vehicle_point_data for interface '"
              << vehicle_point_id << "'.\n";
       DebugHandler::terminate( errmsg.str() );
    }
@@ -160,11 +160,11 @@ void JEODPhysicalInterface::pack_from_working_data()
 {
    int iinc;
 
-   // Check for NULL vehicle point.
+   // Check for nullptr vehicle point.
    // Note: This should never be true, but just in case.
-   if ( this->vehicle_point_data == NULL ) {
+   if ( this->vehicle_point_data == nullptr ) {
       message_publish( MSG_WARNING,
-                       "SpaceFOM::JEODPhysicalInterface::pack():%d NULL vehicle point data!\n",
+                       "SpaceFOM::JEODPhysicalInterface::pack():%d nullptr vehicle point data!\n",
                        __LINE__ );
       return;
    }
@@ -205,11 +205,11 @@ void JEODPhysicalInterface::unpack_into_working_data()
 {
    jeod::MassPoint *mass_point_ptr;
 
-   // Check for NULL vehicle point.
+   // Check for nullptr vehicle point.
    // Note: This should never be true, but just in case.
-   if ( this->vehicle_point_data == NULL ) {
+   if ( this->vehicle_point_data == nullptr ) {
       message_publish( MSG_WARNING,
-                       "SpaceFOM::JEODPhysicalInterface::unpack():%d NULL vehicle point data!\n",
+                       "SpaceFOM::JEODPhysicalInterface::unpack():%d nullptr vehicle point data!\n",
                        __LINE__ );
       return;
    }
@@ -266,7 +266,7 @@ void JEODPhysicalInterface::unpack_into_working_data()
  */
 void JEODPhysicalInterface::set_vehicle_point_id( char const *new_id )
 {
-   if ( this->vehicle_point_id != NULL ) {
+   if ( this->vehicle_point_id != nullptr ) {
       if ( !MemoryServices::delete_var( this->vehicle_point_id ) ) {
          message_publish( MSG_WARNING, "SpaceFOM::JEODPhysicalInterface::set_vehicle_point_id():%d WARNING failed to delete Trick Memory for 'this->vehicle_point_id'\n",
                           __LINE__ );
@@ -282,19 +282,19 @@ void JEODPhysicalInterface::set_data(
    jeod::DynBody *dyn_body_ptr ) // cppcheck-suppress [constParameterPointer]
 {
    // Make sure that we have a vehicle point ID to work with.
-   if ( this->vehicle_point_id == NULL ) {
+   if ( this->vehicle_point_id == nullptr ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalInterface::set_data():" << __LINE__
-             << " ERROR: Unexpected NULL vehicle_point_id for interface "
+             << " ERROR: Unexpected nullptr vehicle_point_id for interface "
              << this->packing_data.name << "\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
    // Look up the vehicle point by name.
-   if ( dyn_body_ptr == NULL ) {
+   if ( dyn_body_ptr == nullptr ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalInterface::set_data():" << __LINE__
-             << " ERROR: Unexpected NULL dyn_body_ptr: for interface "
+             << " ERROR: Unexpected nullptr dyn_body_ptr: for interface "
              << this->packing_data.name << "\n";
       DebugHandler::terminate( errmsg.str() );
    } else {
@@ -302,10 +302,10 @@ void JEODPhysicalInterface::set_data(
    }
 
    // Make sure that we found the vehicle point.
-   if ( this->vehicle_point_data == NULL ) {
+   if ( this->vehicle_point_data == nullptr ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalInterface::set_data():" << __LINE__
-             << " ERROR: Unexpected NULL vehicle_point_data for interface "
+             << " ERROR: Unexpected nullptr vehicle_point_data for interface "
              << vehicle_point_id << "\n";
       DebugHandler::terminate( errmsg.str() );
    }
@@ -320,10 +320,10 @@ void JEODPhysicalInterface::set_data(
    jeod::BodyRefFrame const *vehicle_point_ptr )
 {
    // Set the reference to the JEODPhysicalInterface data.
-   if ( vehicle_point_ptr == NULL ) {
+   if ( vehicle_point_ptr == nullptr ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalInterface::set_data():" << __LINE__
-             << " ERROR: Unexpected NULL vehicle_point_ptr: "
+             << " ERROR: Unexpected nullptr vehicle_point_ptr: "
              << this->packing_data.name << "\n";
       DebugHandler::terminate( errmsg.str() );
    }
@@ -340,10 +340,10 @@ void JEODPhysicalInterface::set_data(
    jeod::BodyRefFrame const *vehicle_point_ptr )
 {
    // Make sure that we have a dyn_body pointer to assign.
-   if ( dyn_body_ptr == NULL ) {
+   if ( dyn_body_ptr == nullptr ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalInterface::set_data():" << __LINE__
-             << " ERROR: Unexpected NULL dyn_body_ptr: for interface "
+             << " ERROR: Unexpected nullptr dyn_body_ptr: for interface "
              << this->packing_data.name << "\n";
       DebugHandler::terminate( errmsg.str() );
    } else {
@@ -351,10 +351,10 @@ void JEODPhysicalInterface::set_data(
    }
 
    // Set the reference to the JEODPhysicalInterface data.
-   if ( vehicle_point_ptr == NULL ) {
+   if ( vehicle_point_ptr == nullptr ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalInterface::set_data():" << __LINE__
-             << " ERROR: Unexpected NULL vehicle_point_ptr: "
+             << " ERROR: Unexpected nullptr vehicle_point_ptr: "
              << this->packing_data.name << "\n";
       DebugHandler::terminate( errmsg.str() );
    } else {

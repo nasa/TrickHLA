@@ -140,7 +140,7 @@ ExecutionConfiguration::ExecutionConfiguration(
  */
 ExecutionConfiguration::~ExecutionConfiguration() // RETURN: -- None.
 {
-   this->execution_control = NULL;
+   this->execution_control = nullptr;
 }
 
 /*!
@@ -254,10 +254,10 @@ void ExecutionConfiguration::configure_attributes()
 void ExecutionConfiguration::configure()
 {
    // Check to make sure we have a reference to the TrickHLA::FedAmb.
-   if ( federate == NULL ) {
+   if ( federate == nullptr ) {
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionConfiguration::configure():" << __LINE__
-             << " ERROR: Unexpected NULL TrickHLA::Federate.\n";
+             << " ERROR: Unexpected nullptr TrickHLA::Federate.\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -273,7 +273,7 @@ void ExecutionConfiguration::configure()
    set_lag_compensation_type( LAG_COMPENSATION_NONE );
 
    // Ownership transfer will not be used for the Execution Configuration object.
-   ownership = NULL;
+   ownership = nullptr;
 
    // Make sure the ExecutionConfiguration attributes go out in
    // Receive-Order so that a late joining federate can get them.
@@ -296,7 +296,7 @@ IMSim::ExecutionControl *ExecutionConfiguration::get_imsim_control()
    IMSim::ExecutionControl *imsim_exec_cntrl;
 
    imsim_exec_cntrl = dynamic_cast< IMSim::ExecutionControl * >( execution_control );
-   if ( imsim_exec_cntrl == NULL ) {
+   if ( imsim_exec_cntrl == nullptr ) {
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionConfiguration::get_imsim_control():" << __LINE__
              << " ERROR: Dynamic cast error from base class reference to IMSim reference!\n";

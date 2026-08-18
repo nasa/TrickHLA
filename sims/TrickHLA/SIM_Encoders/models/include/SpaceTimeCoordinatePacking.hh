@@ -96,8 +96,8 @@ class SpaceTimeCoordinatePacking : public TrickHLA::Packing
    virtual void base_config( bool                     publishes,
                              char const              *sim_obj_name,
                              char const              *packing_name,
-                             SpaceTimeCoordinateData *working_data = NULL,
-                             TrickHLA::Object        *mngr_object  = NULL );
+                             SpaceTimeCoordinateData *working_data = nullptr,
+                             TrickHLA::Object        *mngr_object  = nullptr );
 
    // Initialize the packing object.
    /*! @brief Finish the initialization of the RefFrame. */

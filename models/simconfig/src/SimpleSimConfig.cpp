@@ -68,8 +68,8 @@ SimpleSimConfig::SimpleSimConfig()
    : run_duration( 0.0 ),
      run_duration_base_time( 0L ),
      num_federates( 0 ),
-     required_federates( NULL ),
-     owner( NULL )
+     required_federates( nullptr ),
+     owner( nullptr )
 {
    return;
 }
@@ -79,20 +79,20 @@ SimpleSimConfig::SimpleSimConfig()
  */
 SimpleSimConfig::~SimpleSimConfig()
 {
-   if ( required_federates != NULL ) {
+   if ( required_federates != nullptr ) {
       if ( trick_MM->delete_var( static_cast< void * >( required_federates ) ) ) {
          message_publish( MSG_WARNING, "TrickHLAModel::SimpleSimConfig::~SimpleSimConfig():%d WARNING failed to delete Trick Memory for 'required_federates'\n",
                           __LINE__ );
       }
-      required_federates = NULL;
+      required_federates = nullptr;
    }
 
-   if ( owner != NULL ) {
+   if ( owner != nullptr ) {
       if ( trick_MM->delete_var( static_cast< void * >( owner ) ) ) {
          message_publish( MSG_WARNING, "TrickHLAModel::SimpleSimConfig::~SimpleSimConfig():%d WARNING failed to delete Trick Memory for 'owner'\n",
                           __LINE__ );
       }
-      owner = NULL;
+      owner = nullptr;
    }
 }
 
@@ -104,12 +104,12 @@ void SimpleSimConfig::configure(
    TrickHLA::KnownFederate *known_feds )
 {
    // Release the memory used by the required_federates c-string.
-   if ( required_federates != NULL ) {
+   if ( required_federates != nullptr ) {
       if ( trick_MM->delete_var( static_cast< void * >( required_federates ) ) ) {
          message_publish( MSG_WARNING, "TrickHLAModel::SimpleSimConfig::initialize():%d WARNING failed to delete Trick Memory for 'required_federates'\n",
                           __LINE__ );
       }
-      required_federates = NULL;
+      required_federates = nullptr;
    }
 
    ostringstream fed_list;
@@ -199,12 +199,12 @@ void SimpleSimConfig::pack()
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
       msg << "SimpleSimConfig::pack():" << __LINE__ << "\n"
           << "\t Object-Name:'" << object->get_name() << "'\n"
-          << "\t owner:'" << ( owner != NULL ? owner : "" ) << "'\n"
+          << "\t owner:'" << ( owner != nullptr ? owner : "" ) << "'\n"
           << "\t run_duration:" << run_duration << " seconds\n"
           << "\t run_duration_base_time:" << run_duration_base_time << " "
           << Int64BaseTime::get_base_unit() << "\n"
           << "\t num_federates:" << num_federates << "\n"
-          << "\t required_federates:'" << ( required_federates != NULL ? required_federates : "" ) << "'\n"
+          << "\t required_federates:'" << ( required_federates != nullptr ? required_federates : "" ) << "'\n"
           << "===================================================\n";
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
@@ -241,12 +241,12 @@ void SimpleSimConfig::unpack()
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
       msg << "SimpleSimConfig::unpack():" << __LINE__ << "\n"
           << "\t Object-Name:'" << object->get_name() << "'\n"
-          << "\t owner:'" << ( owner != NULL ? owner : "" ) << "'\n"
+          << "\t owner:'" << ( owner != nullptr ? owner : "" ) << "'\n"
           << "\t run_duration:" << run_duration << " seconds\n"
           << "\t run_duration_base_time:" << run_duration_base_time << " "
           << Int64BaseTime::get_base_unit() << "\n"
           << "\t num_federates:" << num_federates << "\n"
-          << "\t required_federates:'" << ( required_federates != NULL ? required_federates : "" ) << "'\n"
+          << "\t required_federates:'" << ( required_federates != nullptr ? required_federates : "" ) << "'\n"
           << "===================================================\n";
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }

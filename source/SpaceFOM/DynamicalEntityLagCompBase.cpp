@@ -66,12 +66,12 @@ using namespace SpaceFOM;
 DynamicalEntityLagCompBase::DynamicalEntityLagCompBase( DynamicalEntityBase &entity_ref ) // RETURN: -- None.
    : SpaceFOM::PhysicalEntityLagCompBase( entity_ref ),
      de_entity( entity_ref ),
-     force_attr( NULL ),
-     torque_attr( NULL ),
-     mass_attr( NULL ),
-     mass_rate_attr( NULL ),
-     inertia_attr( NULL ),
-     inertia_rate_attr( NULL ),
+     force_attr( nullptr ),
+     torque_attr( nullptr ),
+     mass_attr( nullptr ),
+     mass_rate_attr( nullptr ),
+     inertia_attr( nullptr ),
+     inertia_rate_attr( nullptr ),
      mass( 1.0 ),
      mass_rate( 0.0 )
 {

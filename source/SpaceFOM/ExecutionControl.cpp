@@ -148,10 +148,10 @@ ExecutionControl::ExecutionControl()
    : TrickHLA::ExecutionControlBase(),
      pacing( false ),
      root_frame_pub( false ),
-     root_ref_frame( NULL ),
+     root_ref_frame( nullptr ),
      pending_mtr( SpaceFOM::MTR_UNINITIALIZED ),
-     mtr_interaction( NULL ),
-     mtr_interaction_handler( NULL )
+     mtr_interaction( nullptr ),
+     mtr_interaction_handler( nullptr )
 {
    this->enable_least_common_time_step = true;
 }
@@ -164,10 +164,10 @@ ExecutionControl::ExecutionControl(
    : TrickHLA::ExecutionControlBase( exec_config ),
      pacing( false ),
      root_frame_pub( false ),
-     root_ref_frame( NULL ),
+     root_ref_frame( nullptr ),
      pending_mtr( SpaceFOM::MTR_UNINITIALIZED ),
-     mtr_interaction( NULL ),
-     mtr_interaction_handler( NULL )
+     mtr_interaction( nullptr ),
+     mtr_interaction_handler( nullptr )
 {
    this->enable_least_common_time_step = true;
 }
@@ -202,7 +202,7 @@ input.py files and reduce input.py file setting errors.
 void ExecutionControl::initialize()
 {
 #if THLA_TIME_DEBUG
-   print_clock_summary( "ExecutionControl::initialize():" + std::to_string( __LINE__ ) + endl );
+   print_clock_summary( "ExecutionControl::initialize():" + std::to_string( __LINE__ ) + "\n" );
 #endif
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
@@ -297,7 +297,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
 {
    // Allocate the Mode Transition Request Interaction.
    mtr_interaction = MemoryServices::declare_var( mtr_interaction, 1 );
-   if ( mtr_interaction == NULL ) {
+   if ( mtr_interaction == nullptr ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::setup_MTR_interaction_ref_attributes():" << __LINE__
              << " FAILED to allocate enough memory for Interaction specialized"
@@ -320,7 +320,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
    mtr_interaction->set_parameter_count( 1 );
    Parameter *tParm = nullptr;
    tParm            = MemoryServices::declare_var( tParm, mtr_interaction->get_parameter_count() );
-   if ( tParm == NULL ) {
+   if ( tParm == nullptr ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__
              << " FAILED to allocate enough memory for the parameters of the"
@@ -344,7 +344,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
    // entries: 1) the 'execution_mode' parameter and 2) an empty entry
    // marking the end of the structure.
    ATTRIBUTES *mode_attr = static_cast< ATTRIBUTES * >( malloc( 2 * sizeof( ATTRIBUTES ) ) );
-   if ( mode_attr == NULL ) {
+   if ( mode_attr == nullptr ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__
              << " FAILED to aallocate enough memory for the ATTRIBUTES for the"
@@ -358,7 +358,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
    // element as an ending marker of the ATTRIBUTES.
    int attr_index = 0;
 
-   // loop until the current ATTRIBUTES name is a NULL string
+   // loop until the current ATTRIBUTES name is a nullptr string
    while ( strcmp( attrSpaceFOM__MTRInteractionHandler[attr_index].name, "" ) != 0 ) {
       if ( strcmp( attrSpaceFOM__MTRInteractionHandler[attr_index].name, "mtr_mode_int" ) == 0 ) {
          memcpy( &mode_attr[0], // flawfinder: ignore
@@ -409,10 +409,10 @@ void ExecutionControl::setup_interaction_ref_attributes()
 void ExecutionControl::setup_object_RTI_handles()
 {
    ExecutionConfiguration *ExCO = get_execution_configuration();
-   if ( ExCO == NULL ) {
+   if ( ExCO == nullptr ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::setup_object_RTI_handles():" << __LINE__
-             << " ERROR: Unexpected NULL ExCO!\n";
+             << " ERROR: Unexpected nullptr ExCO!\n";
       DebugHandler::terminate( errmsg.str() );
       return;
    }
@@ -425,7 +425,7 @@ void ExecutionControl::setup_object_RTI_handles()
 void ExecutionControl::setup_interaction_RTI_handles()
 {
    // Setup the RTI handles for the SpaceFOM MTR Interaction.
-   if ( mtr_interaction != NULL ) {
+   if ( mtr_interaction != nullptr ) {
       // SpaceFOM Mode Transition Request (MTR) Interaction.
       interaction_service->setup_interaction_RTI_handles( 1, mtr_interaction );
    }
@@ -1088,10 +1088,10 @@ void ExecutionControl::pre_multi_phase_init_processes()
    ExecutionConfiguration *ExCO = get_execution_configuration();
 
    // The User Must specify an ExCO.
-   if ( ExCO == NULL ) {
+   if ( ExCO == nullptr ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
-             << " ERROR: Unexpected NULL THLA.federate.exec_config object.\n";
+             << " ERROR: Unexpected nullptr THLA.federate.exec_config object.\n";
       DebugHandler::terminate( errmsg.str() );
       return;
    }
@@ -1100,19 +1100,19 @@ void ExecutionControl::pre_multi_phase_init_processes()
    if ( ExCO->get_FOM_name().empty() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
-             << " ERROR: Unexpected NULL FOM-name for the THLA.federate.exec_config object.\n";
+             << " ERROR: Unexpected nullptr FOM-name for the THLA.federate.exec_config object.\n";
       DebugHandler::terminate( errmsg.str() );
       return;
    }
 
    // The User Must specify a root reference frame.
-   if ( this->root_ref_frame == NULL ) {
+   if ( this->root_ref_frame == nullptr ) {
       // The Master federate or the Root Reference Frame Publisher federate
       // must have the root_ref_frame reference set.
       if ( is_master() || is_root_frame_publisher() ) {
          ostringstream errmsg;
          errmsg << "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
-                << " ERROR: Unexpected NULL THLA.federate.root_ref_frame object."
+                << " ERROR: Unexpected nullptr THLA.federate.root_ref_frame object."
                 << " The Master federate or the Root Reference Frame Publisher"
                 << " federate must have the root_ref_frame reference set.\n";
          DebugHandler::terminate( errmsg.str() );
@@ -1489,7 +1489,7 @@ bool ExecutionControl::is_mtr_valid(
    MTREnum mtr_value )
 {
    ExecutionConfiguration const *ExCO = get_execution_configuration();
-   if ( ExCO != NULL ) {
+   if ( ExCO != nullptr ) {
       switch ( mtr_value ) {
          case MTR_GOTO_RUN: {
             return ( ( ExCO->current_execution_mode == EXECUTION_MODE_INITIALIZING ) || ( ExCO->current_execution_mode == EXECUTION_MODE_FREEZE ) );
@@ -1907,7 +1907,7 @@ bool ExecutionControl::process_execution_control_updates()
       // Verify the time constraint relationships between the Trick real-time
       // software-frame, Least Common Time Step (LCTS), lookahead and delta
       // time step times.
-      if ( ( federate != NULL ) && !federate->verify_time_constraints() ) {
+      if ( ( federate != nullptr ) && !federate->verify_time_constraints() ) {
          ostringstream errmsg;
          errmsg << "SpaceFOM::ExecutionControl::process_execution_control_updates():" << __LINE__
                 << " ERROR: Time constraints verification failed!\n";
@@ -2773,14 +2773,14 @@ void ExecutionControl::exit_freeze()
 #if THLA_TIME_DEBUG
    print_clock_summary( "ExecutionControl::exit_freeze():" + std::to_string( __LINE__ )
                         + "\n AFTER CLOCK RESET\n"
-                        + "clock_reset to: " + std::to_string( ref ) + endl );
+                        + "clock_reset to: " + std::to_string( ref ) + "\n" );
 #endif
 }
 
 ExecutionConfiguration *ExecutionControl::get_execution_configuration()
 {
    ExecutionConfiguration *ExCO = dynamic_cast< SpaceFOM::ExecutionConfiguration * >( execution_configuration );
-   if ( ExCO == NULL ) {
+   if ( ExCO == nullptr ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::get_execution_configuration():" << __LINE__
              << " ERROR: Execution Configuration is not an SpaceFOM ExCO.\n";
@@ -2881,7 +2881,7 @@ void ExecutionControl::epoch_and_root_frame_discovery_process()
 
       // Set the Root Reference Frame name in the ExCO if a
       // root reference frame object exists in this federate.
-      if ( root_ref_frame != NULL ) {
+      if ( root_ref_frame != nullptr ) {
          ExCO->set_root_frame_name( root_ref_frame->get_name() );
       }
    }
@@ -2935,7 +2935,7 @@ void ExecutionControl::send_root_ref_frame()
    }
 
    // Make sure that the root reference frame is set.
-   if ( root_ref_frame == NULL ) {
+   if ( root_ref_frame == nullptr ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::send_root_ref_frame():" << __LINE__
              << " ERROR: Root Reference Frame is not set!\n";
@@ -2945,7 +2945,7 @@ void ExecutionControl::send_root_ref_frame()
 
    TrickHLA::Object *rrf_object = root_ref_frame->get_object();
 
-   if ( rrf_object == NULL ) {
+   if ( rrf_object == nullptr ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::send_root_ref_frame():" << __LINE__
              << " ERROR: Unexpected null Root Reference Frame object from"
@@ -3000,14 +3000,14 @@ void ExecutionControl::receive_init_root_ref_frame()
 void ExecutionControl::receive_root_ref_frame()
 {
    // If the root_reference frame is not set, then just return.
-   if ( root_ref_frame == NULL ) {
+   if ( root_ref_frame == nullptr ) {
       return;
    }
 
    // Get the Object associated with the root reference frame.
    TrickHLA::Object *rrf_object = root_ref_frame->get_object();
 
-   if ( rrf_object == NULL ) {
+   if ( rrf_object == nullptr ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionControl::receive_root_ref_frame():" << __LINE__
              << " ERROR: Unexpected null Root Reference Frame object from"
@@ -3126,7 +3126,7 @@ void ExecutionControl::set_least_common_time_step(
    if ( is_master() ) {
 
       ExecutionConfiguration *ExCO = dynamic_cast< SpaceFOM::ExecutionConfiguration * >( execution_configuration );
-      if ( ExCO == NULL ) {
+      if ( ExCO == nullptr ) {
          ostringstream errmsg;
          errmsg << "SpaceFOM::ExecutionControl::set_least_common_time_step():" << __LINE__
                 << " ERROR: Execution Configuration is not an SpaceFOM ExCO.\n";

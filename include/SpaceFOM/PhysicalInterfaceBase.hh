@@ -99,7 +99,7 @@ class PhysicalInterfaceBase : public TrickHLA::Packing
                              std::string const &sim_obj_name,
                              std::string const &interface_pkg_name,
                              std::string const &interface_fed_name,
-                             TrickHLA::Object  *mngr_object = NULL,
+                             TrickHLA::Object  *mngr_object = nullptr,
                              bool const         publish     = false,
                              bool const         subscribe   = false );
 

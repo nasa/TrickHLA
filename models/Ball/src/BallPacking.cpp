@@ -65,15 +65,15 @@ using namespace TrickHLAModel;
  */
 BallPacking::BallPacking()
    : debug( false ),
-     name_attr( NULL ),
-     time_attr( NULL ),
-     position_attr( NULL ),
-     velocity_attr( NULL ),
-     acceleration_attr( NULL ),
-     force_attr( NULL ),
-     name( NULL ),
+     name_attr( nullptr ),
+     time_attr( nullptr ),
+     position_attr( nullptr ),
+     velocity_attr( nullptr ),
+     acceleration_attr( nullptr ),
+     force_attr( nullptr ),
+     name( nullptr ),
      time( 0.0 ),
-     ball_state( NULL )
+     ball_state( nullptr )
 {
    //
    // Initialize the state.
@@ -95,13 +95,13 @@ BallPacking::BallPacking()
  */
 BallPacking::BallPacking( BallState &ball_state_ref )
    : debug( false ),
-     name_attr( NULL ),
-     time_attr( NULL ),
-     position_attr( NULL ),
-     velocity_attr( NULL ),
-     acceleration_attr( NULL ),
-     force_attr( NULL ),
-     name( NULL ),
+     name_attr( nullptr ),
+     time_attr( nullptr ),
+     position_attr( nullptr ),
+     velocity_attr( nullptr ),
+     acceleration_attr( nullptr ),
+     force_attr( nullptr ),
+     name( nullptr ),
      time( 0.0 ),
      ball_state( &ball_state_ref )
 {
@@ -125,21 +125,21 @@ BallPacking::BallPacking( BallState &ball_state_ref )
  */
 BallPacking::~BallPacking()
 {
-   if ( this->name != NULL ) {
+   if ( this->name != nullptr ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
          message_publish( MSG_WARNING, "Ball::BallPacking::~BallPacking():%d WARNING deleting Trick Memory for 'this->name'\n",
                           __LINE__ );
       }
-      this->name = NULL;
+      this->name = nullptr;
    }
    initialized       = false;
-   name_attr         = NULL;
-   time_attr         = NULL;
-   position_attr     = NULL;
-   velocity_attr     = NULL;
-   acceleration_attr = NULL;
-   force_attr        = NULL;
-   ball_state        = NULL;
+   name_attr         = nullptr;
+   time_attr         = nullptr;
+   position_attr     = nullptr;
+   velocity_attr     = nullptr;
+   acceleration_attr = nullptr;
+   force_attr        = nullptr;
+   ball_state        = nullptr;
 }
 
 /*!
@@ -160,12 +160,12 @@ void BallPacking::base_config(
    this->object = mngr_object;
 
    // Set the Ball name.
-   if ( ball_name != NULL ) {
+   if ( ball_name != nullptr ) {
       name = trick_MM->mm_strdup( ball_name );
    } else {
       ostringstream errmsg;
       errmsg << "Ball::BallPacking::base_config():" << __LINE__
-             << " ERROR: Unexpected NULL federation instance Ball name!\n";
+             << " ERROR: Unexpected nullptr federation instance Ball name!\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -247,10 +247,10 @@ void BallPacking::base_config(
 void BallPacking::initialize()
 {
    // Must have federation instance name.
-   if ( name == NULL ) {
+   if ( name == nullptr ) {
       ostringstream errmsg;
       errmsg << "Ball::BallPacking::initialize():" << __LINE__
-             << " WARNING: Unexpected NULL entity name!"
+             << " WARNING: Unexpected nullptr entity name!"
              << " Setting frame name to empty string.\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
       this->name = trick_MM->mm_strdup( "" );
@@ -303,16 +303,16 @@ void BallPacking::initialize_callback(
 void BallPacking::set_name( char const *new_name )
 {
    // Free the existing name.
-   if ( this->name != NULL ) {
+   if ( this->name != nullptr ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
          message_publish( MSG_WARNING, "Ball::BallPacking::set_name():%d WARNING deleting Trick Memory for 'this->name'\n",
                           __LINE__ );
       }
-      this->name = NULL;
+      this->name = nullptr;
    }
 
-   // Check for NULL new name.
-   if ( new_name == NULL ) {
+   // Check for nullptr new name.
+   if ( new_name == nullptr ) {
       // Allocate and assign and empty string.
       this->name = trick_MM->mm_strdup( "" );
    } else {
@@ -335,7 +335,7 @@ void BallPacking::pack()
    }
 
    // Check for latency/lag compensation.
-   if ( this->object->lag_comp == NULL ) {
+   if ( this->object->lag_comp == nullptr ) {
       pack_from_working_data();
    }
 
@@ -389,9 +389,9 @@ void BallPacking::pack_from_working_data()
    // state.
 
    // Check for name change.
-   if ( ball_state->name != NULL ) {
+   if ( ball_state->name != nullptr ) {
 
-      if ( name != NULL ) {
+      if ( name != nullptr ) {
 
          // Compare names.
          if ( strcmp( ball_state->name, name ) ) {
@@ -413,7 +413,7 @@ void BallPacking::pack_from_working_data()
 
       ostringstream errmsg;
       errmsg << "TrickHLAModel::Ball::pack_from_working_data():" << __LINE__
-             << " ERROR: Unexpected NULL name for Ball!\n";
+             << " ERROR: Unexpected nullptr name for Ball!\n";
       // Print message and terminate.
       TrickHLA::DebugHandler::terminate( errmsg.str() );
    }
@@ -461,7 +461,7 @@ void BallPacking::unpack_into_working_data()
 
    // Set the entity name.
    if ( name_attr->is_received() ) {
-      if ( ball_state->name != NULL ) {
+      if ( ball_state->name != nullptr ) {
          if ( !strcmp( ball_state->name, name ) ) {
             if ( trick_MM->delete_var( static_cast< void * >( ball_state->name ) ) ) {
                message_publish( MSG_WARNING, "BallPacking::unpack_into_working_data():%d WARNING failed to delete Trick Memory for 'ball_state->name'\n",
@@ -522,7 +522,7 @@ void BallPacking::debug_print( std::ostream &stream ) const
    stream.precision( 15 );
 
    stream << "\tObject-Name: '" << object->get_name() << "'\n"
-          << "\tname:          '" << ( name != NULL ? name : "" ) << "'\n"
+          << "\tname:          '" << ( name != nullptr ? name : "" ) << "'\n"
           << "\ttime:          " << time << "\n"
           << "\tposition:      " << position[0] << ", " << position[1] << "\n"
           << "\tvelocity:      " << velocity[0] << ", " << velocity[1] << "\n"

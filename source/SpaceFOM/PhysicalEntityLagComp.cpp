@@ -86,12 +86,12 @@ PhysicalEntityLagComp::PhysicalEntityLagComp( PhysicalEntityBase &entity_ref ) /
 PhysicalEntityLagComp::~PhysicalEntityLagComp() // RETURN: -- None.
 {
    // Free up any allocated intergrator.
-   if ( this->integrator != NULL ) {
+   if ( this->integrator != nullptr ) {
       if ( !MemoryServices::delete_var( this->integrator ) ) {
          message_publish( MSG_WARNING, "SpaceFOM::PhysicalEntityBase::~PhysicalEntityBase():%d WARNING failed to delete memory for 'this->integrator'\n",
                           __LINE__ );
       }
-      this->integrator = NULL;
+      this->integrator = nullptr;
    }
 }
 
@@ -103,11 +103,11 @@ void PhysicalEntityLagComp::initialize()
    // Create and get a reference to the Trick Euler integrator.
    this->integrator = Trick::getIntegrator( Euler, 26, this->integ_dt );
 
-   if ( this->integrator == NULL ) {
+   if ( this->integrator == nullptr ) {
       ostringstream errmsg;
 
       errmsg << "SpaceFOM::PhysicalEntityLagComp::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL Trick integrator!\n";
+             << " ERROR: Unexpected nullptr Trick integrator!\n";
       // Print message and terminate.
       DebugHandler::terminate( errmsg.str() );
    }

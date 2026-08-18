@@ -61,9 +61,9 @@ SineData::SineData()
      freq( 2.0 * M_PI ),
      amp( 1.0 ),
      tol( 0.001 ),
-     name( NULL )
+     name( nullptr )
 {
-   // We don't want a NULL name by default (Trick Memory Manager allocated).
+   // We don't want a nullptr name by default (Trick Memory Manager allocated).
    set_name( "" );
 
    // Compute the value.
@@ -87,9 +87,9 @@ SineData::SineData(
      freq( omega ),
      amp( mag ),
      tol( 0.001 ),
-     name( NULL )
+     name( nullptr )
 {
-   // We don't want a NULL name by default (Trick Memory Manager allocated).
+   // We don't want a nullptr name by default (Trick Memory Manager allocated).
    set_name( "" );
 
    // Compute the value.
@@ -105,11 +105,11 @@ SineData::SineData(
 SineData::~SineData()
 {
    // Make sure we free the memory used by the name.
-   if ( name != NULL ) {
+   if ( name != nullptr ) {
       if ( trick_MM->delete_var( static_cast< void * >( name ) ) ) {
          message_publish( MSG_WARNING, "TrickHLAModel::SineData::~SineData():%d WARNING failed to delete Trick Memory for 'name'\n", __LINE__ );
       }
-      name = NULL;
+      name = nullptr;
    }
 }
 
@@ -120,27 +120,27 @@ SineData::~SineData()
 void SineData::set_name( char const *new_name )
 {
    if ( new_name != this->name ) {
-      if ( this->name != NULL ) {
+      if ( this->name != nullptr ) {
          if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
             message_publish( MSG_ERROR, "TrickHLAModel::SineData::set_name():%d ERROR deleting Trick Memory for 'this->name'\n", __LINE__ );
             exit( -1 );
          }
       }
-      if ( new_name != NULL ) {
+      if ( new_name != nullptr ) {
          this->name = trick_MM->mm_strdup( new_name );
-         if ( this->name == NULL ) {
+         if ( this->name == nullptr ) {
             message_publish( MSG_ERROR, "TrickHLAModel::SineData::set_name():%d ERROR cannot allocate Trick Memory for 'this->name'\n", __LINE__ );
             exit( -1 );
          }
       } else {
-         this->name = NULL;
+         this->name = nullptr;
       }
    }
 
-   // We don't want a NULL name by default (Trick Memory Manager allocated).
-   if ( this->name == NULL ) {
+   // We don't want a nullptr name by default (Trick Memory Manager allocated).
+   if ( this->name == nullptr ) {
       this->name = trick_MM->mm_strdup( "" );
-      if ( this->name == NULL ) {
+      if ( this->name == nullptr ) {
          message_publish( MSG_ERROR, "TrickHLAModel::SineData::set_name():%d ERROR cannot allocate Trick Memory for 'this->name'\n", __LINE__ );
          exit( -1 );
       }
@@ -257,16 +257,16 @@ void SineData::adjust_phase(
 int SineData::integration()
 {
    // Load the current sine state.
-   load_state( &value, NULL ); // cppcheck-suppress [varFuncNullUB,unmatchedSuppression]
+   load_state( &value, nullptr ); // cppcheck-suppress [varFuncNullUB,unmatchedSuppression]
 
    // Load the current state derivative.
-   load_deriv( &dvdt, NULL ); // cppcheck-suppress [varFuncNullUB,unmatchedSuppression]
+   load_deriv( &dvdt, nullptr ); // cppcheck-suppress [varFuncNullUB,unmatchedSuppression]
 
    // Call the Trick integration service.
    int const ipass = integrate();
 
    // Unload the new propagated state value.
-   unload_state( &value, NULL ); // cppcheck-suppress [varFuncNullUB,unmatchedSuppression]
+   unload_state( &value, nullptr ); // cppcheck-suppress [varFuncNullUB,unmatchedSuppression]
 
    // Return the intermediate step ID.
    return ( ipass );

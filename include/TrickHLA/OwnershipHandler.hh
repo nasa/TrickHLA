@@ -195,7 +195,7 @@ class OwnershipHandler : public CheckpointConversionBase
    double get_cte_time() const;
 
   protected:
-   /*! @brief Returns the attribute for the given attribute FOM name or NULL
+   /*! @brief Returns the attribute for the given attribute FOM name or nullptr
     * if an attribute corresponding to the FOM name is not found.
     * @return Attribute of the object.
     * @param attribute_FOM_name Attribute FOM name.*/

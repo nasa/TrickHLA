@@ -58,25 +58,25 @@ VariableArrayEncoderBase::VariableArrayEncoderBase(
    string const &name )
    : EncoderBase( name ),
      address( addr ),
-     type( ( attr != NULL ) ? attr->type : TRICK_VOID ),
-     type_name( ( attr != NULL ) ? attr->type_name : "UNSUPPORTED_TYPE" ),
-     var_address( NULL ),
+     type( ( attr != nullptr ) ? attr->type : TRICK_VOID ),
+     type_name( ( attr != nullptr ) ? attr->type_name : "UNSUPPORTED_TYPE" ),
+     var_address( nullptr ),
      var_element_count( 0 ),
      data_elements()
 {
-   if ( this->address == NULL ) {
+   if ( this->address == nullptr ) {
       ostringstream errmsg;
       errmsg << "VariableArrayEncoderBase::VariableArrayEncoderBase():" << __LINE__
-             << " ERROR: The variable address is NULL for variable '"
+             << " ERROR: The variable address is nullptr for variable '"
              << data_name << "'. Please make sure the Trick variable"
              << " is allocated memory by the Trick Memory Manager.\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
-   if ( attr == NULL ) {
+   if ( attr == nullptr ) {
       ostringstream errmsg;
       errmsg << "VariableArrayEncoderBase::VariableArrayEncoderBase():" << __LINE__
-             << " ERROR: Unexpected NULL Trick attributes. Please make sure the"
+             << " ERROR: Unexpected nullptr Trick attributes. Please make sure the"
              << " variable is allocated memory by the Trick Memory Manager.\n";
       DebugHandler::terminate( errmsg.str() );
       return;
@@ -100,7 +100,7 @@ VariableArrayEncoderBase::~VariableArrayEncoderBase()
 {
    while ( !data_elements.empty() ) {
       delete data_elements.back();
-      data_elements.back() = NULL;
+      data_elements.back() = nullptr;
       data_elements.pop_back();
    }
 }
@@ -119,7 +119,7 @@ size_t VariableArrayEncoderBase::get_data_size()
 {
    size_t byte_count = 0;
 
-   if ( address != NULL ) {
+   if ( address != nullptr ) {
       calculate_var_element_count();
 
       switch ( type ) {
@@ -164,8 +164,8 @@ void VariableArrayEncoderBase::calculate_var_element_count()
       // Remember the actual Trick variable address.
       var_address = *static_cast< void ** >( address );
 
-      // Dynamic array is a pointer so check for NULL.
-      if ( var_address != NULL ) {
+      // Dynamic array is a pointer so check for nullptr.
+      if ( var_address != nullptr ) {
          this->var_element_count = MemoryServices::get_size( var_address );
       } else {
          this->var_element_count = 0;
@@ -180,18 +180,18 @@ void VariableArrayEncoderBase::resize_trick_var(
    if ( is_dynamic_array()
         && ( new_size > 0 )
         && ( ( new_size != var_element_count )
-             || ( *( static_cast< void ** >( address ) ) == NULL ) ) ) {
+             || ( *( static_cast< void ** >( address ) ) == nullptr ) ) ) {
 
       if ( ( type == TRICK_STRING ) || ( type == TRICK_WSTRING ) ) {
          // MemoryServices::resize_array does not support std::string or std::wstring
          // so reallocate a new array and delete the old one.
-         if ( *( static_cast< void ** >( address ) ) != NULL ) {
+         if ( *( static_cast< void ** >( address ) ) != nullptr ) {
             MemoryServices::delete_var( *( static_cast< void ** >( address ) ) );
          }
          *( static_cast< void ** >( address ) ) =
             static_cast< void * >( MemoryServices::declare_var( type_name.c_str(), new_size ) );
       } else {
-         if ( *( static_cast< void ** >( address ) ) == NULL ) {
+         if ( *( static_cast< void ** >( address ) ) == nullptr ) {
             *( static_cast< void ** >( address ) ) =
                static_cast< void * >( MemoryServices::declare_var( type_name.c_str(), new_size ) );
          } else {
@@ -205,7 +205,7 @@ void VariableArrayEncoderBase::resize_trick_var(
       this->var_address       = *static_cast< void ** >( address );
       this->var_element_count = new_size;
 
-      if ( *static_cast< void ** >( address ) == NULL ) {
+      if ( *static_cast< void ** >( address ) == nullptr ) {
          ostringstream errmsg;
          errmsg << "VariableArrayEncoderBase::resize_trick_var():" << __LINE__
                 << " ERROR: Could not allocate memory for Trick variable"

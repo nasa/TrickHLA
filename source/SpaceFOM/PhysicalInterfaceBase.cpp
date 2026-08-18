@@ -67,10 +67,10 @@ using namespace SpaceFOM;
 PhysicalInterfaceBase::PhysicalInterfaceBase() // RETURN: -- None.
    : TrickHLA::Packing( "PhysicalInterfaceBase" ),
      debug( false ),
-     name_attr( NULL ),
-     parent_attr( NULL ),
-     position_attr( NULL ),
-     attitude_attr( NULL )
+     name_attr( nullptr ),
+     parent_attr( nullptr ),
+     position_attr( nullptr ),
+     attitude_attr( nullptr )
 #if defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
      ,
      quat_encoder( packing_data.attitude )
@@ -85,9 +85,9 @@ PhysicalInterfaceBase::PhysicalInterfaceBase() // RETURN: -- None.
 PhysicalInterfaceBase::~PhysicalInterfaceBase() // RETURN: -- None.
 {
    initialized   = false;
-   name_attr     = NULL;
-   position_attr = NULL;
-   attitude_attr = NULL;
+   name_attr     = nullptr;
+   position_attr = nullptr;
+   attitude_attr = nullptr;
 }
 
 /*!
@@ -105,17 +105,17 @@ void PhysicalInterfaceBase::base_config(
 {
    string const interface_full_name_str = sim_obj_name + "." + interface_pkg_name;
 
-   // Make sure that the TrickHLA::Object pointer is not NULL.
-   // If NULL, this it means this object has not been allocated yet.
+   // Make sure that the TrickHLA::Object pointer is not nullptr.
+   // If nullptr, this it means this object has not been allocated yet.
    // If not allocated, there are two options:
    // 1). We are configuring in the input file, which is okay.
    // 2). We are configuring in default_data but forgot to allocate and
    //     assign the associated object in the 'create_connections()' routine.
-   if ( mngr_object == NULL ) {
+   if ( mngr_object == nullptr ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          ostringstream errmsg;
          errmsg << "PhysicalInterfaceBase::base_config() Warning: \n"
-                << "\tThe TrickHLA::Object associated with object \'" << interface_fed_name << "\' is NULL.\n"
+                << "\tThe TrickHLA::Object associated with object \'" << interface_fed_name << "\' is nullptr.\n"
                 << "\tEither of the two things are possible:\n"
                 << "\t1). We are configuring in the input file, which is okay.\n"
                 << "\t2). We are configuring in default_data but forgot to allocate and\n"
@@ -200,11 +200,11 @@ void PhysicalInterfaceBase::base_config(
  */
 void PhysicalInterfaceBase::initialize()
 {
-   // Check for a NULL object pointer.
-   if ( this->object == NULL ) {
+   // Check for a nullptr object pointer.
+   if ( this->object == nullptr ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterfaceBase::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL TrickHLA Object pointer!\n";
+             << " ERROR: Unexpected nullptr TrickHLA Object pointer!\n";
       DebugHandler::terminate( errmsg.str() );
       return;
    }
@@ -268,7 +268,7 @@ void PhysicalInterfaceBase::initialize_callback(
  */
 void PhysicalInterfaceBase::set_name( std::string const &new_name )
 {
-   if ( this->object != NULL
+   if ( this->object != nullptr
         && this->object->create_HLA_instance
         && new_name.empty() ) {
       ostringstream errmsg;
@@ -285,7 +285,7 @@ void PhysicalInterfaceBase::set_name( std::string const &new_name )
  */
 void PhysicalInterfaceBase::set_parent( std::string const &new_parent_name )
 {
-   if ( this->object != NULL
+   if ( this->object != nullptr
         && this->object->create_HLA_instance
         && new_parent_name.empty() ) {
       ostringstream errmsg;
@@ -314,7 +314,7 @@ void PhysicalInterfaceBase::pack()
    }
 
    // Check for latency/lag compensation.
-   if ( this->object->lag_comp == NULL ) {
+   if ( this->object->lag_comp == nullptr ) {
       pack_from_working_data();
    }
 

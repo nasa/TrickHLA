@@ -43,7 +43,7 @@ using namespace TrickHLA;
  * @job_class{initialization}
  */
 ObjectDeletedHandler::ObjectDeletedHandler() // RETURN: -- None.
-   : object( NULL )
+   : object( nullptr )
 {
    return;
 }

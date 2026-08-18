@@ -73,8 +73,8 @@ using namespace RTI1516_NAMESPACE;
  */
 SineInteractionHandler::SineInteractionHandler()
    : TrickHLA::InteractionHandler(),
-     name( NULL ),
-     message( NULL ),
+     name( nullptr ),
+     message( nullptr ),
      time( 0.0 ),
      year( 2007 ),
      send_cnt( 0 ),
@@ -99,14 +99,14 @@ void SineInteractionHandler::send_sine_interaction(
 
    ostringstream msg;
    msg << "SineInteractionHandler::send_sine_interaction():" << __LINE__
-       << " Interaction from:\"" << ( ( name != NULL ) ? name : "Unknown" )
+       << " Interaction from:\"" << ( ( name != nullptr ) ? name : "Unknown" )
        << "\" Send-count:" << ( send_cnt + 1 ) << "\n";
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
-   if ( message != NULL ) {
+   if ( message != nullptr ) {
       if ( trick_MM->delete_var( static_cast< void * >( message ) ) ) {
          message_publish( MSG_WARNING, "TrickHLAModel::SineInteractionHandler::send_sine_interaction():%d WARNING failed to delete Trick Memory for 'message'\n",
                           __LINE__ );
@@ -116,11 +116,11 @@ void SineInteractionHandler::send_sine_interaction(
 
    // Create a User Supplied Tag based off the name in this example.
    VariableLengthData user_supplied_tag;
-   if ( name != NULL ) {
+   if ( name != nullptr ) {
       string const name_str = name;
       user_supplied_tag     = VariableLengthData( name_str.c_str(), name_str.size() );
    } else {
-      user_supplied_tag = VariableLengthData( NULL, 0 );
+      user_supplied_tag = VariableLengthData( nullptr, 0 );
    }
 
    // Get the HLA granted time and lookahead time.
@@ -156,9 +156,9 @@ void SineInteractionHandler::send_sine_interaction(
               << "Receive Order):"
 #endif
               << __LINE__ << "\n"
-              << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'" << "\n"
-              << "  message:'" << ( ( message != NULL ) ? message : "NULL" ) << "'" << "\n"
-              << "  message length:" << ( ( message != NULL ) ? strlen( message ) : 0 ) << "\n" // flawfinder: ignore
+              << "  name:'" << ( ( name != nullptr ) ? name : "nullptr" ) << "'" << "\n"
+              << "  message:'" << ( ( message != nullptr ) ? message : "nullptr" ) << "'" << "\n"
+              << "  message length:" << ( ( message != nullptr ) ? strlen( message ) : 0 ) << "\n" // flawfinder: ignore
               << "  user-supplied-tag:'" << user_supplied_tag_string << "'" << "\n"
               << "  user-supplied-tag-size:" << user_supplied_tag.size() << "\n"
               << "  hla_granted_time:" << send_time << " ("
@@ -185,7 +185,7 @@ void SineInteractionHandler::send_sine_interaction(
          ostringstream msg2;
          msg2 << "+-+-NOT SENT-+-+ SineInteractionHandler::send_sine_interaction():"
               << __LINE__ << "\n"
-              << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'\n";
+              << "  name:'" << ( ( name != nullptr ) ? name : "nullptr" ) << "'\n";
          message_publish( MSG_NORMAL, msg2.str().c_str() );
       }
    }
@@ -206,9 +206,9 @@ void SineInteractionHandler::receive_interaction(
       ostringstream msg;
       msg << "++++RECEIVING++++ SineInteractionHandler::receive_interaction():"
           << __LINE__ << "\n"
-          << "  name:'" << ( ( name != NULL ) ? name : "NULL" ) << "'" << "\n"
-          << "  message:'" << ( ( message != NULL ) ? message : "NULL" ) << "'" << "\n"
-          << "  message length:" << ( ( message != NULL ) ? strlen( message ) : 0 ) << "\n" // flawfinder: ignore
+          << "  name:'" << ( ( name != nullptr ) ? name : "nullptr" ) << "'" << "\n"
+          << "  message:'" << ( ( message != nullptr ) ? message : "nullptr" ) << "'" << "\n"
+          << "  message length:" << ( ( message != nullptr ) ? strlen( message ) : 0 ) << "\n" // flawfinder: ignore
           << "  user-supplied-tag:'" << user_tag_string << "'" << "\n"
           << "  user-supplied-tag-size:" << the_user_supplied_tag.size() << "\n"
           << "  scenario_time:" << get_scenario_time() << "\n"

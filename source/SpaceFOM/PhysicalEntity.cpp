@@ -57,7 +57,7 @@ using namespace SpaceFOM;
  * @job_class{initialization}
  */
 PhysicalEntity::PhysicalEntity() // RETURN: -- None.
-   : physical_data( NULL )
+   : physical_data( nullptr )
 {
    return;
 }
@@ -76,7 +76,7 @@ PhysicalEntity::PhysicalEntity( PhysicalEntityData &physical_data_ref ) // RETUR
  */
 PhysicalEntity::~PhysicalEntity() // RETURN: -- None.
 {
-   physical_data = NULL;
+   physical_data = nullptr;
 }
 
 /*!
@@ -85,10 +85,10 @@ PhysicalEntity::~PhysicalEntity() // RETURN: -- None.
 void PhysicalEntity::set_data( PhysicalEntityData *physical_data_ptr )
 {
    // Set the reference to the PhysicalEntity data.
-   if ( physical_data_ptr == NULL ) {
+   if ( physical_data_ptr == nullptr ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntity::set_data():" << __LINE__
-             << " ERROR: Unexpected NULL PhysicalEntityData: "
+             << " ERROR: Unexpected nullptr PhysicalEntityData: "
              << pe_packing_data.name << "\n";
       DebugHandler::terminate( errmsg.str() );
       return;
@@ -105,10 +105,10 @@ void PhysicalEntity::set_data( PhysicalEntityData *physical_data_ptr )
 void PhysicalEntity::initialize()
 {
    // Check to make sure the PhysicalEntity data is set.
-   if ( physical_data == NULL ) {
+   if ( physical_data == nullptr ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntity::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL PhysicalEntityData: "
+             << " ERROR: Unexpected nullptr PhysicalEntityData: "
              << pe_packing_data.name << "\n";
       DebugHandler::terminate( errmsg.str() );
       return;

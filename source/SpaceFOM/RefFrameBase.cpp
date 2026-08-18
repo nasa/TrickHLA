@@ -70,10 +70,10 @@ using namespace SpaceFOM;
  */
 RefFrameBase::RefFrameBase()
    : TrickHLA::Packing( "RefFrameBase" ),
-     parent_frame( NULL ),
-     name_attr( NULL ),
-     parent_name_attr( NULL ),
-     state_attr( NULL ),
+     parent_frame( nullptr ),
+     name_attr( nullptr ),
+     parent_name_attr( nullptr ),
+     state_attr( nullptr ),
      packing_data()
 #if defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
      ,
@@ -106,17 +106,17 @@ void RefFrameBase::base_config(
 {
    string const ref_frame_full_name = sim_obj_name + "." + ref_frame_pkg_name;
 
-   // Make sure that the TrickHLA::Object pointer is not NULL.
-   // If NULL, this it means this object has not been allocated yet.
+   // Make sure that the TrickHLA::Object pointer is not nullptr.
+   // If nullptr, this it means this object has not been allocated yet.
    // If not allocated, there are two options:
    // 1). We are configuring in the input file, which is okay.
    // 2). We are configuring in default_data but forgot to allocate and
    //     assign the associated object in the 'create_connections()' routine.
-   if ( mngr_object == NULL ) {
+   if ( mngr_object == nullptr ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          ostringstream errmsg;
          errmsg << "RefFrameBase::base_config() Warning: \n"
-                << "\tThe TrickHLA::Object associated with object \'" << ref_frame_fed_name << "\' is NULL.\n"
+                << "\tThe TrickHLA::Object associated with object \'" << ref_frame_fed_name << "\' is nullptr.\n"
                 << "\tEither of the two things are possible:\n"
                 << "\t1). We are configuring in the input file, which is okay.\n"
                 << "\t2). We are configuring in default_data but forgot to allocate and\n"
@@ -208,15 +208,15 @@ void RefFrameBase::initialize()
    if ( this->packing_data.name.empty() ) {
       ostringstream errmsg;
 
-      string const trick_name = ( name_attr != NULL ) ? name_attr->get_trick_name() : "";
-      string const fom_name   = ( name_attr != NULL ) ? name_attr->get_FOM_name() : "";
+      string const trick_name = ( name_attr != nullptr ) ? name_attr->get_trick_name() : "";
+      string const fom_name   = ( name_attr != nullptr ) ? name_attr->get_FOM_name() : "";
 
       errmsg << "SpaceFOM::RefFrameBase::initialize():" << __LINE__
              << " ERROR: For RefFrame object '"
-             << ( ( object != NULL ) ? object->get_name() : "" )
+             << ( ( object != nullptr ) ? object->get_name() : "" )
              << "' with Attribute Trick name '" << trick_name
              << "' and FOM name '" << fom_name
-             << "', detected unexpected NULL federation instance name!"
+             << "', detected unexpected nullptr federation instance name!"
              << "\n";
 
       // Print message and terminate.
@@ -231,12 +231,12 @@ void RefFrameBase::initialize()
 
          ostringstream errmsg;
 
-         string const trick_name = ( name_attr != NULL ) ? name_attr->get_trick_name() : "";
-         string const fom_name   = ( name_attr != NULL ) ? name_attr->get_FOM_name() : "";
+         string const trick_name = ( name_attr != nullptr ) ? name_attr->get_trick_name() : "";
+         string const fom_name   = ( name_attr != nullptr ) ? name_attr->get_FOM_name() : "";
 
          errmsg << "SpaceFOM::RefFrameBase::initialize():" << __LINE__
                 << " WARNING: For RefFrame '" << this->packing_data.name
-                << "' and object '" << ( ( object != NULL ) ? object->get_name() : "" )
+                << "' and object '" << ( ( object != nullptr ) ? object->get_name() : "" )
                 << "' with Attribute Trick name '" << trick_name
                 << "' and FOM name '" << fom_name
                 << "', detected unexpected empty federation instance parent frame name!"
@@ -256,28 +256,28 @@ void RefFrameBase::initialize()
 
    // Check to see if the parent reference frame has been set if this frame
    // is NOT the root frame.
-   if ( !this->packing_data.parent_name.empty() && ( this->parent_frame == NULL ) ) {
+   if ( !this->packing_data.parent_name.empty() && ( this->parent_frame == nullptr ) ) {
       ostringstream errmsg;
 
-      string const trick_name = ( name_attr != NULL ) ? name_attr->get_trick_name() : "";
-      string const fom_name   = ( name_attr != NULL ) ? name_attr->get_FOM_name() : "";
+      string const trick_name = ( name_attr != nullptr ) ? name_attr->get_trick_name() : "";
+      string const fom_name   = ( name_attr != nullptr ) ? name_attr->get_FOM_name() : "";
 
       errmsg << "SpaceFOM::RefFrameBase::initialize():" << __LINE__
              << " ERROR: For RefFrame object '"
-             << ( ( object != NULL ) ? object->get_name() : "" )
+             << ( ( object != nullptr ) ? object->get_name() : "" )
              << "' with Attribute Trick name '" << trick_name
              << "' and FOM name '" << fom_name
-             << "', detected unexpected NULL parent frame reference!\n";
+             << "', detected unexpected nullptr parent frame reference!\n";
 
       // Print message and terminate.
       DebugHandler::terminate( errmsg.str() );
    }
 
    // Associate the instantiated Manager object with this packing object.
-   if ( this->object == NULL ) {
+   if ( this->object == nullptr ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameBase::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL THLAManager object for ReferenceFrame \""
+             << " ERROR: Unexpected nullptr THLAManager object for ReferenceFrame \""
              << this->packing_data.name << "\"!\n";
       DebugHandler::terminate( errmsg.str() );
    }
@@ -382,7 +382,7 @@ void RefFrameBase::set_parent_frame( RefFrameBase *pframe_ptr )
    this->parent       = pframe_ptr;
 
    // Set the parent frame name.
-   if ( this->parent_frame != NULL ) {
+   if ( this->parent_frame != nullptr ) {
       set_parent_name( this->parent_frame->packing_data.name );
    } else {
       set_parent_name( "" );
@@ -400,7 +400,7 @@ bool RefFrameBase::set_root( bool root_status )
    if ( root_status ) {
 
       // Check to make sure predicates are satisfied.
-      if ( this->parent_frame == NULL ) {
+      if ( this->parent_frame == nullptr ) {
 
          // Check to make sure the parent name is empty.
          if ( this->packing_data.parent_name.empty() ) {
@@ -423,7 +423,7 @@ bool RefFrameBase::set_root( bool root_status )
       // If setting is NOT a root reference frame.
 
       // Check to make sure predicates are satisfied.
-      if ( this->parent_frame != NULL ) {
+      if ( this->parent_frame != nullptr ) {
 
          // Check for empty parent name string.
          if ( this->packing_data.parent_name.empty() ) {
@@ -436,7 +436,7 @@ bool RefFrameBase::set_root( bool root_status )
          }
 
       } else {
-         // Parent frame is NULL.  Automatic fail.
+         // Parent frame is nullptr.  Automatic fail.
 
          // Note that we DO NOT change the is_root_node state.
          return ( false );
@@ -457,18 +457,18 @@ void RefFrameBase::publish()
              << " WARNING: Ignoring, reference frame already initialized!\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } else {
-      if ( object == NULL ) {
+      if ( object == nullptr ) {
          ostringstream errmsg;
          errmsg << "RefFrameBase::publish():" << __LINE__
-                << " ERROR: Unexpected NULL Object reference!\n";
+                << " ERROR: Unexpected nullptr Object reference!\n";
          DebugHandler::terminate( errmsg.str() );
          return;
       }
-      if ( object->attributes == NULL ) {
+      if ( object->attributes == nullptr ) {
          ostringstream errmsg;
          errmsg << "RefFrameBase::publish():" << __LINE__
                 << " ERROR: For Object '" << object->get_name()
-                << "', unexpected NULL object attribute reference!\n";
+                << "', unexpected nullptr object attribute reference!\n";
          DebugHandler::terminate( errmsg.str() );
          return;
       }
@@ -504,18 +504,18 @@ void RefFrameBase::subscribe()
              << " WARNING: Ignoring, reference frame already initialized!\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
    } else {
-      if ( object == NULL ) {
+      if ( object == nullptr ) {
          ostringstream errmsg;
          errmsg << "RefFrameBase::subscribe():" << __LINE__
-                << " ERROR: Unexpected NULL Object reference!\n";
+                << " ERROR: Unexpected nullptr Object reference!\n";
          DebugHandler::terminate( errmsg.str() );
          return;
       }
-      if ( object->attributes == NULL ) {
+      if ( object->attributes == nullptr ) {
          ostringstream errmsg;
          errmsg << "RefFrameBase::subscribe():" << __LINE__
                 << " ERROR: For Object '" << object->get_name()
-                << "', unexpected NULL object attribute reference!\n";
+                << "', unexpected nullptr object attribute reference!\n";
          DebugHandler::terminate( errmsg.str() );
          return;
       }
@@ -559,7 +559,7 @@ void RefFrameBase::pack()
    }
 
    // Check for latency/lag compensation.
-   if ( this->object->lag_comp == NULL ) {
+   if ( this->object->lag_comp == nullptr ) {
       pack_from_working_data();
    }
 

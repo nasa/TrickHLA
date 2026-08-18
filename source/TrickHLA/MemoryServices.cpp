@@ -95,7 +95,7 @@ size_t MemoryServices::get_static_var_element_count(
 {
    size_t count = 0;
 
-   if ( attr != NULL ) {
+   if ( attr != nullptr ) {
       bool const is_array        = ( attr->num_index > 0 );
       bool const is_static_array = is_array && ( attr->index[attr->num_index - 1].size != 0 );
 

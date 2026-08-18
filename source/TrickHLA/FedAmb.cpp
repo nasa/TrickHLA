@@ -106,7 +106,7 @@ using namespace TrickHLA;
  * constructor. However, since we want this class to be Input
  * Processor friendly, we cannot do that here since the Input
  * Processor may not have been initialized yet. So, we have to
- * set the name information to NULL and then allocate and set the
+ * set the name information to nullptr and then allocate and set the
  * defaults in the initialization job if not already set in the
  * input stream.
  * @job_class{initialization}
@@ -135,7 +135,7 @@ void FedAmb::connectionLost(
    throw( FederateInternalError )
 #endif // IEEE_1516_2010
 {
-   if ( federate != NULL ) {
+   if ( federate != nullptr ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          string fault_msg;
          StringUtilities::to_string( fault_msg, faultDescription );
@@ -603,7 +603,7 @@ void FedAmb::objectInstanceNameReservationSucceeded(
    throw( FederateInternalError )
 #endif // IEEE_1516_2010
 {
-   if ( object_service != NULL ) {
+   if ( object_service != nullptr ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          string instance_name;
          StringUtilities::to_string( instance_name, objectInstanceName );
@@ -622,7 +622,7 @@ void FedAmb::objectInstanceNameReservationFailed(
    throw( FederateInternalError )
 #endif // IEEE_1516_2010
 {
-   if ( object_service != NULL ) {
+   if ( object_service != nullptr ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          string instance_name;
          StringUtilities::to_string( instance_name, objectInstanceName );
@@ -641,7 +641,7 @@ void FedAmb::multipleObjectInstanceNameReservationSucceeded(
    throw( FederateInternalError )
 #endif // IEEE_1516_2010
 {
-   if ( object_service != NULL ) {
+   if ( object_service != nullptr ) {
 
       set< wstring >::const_iterator iter;
       for ( iter = objectInstanceNames.begin();
@@ -664,7 +664,7 @@ void FedAmb::multipleObjectInstanceNameReservationFailed(
    throw( FederateInternalError )
 #endif // IEEE_1516_2010
 {
-   if ( object_service != NULL ) {
+   if ( object_service != nullptr ) {
 
       set< wstring >::const_iterator iter;
       for ( iter = objectInstanceNames.begin();
@@ -696,14 +696,14 @@ void FedAmb::discoverObjectInstance(
                        __LINE__, name_str.c_str(), id_str.c_str() );
    }
 
-   if ( object_service == NULL ) {
+   if ( object_service == nullptr ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          string id_str;
          StringUtilities::to_string( id_str, objectInstance );
          string name_str;
          StringUtilities::to_string( name_str, objectInstanceName );
          message_publish( MSG_NORMAL, "FedAmb::discoverObjectInstance():%d Unexpected \
-NULL ObjectServices! Can't do anything with discovered object '%s' Instance-ID:%s\n",
+nullptr ObjectServices! Can't do anything with discovered object '%s' Instance-ID:%s\n",
                           __LINE__, name_str.c_str(), id_str.c_str() );
       }
    } else if ( !object_service->discover_object_instance( objectInstance, objectClass, objectInstanceName ) ) {
@@ -740,14 +740,14 @@ federate '%s'):%d calling 'discoverObjectInstance' to finish the discovery.\n",
                        fed_id.c_str(), __LINE__ );
    }
 
-   if ( object_service == NULL ) {
+   if ( object_service == nullptr ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          string id_str;
          StringUtilities::to_string( id_str, objectInstance );
          string name_str;
          StringUtilities::to_string( name_str, objectInstanceName );
          message_publish( MSG_NORMAL, "FedAmb::discoverObjectInstance():%d Unexpected \
-NULL ObjectServices! Can't do anything with discovered object '%s' Instance-ID:%s\n",
+nullptr ObjectServices! Can't do anything with discovered object '%s' Instance-ID:%s\n",
                           __LINE__, name_str.c_str(), id_str.c_str() );
       }
    } else if ( !object_service->discover_object_instance( objectInstance, objectClass, objectInstanceName ) ) {
@@ -780,12 +780,12 @@ void FedAmb::reflectAttributeValues(
 #endif // IEEE_1516_2025
 {
    // Get the TrickHLA object for the given Object Instance Handle.
-   Object *trickhla_obj = ( object_service != NULL ) ? object_service->get_trickhla_object( objectInstance ) : NULL;
+   Object *trickhla_obj = ( object_service != nullptr ) ? object_service->get_trickhla_object( objectInstance ) : nullptr;
 
    // If the HLA Object Instance is found in the list of TrickHLA Object
    // Instances then this is to be processed as a federate recognized/defined
    // object instance.  Queue the data and return.
-   if ( trickhla_obj != NULL ) {
+   if ( trickhla_obj != nullptr ) {
       if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          message_publish( MSG_NORMAL, "FedAmb:reflectAttributeValues():%d '%s'\n",
                           __LINE__, trickhla_obj->get_name().c_str() );
@@ -803,7 +803,7 @@ void FedAmb::reflectAttributeValues(
    // If we get here, then this isn't a federate recognized/defined object
    // instance.  Now we check to see if it is a joined federate MOM object
    // instance.  We use these to process joined federate data.
-   if ( ( federate != NULL ) && federate->is_joined_federate_by_object_handle( objectInstance ) ) {
+   if ( ( federate != nullptr ) && federate->is_joined_federate_by_object_handle( objectInstance ) ) {
 
       if ( save_restore_service->restore_state == THLARestoreProcessEnum::RESTORE_CHECKPOINT
            || save_restore_service->restore_state == THLARestoreProcessEnum::RESTORE_WAITING_COMPLETION ) {
@@ -830,7 +830,7 @@ void FedAmb::reflectAttributeValues(
 
    // If we get here, then check to see if this is the MOM federation
    // object instance.
-   if ( ( federate != NULL ) && federate->is_MOM_HLAfederation_instance_handle( objectInstance ) ) {
+   if ( ( federate != nullptr ) && federate->is_MOM_HLAfederation_instance_handle( objectInstance ) ) {
 
       // This was an instance-ID for the MOM interface.
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
@@ -880,9 +880,9 @@ void FedAmb::reflectAttributeValues(
    SupplementalReflectInfo        reflectInfo ) throw( FederateInternalError )
 {
    // Get the TrickHLA object for the given Object Instance Handle.
-   Object *trickhla_obj = ( object_service != NULL ) ? object_service->get_trickhla_object( objectInstance ) : NULL;
+   Object *trickhla_obj = ( object_service != nullptr ) ? object_service->get_trickhla_object( objectInstance ) : nullptr;
 
-   if ( trickhla_obj != NULL ) {
+   if ( trickhla_obj != nullptr ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          Int64Time i64time;
@@ -932,9 +932,9 @@ void FedAmb::reflectAttributeValues(
 #endif // IEEE_1516_2025
 {
    // Get the TrickHLA object for the given Object Instance Handle.
-   Object *trickhla_obj = ( object_service != NULL ) ? object_service->get_trickhla_object( objectInstance ) : NULL;
+   Object *trickhla_obj = ( object_service != nullptr ) ? object_service->get_trickhla_object( objectInstance ) : nullptr;
 
-   if ( trickhla_obj != NULL ) {
+   if ( trickhla_obj != nullptr ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          Int64Time i64time;
@@ -975,8 +975,8 @@ void FedAmb::receiveInteraction(
    SupplementalReceiveInfo        receiveInfo ) throw( FederateInternalError )
 #endif // IEEE_1516_2025
 {
-   if ( object_service == NULL ) {
-      message_publish( MSG_WARNING, "FedAmb::receiveInteraction():%d NULL ObjectServices!\n",
+   if ( object_service == nullptr ) {
+      message_publish( MSG_WARNING, "FedAmb::receiveInteraction():%d nullptr ObjectServices!\n",
                        __LINE__ );
    } else {
       Int64Time const dummyTime;
@@ -1006,8 +1006,8 @@ void FedAmb::receiveInteraction(
    OrderType                      receivedOrderType,
    SupplementalReceiveInfo        receiveInfo ) throw( FederateInternalError )
 {
-   if ( object_service == NULL ) {
-      message_publish( MSG_WARNING, "FedAmb::receiveInteraction():%d NULL ObjectServices!\n",
+   if ( object_service == nullptr ) {
+      message_publish( MSG_WARNING, "FedAmb::receiveInteraction():%d nullptr ObjectServices!\n",
                        __LINE__ );
    } else {
       // Process the interaction.
@@ -1051,8 +1051,8 @@ void FedAmb::receiveInteraction(
    SupplementalReceiveInfo        receiveInfo ) throw( FederateInternalError )
 #endif // IEEE_1516_2025
 {
-   if ( object_service == NULL ) {
-      message_publish( MSG_WARNING, "FedAmb::receiveInteraction():%d NULL ObjectServices!\n",
+   if ( object_service == nullptr ) {
+      message_publish( MSG_WARNING, "FedAmb::receiveInteraction():%d nullptr ObjectServices!\n",
                        __LINE__ );
    } else {
       if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
@@ -1255,7 +1255,7 @@ void FedAmb::provideAttributeValueUpdate(
    VariableLengthData const &userSuppliedTag ) throw( FederateInternalError )
 #endif // IEEE_1516_2025
 {
-   if ( object_service != NULL ) {
+   if ( object_service != nullptr ) {
       object_service->provide_attribute_update( objectInstance,
                                                 const_cast< AttributeHandleSet & >( attributes ) );
    }
@@ -1388,9 +1388,9 @@ void FedAmb::requestAttributeOwnershipAssumption(
                        __LINE__, tag );
    }
 
-   Object *trickhla_obj = ( object_service != NULL ) ? object_service->get_trickhla_object( objectInstance ) : NULL;
+   Object *trickhla_obj = ( object_service != nullptr ) ? object_service->get_trickhla_object( objectInstance ) : nullptr;
 
-   if ( trickhla_obj != NULL ) {
+   if ( trickhla_obj != nullptr ) {
 
       bool any_attribute_not_recognized = false;
       bool any_attribute_already_owned  = false;
@@ -1414,7 +1414,7 @@ void FedAmb::requestAttributeOwnershipAssumption(
 
             // We can accept ownership of the attribute if our object contains it
             // as an attribute, is remotely owned, and we are setup to publish it.
-            if ( ( trick_hla_attr != NULL ) && trick_hla_attr->is_remotely_owned() && trick_hla_attr->is_publish() ) {
+            if ( ( trick_hla_attr != nullptr ) && trick_hla_attr->is_remotely_owned() && trick_hla_attr->is_publish() ) {
 
                trick_hla_attr->set_push_requested( true );
 
@@ -1426,7 +1426,7 @@ void FedAmb::requestAttributeOwnershipAssumption(
                                    trick_hla_attr->get_FOM_name().c_str(),
                                    trickhla_obj->get_name().c_str() );
                }
-            } else if ( trick_hla_attr == NULL ) {
+            } else if ( trick_hla_attr == nullptr ) {
 
                // Handle the case where the attribute is not recognized.
                any_attribute_not_recognized = true;
@@ -1506,9 +1506,9 @@ void FedAmb::requestDivestitureConfirmation(
    AttributeHandleSet const &releasedAttributes ) throw( FederateInternalError )
 #endif // IEEE_1516_2025
 {
-   Object *trickhla_obj = ( object_service != NULL ) ? object_service->get_trickhla_object( objectInstance ) : NULL;
+   Object *trickhla_obj = ( object_service != nullptr ) ? object_service->get_trickhla_object( objectInstance ) : nullptr;
 
-   if ( trickhla_obj == NULL ) {
+   if ( trickhla_obj == nullptr ) {
       string id_str;
       StringUtilities::to_string( id_str, objectInstance );
       message_publish( MSG_NORMAL, "FedAmb::requestDivestitureConfirmation():%d Unknown \
@@ -1532,7 +1532,7 @@ object instance (ID:%s), push request rejected.\n",
 
       // We want to divest ownership of the attribute if our object
       // contains it and it is locally owned.
-      if ( ( trick_hla_attr != NULL ) && trick_hla_attr->is_locally_owned() ) {
+      if ( ( trick_hla_attr != nullptr ) && trick_hla_attr->is_locally_owned() ) {
 
          // Divest ownership of this attribute.
          trick_hla_attr->set_divest_requested( true );
@@ -1547,7 +1547,7 @@ object instance (ID:%s), push request rejected.\n",
                              trick_hla_attr->get_FOM_name().c_str(),
                              trickhla_obj->get_name().c_str() );
          }
-      } else if ( trick_hla_attr == NULL ) {
+      } else if ( trick_hla_attr == nullptr ) {
 
          // Handle the case where the attribute is not recognized.
          any_attribute_not_recognized = true;
@@ -1608,9 +1608,9 @@ void FedAmb::attributeOwnershipAcquisitionNotification(
                        __LINE__ );
    }
 
-   Object *trickhla_obj = ( object_service != NULL ) ? object_service->get_trickhla_object( objectInstance ) : NULL;
+   Object *trickhla_obj = ( object_service != nullptr ) ? object_service->get_trickhla_object( objectInstance ) : nullptr;
 
-   if ( trickhla_obj != NULL ) {
+   if ( trickhla_obj != nullptr ) {
 
       bool any_attribute_acquired       = false;
       bool any_attribute_not_recognized = false;
@@ -1627,7 +1627,7 @@ void FedAmb::attributeOwnershipAcquisitionNotification(
 
          // Mark the attribute as locally owned if the object has it as an
          // attribute and is remotely owned, and we are setup to publish it.
-         if ( ( trick_hla_attr != NULL ) && trick_hla_attr->is_remotely_owned() && trick_hla_attr->is_publish() ) {
+         if ( ( trick_hla_attr != nullptr ) && trick_hla_attr->is_remotely_owned() && trick_hla_attr->is_publish() ) {
 
             trick_hla_attr->mark_locally_owned();
             any_attribute_acquired = true;
@@ -1640,7 +1640,7 @@ void FedAmb::attributeOwnershipAcquisitionNotification(
                                 trick_hla_attr->get_FOM_name().c_str(),
                                 trickhla_obj->get_name().c_str() );
             }
-         } else if ( trick_hla_attr == NULL ) {
+         } else if ( trick_hla_attr == nullptr ) {
 
             // Handle the case where the attribute is not recognized.
             any_attribute_not_recognized = true;
@@ -1739,9 +1739,9 @@ void FedAmb::requestAttributeOwnershipRelease(
       message_publish( MSG_NORMAL, "FedAmb::requestAttributeOwnershipRelease():%d pull request received, tag='%s'\n",
                        __LINE__, tag );
    }
-   Object *trickhla_obj = ( object_service != NULL ) ? object_service->get_trickhla_object( objectInstance ) : NULL;
+   Object *trickhla_obj = ( object_service != nullptr ) ? object_service->get_trickhla_object( objectInstance ) : nullptr;
 
-   if ( trickhla_obj != NULL ) {
+   if ( trickhla_obj != nullptr ) {
 
       bool any_pull_requested           = false;
       bool any_attribute_not_recognized = false;
@@ -1757,7 +1757,7 @@ void FedAmb::requestAttributeOwnershipRelease(
 
          // Set the attribute for a pull request if the object contains the
          // specified attribute and is locally owned.
-         if ( ( trick_hla_attr != NULL ) && trick_hla_attr->is_locally_owned() ) {
+         if ( ( trick_hla_attr != nullptr ) && trick_hla_attr->is_locally_owned() ) {
 
             // Mark the attribute for the pull request.
             trick_hla_attr->set_pull_requested( true );
@@ -1772,7 +1772,7 @@ void FedAmb::requestAttributeOwnershipRelease(
                                 trick_hla_attr->get_FOM_name().c_str(),
                                 trickhla_obj->get_name().c_str() );
             }
-         } else if ( trick_hla_attr == NULL ) {
+         } else if ( trick_hla_attr == nullptr ) {
 
             // Handle the case where the attribute is not recognized.
             any_attribute_not_recognized = true;

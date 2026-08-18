@@ -315,10 +315,10 @@ void ExecutionControl::setup_interaction_ref_attributes()
 void ExecutionControl::setup_object_RTI_handles()
 {
    ExecutionConfiguration *ExCO = get_execution_configuration();
-   if ( ExCO == NULL ) {
+   if ( ExCO == nullptr ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControl::setup_object_RTI_handles():" << __LINE__
-             << " ERROR: Unexpected NULL ExCO!\n";
+             << " ERROR: Unexpected nullptr ExCO!\n";
       DebugHandler::terminate( errmsg.str() );
       return;
    }
@@ -473,7 +473,7 @@ void ExecutionControl::shutdown_mode_transition()
 ExecutionConfiguration *ExecutionControl::get_execution_configuration()
 {
    ExecutionConfiguration *ExCO = dynamic_cast< ExecutionConfiguration * >( execution_configuration );
-   if ( ExCO == NULL ) {
+   if ( ExCO == nullptr ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionControl::get_execution_configuration():" << __LINE__
              << " ERROR: Execution Configuration is not an TrickHLA ExCO.\n";
@@ -491,7 +491,7 @@ void ExecutionControl::set_least_common_time_step(
    // WARNING: Only the Master federate should ever set this.
    if ( is_master() ) {
       ExecutionConfiguration const *ExCO = dynamic_cast< ExecutionConfiguration * >( execution_configuration );
-      if ( ExCO == NULL ) {
+      if ( ExCO == nullptr ) {
          ostringstream errmsg;
          errmsg << "TrickHLA::ExecutionControl::set_least_common_time_step():" << __LINE__
                 << " ERROR: Execution Configuration is not an TrickHLA ExCO.\n";

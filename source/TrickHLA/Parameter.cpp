@@ -95,9 +95,9 @@ Parameter::Parameter()
  */
 Parameter::~Parameter()
 {
-   if ( encoder != NULL ) {
+   if ( encoder != nullptr ) {
       delete encoder;
-      encoder = NULL;
+      encoder = nullptr;
    }
 }
 
@@ -156,10 +156,10 @@ void Parameter::initialize(
    // Initialize the element encoders including a fixed record encoder.
    initialize_element_encoder();
 
-   if ( this->encoder == NULL ) {
+   if ( this->encoder == nullptr ) {
       ostringstream errmsg;
       errmsg << "Parameter::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL encoder for Trick variable '"
+             << " ERROR: Unexpected nullptr encoder for Trick variable '"
              << get_trick_name() << "' with an 'rti_encoding' value of "
              << rti_encoding << ".\n";
       DebugHandler::terminate( errmsg.str() );
@@ -193,18 +193,18 @@ void Parameter::initialize(
    void         *address,
    ATTRIBUTES   *attr )
 {
-   if ( address == NULL ) {
+   if ( address == nullptr ) {
       ostringstream errmsg;
       errmsg << "Parameter::initialize(char const *, void *, ATTRIBUTES *):" << __LINE__
              << " ERROR: For FOM Interaction Parameter '" << interaction_fom_name
-             << "'. Unexpected NULL trick variable address.\n";
+             << "'. Unexpected nullptr trick variable address.\n";
       DebugHandler::terminate( errmsg.str() );
    }
-   if ( attr == NULL ) {
+   if ( attr == nullptr ) {
       ostringstream errmsg;
       errmsg << "Parameter::initialize(char const *, void *, ATTRIBUTES *):" << __LINE__
              << " ERROR: For FOM Interaction Parameter '" << interaction_fom_name
-             << "'. Unexpected NULL ATTRIBUTES pointer.\n";
+             << "'. Unexpected nullptr ATTRIBUTES pointer.\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -214,10 +214,10 @@ void Parameter::initialize(
    // Initialize the element encoders including a fixed record encoder.
    initialize_element_encoder( address, attr );
 
-   if ( this->encoder == NULL ) {
+   if ( this->encoder == nullptr ) {
       ostringstream errmsg;
       errmsg << "Parameter::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL encoder for Trick variable '"
+             << " ERROR: Unexpected nullptr encoder for Trick variable '"
              << attr->name << "' with an 'rti_encoding' value of "
              << rti_encoding << ".\n";
       DebugHandler::terminate( errmsg.str() );

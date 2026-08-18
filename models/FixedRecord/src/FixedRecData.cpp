@@ -37,12 +37,12 @@ using namespace std;
 using namespace TrickHLAModel;
 
 FixedRecData::FixedRecData()
-   : field_1_string( NULL ),
+   : field_1_string( nullptr ),
      field_2_float64( 0.0 ),
-     elem_1_string( NULL ),
+     elem_1_string( nullptr ),
      elem_2_float64( 0.0 ),
      element_1_count( 0 ),
-     element_2_name( NULL )
+     element_2_name( nullptr )
 {
    return;
 }
@@ -215,13 +215,13 @@ string FixedRecData::to_string()
    ostringstream msg;
    msg << "FixedRecData::to_string():" << __LINE__ << "\n"
        << "\t field_1_string:"
-       << ( ( field_1_string != NULL ) ? field_1_string : "NULL" ) << "\n"
+       << ( ( field_1_string != nullptr ) ? field_1_string : "nullptr" ) << "\n"
        << "\t field_2_float64:" << field_2_float64 << "\n"
        << "\t elem_1_string:"
-       << ( ( elem_1_string != NULL ) ? elem_1_string : "NULL" ) << "\n"
+       << ( ( elem_1_string != nullptr ) ? elem_1_string : "nullptr" ) << "\n"
        << "\t elem_2_float64:" << elem_2_float64 << "\n"
        << "\t element_1_count:" << element_1_count << "\n"
        << "\t element_2_name:"
-       << ( ( element_2_name != NULL ) ? element_2_name : "NULL" ) << "\n";
+       << ( ( element_2_name != nullptr ) ? element_2_name : "nullptr" ) << "\n";
    return msg.str();
 }

@@ -508,7 +508,7 @@ class Federate : public CheckpointConversionBase
     *. @return Simulation elapsed time. */
    double get_SET()
    {
-      if ( execution_control != NULL ) {
+      if ( execution_control != nullptr ) {
          return ( execution_control->get_sim_time() );
       }
       return ( 0.0 );
@@ -525,7 +525,7 @@ class Federate : public CheckpointConversionBase
     *. @return Simulation scenario time. */
    double get_SST()
    {
-      if ( execution_control != NULL ) {
+      if ( execution_control != nullptr ) {
          return ( execution_control->get_scenario_time() );
       }
       return ( 0.0 );

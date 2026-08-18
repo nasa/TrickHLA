@@ -63,10 +63,10 @@ PhysicalInterfaceConditionalBase::PhysicalInterfaceConditionalBase(
      debug( false ),
      interface( interface_ref ),
      prev_data(),
-     name_attr( NULL ),
-     parent_attr( NULL ),
-     position_attr( NULL ),
-     attitude_attr( NULL )
+     name_attr( nullptr ),
+     parent_attr( nullptr ),
+     position_attr( nullptr ),
+     attitude_attr( nullptr )
 {
    return;
 }

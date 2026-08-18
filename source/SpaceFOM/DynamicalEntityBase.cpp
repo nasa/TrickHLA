@@ -69,12 +69,12 @@ using namespace SpaceFOM;
  * @job_class{initialization}
  */
 DynamicalEntityBase::DynamicalEntityBase() // RETURN: -- None.
-   : force_attr( NULL ),
-     torque_attr( NULL ),
-     mass_attr( NULL ),
-     mass_rate_attr( NULL ),
-     inertia_attr( NULL ),
-     inertia_rate_attr( NULL )
+   : force_attr( nullptr ),
+     torque_attr( nullptr ),
+     mass_attr( nullptr ),
+     mass_rate_attr( nullptr ),
+     inertia_attr( nullptr ),
+     inertia_rate_attr( nullptr )
 {
    //
    // Initialize the additional DynamicalEntity packing data structure.
@@ -110,17 +110,17 @@ void DynamicalEntityBase::base_config(
 {
    string const entity_full_name_str = sim_obj_name + "." + entity_pkg_name;
 
-   // Make sure that the TrickHLA::Object pointer is not NULL.
-   // If NULL, this it means this object has not been allocated yet.
+   // Make sure that the TrickHLA::Object pointer is not nullptr.
+   // If nullptr, this it means this object has not been allocated yet.
    // If not allocated, there are two options:
    // 1). We are configuring in the input file, which is okay.
    // 2). We are configuring in default_data but forgot to allocate and
    //     assign the associated object in the 'create_connections()' routine.
-   if ( mngr_object == NULL ) {
+   if ( mngr_object == nullptr ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          ostringstream errmsg;
          errmsg << "DynamicalEntityBase::base_config() WARNING: \n"
-                << "\tThe TrickHLA::Object associated with object \'" << entity_fed_name << "\' is NULL.\n"
+                << "\tThe TrickHLA::Object associated with object \'" << entity_fed_name << "\' is nullptr.\n"
                 << "\tEither of the two things are possible:\n"
                 << "\t1). We are configuring in the input file, which is okay.\n"
                 << "\t2). We are configuring in default_data but forgot to allocate and\n"

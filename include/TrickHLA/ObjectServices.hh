@@ -293,7 +293,7 @@ class ObjectServices : public CheckpointConversionBase
    /*! @brief Returns the first object that is remotely owned, has the same
     * Object-Class, is not registered, and does not have an Object Instance
     * Name associated with it.
-    *  @return The associated TrickHLA::Object instance; otherwise NULL.
+    *  @return The associated TrickHLA::Object instance; otherwise nullptr.
     *  @param theObjectClass RTI Object class type. */
    Object *get_unregistered_remote_object(
       RTI1516_NAMESPACE::ObjectClassHandle const &theObjectClass );

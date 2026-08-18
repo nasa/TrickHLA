@@ -61,9 +61,9 @@ RefFrameConditionalBase::RefFrameConditionalBase(
      debug( false ),
      frame( frame_ref ),
      prev_data(),
-     name_attr( NULL ),
-     parent_name_attr( NULL ),
-     state_attr( NULL )
+     name_attr( nullptr ),
+     parent_name_attr( nullptr ),
+     state_attr( nullptr )
 {
    return;
 }
@@ -148,7 +148,7 @@ bool RefFrameConditionalBase::should_send(
       if ( frame.packing_data.name.empty() ) {
          ostringstream errmsg;
          errmsg << "RefFrameConditionalBase::should_send():" << __LINE__
-                << " ERROR: Unexpected NULL Name for RefFrame!\n";
+                << " ERROR: Unexpected nullptr Name for RefFrame!\n";
          // Print message and terminate.
          DebugHandler::terminate( errmsg.str() );
       }

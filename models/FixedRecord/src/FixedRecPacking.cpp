@@ -57,7 +57,7 @@ using namespace TrickHLAModel;
 FixedRecPacking::FixedRecPacking()
    : FixedRecData(),
      TrickHLA::Packing(),
-     sim_data( NULL )
+     sim_data( nullptr )
 {
    return;
 }
@@ -97,7 +97,7 @@ void FixedRecPacking::pack()
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_PACKING ) ) {
-      string        obj_name = ( this->object != NULL ) ? object->get_name() : "";
+      string        obj_name = ( this->object != nullptr ) ? object->get_name() : "";
       ostringstream msg;
       msg << "FixedRecPacking::pack():" << __LINE__ << "\n"
           << "Object-Name:'" << obj_name << "'\n"
@@ -118,19 +118,19 @@ void FixedRecPacking::unpack()
    }
 
    // MainFixedRecObject
-   if ( field_1_string != NULL ) {
+   if ( field_1_string != nullptr ) {
       sim_data->field_1_string = StringUtilities::mm_strdup_string( field_1_string );
    }
    sim_data->field_2_float64 = field_2_float64;
 
    // MainFixedRecord
-   if ( elem_1_string != NULL ) {
+   if ( elem_1_string != nullptr ) {
       sim_data->elem_1_string = StringUtilities::mm_strdup_string( elem_1_string );
    }
    sim_data->elem_2_float64 = elem_2_float64;
 
    // SecondaryFixedRecord
-   if ( element_2_name != NULL ) {
+   if ( element_2_name != nullptr ) {
       sim_data->element_2_name = StringUtilities::mm_strdup_string( element_2_name );
    }
    sim_data->element_1_count = element_1_count;
@@ -139,7 +139,7 @@ void FixedRecPacking::unpack()
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_PACKING ) ) {
 
-      string obj_name = ( this->object != NULL ) ? object->get_name() : "";
+      string obj_name = ( this->object != nullptr ) ? object->get_name() : "";
 
       ostringstream msg;
       msg << "FixedRecPacking::unpack():" << __LINE__ << "\n"

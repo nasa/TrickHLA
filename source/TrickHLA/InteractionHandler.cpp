@@ -68,7 +68,7 @@ using namespace RTI1516_NAMESPACE;
  */
 InteractionHandler::InteractionHandler() // RETURN: -- None.
    : initialized( false ),
-     interaction( NULL )
+     interaction( nullptr )
 {
    return;
 }
@@ -112,7 +112,7 @@ void InteractionHandler::set_interaction( TrickHLA::Interaction *inter )
 
 bool InteractionHandler::send_interaction()
 {
-   return ( ( interaction != NULL )
+   return ( ( interaction != nullptr )
                ? interaction->send( TrickHLA::EMPTY_USER_SUPPLIED_TAG )
                : false );
 }
@@ -120,7 +120,7 @@ bool InteractionHandler::send_interaction()
 bool InteractionHandler::send_interaction(
    VariableLengthData const &the_user_supplied_tag )
 {
-   return ( ( interaction != NULL )
+   return ( ( interaction != nullptr )
                ? interaction->send( the_user_supplied_tag )
                : false );
 }
@@ -128,7 +128,7 @@ bool InteractionHandler::send_interaction(
 bool InteractionHandler::send_interaction(
    double send_HLA_time )
 {
-   return ( ( interaction != NULL )
+   return ( ( interaction != nullptr )
                ? interaction->send( send_HLA_time, TrickHLA::EMPTY_USER_SUPPLIED_TAG )
                : false );
 }
@@ -137,7 +137,7 @@ bool InteractionHandler::send_interaction(
    double                    send_HLA_time,
    VariableLengthData const &the_user_supplied_tag )
 {
-   return ( ( interaction != NULL )
+   return ( ( interaction != nullptr )
                ? interaction->send( send_HLA_time, the_user_supplied_tag )
                : false );
 }
@@ -164,11 +164,11 @@ Int64Time const &InteractionHandler::get_granted_time() const
 
 double InteractionHandler::get_sim_time() const
 {
-   if ( interaction != NULL ) {
+   if ( interaction != nullptr ) {
       Federate *fed = interaction->get_federate();
-      if ( fed != NULL ) {
+      if ( fed != nullptr ) {
          ExecutionControlBase const *exec_control = fed->get_execution_control();
-         if ( exec_control != NULL ) {
+         if ( exec_control != nullptr ) {
             return exec_control->get_sim_time();
          }
       }
@@ -178,11 +178,11 @@ double InteractionHandler::get_sim_time() const
 
 double InteractionHandler::get_scenario_time() const
 {
-   if ( interaction != NULL ) {
+   if ( interaction != nullptr ) {
       Federate *fed = interaction->get_federate();
-      if ( fed != NULL ) {
+      if ( fed != nullptr ) {
          ExecutionControlBase const *exec_control = fed->get_execution_control();
-         if ( exec_control != NULL ) {
+         if ( exec_control != nullptr ) {
             return exec_control->get_scenario_time();
          }
       }
@@ -192,11 +192,11 @@ double InteractionHandler::get_scenario_time() const
 
 double InteractionHandler::get_cte_time() const
 {
-   if ( interaction != NULL ) {
+   if ( interaction != nullptr ) {
       Federate *fed = interaction->get_federate();
-      if ( fed != NULL ) {
+      if ( fed != nullptr ) {
          ExecutionControlBase const *exec_control = fed->get_execution_control();
-         if ( exec_control != NULL ) {
+         if ( exec_control != nullptr ) {
             return exec_control->get_cte_time();
          }
       }
@@ -223,11 +223,11 @@ Parameter *InteractionHandler::get_parameter(
 Parameter *InteractionHandler::get_parameter_and_validate(
    string const &param_FOM_name )
 {
-   // Make sure the FOM name is not NULL.
+   // Make sure the FOM name is not nullptr.
    if ( param_FOM_name.empty() ) {
       ostringstream errmsg;
       errmsg << "InteractionHandler::get_parameter_and_validate():" << __LINE__
-             << " ERROR: Unexpected NULL parameter FOM name specified.\n";
+             << " ERROR: Unexpected nullptr parameter FOM name specified.\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -235,7 +235,7 @@ Parameter *InteractionHandler::get_parameter_and_validate(
    Parameter *param = get_parameter( param_FOM_name );
 
    // Make sure we have found the parameter.
-   if ( param == NULL ) {
+   if ( param == nullptr ) {
       ostringstream errmsg;
       errmsg << "InteractionHandler::get_parameter_and_validate():" << __LINE__
              << " ERROR: For FOM interaction '" << interaction->get_FOM_name()

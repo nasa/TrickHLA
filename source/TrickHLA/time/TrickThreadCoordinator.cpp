@@ -79,11 +79,11 @@ TrickThreadCoordinator::TrickThreadCoordinator(
      any_child_thread_associated( false ),
      disable_thread_ids(),
      thread_cnt( 0 ),
-     thread_state( NULL ),
-     data_cycle_time_per_thread( NULL ),
-     data_cycle_base_time_per_thread( NULL ),
-     data_cycle_time_per_obj( NULL ),
-     data_cycle_base_time_per_obj( NULL ),
+     thread_state( nullptr ),
+     data_cycle_time_per_thread( nullptr ),
+     data_cycle_base_time_per_thread( nullptr ),
+     data_cycle_time_per_obj( nullptr ),
+     data_cycle_base_time_per_obj( nullptr ),
      main_thread_data_cycle_time( 0.0 ),
      main_thread_data_cycle_base_time( 0LL )
 {
@@ -96,41 +96,41 @@ TrickThreadCoordinator::TrickThreadCoordinator(
 TrickThreadCoordinator::~TrickThreadCoordinator() // RETURN: -- None.
 {
    // Release the arrays.
-   if ( this->thread_state != NULL ) {
+   if ( this->thread_state != nullptr ) {
       this->thread_cnt = 0;
       if ( !MemoryServices::delete_var( this->thread_state ) ) {
          message_publish( MSG_WARNING, "TrickThreadCoordinator::~TrickThreadCoordinator():%d WARNING failed to delete Trick Memory for 'this->thread_state'\n",
                           __LINE__ );
       }
-      this->thread_state = NULL;
+      this->thread_state = nullptr;
    }
-   if ( this->data_cycle_time_per_thread != NULL ) {
+   if ( this->data_cycle_time_per_thread != nullptr ) {
       if ( !MemoryServices::delete_var( this->data_cycle_time_per_thread ) ) {
          message_publish( MSG_WARNING, "TrickThreadCoordinator::~TrickThreadCoordinator():%d WARNING failed to delete Trick Memory for 'this->data_cycle_time_per_thread'\n",
                           __LINE__ );
       }
-      this->data_cycle_time_per_thread = NULL;
+      this->data_cycle_time_per_thread = nullptr;
    }
-   if ( this->data_cycle_base_time_per_thread != NULL ) {
+   if ( this->data_cycle_base_time_per_thread != nullptr ) {
       if ( !MemoryServices::delete_var( this->data_cycle_base_time_per_thread ) ) {
          message_publish( MSG_WARNING, "TrickThreadCoordinator::~TrickThreadCoordinator():%d WARNING failed to delete Trick Memory for 'this->data_cycle_base_time_per_thread'\n",
                           __LINE__ );
       }
-      this->data_cycle_base_time_per_thread = NULL;
+      this->data_cycle_base_time_per_thread = nullptr;
    }
-   if ( this->data_cycle_time_per_obj != NULL ) {
+   if ( this->data_cycle_time_per_obj != nullptr ) {
       if ( !MemoryServices::delete_var( this->data_cycle_time_per_obj ) ) {
          message_publish( MSG_WARNING, "TrickThreadCoordinator::~TrickThreadCoordinator():%d WARNING failed to delete Trick Memory for 'this->data_cycle_time_per_obj'\n",
                           __LINE__ );
       }
-      this->data_cycle_time_per_obj = NULL;
+      this->data_cycle_time_per_obj = nullptr;
    }
-   if ( this->data_cycle_base_time_per_obj != NULL ) {
+   if ( this->data_cycle_base_time_per_obj != nullptr ) {
       if ( !MemoryServices::delete_var( this->data_cycle_base_time_per_obj ) ) {
          message_publish( MSG_WARNING, "TrickThreadCoordinator::~TrickThreadCoordinator():%d WARNING failed to delete Trick Memory for 'this->data_cycle_base_time_per_obj'\n",
                           __LINE__ );
       }
-      this->data_cycle_base_time_per_obj = NULL;
+      this->data_cycle_base_time_per_obj = nullptr;
    }
 
    // Make sure we destroy the mutex.
@@ -190,12 +190,12 @@ void TrickThreadCoordinator::initialize_thread_coordinator(
    // mutex even if there is an exception.
    MutexProtection const auto_unlock_mutex( &mutex );
 
-   if ( thread_state != NULL ) {
+   if ( thread_state != nullptr ) {
       ostringstream errmsg;
       errmsg << "TrickThreadCoordinator::initialize_thread_coordinator():" << __LINE__
              << " ERROR: This function can only be called once. Detected the"
              << " this->thread_state variable is already allocated memory and"
-             << " is not NULL.\n";
+             << " is not nullptr.\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -223,7 +223,7 @@ void TrickThreadCoordinator::initialize_thread_coordinator(
 
    // Allocate the thread state array for all the Trick threads (main + child).
    thread_state = MemoryServices::declare_var( thread_state, thread_cnt );
-   if ( thread_state == NULL ) {
+   if ( thread_state == nullptr ) {
       ostringstream errmsg;
       errmsg << "TrickThreadCoordinator::initialize_thread_coordinator():" << __LINE__
              << " ERROR: Could not allocate memory for 'thread_state'"
@@ -287,7 +287,7 @@ void TrickThreadCoordinator::initialize_thread_coordinator(
 
    // Allocate memory for the data cycle times per each thread.
    data_cycle_time_per_thread = MemoryServices::declare_var( data_cycle_time_per_thread, thread_cnt );
-   if ( data_cycle_time_per_thread == NULL ) {
+   if ( data_cycle_time_per_thread == nullptr ) {
       ostringstream errmsg;
       errmsg << "TrickThreadCoordinator::initialize_thread_coordinator():" << __LINE__
              << " ERROR: Could not allocate memory for 'data_cycle_time_per_thread'"
@@ -296,7 +296,7 @@ void TrickThreadCoordinator::initialize_thread_coordinator(
       DebugHandler::terminate( errmsg.str() );
    }
    data_cycle_base_time_per_thread = MemoryServices::declare_var( data_cycle_base_time_per_thread, thread_cnt );
-   if ( data_cycle_base_time_per_thread == NULL ) {
+   if ( data_cycle_base_time_per_thread == nullptr ) {
       ostringstream errmsg;
       errmsg << "TrickThreadCoordinator::initialize_thread_coordinator():" << __LINE__
              << " ERROR: Could not allocate memory for 'data_cycle_base_time_per_thread'"
@@ -314,7 +314,7 @@ void TrickThreadCoordinator::initialize_thread_coordinator(
    // Allocate memory for the data cycle times per each object instance.
    if ( object_service->obj_count > 0 ) {
       data_cycle_time_per_obj = MemoryServices::declare_var( data_cycle_time_per_obj, object_service->obj_count );
-      if ( data_cycle_time_per_obj == NULL ) {
+      if ( data_cycle_time_per_obj == nullptr ) {
          ostringstream errmsg;
          errmsg << "TrickThreadCoordinator::initialize_thread_coordinator():" << __LINE__
                 << " ERROR: Could not allocate memory for 'data_cycle_time_per_obj'"
@@ -324,7 +324,7 @@ void TrickThreadCoordinator::initialize_thread_coordinator(
          return;
       }
       data_cycle_base_time_per_obj = MemoryServices::declare_var( data_cycle_base_time_per_obj, object_service->obj_count );
-      if ( data_cycle_base_time_per_obj == NULL ) {
+      if ( data_cycle_base_time_per_obj == nullptr ) {
          ostringstream errmsg;
          errmsg << "TrickThreadCoordinator::initialize_thread_coordinator():" << __LINE__
                 << " ERROR: Could not allocate memory for 'data_cycle_base_time_per_obj'"
@@ -383,7 +383,7 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
    // Verify the TrickThreadCoordinator::initialize() function was called as
    // required before this function is called by checking if the thread count
    // was initialized.
-   if ( ( thread_cnt == 0 ) || ( thread_state == NULL ) ) {
+   if ( ( thread_cnt == 0 ) || ( thread_state == nullptr ) ) {
       ostringstream errmsg;
       errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
              << " ERROR: Federate::initialize_thread_state() must be called"
@@ -776,16 +776,16 @@ void TrickThreadCoordinator::refresh_thread_base_times()
 
    ObjectServices const *object_service = federate->get_object_service();
 
-   if ( ( data_cycle_base_time_per_obj != NULL )
-        && ( data_cycle_time_per_obj != NULL ) ) {
+   if ( ( data_cycle_base_time_per_obj != nullptr )
+        && ( data_cycle_time_per_obj != nullptr ) ) {
       for ( int obj_index = 0; obj_index < object_service->obj_count; ++obj_index ) {
          data_cycle_base_time_per_obj[obj_index] =
             Int64BaseTime::to_base_time( data_cycle_time_per_obj[obj_index] );
       }
    }
 
-   if ( ( data_cycle_base_time_per_thread != NULL )
-        && ( data_cycle_time_per_thread != NULL ) ) {
+   if ( ( data_cycle_base_time_per_thread != nullptr )
+        && ( data_cycle_time_per_thread != nullptr ) ) {
       for ( unsigned int thread_id = 0; thread_id < thread_cnt; ++thread_id ) {
          data_cycle_base_time_per_thread[thread_id] =
             Int64BaseTime::to_base_time( data_cycle_time_per_thread[thread_id] );

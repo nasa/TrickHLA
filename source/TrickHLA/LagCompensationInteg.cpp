@@ -51,7 +51,7 @@ using namespace TrickHLA;
  * @job_class{initialization}
  */
 LagCompensationInteg::LagCompensationInteg()
-   : integrator( NULL )
+   : integrator( nullptr )
 {
    return;
 }

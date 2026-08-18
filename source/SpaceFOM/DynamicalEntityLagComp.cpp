@@ -88,12 +88,12 @@ DynamicalEntityLagComp::DynamicalEntityLagComp( DynamicalEntityBase &entity_ref 
 DynamicalEntityLagComp::~DynamicalEntityLagComp() // RETURN: -- None.
 {
    // Free up any allocated intergrator.
-   if ( this->integrator != NULL ) {
+   if ( this->integrator != nullptr ) {
       if ( !MemoryServices::delete_var( static_cast< void * >( this->integrator ) ) ) {
          message_publish( MSG_WARNING, "SpaceFOM::DynamicalEntityBase::~DynamicalEntityBase():%d WARNING failed to delete memory for 'this->integrator'\n",
                           __LINE__ );
       }
-      this->integrator = NULL;
+      this->integrator = nullptr;
    }
 }
 
@@ -105,11 +105,11 @@ void DynamicalEntityLagComp::initialize()
    // Create and get a reference to the Trick Euler integrator.
    this->integrator = Trick::getIntegrator( Euler, 26, this->integ_dt );
 
-   if ( this->integrator == NULL ) {
+   if ( this->integrator == nullptr ) {
       ostringstream errmsg;
 
       errmsg << "SpaceFOM::DynamicalEntityLagComp::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL Trick integrator!\n";
+             << " ERROR: Unexpected nullptr Trick integrator!\n";
       // Print message and terminate.
       DebugHandler::terminate( errmsg.str() );
    }

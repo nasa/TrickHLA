@@ -73,8 +73,8 @@ using namespace SpaceFOM;
 QuaternionPacking::QuaternionPacking()
    : debug( false ),
      test( true ),
-     working_data( NULL ),
-     quat_attr( NULL ),
+     working_data( nullptr ),
+     quat_attr( nullptr ),
      packing_data()
 #if defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
      ,
@@ -107,16 +107,16 @@ void QuaternionPacking::base_config(
    string       trick_name_str;
 
    // Associate the instantiated Manager object with this packing object.
-   if ( mngr_object == NULL ) {
-      if ( this->object == NULL ) {
+   if ( mngr_object == nullptr ) {
+      if ( this->object == nullptr ) {
          ostringstream errmsg;
          errmsg << "SpaceFOM::QuaternionPacking::base_config():" << __LINE__
-                << " WARNING: Unexpected NULL THLAManager object!\n";
+                << " WARNING: Unexpected nullptr THLAManager object!\n";
          DebugHandler::terminate( errmsg.str() );
       }
       // If the mngr_object is not set but the object is, use that.
    } else {
-      if ( this->object == NULL ) {
+      if ( this->object == nullptr ) {
          // If the object is not already set, use the passed in mngr_object.
          this->object = mngr_object;
       } else {
@@ -127,8 +127,8 @@ void QuaternionPacking::base_config(
       }
    }
 
-   // Set the working data pointer if not NULL.
-   if ( working != NULL ) {
+   // Set the working data pointer if not nullptr.
+   if ( working != nullptr ) {
       working_data = working;
    }
 
@@ -176,10 +176,10 @@ void QuaternionPacking::base_config(
 void QuaternionPacking::initialize()
 {
    // Check to make sure the working data has been set.
-   if ( working_data == NULL ) {
+   if ( working_data == nullptr ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::QuaternionPacking::initialize():" << __LINE__
-             << " ERROR: NULL latitude reference!\n";
+             << " ERROR: nullptr latitude reference!\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -275,7 +275,7 @@ void QuaternionPacking::pack()
    }
 
    // Check for latency/lag compensation.
-   if ( this->object->lag_comp == NULL ) {
+   if ( this->object->lag_comp == nullptr ) {
       pack_from_working_data();
    }
 

@@ -49,7 +49,7 @@ using namespace TrickHLA;
 SyncPoint::SyncPoint()
    : label(),
      state( TrickHLA::SYNC_PT_STATE_KNOWN ),
-     user_supplied_tag( NULL, 0 )
+     user_supplied_tag( nullptr, 0 )
 {
    return;
 }
@@ -61,7 +61,7 @@ SyncPoint::SyncPoint(
    wstring const &lbl )
    : label( lbl ),
      state( TrickHLA::SYNC_PT_STATE_KNOWN ),
-     user_supplied_tag( NULL, 0 )
+     user_supplied_tag( nullptr, 0 )
 {
    return;
 }

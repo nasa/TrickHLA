@@ -63,7 +63,7 @@ class MemoryServices
     * allocation declaration string.
     * @param declaration A type specifier followed by zero or more asterisks,
     * followed by an optional name, followed by zero or more bracketed integers.
-    * @return An address to the allocated memory or NULL on failure. */
+    * @return An address to the allocated memory or nullptr on failure. */
    static void *declare_var( char const *declaration );
 
    /*! @brief Allocate an anonymous, one dimensional array. The elements of the
@@ -71,7 +71,7 @@ class MemoryServices
     * is specified by @b n_elems.
     * @param enh_type_spec Type specifier followed by zero or more asterisks.
     * @param n_elems       The number of items of the given type to allocate.
-    * @return An address to the allocated memory or NULL on failure.  */
+    * @return An address to the allocated memory or nullptr on failure.  */
    static void *declare_var( char const *enh_type_spec, size_t n_elems );
 
    /*! @brief Delete the memory at the named allocation address.
@@ -90,27 +90,27 @@ class MemoryServices
 
    /*! @brief Allocate for a duplicate of an input C string (char*).
     * @param input The C string (char *) to be duplicated.
-    * @return An address to the allocated C string or NULL on failure. */
+    * @return An address to the allocated C string or nullptr on failure. */
    static char *cstrdup( char const *input );
 
    /*! @brief Allocate for a duplicate of an input C++ string (std::string).
     * @param input The string to be duplicated.
-    * @return An address to the allocated C string or NULL on failure. */
+    * @return An address to the allocated C string or nullptr on failure. */
    static char *cstrdup( std::string const &input );
 
    /*! @brief Allocate for a duplicate of an input C string (char*).
     * @param input The C wide string (wchar_t *) to be duplicated.
-    * @return An address to the allocated C wide string or NULL on failure. */
+    * @return An address to the allocated C wide string or nullptr on failure. */
    static wchar_t *cwstrdup( char const *input );
 
    /*! @brief Allocate for a duplicate of an input C wide string (char*).
     * @param input The C wide string (wchar_t *) to be duplicated.
-    * @return An address to the allocated C wide string or NULL on failure. */
+    * @return An address to the allocated C wide string or nullptr on failure. */
    static wchar_t *cwstrdup( wchar_t const *input );
 
    /*! @brief Allocate for a duplicate of an input C++ wide string (std::wstring).
     * @param input The wide string to be duplicated.
-    * @return An address to the allocated C wide string or NULL on failure. */
+    * @return An address to the allocated C wide string or nullptr on failure. */
    static wchar_t *cwstrdup( std::wstring const &input );
 
    //--------------------------------------------------------------------------
@@ -132,7 +132,7 @@ class MemoryServices
     * @param  var_name   Name of the allocation. ="" for anonymous allocations.
     * @param  n_cdims    Number of constrained/fixed dimensions. =0 for unarrayed variables.
     * @param  cdims      Array of dimension sizes.
-    * @return An address to the allocated memory or NULL on failure. */
+    * @return An address to the allocated memory or nullptr on failure. */
    template < typename T >
    static T declare_var( T type, std::string const &class_name, size_t n_stars, std::string const &var_name, size_t n_cdims, size_t *cdims );
 
@@ -145,7 +145,7 @@ class MemoryServices
     * @param  type     Specified type to allocate.
     * @param  n_elems  Number of elements in the array.
     * @param  var_name Name of the allocation for Trick.  Anonymous allocation if empty.
-    * @return An address to the allocated memory or NULL on failure. */
+    * @return An address to the allocated memory or nullptr on failure. */
    template < typename T >
    static T declare_var( T type, size_t n_elems, std::string const &var_name );
 
@@ -157,7 +157,7 @@ class MemoryServices
     * @tparam T        Template type parameter.
     * @param  type     Specified type to allocate.
     * @param  n_elems  Number of elements in the array.
-    * @return An address to the allocated memory or NULL on failure. */
+    * @return An address to the allocated memory or nullptr on failure. */
    template < typename T >
    static T declare_var( T type, size_t n_elems );
 
@@ -167,7 +167,7 @@ class MemoryServices
     * @param  type        Specified type to allocate.
     * @param  declaration A type specifier followed by zero or more asterisks,
     * followed by an optional name, followed by zero or more bracketed integers.
-    * @return An address to the allocated memory or NULL on failure. */
+    * @return An address to the allocated memory or nullptr on failure. */
    template < typename T >
    static T declare_var( T type, std::string const &declaration );
 
@@ -178,7 +178,7 @@ class MemoryServices
     * @param  type          Specified type to allocate.
     * @param  enh_type_spec Type specifier followed by zero or more asterisks.
     * @param  n_elems       The number of items of the given type to allocate.
-    * @return An address to the allocated memory or NULL on failure.  */
+    * @return An address to the allocated memory or nullptr on failure.  */
    template < typename T >
    static T declare_var( T type, std::string const &enh_type_spec, size_t n_elems );
 
@@ -186,7 +186,7 @@ class MemoryServices
     * @tparam T             Template type parameter.
     * @param  address       Address of array to be resized.
     * @param  n_elems       The number of items of the given type to allocate.
-    * @return An address to the allocated memory or NULL on failure.  */
+    * @return An address to the allocated memory or nullptr on failure.  */
    template < typename T >
    static T resize_array( T address, size_t n_elems );
 

@@ -77,7 +77,7 @@ using namespace TrickHLA;
       this->data_encoder              = array_encoder;                                                                                 \
                                                                                                                                        \
       /* Connect the users array data to the encoder array elements. */                                                                \
-      if ( addr != NULL ) {                                                                                                            \
+      if ( addr != nullptr ) {                                                                                                         \
          SimpleDataType *array_data = static_cast< SimpleDataType * >( addr ); /* NOLINT */                                            \
          for ( std::size_t i = 0; i < length; ++i ) {                                                                                  \
             const_cast< EncodableDataType & >( /* NOLINT(bugprone-macro-parentheses) */                                                \
@@ -96,7 +96,7 @@ using namespace TrickHLA;
    std::size_t EncoderClassName::get_data_size()                                                                                       \
    {                                                                                                                                   \
       std::size_t byte_count = 0;                                                                                                      \
-      if ( data_encoder != NULL ) {                                                                                                    \
+      if ( data_encoder != nullptr ) {                                                                                                 \
          HLAfixedArray const *array_encoder = dynamic_cast< HLAfixedArray * >( data_encoder );                                         \
          std::size_t const    array_size    = array_encoder->size();                                                                   \
                                                                                                                                        \

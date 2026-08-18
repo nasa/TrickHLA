@@ -68,17 +68,17 @@ class TrickHLAObjectBaseSimObject : public Trick::SimObject {
                                 std::string const & obj_fed_name,
                                 unsigned short      _INIT = P_HLA_INIT )
       : Trick::SimObject(),
-        packing_base_ptr( NULL ),
-        lag_comp_base_ptr( NULL ),
-        conditional_base_ptr( NULL ),
-        ownership_base_ptr( NULL ),
-        deleted_base_ptr( NULL ),
+        packing_base_ptr( nullptr ),
+        lag_comp_base_ptr( nullptr ),
+        conditional_base_ptr( nullptr ),
+        ownership_base_ptr( nullptr ),
+        deleted_base_ptr( nullptr ),
         create( create_object ),
         sim_object_configured( false ),
         sim_object_name( sim_obj_name ),
         object_packing_name( obj_packing_name ),
         object_fed_name( obj_fed_name ),
-        thla_object( NULL )
+        thla_object( nullptr )
    {
       //
       // Default data jobs
@@ -94,18 +94,18 @@ class TrickHLAObjectBaseSimObject : public Trick::SimObject {
 
    virtual void set_object( TrickHLA::Object * object )
    {
-      if ( packing_base_ptr == NULL ) {
+      if ( packing_base_ptr == nullptr ) {
          std::ostringstream errmsg;
          errmsg << "TrickHLAObjectBaseSimObject::default_config():" << __LINE__
-                << " ERROR: Unexpected NULL Packing object!" << std::endl;
+                << " ERROR: Unexpected nullptr Packing object!\n";
          TrickHLA::DebugHandler::terminate( errmsg.str() );
       }
       
-      if ( object == NULL ) {
+      if ( object == nullptr ) {
          std::ostringstream errmsg;
          errmsg << "TrickHLAObjectBaseSimObject::set_object():" << __LINE__
                 << " ERROR: The TrickHLA::Object associated with object \'"
-                << name << "\' is NULL." << std::endl;
+                << name << "\' is nullptr.\n";
          TrickHLA::DebugHandler::terminate( errmsg.str() );
       }
       
@@ -122,17 +122,17 @@ class TrickHLAObjectBaseSimObject : public Trick::SimObject {
       TrickHLA::Object * pkg_obj_ptr = packing_base_ptr->get_object();
       
       // Check to make sure if the object has been allocated and set.
-      if ( pkg_obj_ptr == NULL ) {
+      if ( pkg_obj_ptr == nullptr ) {
          std::ostringstream errmsg;
          errmsg << "TrickHLAObjectBaseSimObject::set_required():" << __LINE__
                 << " ERROR: The TrickHLA::Object associated with object \'"
-                << name << "\' is NULL." << std::endl;
+                << name << "\' is nullptr.\n";
          TrickHLA::DebugHandler::terminate( errmsg.str() );
       }
 
       // Check if the object reference has been set.
       // If not, set it.
-      if ( thla_object == NULL ){
+      if ( thla_object == nullptr ){
          // Register the object with this SimObject.
          thla_object = pkg_obj_ptr;
       }
@@ -150,7 +150,7 @@ class TrickHLAObjectBaseSimObject : public Trick::SimObject {
       // Check if the TrickHLA Object associated with the packing function
       // has been instantiated and assigned.  If so, assign the name to
       // it as well.
-      if ( thla_object != NULL ) {
+      if ( thla_object != nullptr ) {
          thla_object->name = instance_name;
       }
 
@@ -160,10 +160,10 @@ class TrickHLAObjectBaseSimObject : public Trick::SimObject {
  protected:
    virtual int default_config()
    {
-      if ( packing_base_ptr == NULL ) {
+      if ( packing_base_ptr == nullptr ) {
          std::ostringstream errmsg;
          errmsg << "TrickHLAObjectBaseSimObject::default_config():" << __LINE__
-                << " ERROR: Unexpected NULL Packing object!" << std::endl;
+                << " ERROR: Unexpected nullptr Packing object!\n";
          TrickHLA::DebugHandler::terminate( errmsg.str() );
          return( -1 );
       }
@@ -173,16 +173,16 @@ class TrickHLAObjectBaseSimObject : public Trick::SimObject {
       
       // Check if the TrickHLA Object associated with the packing function
       // has been instantiated and assigned.
-      if ( thla_object != NULL ) {
+      if ( thla_object != nullptr ) {
          
          // Check if the packing object is already assigned.
-         if ( pkg_obj_ptr != NULL ) {
+         if ( pkg_obj_ptr != nullptr ) {
             
             // Both are set and they MUST match!
             if ( thla_object != pkg_obj_ptr ) {
                std::ostringstream errmsg;
                errmsg << "TrickHLAObjectBaseSimObject::default_config():" << __LINE__
-                      << " ERROR: Object references do NOT match!" << std::endl;
+                      << " ERROR: Object references do NOT match!\n";
                TrickHLA::DebugHandler::terminate( errmsg.str() );
                return( -1 );
             }
@@ -194,7 +194,7 @@ class TrickHLAObjectBaseSimObject : public Trick::SimObject {
             
          }
          
-      } else if ( pkg_obj_ptr != NULL ) {
+      } else if ( pkg_obj_ptr != nullptr ) {
          
          // The thla_object reference is not set but the packing object is.
          // So, we'll use that.
@@ -236,16 +236,16 @@ class TrickHLAObjectBaseSimObject : public Trick::SimObject {
          std::ostringstream errmsg;
          errmsg << "TrickHLAObjectBaseSimObject::initialize():" << __LINE__
                 << " ERROR: The sim-object configure function must be called"
-                << " before calling this initialize function!" << std::endl;
+                << " before calling this initialize function!\n";
          TrickHLA::DebugHandler::terminate( errmsg.str() );
          return( -1 );
       }
 
       // We must have a Packing object.
-      if ( packing_base_ptr == NULL ) {
+      if ( packing_base_ptr == nullptr ) {
          std::ostringstream errmsg;
          errmsg << "TrickHLAObjectBaseSimObject::initialize():" << __LINE__
-                << " ERROR: Unexpected NULL Packing object!" << std::endl;
+                << " ERROR: Unexpected nullptr Packing object!\n";
          TrickHLA::DebugHandler::terminate( errmsg.str() );
          return( -1 );
       } else {
@@ -257,16 +257,16 @@ class TrickHLAObjectBaseSimObject : public Trick::SimObject {
 
       // Check if the TrickHLA Object associated with the packing function
       // has been instantiated and assigned.
-      if ( thla_object != NULL ) {
+      if ( thla_object != nullptr ) {
          
          // Check if the packing object is already assigned.
-         if ( pkg_obj_ptr != NULL ) {
+         if ( pkg_obj_ptr != nullptr ) {
             
             // Both are set and they MUST match!
             if ( thla_object != pkg_obj_ptr ) {
                std::ostringstream errmsg;
                errmsg << "TrickHLAObjectBaseSimObject::initialize():" << __LINE__
-                      << " ERROR: Object references do NOT match!" << std::endl;
+                      << " ERROR: Object references do NOT match!\n";
                TrickHLA::DebugHandler::terminate( errmsg.str() );
                return( -1 );
             }
@@ -278,7 +278,7 @@ class TrickHLAObjectBaseSimObject : public Trick::SimObject {
             
          }
          
-      } else if ( pkg_obj_ptr != NULL ) {
+      } else if ( pkg_obj_ptr != nullptr ) {
          
          // The thla_object reference is not set but the packing object is.
          // So, we'll use that.
@@ -290,18 +290,18 @@ class TrickHLAObjectBaseSimObject : public Trick::SimObject {
          std::ostringstream errmsg;
          errmsg << "TrickHLAObjectBaseSimObject::initialize():" << __LINE__
                 << " ERROR: The TrickHLA::Object associated with object \'"
-                << name << "\' is NULL." << std::endl;
+                << name << "\' is nullptr.\n";
          TrickHLA::DebugHandler::terminate( errmsg.str() );
          return( -1 );
       }
 
       // Check for a Lag Compensation object.
-      if ( lag_comp_base_ptr != NULL ) {
+      if ( lag_comp_base_ptr != nullptr ) {
          lag_comp_base_ptr->initialize();
       }
 
       // Check for a Conditional object.
-      if ( conditional_base_ptr != NULL ) {
+      if ( conditional_base_ptr != nullptr ) {
          conditional_base_ptr->initialize();
       }
 

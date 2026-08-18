@@ -96,12 +96,12 @@ class RefFrameTree : public SpaceFOM::LRTreeBase
    virtual bool has_frame( RefFrameBase const *frame );
 
    /*! @brief Find a frame in the tree.
-    *  @return Tree frame instance if found, NULL otherwise.
+    *  @return Tree frame instance if found, nullptr otherwise.
     *  @param name Name of the frame to check for. */
    virtual RefFrameBase *find_frame( char const *name );
 
    /*! @brief Find a frame in the tree.
-    *  @return Tree frame instance if found, NULL otherwise.
+    *  @return Tree frame instance if found, nullptr otherwise.
     *  @param name Name of the frame to check for. */
    virtual RefFrameBase *find_frame( std::string const &name );
 

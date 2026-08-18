@@ -100,7 +100,7 @@ void SleepTimeout::set(
 
 int SleepTimeout::sleep() const
 {
-   return nanosleep( &sleep_time, NULL ); // NOLINT
+   return nanosleep( &sleep_time, nullptr ); // NOLINT
 }
 
 // Current time as an integer in microseconds.

@@ -439,7 +439,7 @@ int Utilities::micro_sleep(
       sleep_time.tv_sec  = 0;
       sleep_time.tv_nsec = 0;
    }
-   return nanosleep( &sleep_time, NULL ); // NOLINT
+   return nanosleep( &sleep_time, nullptr ); // NOLINT
 }
 
 string const Utilities::get_version()

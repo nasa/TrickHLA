@@ -62,15 +62,15 @@ PhysicalEntityConditionalBase::PhysicalEntityConditionalBase(
      debug( false ),
      entity( entity_ref ),
      prev_data(),
-     name_attr( NULL ),
-     type_attr( NULL ),
-     status_attr( NULL ),
-     parent_frame_attr( NULL ),
-     state_attr( NULL ),
-     accel_attr( NULL ),
-     ang_accel_attr( NULL ),
-     cm_attr( NULL ),
-     body_frame_attr( NULL )
+     name_attr( nullptr ),
+     type_attr( nullptr ),
+     status_attr( nullptr ),
+     parent_frame_attr( nullptr ),
+     state_attr( nullptr ),
+     accel_attr( nullptr ),
+     ang_accel_attr( nullptr ),
+     cm_attr( nullptr ),
+     body_frame_attr( nullptr )
 {
    return;
 }

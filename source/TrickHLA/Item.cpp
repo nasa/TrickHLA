@@ -38,7 +38,7 @@ using namespace TrickHLA;
  * @job_class{initialization}
  */
 Item::Item() // RETURN: -- None.
-   : next( NULL )
+   : next( nullptr )
 {
    return;
 }

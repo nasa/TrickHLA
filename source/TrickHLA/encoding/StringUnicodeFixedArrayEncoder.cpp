@@ -141,7 +141,7 @@ void StringUnicodeFixedArrayEncoder::update_after_decode()
 size_t StringUnicodeFixedArrayEncoder::get_data_size()
 {
    size_t byte_count = 0;
-   if ( data_encoder != NULL ) {
+   if ( data_encoder != nullptr ) {
       HLAfixedArray const *array_encoder = dynamic_cast< HLAfixedArray * >( data_encoder );
       size_t const         array_size    = array_encoder->size();
       for ( size_t i = 0; i < array_size; ++i ) {

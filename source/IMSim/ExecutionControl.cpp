@@ -144,7 +144,7 @@ ExecutionControl::ExecutionControl(
    : TrickHLA::ExecutionControlBase( imsim_config ),
      pending_mtr( IMSim::MTR_UNINITIALIZED ),
      freeze_inter_count( 0 ),
-     freeze_interaction( NULL ),
+     freeze_interaction( nullptr ),
      freeze_scenario_times(),
      scenario_time_epoch( 0.0 ),
      current_execution_mode( TrickHLA::EXECUTION_CONTROL_UNINITIALIZED ),
@@ -191,19 +191,19 @@ ExecutionControl::~ExecutionControl()
    clear_mode_values();
 
    // Free up the allocated Freeze Interaction.
-   if ( freeze_interaction != NULL ) {
-      if ( freeze_interaction->get_handler() != NULL ) {
+   if ( freeze_interaction != nullptr ) {
+      if ( freeze_interaction->get_handler() != nullptr ) {
          if ( !MemoryServices::delete_var( freeze_interaction->get_handler() ) ) {
             message_publish( MSG_WARNING, "IMSim::ExecutionControl::~ExecutionControl():%d WARNING failed to delete memory for 'freeze_interaction->get_handler()'\n",
                              __LINE__ );
          }
-         freeze_interaction->set_handler( NULL );
+         freeze_interaction->set_handler( nullptr );
       }
       if ( !MemoryServices::delete_var( freeze_interaction ) ) {
          message_publish( MSG_WARNING, "IMSim::ExecutionControl::~ExecutionControl():%d WARNING failed to delete memory for 'freeze_interaction'\n",
                           __LINE__ );
       }
-      freeze_interaction = NULL;
+      freeze_interaction = nullptr;
       freeze_inter_count = 0;
    }
 }
@@ -211,7 +211,7 @@ ExecutionControl::~ExecutionControl()
 ExecutionConfiguration *ExecutionControl::get_execution_configuration()
 {
    ExecutionConfiguration *ExCO = dynamic_cast< ExecutionConfiguration * >( ExecutionControlBase::get_execution_configuration() );
-   if ( ExCO == NULL ) {
+   if ( ExCO == nullptr ) {
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionControl::get_execution_configuration():" << __LINE__
              << " ERROR: Execution Configuration base is not an IMSim::ExecutionConfiguration instance.\n";
@@ -381,7 +381,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
    }
 
    // Save restore_file_name before it gets wiped out with the loading of the checkpoint file...
-   char const *tRestoreName = NULL;
+   char const *tRestoreName = nullptr;
    if ( !save_restore_service->restore_file_name.empty() ) {
       // we don't want this to get wiped out when trick clears memory for load checkpoint, so don't allocate with TMM
       tRestoreName = strdup( save_restore_service->restore_file_name.c_str() ); // NOLINT
@@ -397,7 +397,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
       // if you want to restore from a check point, force the loading of the
       // checkpoint file here...
       if ( save_restore_service->restore_federation ) {
-         if ( ( tRestoreName != NULL ) && ( *tRestoreName != '\0' ) ) {
+         if ( ( tRestoreName != nullptr ) && ( *tRestoreName != '\0' ) ) {
 
             // make sure that we have a valid absolute path to the files.
             save_restore_service->check_HLA_save_directory();
@@ -493,7 +493,7 @@ initiating restore request for '%s' with the RTI.\n",
             save_restore_service->inform_RTI_of_restore_completion();
 
             // Wait until we get a callback to inform us that the federation
-            // restore is complete. if a non-NULL string is returned, there was
+            // restore is complete. if a non-nullptr string is returned, there was
             // an error so take appropriate action.
             string tStr = save_restore_service->wait_for_federation_restore_to_complete();
             if ( tStr.length() ) {
@@ -664,7 +664,7 @@ You indicated that you want a restore => I AM NOT THE MASTER <= \
 loading of the federate from the checkpoint file '%s'.\n",
                              __LINE__, tRestoreName );
          }
-         string restore_name = ( tRestoreName != NULL ) ? tRestoreName : "";
+         string restore_name = ( tRestoreName != nullptr ) ? tRestoreName : "";
          save_restore_service->restore_checkpoint( restore_name );
 
          //
@@ -1042,7 +1042,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
    freeze_interaction = reinterpret_cast< Interaction * >(
       alloc_type( freeze_inter_count, "TrickHLA::Interaction" ) );
 
-   if ( freeze_interaction == NULL ) {
+   if ( freeze_interaction == nullptr ) {
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__
              << " FAILED to allocate enough memory for Interaction specialized"
@@ -1055,7 +1055,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
       reinterpret_cast< FreezeInteractionHandler * >(
          alloc_type( 1, "IMSim::FreezeInteractionHandler" ) );
 
-   if ( freeze_handler == NULL ) {
+   if ( freeze_handler == nullptr ) {
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__
              << " FAILED to allocate enough memory for FreezeInteractionHandler!\n";
@@ -1078,7 +1078,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
    Parameter *tParm = reinterpret_cast< Parameter * >(
       alloc_type( freeze_interaction->get_parameter_count(), "TrickHLA::Parameter" ) );
 
-   if ( tParm == NULL ) {
+   if ( tParm == nullptr ) {
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__
              << " FAILED to allocate enough memory for the parameters of the"
@@ -1101,7 +1101,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
    // of the structure.
    ATTRIBUTES *time_attr;
    time_attr = static_cast< ATTRIBUTES * >( malloc( 2 * sizeof( ATTRIBUTES ) ) );
-   if ( time_attr == NULL ) {
+   if ( time_attr == nullptr ) {
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__
              << " FAILED to allocate enough memory for the ATTRIBUTES for the"
@@ -1115,7 +1115,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
    // element as an ending marker of the ATTRIBUTES.
    int attr_index = 0;
 
-   // loop until the current ATTRIBUTES name is a NULL string
+   // loop until the current ATTRIBUTES name is a nullptr string
    while ( strcmp( attrIMSim__FreezeInteractionHandler[attr_index].name, "" ) != 0 ) {
       if ( strcmp( attrIMSim__FreezeInteractionHandler[attr_index].name, "time" ) == 0 ) {
          memcpy( &time_attr[0], // flawfinder: ignore
@@ -1166,10 +1166,10 @@ void ExecutionControl::setup_interaction_ref_attributes()
 void ExecutionControl::setup_object_RTI_handles()
 {
    ExecutionConfiguration *ExCO = get_execution_configuration();
-   if ( ExCO == NULL ) {
+   if ( ExCO == nullptr ) {
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionControl::setup_object_RTI_handles():" << __LINE__
-             << " ERROR: Unexpected NULL SimConfig!\n";
+             << " ERROR: Unexpected nullptr SimConfig!\n";
       DebugHandler::terminate( errmsg.str() );
       return;
    }
@@ -2052,7 +2052,7 @@ bool ExecutionControl::run_mode_transition()
 
    RTIambassador          *RTI_amb  = federate->get_RTI_ambassador();
    ExecutionConfiguration *ExCO     = get_execution_configuration();
-   SyncPoint              *sync_pnt = NULL;
+   SyncPoint              *sync_pnt = nullptr;
 
      // Register the 'mtr_run' sync-point.
      if ( is_master() ) {
@@ -2062,7 +2062,7 @@ bool ExecutionControl::run_mode_transition()
      }
 
      // Make sure that we have a valid sync-point.
-     if ( sync_pnt == NULL ) {
+     if ( sync_pnt == nullptr ) {
         ostringstream errmsg;
         errmsg << "IMSim::ExecutionControl::run_mode_transition():" << __LINE__
                << " ERROR: The 'mtr_run' sync-point was not found!\n";
@@ -2328,7 +2328,7 @@ void ExecutionControl::start_federation_save_at_SST(
    // Map the save label to the needed file names.
    checkpoint_file_name = map_label_to_checkpoint_file_name( save_label ); // cppcheck-suppress [unreadVariable]
 
-   if ( freeze_interaction->get_handler() != NULL ) {
+   if ( freeze_interaction->get_handler() != nullptr ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          message_publish( MSG_NORMAL, "IMSim::ExecutionControl::start_federation_save_at_scenario_time(%g, '%s'):%d\n",
@@ -2346,7 +2346,7 @@ void ExecutionControl::start_federation_save_at_SST(
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          message_publish( MSG_NORMAL, "IMSim::ExecutionControl::start_federation_save_at_scenario_time(%g, '%s'):%d \
-freeze_interaction's HANLDER is NULL! Request was ignored!\n",
+freeze_interaction's HANLDER is nullptr! Request was ignored!\n",
                           freeze_sst, save_label.c_str(), __LINE__ );
       }
    }

@@ -59,7 +59,7 @@ OpaqueBuffer::OpaqueBuffer()
      push_pos( 0 ),
      pull_pos( 0 ),
      capacity( 0 ),
-     buffer( NULL )
+     buffer( nullptr )
 {
    // Default to a buffer capacity of 1 for now just to make sure we have
    // a buffer allocated in Trick managed memory. This allows the buffer to
@@ -73,12 +73,12 @@ OpaqueBuffer::OpaqueBuffer()
  */
 OpaqueBuffer::~OpaqueBuffer() // RETURN: -- None.
 {
-   if ( buffer != NULL ) {
+   if ( buffer != nullptr ) {
       if ( !MemoryServices::delete_var( buffer ) ) {
          message_publish( MSG_WARNING, "OpaqueBuffer::~OpaqueBuffer():%d WARNING failed to delete Trick Memory for 'buffer'\n",
                           __LINE__ );
       }
-      buffer   = NULL;
+      buffer   = nullptr;
       capacity = 0;
       push_pos = 0;
       pull_pos = 0;
@@ -126,12 +126,12 @@ void OpaqueBuffer::ensure_buffer_capacity(
 
    if ( requested_size > capacity ) {
       capacity = requested_size;
-      if ( buffer == NULL ) {
+      if ( buffer == nullptr ) {
          buffer = MemoryServices::declare_var( buffer, capacity );
       } else {
          buffer = MemoryServices::resize_array( buffer, capacity );
       }
-   } else if ( buffer == NULL ) {
+   } else if ( buffer == nullptr ) {
       // Handle the case where the buffer has not been created yet and we
       // might have an invalid user capacity specified.
 
@@ -140,7 +140,7 @@ void OpaqueBuffer::ensure_buffer_capacity(
       buffer   = MemoryServices::declare_var( buffer, capacity );
    }
 
-   if ( buffer == NULL ) {
+   if ( buffer == nullptr ) {
       ostringstream errmsg;
       errmsg << "OpaqueBuffer::ensure_buffer_capacity():" << __LINE__
              << " ERROR: Could not allocate memory for buffer for requested"

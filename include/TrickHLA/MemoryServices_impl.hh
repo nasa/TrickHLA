@@ -291,7 +291,7 @@ std::size_t MemoryServices::get_size( T addr )
    if ( num_items <= 0 ) {
       // Get the allocation info that contains the variable address.
       ALLOC_INFO const *alloc_info = trick_MM->get_alloc_info_of( static_cast< void * >( addr ) );
-      if ( alloc_info != NULL ) {
+      if ( alloc_info != nullptr ) {
          num_items = alloc_info->num;
       }
    }

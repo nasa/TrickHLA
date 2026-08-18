@@ -98,17 +98,17 @@ Interaction::Interaction()
      subscribe( false ),
      preferred_order( TRANSPORT_SPECIFIED_IN_FOM ),
      param_count( 0 ),
-     parameters( NULL ),
-     handler( NULL ),
+     parameters( nullptr ),
+     handler( nullptr ),
      mutex(),
      changed( false ),
      received_as_TSO( false ),
      time( 0.0 ),
-     federate( NULL ),
+     federate( nullptr ),
      class_handle(),
      user_supplied_tag_size( 0 ),
      user_supplied_tag_capacity( 0 ),
-     user_supplied_tag( NULL )
+     user_supplied_tag( nullptr )
 {
    return;
 }
@@ -126,12 +126,12 @@ Interaction::~Interaction()
    // destructor. Meaning after a checkpoint restore, the federate would no
    // longer get that interaction.
 
-   if ( user_supplied_tag != NULL ) {
+   if ( user_supplied_tag != nullptr ) {
       if ( !MemoryServices::delete_var( user_supplied_tag ) ) {
          message_publish( MSG_WARNING, "Interaction::~Interaction():%d WARNING failed to delete Trick Memory for 'user_supplied_tag'\n",
                           __LINE__ );
       }
-      user_supplied_tag      = NULL;
+      user_supplied_tag      = nullptr;
       user_supplied_tag_size = 0;
    }
 
@@ -148,10 +148,10 @@ void Interaction::initialize(
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
    this->federate = fed;
-   if ( federate == NULL ) {
+   if ( federate == nullptr ) {
       ostringstream errmsg;
       errmsg << "Interaction::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL TrickHLA-Federate!\n";
+             << " ERROR: Unexpected nullptr TrickHLA-Federate!\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -180,7 +180,7 @@ void Interaction::initialize(
    }
 
    // If we have an parameter count but no parameters then let the user know.
-   if ( ( param_count > 0 ) && ( parameters == NULL ) ) {
+   if ( ( param_count > 0 ) && ( parameters == nullptr ) ) {
       ostringstream errmsg;
       errmsg << "Interaction::initialize():" << __LINE__
              << " ERROR: For Interaction '"
@@ -193,7 +193,7 @@ void Interaction::initialize(
 
    // If we have parameters but the parameter-count is invalid then let
    // the user know.
-   if ( ( param_count <= 0 ) && ( parameters != NULL ) ) {
+   if ( ( param_count <= 0 ) && ( parameters != nullptr ) ) {
       ostringstream errmsg;
       errmsg << "Interaction::initialize():" << __LINE__
              << " ERROR: For Interaction '"
@@ -206,7 +206,7 @@ void Interaction::initialize(
 
    // Reset the TrickHLA Parameters count if it is negative or if there
    // are no attributes.
-   if ( ( param_count < 0 ) || ( parameters == NULL ) ) {
+   if ( ( param_count < 0 ) || ( parameters == nullptr ) ) {
       param_count = 0;
    }
 
@@ -245,7 +245,7 @@ void Interaction::initialize(
 
    // We must have an interaction handler specified, otherwise we can not
    // process the interaction.
-   if ( handler == NULL ) {
+   if ( handler == nullptr ) {
       ostringstream errmsg;
       errmsg << "Interaction::initialize():" << __LINE__
              << " ERROR: An Interaction-Handler for"
@@ -264,7 +264,7 @@ void Interaction::initialize(
 /*! @brief Encode/setup the checkpoint data structures. */
 void Interaction::convert_data_before_checkpoint()
 {
-   if ( handler != NULL ) {
+   if ( handler != nullptr ) {
       handler->convert_data_before_checkpoint();
    }
 }
@@ -272,7 +272,7 @@ void Interaction::convert_data_before_checkpoint()
 /*! @brief Restore the state of this class from the Trick checkpoint. */
 void Interaction::restore_data_after_checkpoint()
 {
-   if ( handler != NULL ) {
+   if ( handler != nullptr ) {
       handler->restore_data_after_checkpoint();
    }
 }
@@ -280,7 +280,7 @@ void Interaction::restore_data_after_checkpoint()
 /*! @brief Clear/release the memory used for the checkpoint data structures. */
 void Interaction::free_converted_data_for_checkpoint()
 {
-   if ( handler != NULL ) {
+   if ( handler != nullptr ) {
       handler->free_converted_data_for_checkpoint();
    }
 }
@@ -291,7 +291,7 @@ void Interaction::set_user_supplied_tag(
 {
    if ( tag_size > user_supplied_tag_capacity ) {
       user_supplied_tag_capacity = tag_size;
-      if ( user_supplied_tag == NULL ) {
+      if ( user_supplied_tag == nullptr ) {
          user_supplied_tag = MemoryServices::declare_var( user_supplied_tag,
                                                           (int)user_supplied_tag_capacity );
       } else {
@@ -300,7 +300,7 @@ void Interaction::set_user_supplied_tag(
       }
    }
    user_supplied_tag_size = tag_size;
-   if ( tag != NULL ) {
+   if ( tag != nullptr ) {
       memcpy( user_supplied_tag, tag, user_supplied_tag_size ); // flawfinder: ignore
    } else {
       memset( user_supplied_tag, 0, user_supplied_tag_size );
@@ -316,9 +316,9 @@ void Interaction::remove() // RETURN: -- None.
    // Only remove the Interaction if the federate has not been shutdown.
    if ( !federate->is_shutdown_called() ) {
 
-      // Get the RTI-Ambassador and check for NULL.
+      // Get the RTI-Ambassador and check for nullptr.
       RTIambassador *rti_amb = federate->get_RTI_ambassador();
-      if ( rti_amb != NULL ) {
+      if ( rti_amb != nullptr ) {
          if ( is_publish() ) {
 
             // Macro to save the FPU Control Word register value.
@@ -360,8 +360,8 @@ void Interaction::setup_preferred_order_with_RTI()
    }
 
    RTIambassador *rti_amb = federate->get_RTI_ambassador();
-   if ( rti_amb == NULL ) {
-      message_publish( MSG_WARNING, "Interaction::setup_preferred_order_with_RTI():%d Unexpected NULL RTIambassador.\n",
+   if ( rti_amb == nullptr ) {
+      message_publish( MSG_WARNING, "Interaction::setup_preferred_order_with_RTI():%d Unexpected nullptr RTIambassador.\n",
                        __LINE__ );
       return;
    }
@@ -460,7 +460,7 @@ Published Interaction '%s' Preferred-Order:%s\n",
              << " EXCEPTION: NotConnected for Interaction '"
              << get_FOM_name() << "'\n";
       DebugHandler::terminate( errmsg.str() );
-      if ( federate != NULL ) {
+      if ( federate != nullptr ) {
          federate->set_connection_lost();
       }
    } catch ( RTI1516_NAMESPACE::Exception const &e ) {
@@ -490,8 +490,8 @@ void Interaction::publish_interaction()
    }
 
    RTIambassador *rti_amb = federate->get_RTI_ambassador();
-   if ( rti_amb == NULL ) {
-      message_publish( MSG_WARNING, "Interaction::publish_interaction():%d Unexpected NULL RTIambassador.\n",
+   if ( rti_amb == nullptr ) {
+      message_publish( MSG_WARNING, "Interaction::publish_interaction():%d Unexpected nullptr RTIambassador.\n",
                        __LINE__ );
       return;
    }
@@ -566,7 +566,7 @@ void Interaction::publish_interaction()
              << " EXCEPTION: NotConnected for Interaction '"
              << get_FOM_name() << "'\n";
       DebugHandler::terminate( errmsg.str() );
-      if ( federate != NULL ) {
+      if ( federate != nullptr ) {
          federate->set_connection_lost();
       }
    } catch ( RTI1516_NAMESPACE::Exception const &e ) {
@@ -591,8 +591,8 @@ void Interaction::publish_interaction()
 void Interaction::unpublish_interaction()
 {
    RTIambassador *rti_amb = federate->get_RTI_ambassador();
-   if ( rti_amb == NULL ) {
-      message_publish( MSG_WARNING, "Interaction::unpublish_interaction():%d Unexpected NULL RTIambassador.\n",
+   if ( rti_amb == nullptr ) {
+      message_publish( MSG_WARNING, "Interaction::unpublish_interaction():%d Unexpected nullptr RTIambassador.\n",
                        __LINE__ );
       return;
    }
@@ -659,7 +659,7 @@ void Interaction::unpublish_interaction()
                 << " EXCEPTION: NotConnected for Interaction '"
                 << get_FOM_name() << "'\n";
          DebugHandler::terminate( errmsg.str() );
-         if ( federate != NULL ) {
+         if ( federate != nullptr ) {
             federate->set_connection_lost();
          }
       } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
@@ -696,8 +696,8 @@ void Interaction::subscribe_to_interaction()
 {
    // Get the RTI-Ambassador.
    RTIambassador *rti_amb = federate->get_RTI_ambassador();
-   if ( rti_amb == NULL ) {
-      message_publish( MSG_WARNING, "Interaction::subscribe_to_interaction():%d Unexpected NULL RTIambassador.\n",
+   if ( rti_amb == nullptr ) {
+      message_publish( MSG_WARNING, "Interaction::subscribe_to_interaction():%d Unexpected nullptr RTIambassador.\n",
                        __LINE__ );
       return;
    }
@@ -784,7 +784,7 @@ void Interaction::subscribe_to_interaction()
                 << " EXCEPTION: NotConnected for Interaction '"
                 << get_FOM_name() << "'\n";
          DebugHandler::terminate( errmsg.str() );
-         if ( federate != NULL ) {
+         if ( federate != nullptr ) {
             federate->set_connection_lost();
          }
       } catch ( RTI1516_NAMESPACE::Exception const &e ) {
@@ -812,8 +812,8 @@ void Interaction::unsubscribe_from_interaction()
    // Get the RTI-Ambassador.
    RTIambassador *rti_amb = federate->get_RTI_ambassador();
 
-   if ( rti_amb == NULL ) {
-      message_publish( MSG_WARNING, "Interaction::unsubscribe_from_interaction():%d Unexpected NULL RTIambassador.\n",
+   if ( rti_amb == nullptr ) {
+      message_publish( MSG_WARNING, "Interaction::unsubscribe_from_interaction():%d Unexpected nullptr RTIambassador.\n",
                        __LINE__ );
       return;
    }
@@ -880,7 +880,7 @@ void Interaction::unsubscribe_from_interaction()
                 << " EXCEPTION: NotConnected for Interaction '"
                 << get_FOM_name() << "'\n";
          DebugHandler::terminate( errmsg.str() );
-         if ( federate != NULL ) {
+         if ( federate != nullptr ) {
             federate->set_connection_lost();
          }
       } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
@@ -926,8 +926,8 @@ bool Interaction::send(
 
    // Get the RTI-Ambassador.
    RTIambassador *rti_amb = federate->get_RTI_ambassador();
-   if ( rti_amb == NULL ) {
-      message_publish( MSG_WARNING, "Interaction::send():%d As Receive-Order: Unexpected NULL RTIambassador.\n",
+   if ( rti_amb == nullptr ) {
+      message_publish( MSG_WARNING, "Interaction::send():%d As Receive-Order: Unexpected nullptr RTIambassador.\n",
                        __LINE__ );
       return ( false );
    }
@@ -998,8 +998,8 @@ bool Interaction::send(
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
    RTIambassador *rti_amb = federate->get_RTI_ambassador();
-   if ( rti_amb == NULL ) {
-      message_publish( MSG_WARNING, "Interaction::send():%d Unexpected NULL RTIambassador.\n",
+   if ( rti_amb == nullptr ) {
+      message_publish( MSG_WARNING, "Interaction::send():%d Unexpected nullptr RTIambassador.\n",
                        __LINE__ );
       return ( false );
    }
@@ -1146,7 +1146,7 @@ void Interaction::process_interaction()
 
    // Call the users interaction handler (callback) so that they can
    // continue processing the interaction.
-   if ( handler != NULL ) {
+   if ( handler != nullptr ) {
       if ( user_supplied_tag_size > 0 ) {
          handler->receive_interaction( VariableLengthData( user_supplied_tag, user_supplied_tag_size ) );
       } else {
@@ -1162,7 +1162,7 @@ bool Interaction::decode(
 {
    // Must be set to subscribe to the interaction and the interaction item
    // is not null, otherwise just return.
-   if ( !is_subscribe() || ( interaction_item == NULL ) ) {
+   if ( !is_subscribe() || ( interaction_item == nullptr ) ) {
       return false;
    }
 
@@ -1195,7 +1195,7 @@ bool Interaction::decode(
       set_user_supplied_tag( interaction_item->user_supplied_tag, interaction_item->user_supplied_tag_size );
       mark_changed();
    } else {
-      set_user_supplied_tag( NULL, 0 );
+      set_user_supplied_tag( nullptr, 0 );
    }
 
    bool any_param_received = false;
@@ -1206,7 +1206,7 @@ bool Interaction::decode(
       ParameterItem const *param_item = static_cast< ParameterItem * >( interaction_item->parameter_queue.front() );
 
       // Determine if we have a valid parameter-item.
-      if ( ( param_item != NULL ) && ( param_item->index < (size_t)param_count ) ) {
+      if ( ( param_item != nullptr ) && ( param_item->index < (size_t)param_count ) ) {
 
          if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
             message_publish( MSG_NORMAL, "Interaction::decode():%d Decoding '%s' from parameter map.\n",
@@ -1239,7 +1239,7 @@ Parameter *Interaction::get_parameter(
          }
       }
    }
-   return NULL;
+   return nullptr;
 }
 
 void Interaction::mark_unchanged()

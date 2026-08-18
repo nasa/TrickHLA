@@ -124,7 +124,7 @@ void CharASCIIStringEncoder::update_after_decode()
       // Need to make the Trick variable char* bigger by reallocating.
 
       // Don't leak memory by deleting the old char* string allocation.
-      if ( *static_cast< void ** >( address ) != NULL ) {
+      if ( *static_cast< void ** >( address ) != nullptr ) {
          MemoryServices::delete_var( *( static_cast< void ** >( address ) ) );
       }
 

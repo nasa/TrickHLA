@@ -76,8 +76,8 @@ LRTreeBase::LRTreeBase()
      nodes(),
      node_map(),
      root_node_id( 0 ),
-     root_node_ptr( NULL ),
-     paths( NULL )
+     root_node_ptr( nullptr ),
+     paths( nullptr )
 {
    return;
 }
@@ -98,8 +98,8 @@ LRTreeBase::~LRTreeBase()
  */
 bool LRTreeBase::add_node( LRTreeNodeBase *node_ptr )
 {
-   // Check to see if the node pointer is NULL.
-   if ( node_ptr == NULL ) {
+   // Check to see if the node pointer is nullptr.
+   if ( node_ptr == nullptr ) {
       return ( false );
    }
 
@@ -112,7 +112,7 @@ bool LRTreeBase::add_node( LRTreeNodeBase *node_ptr )
       return ( false );
    }
 
-   // Check for NULL node name. The node must have a name.
+   // Check for nullptr node name. The node must have a name.
    if ( node_ptr->name.empty() ) {
       message_publish( MSG_WARNING, "LRTreeBase::add_node():%d WARNING: empty node name.\n",
                        __LINE__ );
@@ -155,7 +155,7 @@ bool LRTreeBase::build_tree()
 
    // Find the root node for this tree.
    LRTreeNodeBase const *root_node = find_root();
-   if ( root_node == NULL ) {
+   if ( root_node == nullptr ) {
       ostringstream errmsg;
       errmsg << "LRTreeBase::build_tree():" << __LINE__
              << " ERROR: Root node not found!\"\n";
@@ -177,7 +177,7 @@ bool LRTreeBase::build_tree()
             LRTreeNodeVector *path = find_path( iinc, jinc );
 
             // Check to make sure that we found a path.
-            if ( path != NULL ) {
+            if ( path != nullptr ) {
 
                // Iterate through the path to build out the matrix.
                // Note that the upper triangle of matrix is the reverse of the lower.
@@ -192,7 +192,7 @@ bool LRTreeBase::build_tree()
                // Clean up the path vector.
                path->clear();
                delete path;
-               path = NULL;
+               path = nullptr;
             }
          }
       }
@@ -226,7 +226,7 @@ bool LRTreeBase::check_tree()
       }
 
       // Check for an unparented root node.
-      if ( node_ptr->parent == NULL ) {
+      if ( node_ptr->parent == nullptr ) {
 
          // Check is this is marked as a root node.
          if ( !( node_ptr->is_root_node ) ) {
@@ -319,9 +319,9 @@ bool LRTreeBase::has_node( size_t const node_id )
  */
 bool LRTreeBase::has_node( char const *name )
 {
-   if ( name == NULL ) {
+   if ( name == nullptr ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
-         message_publish( MSG_WARNING, "LRTreeBase::has_node():%d WARNING: NULL node name.\n",
+         message_publish( MSG_WARNING, "LRTreeBase::has_node():%d WARNING: nullptr node name.\n",
                           __LINE__ );
       }
       return ( false );
@@ -374,10 +374,10 @@ LRTreeNodeBase *LRTreeBase::find_node( size_t const node_id )
  */
 LRTreeNodeBase *LRTreeBase::find_node( char const *name )
 {
-   if ( name == NULL ) {
-      message_publish( MSG_WARNING, "LRTreeBase::has_node():%d WARNING: NULL node name.\n",
+   if ( name == nullptr ) {
+      message_publish( MSG_WARNING, "LRTreeBase::has_node():%d WARNING: nullptr node name.\n",
                        __LINE__ );
-      return ( NULL );
+      return ( nullptr );
    }
    return ( find_node( string( name ) ) );
 }
@@ -396,8 +396,8 @@ LRTreeNodeBase *LRTreeBase::find_node( string const &name )
       return ( map_iter->second );
    }
 
-   // The node was not found; so, return NULL.
-   return ( NULL );
+   // The node was not found; so, return nullptr.
+   return ( nullptr );
 }
 
 /*!
@@ -420,7 +420,7 @@ void LRTreeBase::print_path(
    std::ostream   &stream ) const
 {
    // Check to see if a paths matrix has been allocated.
-   if ( paths != NULL ) {
+   if ( paths != nullptr ) {
       print_path( start.node_id, end.node_id, stream );
    } else {
       message_publish( MSG_NORMAL, "LRTreeBase::print_path():%d Warning: No path matrix allocated.\n",
@@ -448,7 +448,7 @@ void LRTreeBase::print_path(
    }
 
    // Check to see if a paths matrix has been allocated.
-   if ( paths != NULL ) {
+   if ( paths != nullptr ) {
 
       // Get the size of the path.
       size_t const path_size = paths[start][end].size();
@@ -461,7 +461,7 @@ void LRTreeBase::print_path(
          stream << paths[start][end][kinc]->name << " [" << paths[start][end][kinc]->node_id << "]";
          if ( kinc < path_size - 1 ) {
             // stream << ", ";
-            if ( paths[start][end][kinc + 1]->parent != NULL ) {
+            if ( paths[start][end][kinc + 1]->parent != nullptr ) {
                if ( paths[start][end][kinc + 1]->parent->node_id == paths[start][end][kinc]->node_id ) {
                   stream << " > ";
                } else {
@@ -487,7 +487,7 @@ void LRTreeBase::print_path(
 void LRTreeBase::print_paths( std::ostream &stream ) const
 {
    // Check to see if a paths matrix has been allocated.
-   if ( paths != NULL ) {
+   if ( paths != nullptr ) {
 
       // Get the size of the path matrix.
       size_t const num_nodes = nodes.size();
@@ -499,7 +499,7 @@ void LRTreeBase::print_paths( std::ostream &stream ) const
       for ( size_t iinc = 0; iinc < num_nodes; ++iinc ) {
 
          // Check that the columns have be allocated.
-         if ( paths[iinc] != NULL ) {
+         if ( paths[iinc] != nullptr ) {
 
             // Iterate through the columns.
             for ( size_t jinc = 0; jinc < num_nodes; ++jinc ) {
@@ -514,7 +514,7 @@ void LRTreeBase::print_paths( std::ostream &stream ) const
                      stream << paths[iinc][jinc][kinc]->node_id;
                      if ( kinc < path_size - 1 ) {
                         // stream << ", ";
-                        if ( paths[iinc][jinc][kinc + 1]->parent != NULL ) {
+                        if ( paths[iinc][jinc][kinc + 1]->parent != nullptr ) {
                            if ( paths[iinc][jinc][kinc + 1]->parent->node_id == paths[iinc][jinc][kinc]->node_id ) {
                               stream << " > ";
                            } else {
@@ -557,7 +557,7 @@ bool LRTreeBase::allocate_paths()
    this->paths = new LRTreeNodeVector *[num_nodes];
 
    // Check for successful allocation.
-   if ( this->paths == NULL ) {
+   if ( this->paths == nullptr ) {
 
       // Allocation failed.
       message_publish( MSG_WARNING, "LRTreeBase::allocate_paths():%d WARNING: Failed allocation of paths matrix rows.\n",
@@ -574,7 +574,7 @@ bool LRTreeBase::allocate_paths()
          this->paths[iinc] = new LRTreeNodeVector[num_nodes];
 
          // Check for column allocation failure.
-         if ( this->paths[iinc] == NULL ) {
+         if ( this->paths[iinc] == nullptr ) {
             message_publish( MSG_WARNING, "LRTreeBase::allocate_paths():%d WARNING: Failed allocation of paths matrix columns for row %d.\n",
                              __LINE__, iinc );
             return ( false );
@@ -591,7 +591,7 @@ bool LRTreeBase::allocate_paths()
 void LRTreeBase::free_paths()
 {
    // Check to see if a paths matrix has been allocated.
-   if ( paths != NULL ) {
+   if ( paths != nullptr ) {
 
       // Size the path matrix.
       size_t const num_nodes = nodes.size();
@@ -601,7 +601,7 @@ void LRTreeBase::free_paths()
       for ( size_t iinc = 0; iinc < num_nodes; ++iinc ) {
 
          // Check that the columns have been allocated.
-         if ( paths[iinc] != NULL ) {
+         if ( paths[iinc] != nullptr ) {
 
             for ( size_t jinc = 0; jinc < num_nodes; ++jinc ) {
 
@@ -613,8 +613,8 @@ void LRTreeBase::free_paths()
             // Free the allocated path column.
             // Delete the memory.
             delete[] this->paths[iinc];
-            // Set the path column to NULL.
-            this->paths[iinc] = NULL;
+            // Set the path column to nullptr.
+            this->paths[iinc] = nullptr;
          }
 
       } // End row iteration.
@@ -622,8 +622,8 @@ void LRTreeBase::free_paths()
       // Free the allocated path rows.
       delete[] paths;
 
-      // Mark as NULL.
-      paths = NULL;
+      // Mark as nullptr.
+      paths = nullptr;
    }
    return;
 }
@@ -650,15 +650,15 @@ LRTreeNodeBase *LRTreeBase::find_root()
       node_ptr = this->nodes[iinc];
 
       // Check for an unparented root node.
-      if ( node_ptr->parent == NULL ) {
+      if ( node_ptr->parent == nullptr ) {
          // Check for a single unparented root node.
          if ( found_root ) {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
                message_publish( MSG_WARNING, "LRTreeBase::find_root():%d WARNING: More than one root node found: \'%s\'!\n",
                                 __LINE__, node_ptr->name.c_str() );
             }
-            // Return NULL since we already found a root node.
-            return ( NULL );
+            // Return nullptr since we already found a root node.
+            return ( nullptr );
          } else {
             if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
                message_publish( MSG_NORMAL, "LRTreeBase::find_root():%d INFO: Root node found: \'%s\'!\n",
@@ -671,13 +671,13 @@ LRTreeNodeBase *LRTreeBase::find_root()
       }
    }
 
-   // Return NULL if no root node found.
+   // Return nullptr if no root node found.
    if ( !found_root ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
          message_publish( MSG_WARNING, "LRTreeBase::find_root():%d WARNING: No root node found!\n",
                           __LINE__ );
       }
-      return ( NULL );
+      return ( nullptr );
    }
 
    // Set the root information.
@@ -702,8 +702,8 @@ bool LRTreeBase::is_cyclic( LRTreeNodeBase const *node )
    LRTreeNodeBase const *current_node = node;
 
    // Check for degenerate case.
-   if ( node == NULL ) {
-      message_publish( MSG_NORMAL, "LRTreeBase::is_cyclic():%d ERROR: NULL node pointer!\n", __LINE__ );
+   if ( node == nullptr ) {
+      message_publish( MSG_NORMAL, "LRTreeBase::is_cyclic():%d ERROR: nullptr node pointer!\n", __LINE__ );
       return ( true );
    }
 
@@ -722,7 +722,7 @@ bool LRTreeBase::is_cyclic( LRTreeNodeBase const *node )
 
       // Check for root node.
       // If this is a root node, we're done.
-      if ( current_node->parent == NULL ) {
+      if ( current_node->parent == nullptr ) {
          break;
       }
 
@@ -750,17 +750,17 @@ bool LRTreeBase::is_cyclic( LRTreeNodeBase const *node )
 LRTreeNodeVector *LRTreeBase::get_path_to_root( size_t const node_id )
 {
    LRTreeNodeBase   *node_ptr;
-   LRTreeNodeVector *return_vector = NULL;
+   LRTreeNodeVector *return_vector = nullptr;
 
    // Make sure the node is in the tree.
    node_ptr = find_node( node_id );
-   if ( node_ptr != NULL ) {
+   if ( node_ptr != nullptr ) {
 
       // Allocate the return node path vector;
       return_vector = new LRTreeNodeVector;
 
       // Climb the tree up to the root.
-      while ( node_ptr != NULL ) {
+      while ( node_ptr != nullptr ) {
 
          // Push the node onto the path vector.
          return_vector->push_back( node_ptr );
@@ -778,11 +778,11 @@ LRTreeNodeVector *LRTreeBase::get_path_to_root( size_t const node_id )
  */
 LRTreeNodeVector *LRTreeBase::get_path_to_root( LRTreeNodeBase const *node )
 {
-   // Protect against NULL pointers.
-   if ( node == NULL ) {
-      message_publish( MSG_WARNING, "LRTreeBase::get_path_to_root():%d WARNING: NULL node pointer.\n",
+   // Protect against nullptr pointers.
+   if ( node == nullptr ) {
+      message_publish( MSG_WARNING, "LRTreeBase::get_path_to_root():%d WARNING: nullptr node pointer.\n",
                        __LINE__ );
-      return ( NULL );
+      return ( nullptr );
    }
 
    // Call the indexed routine.
@@ -795,9 +795,9 @@ LRTreeNodeVector *LRTreeBase::get_path_to_root( LRTreeNodeBase const *node )
 LRTreeNodeVector *LRTreeBase::find_path( size_t const local,
                                          size_t const wrt )
 {
-   LRTreeNodeVector *up_path     = NULL;
-   LRTreeNodeVector *down_path   = NULL;
-   LRTreeNodeVector *return_path = NULL;
+   LRTreeNodeVector *up_path     = nullptr;
+   LRTreeNodeVector *down_path   = nullptr;
+   LRTreeNodeVector *return_path = nullptr;
 
    LRTreeNodeVector::iterator up_itr;
    LRTreeNodeVector::iterator down_itr;
@@ -812,13 +812,13 @@ LRTreeNodeVector *LRTreeBase::find_path( size_t const local,
       down_path = get_path_to_root( wrt );
 
       // Check to find the common path.
-      if ( ( up_path != NULL ) && ( down_path != NULL ) ) {
+      if ( ( up_path != nullptr ) && ( down_path != nullptr ) ) {
 
          // Find the common node between two paths.
          LRTreeNodeBase const *common_node = find_common_node( up_path, down_path );
 
          // Make sure that we found a common node.
-         if ( common_node != NULL ) {
+         if ( common_node != nullptr ) {
 
             // We found the up and down paths and the common node.
             // So, now build the path.
@@ -849,7 +849,7 @@ LRTreeNodeVector *LRTreeBase::find_path( size_t const local,
                                 __LINE__ );
                return_path->clear();
                delete return_path;
-               return_path = NULL;
+               return_path = nullptr;
             } else { // Everything looks to be okay.
 
                // Now work backwards from the current common node down to the wrt node.
@@ -862,15 +862,15 @@ LRTreeNodeVector *LRTreeBase::find_path( size_t const local,
       }
 
       // Clear and free the path sets.
-      if ( up_path != NULL ) {
+      if ( up_path != nullptr ) {
          up_path->clear();
          delete up_path;
-         up_path = NULL;
+         up_path = nullptr;
       }
-      if ( down_path != NULL ) {
+      if ( down_path != nullptr ) {
          down_path->clear();
          delete down_path;
-         down_path = NULL;
+         down_path = nullptr;
       }
    }
 
@@ -885,17 +885,17 @@ LRTreeNodeVector *LRTreeBase::find_path( LRTreeNodeBase const *local,
                                          LRTreeNodeBase const *wrt )
 {
 
-   // Protect against NULL pointers.
-   if ( ( local == NULL ) || ( wrt == NULL ) ) {
-      if ( local == NULL ) {
-         message_publish( MSG_WARNING, "LRTreeBase::find_path():%d WARNING: NULL \'local\' pointer.\n",
+   // Protect against nullptr pointers.
+   if ( ( local == nullptr ) || ( wrt == nullptr ) ) {
+      if ( local == nullptr ) {
+         message_publish( MSG_WARNING, "LRTreeBase::find_path():%d WARNING: nullptr \'local\' pointer.\n",
                           __LINE__ );
       }
-      if ( wrt == NULL ) {
-         message_publish( MSG_WARNING, "LRTreeBase::find_path():%d WARNING: NULL \'wrt\' pointer.\n",
+      if ( wrt == nullptr ) {
+         message_publish( MSG_WARNING, "LRTreeBase::find_path():%d WARNING: nullptr \'wrt\' pointer.\n",
                           __LINE__ );
       }
-      return ( NULL );
+      return ( nullptr );
    }
 
    // Call the indexed routine.
@@ -908,9 +908,9 @@ LRTreeNodeVector *LRTreeBase::find_path( LRTreeNodeBase const *local,
 LRTreeNodeBase *LRTreeBase::find_common_node( size_t const local,
                                               size_t const wrt )
 {
-   LRTreeNodeVector *up_path         = NULL;
-   LRTreeNodeVector *down_path       = NULL;
-   LRTreeNodeBase   *common_node_ptr = NULL;
+   LRTreeNodeVector *up_path         = nullptr;
+   LRTreeNodeVector *down_path       = nullptr;
+   LRTreeNodeBase   *common_node_ptr = nullptr;
 
    // Make sure these nodes are in the tree.
    if ( has_node( local ) && has_node( wrt ) ) {
@@ -936,19 +936,19 @@ LRTreeNodeBase *LRTreeBase::find_common_node( LRTreeNodeVector *up_path,
 {
    LRTreeNodeVector::iterator up_iter;
    LRTreeNodeVector::iterator down_iter;
-   LRTreeNodeBase            *common_node_ptr = NULL;
+   LRTreeNodeBase            *common_node_ptr = nullptr;
 
-   // Protect against NULL pointers.
-   if ( ( up_path == NULL ) || ( down_path == NULL ) ) {
-      if ( up_path == NULL ) {
-         message_publish( MSG_WARNING, "LRTreeBase::find_common_node():%d WARNING: NULL \'up_path\' pointer.\n",
+   // Protect against nullptr pointers.
+   if ( ( up_path == nullptr ) || ( down_path == nullptr ) ) {
+      if ( up_path == nullptr ) {
+         message_publish( MSG_WARNING, "LRTreeBase::find_common_node():%d WARNING: nullptr \'up_path\' pointer.\n",
                           __LINE__ );
       }
-      if ( down_path == NULL ) {
-         message_publish( MSG_WARNING, "LRTreeBase::find_common_node():%d WARNING: NULL \'down_path\' pointer.\n",
+      if ( down_path == nullptr ) {
+         message_publish( MSG_WARNING, "LRTreeBase::find_common_node():%d WARNING: nullptr \'down_path\' pointer.\n",
                           __LINE__ );
       }
-      return ( NULL );
+      return ( nullptr );
    }
 
    // Climb up the paths looking for a common node.
@@ -963,7 +963,7 @@ LRTreeNodeBase *LRTreeBase::find_common_node( LRTreeNodeVector *up_path,
       }
 
       // Exit the iteration loop if a common node was found.
-      if ( common_node_ptr != NULL ) {
+      if ( common_node_ptr != nullptr ) {
          break;
       }
    }

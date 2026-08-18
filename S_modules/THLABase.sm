@@ -97,7 +97,7 @@ class THLABaseSimObject : public Trick::SimObject {
             errmsg << __FILE__ << ":THLABaseSimObject():" << __LINE__
                    << " ERROR: interaction_cycle time '" << interaction_cycle
                    << "' is not an integer multiple of the data_cycle time '"
-                   << data_cycle << "'!" << std::endl;
+                   << data_cycle << "'!\n";
             message_publish( MSG_ERROR, errmsg.str().c_str() );
             exit( -1 );
          }
@@ -106,7 +106,7 @@ class THLABaseSimObject : public Trick::SimObject {
             errmsg << __FILE__ << ":THLABaseSimObject():" << __LINE__
                    << " ERROR: data_cycle time '" << data_cycle
                    << "' divided by the interaction_cycle time '"
-                   << interaction_cycle << "' must be an integer!" << std::endl;
+                   << interaction_cycle << "' must be an integer!\n";
             message_publish( MSG_ERROR, errmsg.str().c_str() );
             exit( -1 );
          }

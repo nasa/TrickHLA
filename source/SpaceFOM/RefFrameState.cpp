@@ -61,7 +61,7 @@ using namespace SpaceFOM;
  */
 RefFrameState::RefFrameState()
    : RefFrameBase(),
-     ref_frame_data( NULL )
+     ref_frame_data( nullptr )
 {
    return;
 }
@@ -92,10 +92,10 @@ void RefFrameState::set_data(
    RefFrameData *ref_frame_data_ptr )
 {
    // Set the reference to the reference frame.
-   if ( ref_frame_data_ptr == NULL ) {
+   if ( ref_frame_data_ptr == nullptr ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameState::pre_initialize():" << __LINE__
-             << " ERROR: Unexpected NULL reference frame: " << this->packing_data.name << "\n";
+             << " ERROR: Unexpected nullptr reference frame: " << this->packing_data.name << "\n";
       // Print message and terminate.
       DebugHandler::terminate( errmsg.str() );
       return;
@@ -112,10 +112,10 @@ void RefFrameState::set_data(
 void RefFrameState::initialize()
 {
    // Set the reference to the reference frame.
-   if ( ref_frame_data == NULL ) {
+   if ( ref_frame_data == nullptr ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::RefFrameState::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL reference frame: " << this->packing_data.name << "\n";
+             << " ERROR: Unexpected nullptr reference frame: " << this->packing_data.name << "\n";
       // Print message and terminate.
       DebugHandler::terminate( errmsg.str() );
       return;

@@ -107,7 +107,7 @@ class RecordElement
 
    std::size_t get_data_size()
    {
-      return ( ( encoder != NULL ) ? encoder->get_data_size() : 0 );
+      return ( ( encoder != nullptr ) ? encoder->get_data_size() : 0 );
    }
 
    virtual std::string to_string();

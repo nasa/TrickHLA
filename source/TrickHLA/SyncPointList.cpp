@@ -112,7 +112,7 @@ void SyncPointList::clear()
    // Clear/remove everything from the list.
    while ( !list.empty() ) {
       MemoryServices::delete_var( list.back() );
-      list.back() = NULL;
+      list.back() = nullptr;
       list.pop_back();
    }
 }
@@ -125,14 +125,14 @@ SyncPoint *SyncPointList::get(
                                  [&label]( SyncPoint *sp ) -> bool {
                                     return ( label.compare( sp->get_label() ) == 0 );
                                  } );
-   return ( ( found_it != list.end() ) ? *found_it : NULL );
+   return ( ( found_it != list.end() ) ? *found_it : nullptr );
 #else
    for ( SyncPoint *sp : list ) {
       if ( label.compare( sp->get_label() ) == 0 ) {
          return sp;
       }
    }
-   return NULL;
+   return nullptr;
 #endif // TRICKHLA_USE_STL_ALGORITHM
 }
 
@@ -163,7 +163,7 @@ bool SyncPointList::add(
                                                                1,
                                                                cdims );
 
-   if ( sp == NULL ) {
+   if ( sp == nullptr ) {
       ostringstream errmsg;
       errmsg << "SyncPointList::add():" << __LINE__
              << " ERROR: Cannot allocate Trick Managed Memory for TrickHLA::SyncPoint with label '"
@@ -204,7 +204,7 @@ bool SyncPointList::add(
                                                                   sync_point_name,
                                                                   1,
                                                                   cdims );
-   if ( sp == NULL ) {
+   if ( sp == nullptr ) {
       ostringstream errmsg;
       errmsg << "SyncPointList::add():" << __LINE__
              << " ERROR: Cannot allocate Trick Managed Memory for TrickHLA::SyncPointTimed with label '"
@@ -242,7 +242,7 @@ bool SyncPointList::is_registered(
    wstring const &label )
 {
    SyncPoint const *sp = get( label );
-   return ( ( sp != NULL ) && sp->is_registered() );
+   return ( ( sp != nullptr ) && sp->is_registered() );
 }
 
 /*!
@@ -252,7 +252,7 @@ bool SyncPointList::mark_registered(
    wstring const &label )
 {
    SyncPoint *sp = get( label );
-   if ( sp != NULL ) {
+   if ( sp != nullptr ) {
       sp->mark_registered();
       return true;
    }
@@ -263,7 +263,7 @@ bool SyncPointList::is_announced(
    wstring const &label )
 {
    SyncPoint const *sp = get( label );
-   return ( ( sp != NULL ) && sp->is_announced() );
+   return ( ( sp != nullptr ) && sp->is_announced() );
 }
 
 /*!
@@ -274,7 +274,7 @@ bool SyncPointList::mark_announced(
    VariableLengthData const &user_supplied_tag )
 {
    SyncPoint *sp = get( label );
-   if ( sp != NULL ) {
+   if ( sp != nullptr ) {
       sp->mark_announced( user_supplied_tag );
       return true;
    }
@@ -285,14 +285,14 @@ bool SyncPointList::is_achieved(
    wstring const &label )
 {
    SyncPoint const *sp = get( label );
-   return ( ( sp != NULL ) && sp->is_achieved() );
+   return ( ( sp != nullptr ) && sp->is_achieved() );
 }
 
 bool SyncPointList::is_synchronized(
    wstring const &label )
 {
    SyncPoint const *sp = get( label );
-   return ( ( sp != NULL ) && sp->is_synchronized() );
+   return ( ( sp != nullptr ) && sp->is_synchronized() );
 }
 
 bool SyncPointList::is_all_synchronized()
@@ -324,7 +324,7 @@ bool SyncPointList::mark_synchronized(
    wstring const &label )
 {
    SyncPoint *sp = get( label );
-   if ( sp != NULL ) {
+   if ( sp != nullptr ) {
 
       // Mark the synchronization point at achieved which indicates the
       // federation is synchronized on the synchronization point.
@@ -353,7 +353,7 @@ string SyncPointList::to_string(
    wstring const &label )
 {
    SyncPoint *sp = get( label );
-   if ( sp != NULL ) {
+   if ( sp != nullptr ) {
       return sp->to_string();
    }
 

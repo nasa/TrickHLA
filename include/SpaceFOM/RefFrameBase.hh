@@ -119,7 +119,7 @@ class RefFrameBase : public TrickHLA::Packing, public SpaceFOM::LRTreeNodeBase
                              std::string const &sim_obj_name,
                              std::string const &ref_frame_pkg_name,
                              std::string const &ref_frame_fed_name,
-                             TrickHLA::Object  *mngr_object    = NULL,
+                             TrickHLA::Object  *mngr_object    = nullptr,
                              bool const         publish_attr   = false,
                              bool const         subscribe_attr = false );
 

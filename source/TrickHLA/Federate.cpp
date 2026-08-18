@@ -156,7 +156,7 @@ std::string TrickHLA::to_string( THLAFederateUpdateProcessEnum update_state )
  * @details NOTE: In most cases, we would allocate and set default names in
  * the constructor. However, since we want this class to be Input Processor
  * friendly, we cannot do that here since the Input Processor may not have
- * been initialized yet. So, we have to set the name information to NULL and
+ * been initialized yet. So, we have to set the name information to nullptr and
  * then allocate and set the defaults in the initialization job if not
  * already set in the input stream.
  *
@@ -200,15 +200,15 @@ Federate::Federate()
      object_service( *this ),
      save_restore_service( *this ),
      interaction_service( *this ),
-     execution_control( NULL ),
-     execution_config( NULL ),
+     execution_control( nullptr ),
+     execution_config( nullptr ),
      hla_logical_time( 0 ),
      hlt_seconds( 0.0 ),
      elapsed_time( 0.0 ),
      scenario_time( 0.0 )
 #if defined( IEEE_1516_2010 )
      ,
-     RTI_ambassador( NULL )
+     RTI_ambassador( nullptr )
 #endif
 {
    TRICKHLA_INIT_FPU_CONTROL_WORD;
@@ -366,10 +366,10 @@ void Federate::initialize()
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
    // Check to make sure we have a reference to the TrickHLA::ExecutionControlBase.
-   if ( execution_control == NULL ) {
+   if ( execution_control == nullptr ) {
       ostringstream errmsg;
       errmsg << "Federate::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL TrickHLA::ExecutionControlBase.\n";
+             << " ERROR: Unexpected nullptr TrickHLA::ExecutionControlBase.\n";
       DebugHandler::terminate( errmsg.str() );
       return;
    }
@@ -378,7 +378,7 @@ void Federate::initialize()
    if ( name.empty() ) {
       ostringstream errmsg;
       errmsg << "Federate::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL federate name.\n";
+             << " ERROR: Unexpected nullptr federate name.\n";
       DebugHandler::terminate( errmsg.str() );
       return;
    }
@@ -431,7 +431,7 @@ void Federate::restart_initialization()
    if ( name.empty() ) {
       ostringstream errmsg;
       errmsg << "Federate::restart_initialization():" << __LINE__
-             << " ERROR: NULL or zero length Federate Name.\n";
+             << " ERROR: nullptr or zero length Federate Name.\n";
       DebugHandler::terminate( errmsg.str() );
       return;
    }
@@ -493,10 +493,10 @@ void Federate::restart_initialization()
 
    // Setup the Execution Control and Execution Configuration objects now that
    // we know if we are the "Master" federate or not.
-   if ( this->execution_control == NULL ) {
+   if ( this->execution_control == nullptr ) {
       ostringstream errmsg;
       errmsg << "Federate::restart_initialization():" << __LINE__
-             << " ERROR: Unexpected NULL 'execution_control' pointer!\n";
+             << " ERROR: Unexpected nullptr 'execution_control' pointer!\n";
       DebugHandler::terminate( errmsg.str() );
       return;
    }
@@ -611,7 +611,7 @@ void Federate::create_RTI_ambassador_and_connect()
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
    // Just return if we have already created the RTI ambassador.
-   if ( RTI_ambassador.get() != NULL ) {
+   if ( RTI_ambassador.get() != nullptr ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -840,8 +840,8 @@ bool Federate::is_RTI_ready(
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
    bool rti_valid = true;
-   if ( get_RTI_ambassador() == NULL ) {
-      message_publish( MSG_WARNING, "Federate::%s:%d Unexpected NULL RTIambassador!\n",
+   if ( get_RTI_ambassador() == nullptr ) {
+      message_publish( MSG_WARNING, "Federate::%s:%d Unexpected nullptr RTIambassador!\n",
                        method_name.c_str(), __LINE__ );
       rti_valid = false;
    }
@@ -1052,10 +1052,10 @@ wstring Federate::get_federate_MOM_name( KnownFederate const &federate )
 
    // Sanity check to make sure we have an RTI ambassador.
    RTIambassador *rti_amb = get_RTI_ambassador();
-   if ( rti_amb == NULL ) {
+   if ( rti_amb == nullptr ) {
       ostringstream errmsg;
       errmsg << "Federate::get_federate_MOM_name():" << __LINE__
-             << " Unexpected NULL RTIambassador.\n";
+             << " Unexpected nullptr RTIambassador.\n";
       DebugHandler::terminate( errmsg.str() );
       return ( federate_MOM_name );
    }
@@ -1256,10 +1256,10 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
    }
 
    RTIambassador *rti_amb = get_RTI_ambassador();
-   if ( rti_amb == NULL ) {
+   if ( rti_amb == nullptr ) {
       ostringstream errmsg;
       errmsg << "Federate::set_all_federate_MOM_instance_handles_by_name():" << __LINE__
-             << " ERROR: Unexpected NULL RTIambassador.\n";
+             << " ERROR: Unexpected nullptr RTIambassador.\n";
       DebugHandler::terminate( errmsg.str() );
       return;
    }
@@ -2444,7 +2444,7 @@ void Federate::get_joined_federate_handle_set( RTI1516_NAMESPACE::FederateHandle
 
    // Iterate through the joined federates map to construct a new set of
    // joined federates.  This is a convenience function for some HLA calls.
-   // NULL string entries.
+   // nullptr string entries.
    KnownFederateMap::iterator map_iter;
    for ( map_iter = joined_federates_map.begin();
          map_iter != joined_federates_map.end(); ++map_iter ) {
@@ -3601,7 +3601,7 @@ void Federate::save( wstring const &label )
 {
 
    // Sanity checks.
-   if ( execution_control == NULL ) {
+   if ( execution_control == nullptr ) {
       ostringstream msg;
       string        label_str;
       StringUtilities::to_string( label_str, label );
@@ -3703,7 +3703,7 @@ void Federate::restore( wstring const &label )
 {
 
    // Sanity checks.
-   if ( execution_control == NULL ) {
+   if ( execution_control == nullptr ) {
       ostringstream msg;
       string        label_str;
       StringUtilities::to_string( label_str, label );
@@ -3739,7 +3739,7 @@ void Federate::convert_data_before_checkpoint()
    }
 
    // Delegate to the Execution Control specific implementation.
-   if ( execution_control != NULL ) {
+   if ( execution_control != nullptr ) {
       execution_control->restore_data_after_checkpoint();
    }
 
@@ -3762,7 +3762,7 @@ void Federate::restore_data_after_checkpoint()
    }
 
    // Delegate to the Execution Control specific implementation.
-   if ( execution_control != NULL ) {
+   if ( execution_control != nullptr ) {
       execution_control->restore_data_after_checkpoint();
    }
 
@@ -3785,7 +3785,7 @@ void Federate::free_converted_data_for_checkpoint()
    }
 
    // Delegate to the Execution Control specific implementation.
-   if ( execution_control != NULL ) {
+   if ( execution_control != nullptr ) {
       execution_control->free_converted_data_for_checkpoint();
    }
 
@@ -3808,7 +3808,7 @@ void Federate::checkpoint_before()
    }
 
    // Delegate to the Execution Control specific implementation.
-   if ( execution_control != NULL ) {
+   if ( execution_control != nullptr ) {
       execution_control->checkpoint_before();
    }
 }
@@ -3846,7 +3846,7 @@ void Federate::checkpoint_preload()
    }
 
    // Delegate to the Execution Control specific implementation.
-   if ( execution_control != NULL ) {
+   if ( execution_control != nullptr ) {
       execution_control->checkpoint_preload();
    }
 
@@ -3866,7 +3866,7 @@ void Federate::checkpoint_after()
    }
 
    // Delegate to the Execution Control specific implementation.
-   if ( execution_control != NULL ) {
+   if ( execution_control != nullptr ) {
       execution_control->checkpoint_after();
    }
 
@@ -3897,7 +3897,7 @@ void Federate::checkpoint_restart()
    }
 
    // Delegate to the Execution Control specific implementation.
-   if ( execution_control != NULL ) {
+   if ( execution_control != nullptr ) {
       execution_control->checkpoint_restart();
    }
 
@@ -3913,10 +3913,10 @@ void Federate::create_federation()
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
    // Sanity check.
-   if ( RTI_ambassador.get() == NULL ) {
+   if ( RTI_ambassador.get() == nullptr ) {
       ostringstream errmsg;
       errmsg << "Federate::create_federation():" << __LINE__
-             << " ERROR: NULL pointer to RTIambassador!\n";
+             << " ERROR: nullptr pointer to RTIambassador!\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -4090,10 +4090,10 @@ void Federate::join_federation(
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
    // Sanity check.
-   if ( RTI_ambassador.get() == NULL ) {
+   if ( RTI_ambassador.get() == nullptr ) {
       ostringstream errmsg;
       errmsg << "Federate::join_federation():" << __LINE__
-             << " ERROR: NULL pointer to RTIambassador!\n";
+             << " ERROR: nullptr pointer to RTIambassador!\n";
       DebugHandler::terminate( errmsg.str() );
    }
    if ( this->federation_joined ) {
@@ -4351,8 +4351,8 @@ void Federate::enable_async_delivery()
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
    // Sanity check.
-   if ( RTI_ambassador.get() == NULL ) {
-      DebugHandler::terminate( "Federate::enable_async_delivery() ERROR: NULL pointer to RTIambassador!" );
+   if ( RTI_ambassador.get() == nullptr ) {
+      DebugHandler::terminate( "Federate::enable_async_delivery() ERROR: nullptr pointer to RTIambassador!" );
    }
 
    try {
@@ -4472,7 +4472,7 @@ void Federate::send_zero_lookahead_and_requested_data(
    string const &obj_instance_name )
 {
    TrickHLA::Object *obj = object_service.get_trickhla_object( obj_instance_name );
-   if ( obj == NULL ) {
+   if ( obj == nullptr ) {
       ostringstream errmsg;
       errmsg << "Federate::send_zero_lookahead_and_requested_data():" << __LINE__
              << " ERROR: Could not find the object instance for the name specified:'"
@@ -4504,7 +4504,7 @@ void Federate::wait_to_receive_zero_lookahead_data(
    string const &obj_instance_name )
 {
    TrickHLA::Object *obj = object_service.get_trickhla_object( obj_instance_name );
-   if ( obj == NULL ) {
+   if ( obj == nullptr ) {
       ostringstream errmsg;
       errmsg << "Federate::wait_to_receive_zero_lookahead_data():" << __LINE__
              << " ERROR: Could not find the object instance for the name specified:'"
@@ -4584,7 +4584,7 @@ void Federate::send_blocking_io_data(
    string const &obj_instance_name )
 {
    TrickHLA::Object *obj = object_service.get_trickhla_object( obj_instance_name );
-   if ( obj == NULL ) {
+   if ( obj == nullptr ) {
       ostringstream errmsg;
       errmsg << "Federate::send_blocking_io_data():" << __LINE__
              << " ERROR: Could not find the object instance for the name specified:'"
@@ -4616,7 +4616,7 @@ void Federate::wait_to_receive_blocking_io_data(
    string const &obj_instance_name )
 {
    TrickHLA::Object *obj = object_service.get_trickhla_object( obj_instance_name );
-   if ( obj == NULL ) {
+   if ( obj == nullptr ) {
       ostringstream errmsg;
       errmsg << "Federate::wait_to_receive_blocking_io_data():" << __LINE__
              << " ERROR: Could not find the object instance for the name specified:'"
@@ -4699,7 +4699,7 @@ void Federate::set_connection_lost()
  */
 bool Federate::is_execution_member() // cppcheck-suppress [functionStatic, unmatchedSuppression]
 {
-   if ( connected && ( RTI_ambassador.get() != NULL ) ) {
+   if ( connected && ( RTI_ambassador.get() != nullptr ) ) {
       bool is_exec_member = true;
       try {
          RTI_ambassador->getOrderName( RTI1516_NAMESPACE::TIMESTAMP );
@@ -4772,9 +4772,9 @@ void Federate::shutdown()
    // Macro to save the FPU Control Word register value.
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
-   // Check for Execution Control shutdown. If this is NULL, then we are
+   // Check for Execution Control shutdown. If this is nullptr, then we are
    // probably shutting down prior to initialization.
-   if ( this->execution_control != NULL ) {
+   if ( this->execution_control != nullptr ) {
       // Call Execution Control shutdown method.
       execution_control->shutdown();
    }
@@ -4794,7 +4794,7 @@ void Federate::shutdown()
    destroy();
 
    // Remove the ExecutionConfiguration object.
-   if ( this->execution_control != NULL ) {
+   if ( this->execution_control != nullptr ) {
       execution_control->remove_execution_configuration();
    }
 
@@ -4833,7 +4833,7 @@ void Federate::resign()
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
    // Make sure we've been able to set the RTI ambassador.
-   if ( RTI_ambassador.get() == NULL ) {
+   if ( RTI_ambassador.get() == nullptr ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -4993,7 +4993,7 @@ void Federate::resign_so_we_can_rejoin()
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
    // Make sure we've been able to set the RTI ambassador.
-   if ( RTI_ambassador.get() == NULL ) {
+   if ( RTI_ambassador.get() == nullptr ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -5140,7 +5140,7 @@ void Federate::destroy()
    // will not do anything bad if there other federates joined. The RTI will
    // throw us an exception telling us that other federates are joined and we
    // can just ignore that.
-   if ( RTI_ambassador.get() == NULL ) {
+   if ( RTI_ambassador.get() == nullptr ) {
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -5274,11 +5274,11 @@ void Federate::destroy_orphaned_federation()
    // Macro to save the FPU Control Word register value.
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
-   // Print an error message if the RTI ambassador is NULL.
-   if ( RTI_ambassador.get() == NULL ) {
+   // Print an error message if the RTI ambassador is nullptr.
+   if ( RTI_ambassador.get() == nullptr ) {
       ostringstream errmsg;
       errmsg << "Federate::destroy_orphaned_federation():" << __LINE__
-             << " ERROR: Unexpected NULL RTIambassador.\n";
+             << " ERROR: Unexpected nullptr RTIambassador.\n";
       DebugHandler::terminate( errmsg.str() );
    }
 

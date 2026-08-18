@@ -80,7 +80,7 @@ void FixedRecordEncoder::update_before_encode()
 void FixedRecordEncoder::update_before_encode(
    HLAfixedRecord const *fixed_rec )
 {
-   if ( fixed_rec != NULL ) {
+   if ( fixed_rec != nullptr ) {
       for ( size_t i = 0; i < fixed_rec->size(); ++i ) {
          try {
             DataElement &data_elem = const_cast< DataElement & >(
@@ -107,7 +107,7 @@ void FixedRecordEncoder::update_after_decode()
 void FixedRecordEncoder::update_after_decode(
    HLAfixedRecord const *fixed_rec )
 {
-   if ( fixed_rec != NULL ) {
+   if ( fixed_rec != nullptr ) {
       for ( size_t i = 0; i < fixed_rec->size(); ++i ) {
          try {
             DataElement &data_elem = const_cast< DataElement & >(

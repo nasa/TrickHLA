@@ -217,10 +217,10 @@ void ExecutionConfiguration::configure_attributes()
 void ExecutionConfiguration::configure()
 {
    // Check to make sure we have a reference to the TrickHLA::FedAmb.
-   if ( federate == NULL ) {
+   if ( federate == nullptr ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionConfiguration::configure():" << __LINE__
-             << " ERROR: Unexpected NULL TrickHLA::Federate.\n";
+             << " ERROR: Unexpected nullptr TrickHLA::Federate.\n";
       DebugHandler::terminate( errmsg.str() );
       return;
    }
@@ -233,7 +233,7 @@ void ExecutionConfiguration::configure()
    set_lag_compensation_type( LAG_COMPENSATION_NONE );
 
    // Ownership transfer will not be used for the Execution Configuration object.
-   this->ownership = NULL;
+   this->ownership = nullptr;
 
    // Make sure the ExecutionConfiguration attributes go out in
    // Receive-Order so that a late joining federate can get them.
@@ -275,7 +275,7 @@ void ExecutionConfiguration::pack()
       message_publish( MSG_NORMAL, msg.str().c_str() );
    }
 
-   if ( ( federate != NULL ) && !federate->verify_time_constraints() ) {
+   if ( ( federate != nullptr ) && !federate->verify_time_constraints() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionConfiguration::pack():" << __LINE__
              << " ERROR: Invalid time constraints!\n";
@@ -481,24 +481,24 @@ void ExecutionConfiguration::setup_ref_attributes(
    this->blocking_cyclic_read = false;
 
    // There's no Lag Compensation with the ExCO.
-   this->lag_comp      = (LagCompensation *)NULL;
+   this->lag_comp      = (LagCompensation *)nullptr;
    this->lag_comp_type = LAG_COMPENSATION_NONE;
 
    // Need to set the packing object.
    this->packing = packing_obj;
 
    // No ownership transfer of the ExCO. Only the master can own this.
-   this->ownership = (OwnershipHandler *)NULL;
+   this->ownership = (OwnershipHandler *)nullptr;
 
    // No Object Deleted callback.
-   this->deleted                         = (ObjectDeletedHandler *)NULL;
+   this->deleted                         = (ObjectDeletedHandler *)nullptr;
    this->process_object_deleted_from_RTI = false;
    this->object_deleted_from_RTI         = false;
 
    // Set up attributes.
    this->attr_count = 7;
    this->attributes = MemoryServices::declare_var( this->attributes, this->attr_count );
-   if ( this->attributes == NULL ) {
+   if ( this->attributes == nullptr ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionConfiguration::setup_ref_attributes():" << __LINE__
              << " FAILED to allocate enough memory for the attributes of the ExCO!\n";
@@ -537,7 +537,7 @@ void ExecutionConfiguration::setup_ref_attributes(
    // TODO: Determine if exco_ref2 is needed and used.
    // Allocate the Trick REF2 data structure.
    REF2 *exco_ref2 = reinterpret_cast< REF2 * >( malloc( sizeof( REF2 ) ) );
-   if ( exco_ref2 == NULL ) {
+   if ( exco_ref2 == nullptr ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionConfiguration::setup_ref_attributes():" << __LINE__
              << " FAILED to allocate enough memory for the REF2 structure for"
@@ -550,9 +550,9 @@ void ExecutionConfiguration::setup_ref_attributes(
    // entries: 1) the 'root_frame_name' parameter and 2) an empty entry
    // marking the end of the structure.
    ATTRIBUTES *exco_attr = reinterpret_cast< ATTRIBUTES * >( malloc( 2 * sizeof( ATTRIBUTES ) ) );
-   if ( exco_attr == NULL ) {
+   if ( exco_attr == nullptr ) {
       free( static_cast< void * >( exco_ref2 ) );
-      exco_ref2 = NULL;
+      exco_ref2 = nullptr;
 
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionConfiguration::setup_ref_attributes():" << __LINE__
@@ -567,7 +567,7 @@ void ExecutionConfiguration::setup_ref_attributes(
    // element as an ending marker of the ATTRIBUTES.
    int attr_index = 0;
 
-   // Loop until the current ATTRIBUTES name is a NULL string
+   // Loop until the current ATTRIBUTES name is a nullptr string
    while ( strcmp( attrSpaceFOM__ExecutionConfiguration[attr_index].name, "" ) != 0 ) {
       if ( strcmp( attrSpaceFOM__ExecutionConfiguration[attr_index].name, "root_frame_name" ) == 0 ) {
          memcpy( &exco_attr[0], // flawfinder: ignore
@@ -614,7 +614,7 @@ void ExecutionConfiguration::setup_ref_attributes(
    }
 
    free( static_cast< void * >( exco_ref2 ) );
-   exco_ref2 = NULL;
+   exco_ref2 = nullptr;
 }
 
 void ExecutionConfiguration::print_execution_configuration() const

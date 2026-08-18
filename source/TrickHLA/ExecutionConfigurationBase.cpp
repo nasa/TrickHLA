@@ -85,7 +85,7 @@ ExecutionConfigurationBase::ExecutionConfigurationBase()
    : TrickHLA::Packing( "ExecutionConfigurationBase" ),
      S_define_name(),
      pending_update( false ),
-     execution_control( NULL )
+     execution_control( nullptr )
 {
    // This is both a TrickHLA::Object and Packing.
    // So, it can safely reference itself.
@@ -99,7 +99,7 @@ ExecutionConfigurationBase::ExecutionConfigurationBase(
    string const &s_define_name )
    : TrickHLA::Packing( "ExecutionConfigurationBase" ),
      pending_update( false ),
-     execution_control( NULL )
+     execution_control( nullptr )
 {
    // Set the full path S_define name and make a copy.
    this->S_define_name = string( s_define_name );
@@ -149,7 +149,7 @@ void ExecutionConfigurationBase::reset_preferred_order()
 {
    this->any_attribute_timestamp_order = false;
 
-   if ( ( attr_count > 0 ) && ( attributes != NULL ) ) {
+   if ( ( attr_count > 0 ) && ( attributes != nullptr ) ) {
       for ( int i = 0; i < attr_count; ++i ) {
          attributes[i].set_preferred_order( TRANSPORT_RECEIVE_ORDER );
       }
@@ -162,7 +162,7 @@ void ExecutionConfigurationBase::reset_ownership_states()
    // means we will reserve the instance name as well.
    set_create_HLA_instance( true );
 
-   if ( ( attr_count > 0 ) && ( attributes != NULL ) ) {
+   if ( ( attr_count > 0 ) && ( attributes != nullptr ) ) {
       for ( int i = 0; i < attr_count; ++i ) {
 
          // All the simulation configuration attributes must be configured

@@ -68,8 +68,8 @@ class CabinAtmoVolumeConfigData
    explicit CabinAtmoVolumeConfigData( double const  volume        = 0.0,
                                        double const  temperature   = 0.0,
                                        double const  pressure      = 0.0,
-                                       double const *moleFractions = NULL,
-                                       double const *compoundCp    = NULL,
+                                       double const *moleFractions = nullptr,
+                                       double const *compoundCp    = nullptr,
                                        bool const    isIfMaster    = false,
                                        bool const    isIfEnthalpy  = false );
    /// @brief  Default destructs this Simple Cabin Atmosphere Volume Model Configuration Data.

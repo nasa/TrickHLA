@@ -53,7 +53,7 @@ using namespace std;
 using namespace TrickHLA;
 
 EncoderBase::EncoderBase()
-   : data_encoder( NULL ),
+   : data_encoder( nullptr ),
      data(),
      data_name()
 {
@@ -62,7 +62,7 @@ EncoderBase::EncoderBase()
 
 EncoderBase::EncoderBase(
    string const &name )
-   : data_encoder( NULL ),
+   : data_encoder( nullptr ),
      data(),
      data_name( name )
 {
@@ -71,8 +71,8 @@ EncoderBase::EncoderBase(
 
 EncoderBase::~EncoderBase()
 {
-   if ( data_encoder != NULL ) {
+   if ( data_encoder != nullptr ) {
       delete data_encoder;
-      data_encoder = NULL;
+      data_encoder = nullptr;
    }
 }

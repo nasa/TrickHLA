@@ -74,21 +74,21 @@ RecordElement::RecordElement()
    : trick_name(),
      rti_encoding( ENCODING_UNKNOWN ),
      element_count( 0 ),
-     elements( NULL ),
-     encoder( NULL )
+     elements( nullptr ),
+     encoder( nullptr )
 {
    return;
 }
 
 RecordElement::~RecordElement()
 {
-   if ( elements != NULL ) {
-      elements      = NULL;
+   if ( elements != nullptr ) {
+      elements      = nullptr;
       element_count = 0;
    }
-   if ( encoder != NULL ) {
+   if ( encoder != nullptr ) {
       delete encoder;
-      encoder = NULL;
+      encoder = nullptr;
    }
 }
 
@@ -106,7 +106,7 @@ void RecordElement::initialize_element_encoder()
    if ( rti_encoding == ENCODING_FIXED_RECORD ) {
 
       // If we have an element count but no elements then let the user know.
-      if ( ( element_count > 0 ) && ( elements == NULL ) ) {
+      if ( ( element_count > 0 ) && ( elements == nullptr ) ) {
          ostringstream errmsg;
          errmsg << "RecordElement::initialize_element_encoder():" << __LINE__
                 << " ERROR: For element with trick_name '" << get_trick_name()
@@ -120,7 +120,7 @@ void RecordElement::initialize_element_encoder()
 
       // If we have elements but the element-count is invalid then let
       // the user know.
-      if ( ( element_count <= 0 ) && ( elements != NULL ) ) {
+      if ( ( element_count <= 0 ) && ( elements != nullptr ) ) {
          ostringstream errmsg;
          errmsg << "RecordElement::initialize_element_encoder():" << __LINE__
                 << " ERROR: For element with trick_name '" << get_trick_name()
@@ -144,7 +144,7 @@ void RecordElement::initialize_element_encoder()
          return;
       }
 
-      if ( elements == NULL ) {
+      if ( elements == nullptr ) {
          ostringstream errmsg;
          errmsg << "RecordElement::initialize_element_encoder():" << __LINE__
                 << " ERROR: For element with trick_name '" << get_trick_name()

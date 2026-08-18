@@ -59,7 +59,7 @@ class TrickHLAInteractionHandlerBaseSimObject : public Trick::SimObject {
                                             unsigned short       _INIT = P_HLA_INIT  )
       : Trick::SimObject(),
         handler_base_ptr( handler ),
-        thla_interaction( NULL ),
+        thla_interaction( nullptr ),
         publish( publish_inter ),
         subscribe( subscribe_inter ),
         sim_object_configured( false ),
@@ -81,10 +81,10 @@ class TrickHLAInteractionHandlerBaseSimObject : public Trick::SimObject {
    virtual int default_config()
    {
       // Check interaction handler.
-      if ( handler_base_ptr == NULL ) {
+      if ( handler_base_ptr == nullptr ) {
          std::ostringstream errmsg;
          errmsg << "TrickHLAInteractionHandlerBaseSimObject::default_config():" << __LINE__
-                << " ERROR: Unexpected NULL InteractionHandler!" << std::endl;
+                << " ERROR: Unexpected nullptr InteractionHandler!\n";
          TrickHLA::DebugHandler::terminate( errmsg.str() );
          return( -1 );
       }
@@ -94,16 +94,16 @@ class TrickHLAInteractionHandlerBaseSimObject : public Trick::SimObject {
       
       // Check if the TrickHLA Interaction associated with the handler function
       // has been instantiated and assigned.
-      if ( thla_interaction != NULL ) {
+      if ( thla_interaction != nullptr ) {
          
          // Check if the Interaction is already assigned.
-         if ( interaction_ptr != NULL ) {
+         if ( interaction_ptr != nullptr ) {
             
             // Both are set and they MUST match!
             if ( thla_interaction != interaction_ptr ) {
                std::ostringstream errmsg;
                errmsg << "TrickHLAInteractionHandlerBaseSimObject::default_config():" << __LINE__
-                      << " ERROR: InteractionHandler references do NOT match!" << std::endl;
+                      << " ERROR: InteractionHandler references do NOT match!\n";
                TrickHLA::DebugHandler::terminate( errmsg.str() );
                return( -1 );
             }
@@ -115,7 +115,7 @@ class TrickHLAInteractionHandlerBaseSimObject : public Trick::SimObject {
             
          }
          
-      } else if ( interaction_ptr != NULL ) {
+      } else if ( interaction_ptr != nullptr ) {
          
          // The thla_interaction reference is not set but the InteractionHandler
          // is.  So, we'll use that.
@@ -145,16 +145,16 @@ class TrickHLAInteractionHandlerBaseSimObject : public Trick::SimObject {
          std::ostringstream errmsg;
          errmsg << "TrickHLAInteractionHandlerBaseSimObject::initialize():" << __LINE__
                 << " ERROR: The sim-object configure function must be called"
-                << " before calling this initialize function!" << std::endl;
+                << " before calling this initialize function!\n";
          TrickHLA::DebugHandler::terminate( errmsg.str() );
          return( -1 );
       }
 
       // We must have an InteractionHandler.
-      if ( handler_base_ptr == NULL ) {
+      if ( handler_base_ptr == nullptr ) {
          std::ostringstream errmsg;
          errmsg << "TrickHLAInteractionHandlerBaseSimObject::initialize():" << __LINE__
-                << " ERROR: Unexpected NULL Packing object!" << std::endl;
+                << " ERROR: Unexpected nullptr Packing object!\n";
          TrickHLA::DebugHandler::terminate( errmsg.str() );
          return( -1 );
       } else {
@@ -166,16 +166,16 @@ class TrickHLAInteractionHandlerBaseSimObject : public Trick::SimObject {
 
       // Check if the TrickHLA Interaction associated with the handler function
       // has been instantiated and assigned.
-      if ( thla_interaction != NULL ) {
+      if ( thla_interaction != nullptr ) {
 
          // Check if the Interaction is already assigned.
-         if ( interaction_ptr != NULL ) {
+         if ( interaction_ptr != nullptr ) {
             
             // Both are set and they MUST match!
             if ( thla_interaction != interaction_ptr ) {
                std::ostringstream errmsg;
                errmsg << "TrickHLAInteractionHandlerBaseSimObject::initialize():" << __LINE__
-                      << " ERROR: InteractionHandler references do NOT match!" << std::endl;
+                      << " ERROR: InteractionHandler references do NOT match!\n";
                TrickHLA::DebugHandler::terminate( errmsg.str() );
                return( -1 );
             }
@@ -187,7 +187,7 @@ class TrickHLAInteractionHandlerBaseSimObject : public Trick::SimObject {
             
          }
 
-      } else if ( interaction_ptr != NULL ) {
+      } else if ( interaction_ptr != nullptr ) {
 
          // The thla_interaction reference is not set but the InteractionHandler
          // is.  So, we'll use that.
@@ -199,7 +199,7 @@ class TrickHLAInteractionHandlerBaseSimObject : public Trick::SimObject {
          std::ostringstream errmsg;
          errmsg << "TrickHLAInteractionHandlerBaseSimObject::initialize():" << __LINE__
                 << " ERROR: The TrickHLA::InteractionHandler associated with"
-                << " interaction \'" << name << "\' is NULL." << std::endl;
+                << " interaction \'" << name << "\' is nullptr.\n";
          //TrickHLA::DebugHandler::terminate( errmsg.str() );
          message_publish( MSG_WARNING, errmsg.str().c_str() );
          

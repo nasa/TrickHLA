@@ -73,7 +73,7 @@ Enum32Data::Enum32Data(
 
    ptr_enum32 = static_cast< TrickHLAModel::Int32Enum * >(
       TMM_declare_var_1d( "TrickHLAModel::Int32Enum", ptr_enum32_size ) );
-   if ( ptr_enum32 == NULL ) {
+   if ( ptr_enum32 == nullptr ) {
       ostringstream errmsg;
       errmsg << "Enum32Data::Enum32Data():" << __LINE__
              << " ERROR: Failed to allocate memory for ptr_enum32!\n";

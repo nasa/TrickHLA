@@ -89,10 +89,10 @@ using namespace TrickHLA;
  */
 InteractionServices::InteractionServices( Federate &fed )
    : inter_count( 0 ),
-     interactions( NULL ),
+     interactions( nullptr ),
      interactions_queue(),
      check_interactions_count( 0 ),
-     check_interactions( NULL ),
+     check_interactions( nullptr ),
      federate( &fed )
 {
    return;
@@ -109,10 +109,10 @@ InteractionServices::~InteractionServices()
 
 void InteractionServices::restart_initialization()
 {
-   if ( this->federate == NULL ) {
+   if ( this->federate == nullptr ) {
       ostringstream errmsg;
       errmsg << "InteractionServices::restart_initialization():" << __LINE__
-             << " ERROR: Unexpected NULL 'federate' pointer!\n";
+             << " ERROR: Unexpected nullptr 'federate' pointer!\n";
       DebugHandler::terminate( errmsg.str() );
       return;
    }
@@ -146,10 +146,10 @@ void InteractionServices::verify_interaction_arrays()
 {
    // Check for the error condition of a valid interaction count but a null
    // interactions array.
-   if ( ( inter_count > 0 ) && ( interactions == NULL ) ) {
+   if ( ( inter_count > 0 ) && ( interactions == nullptr ) ) {
       ostringstream errmsg;
       errmsg << "InteractionServices::verify_interaction_arrays():" << __LINE__
-             << " ERROR: Unexpected NULL 'interactions' array for a non zero"
+             << " ERROR: Unexpected nullptr 'interactions' array for a non zero"
              << " inter_count:" << inter_count << ". Please check your input or"
              << " modified-data files to make sure the 'InteractionServices::interactions'"
              << " array is correctly configured.\n";
@@ -157,13 +157,13 @@ void InteractionServices::verify_interaction_arrays()
       return;
    }
 
-   // If we have a non-NULL interactions array but the interactions-count is
+   // If we have a non-nullptr interactions array but the interactions-count is
    // invalid then let the user know.
-   if ( ( inter_count <= 0 ) && ( interactions != NULL ) ) {
+   if ( ( inter_count <= 0 ) && ( interactions != nullptr ) ) {
       ostringstream errmsg;
       errmsg << "InteractionServices::verify_interaction_arrays():" << __LINE__
              << " ERROR: Unexpected " << ( ( inter_count == 0 ) ? "zero" : "negative" )
-             << " inter_count:" << inter_count << " for a non-NULL 'interactions'"
+             << " inter_count:" << inter_count << " for a non-nullptr 'interactions'"
              << " array. Please check your input or modified-data files to make"
              << " sure the 'InteractionServices::interactions' array is correctly configured."
              << "\n";
@@ -329,10 +329,10 @@ void InteractionServices::setup_interaction_RTI_handles(
    int const    interactions_counter,
    Interaction *in_interactions )
 {
-   if ( this->federate == NULL ) {
+   if ( this->federate == nullptr ) {
       ostringstream errmsg;
       errmsg << "InteractionServices::setup_interaction_RTI_handles():" << __LINE__
-             << " ERROR: Unexpected NULL 'federate' pointer!\n";
+             << " ERROR: Unexpected nullptr 'federate' pointer!\n";
       DebugHandler::terminate( errmsg.str() );
       return;
    }
@@ -341,10 +341,10 @@ void InteractionServices::setup_interaction_RTI_handles(
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
    RTIambassador *rti_amb = federate->get_RTI_ambassador();
-   if ( rti_amb == NULL ) {
+   if ( rti_amb == nullptr ) {
       ostringstream errmsg;
       errmsg << "InteractionServices::setup_interaction_RTI_handles():" << __LINE__
-             << " ERROR: Unexpected NULL RTIambassador!\n";
+             << " ERROR: Unexpected nullptr RTIambassador!\n";
       DebugHandler::terminate( errmsg.str() );
       return;
    }
@@ -763,7 +763,7 @@ void InteractionServices::convert_data_before_checkpoint()
 
       // Allocate the interaction items base don the count.
       check_interactions = MemoryServices::declare_var( check_interactions, check_interactions_count );
-      if ( check_interactions == NULL ) {
+      if ( check_interactions == nullptr ) {
          ostringstream errmsg;
          errmsg << "InteractionServices::convert_data_before_checkpoint():" << __LINE__
                 << " ERROR: Failed to allocate enough memory for check_interactions"
@@ -781,7 +781,7 @@ void InteractionServices::convert_data_before_checkpoint()
 
       // Iterate through the interactions-queue.
       for ( i = 0, item = static_cast< InteractionItem * >( interactions_queue.front() );
-            ( i < check_interactions_count ) && ( item != NULL );
+            ( i < check_interactions_count ) && ( item != nullptr );
             ++i, item = static_cast< InteractionItem * >( item->next ) ) {
 
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTER_SERVICES ) ) {
@@ -807,7 +807,7 @@ void InteractionServices::convert_data_before_checkpoint()
                     item->user_supplied_tag,
                     item->user_supplied_tag_size );
          } else {
-            check_interactions[i].user_supplied_tag = NULL;
+            check_interactions[i].user_supplied_tag = nullptr;
          }
 
          check_interactions[i].order_is_TSO = item->order_is_TSO;
@@ -832,7 +832,7 @@ void InteractionServices::restore_data_after_checkpoint()
       // mutex even if there is an exception.
       MutexProtection const auto_unlock_mutex( &interactions_queue.mutex );
 
-      if ( check_interactions != NULL ) {
+      if ( check_interactions != nullptr ) {
          for ( size_t i = 0; i < check_interactions_count; ++i ) {
 
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTER_SERVICES ) ) {
@@ -862,7 +862,7 @@ void InteractionServices::free_converted_data_for_checkpoint()
          message_publish( MSG_WARNING, "InteractionServices::free_converted_data_for_checkpoint():%d WARNING failed to delete Trick Memory for 'check_interactions'\n",
                           __LINE__ );
       }
-      check_interactions       = NULL;
+      check_interactions       = nullptr;
       check_interactions_count = 0;
    }
 }

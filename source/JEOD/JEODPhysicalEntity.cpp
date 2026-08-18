@@ -62,7 +62,7 @@ using namespace SpaceFOM;
  * @job_class{initialization}
  */
 JEODPhysicalEntity::JEODPhysicalEntity()
-   : dyn_body_data( NULL )
+   : dyn_body_data( nullptr )
 {
    return;
 }
@@ -82,7 +82,7 @@ JEODPhysicalEntity::JEODPhysicalEntity(
  */
 JEODPhysicalEntity::~JEODPhysicalEntity()
 {
-   dyn_body_data = NULL;
+   dyn_body_data = nullptr;
 }
 
 /*!
@@ -91,10 +91,10 @@ JEODPhysicalEntity::~JEODPhysicalEntity()
 void JEODPhysicalEntity::initialize()
 {
    // Check to make sure the JEODPhysicalEntity data is set.
-   if ( dyn_body_data == NULL ) {
+   if ( dyn_body_data == nullptr ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalEntity::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL dyn_body_data: "
+             << " ERROR: Unexpected nullptr dyn_body_data: "
              << this->pe_packing_data.name << "\n";
       DebugHandler::terminate( errmsg.str() );
    }
@@ -247,10 +247,10 @@ void JEODPhysicalEntity::set_data(
 {
 
    // Set the reference to the JEODPhysicalEntity data.
-   if ( dyn_body_data_ptr == NULL ) {
+   if ( dyn_body_data_ptr == nullptr ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODPhysicalEntity::set_data():" << __LINE__
-             << " ERROR: Unexpected NULL JEODPhysicalEntityData: "
+             << " ERROR: Unexpected nullptr JEODPhysicalEntityData: "
              << this->pe_packing_data.name << "\n";
       DebugHandler::terminate( errmsg.str() );
    }

@@ -128,10 +128,10 @@ void MTRInteractionHandler::send_interaction(
    MTREnum mode_request )
 {
    // Make sure that the interaction reference has been set.
-   if ( this->interaction == NULL ) {
+   if ( this->interaction == nullptr ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::MTRInteractionHandler::send_interaction():" << __LINE__
-             << " ERROR: Unexpected NULL Interaction!\n";
+             << " ERROR: Unexpected nullptr Interaction!\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -224,19 +224,19 @@ void MTRInteractionHandler::receive_interaction(
    VariableLengthData const &the_user_supplied_tag )
 {
    // Make sure that the federate reference has been set.
-   if ( this->interaction == NULL ) {
+   if ( this->interaction == nullptr ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::MTRInteractionHandler::receive_interaction():" << __LINE__
-             << " ERROR: Unexpected NULL Interaction!\n";
+             << " ERROR: Unexpected nullptr Interaction!\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
    // Get the ExecutionControl object and cast it to an SpaceFOM::ExecutionControl.
    SpaceFOM::ExecutionControl *exco = dynamic_cast< ExecutionControl * >( interaction->get_federate()->get_execution_control() );
-   if ( exco == NULL ) {
+   if ( exco == nullptr ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::MTRInteractionHandler::receive_interaction():" << __LINE__
-             << "  ERROR: Unexpected NULL SpaceFOM::ExecutionControl!\n";
+             << "  ERROR: Unexpected nullptr SpaceFOM::ExecutionControl!\n";
       DebugHandler::terminate( errmsg.str() );
       exit( 1 );
    }

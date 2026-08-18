@@ -98,7 +98,7 @@ InteractionItem::InteractionItem(
      parameter_queue(),
      interaction_type( inter_type ),
      parm_items_count( 0 ),
-     parm_items( NULL ),
+     parm_items( nullptr ),
      order_is_TSO( false ),
      time()
 {
@@ -122,7 +122,7 @@ InteractionItem::InteractionItem(
      parameter_queue(),
      interaction_type( inter_type ),
      parm_items_count( 0 ),
-     parm_items( NULL ),
+     parm_items( nullptr ),
      order_is_TSO( true ),
      time()
 {
@@ -138,14 +138,14 @@ InteractionItem::InteractionItem(
      index( rhs.index ),
      parameter_queue(),
      interaction_type( rhs.interaction_type ),
-     parm_items_count( ( rhs.parm_items != NULL ) ? rhs.parm_items_count : 0 ),
+     parm_items_count( ( rhs.parm_items != nullptr ) ? rhs.parm_items_count : 0 ),
      parm_items( rhs.parm_items ),
-     user_supplied_tag_size( ( rhs.user_supplied_tag != NULL ) ? rhs.user_supplied_tag_size : 0 ),
-     user_supplied_tag( NULL ),
+     user_supplied_tag_size( ( rhs.user_supplied_tag != nullptr ) ? rhs.user_supplied_tag_size : 0 ),
+     user_supplied_tag( nullptr ),
      order_is_TSO( rhs.order_is_TSO ),
      time( rhs.time )
 {
-   if ( ( user_supplied_tag_size > 0 ) && ( rhs.user_supplied_tag != NULL ) ) {
+   if ( ( user_supplied_tag_size > 0 ) && ( rhs.user_supplied_tag != nullptr ) ) {
       user_supplied_tag = MemoryServices::declare_var( user_supplied_tag, user_supplied_tag_size );
       memcpy( user_supplied_tag, rhs.user_supplied_tag, user_supplied_tag_size ); // flawfinder: ignore
    }
@@ -154,7 +154,7 @@ InteractionItem::InteractionItem(
    // mutex even if there is an exception.
    MutexProtection const auto_unlock_mutex( &parameter_queue.mutex );
 
-   if ( parm_items != NULL ) {
+   if ( parm_items != nullptr ) {
       for ( size_t i = 0; i < parm_items_count; ++i ) {
          parameter_queue.push( new ParameterItem( parm_items[i] ) );
       }
@@ -166,13 +166,13 @@ InteractionItem::InteractionItem(
  */
 InteractionItem::~InteractionItem()
 {
-   if ( user_supplied_tag != NULL ) {
+   if ( user_supplied_tag != nullptr ) {
       if ( MemoryServices::is_alloced( user_supplied_tag )
            && !MemoryServices::delete_var( user_supplied_tag ) ) {
          message_publish( MSG_WARNING, "InteractionItem::~InteractionItem():%d WARNING failed to delete Trick Memory for 'user_supplied_tag'\n",
                           __LINE__ );
       }
-      user_supplied_tag      = NULL;
+      user_supplied_tag      = nullptr;
       user_supplied_tag_size = 0;
    }
    clear_parm_items();
@@ -195,7 +195,7 @@ void InteractionItem::initialize(
       // mutex even if there is an exception.
       MutexProtection const auto_unlock_mutex( &parameter_queue.mutex );
 
-      if ( parameters != NULL ) {
+      if ( parameters != nullptr ) {
          // Decode all the parameters from the map.
          for ( size_t i = 0; i < param_count; ++i ) {
             // Note that we are using a const_iterator since this map does not support
@@ -212,13 +212,13 @@ void InteractionItem::initialize(
       }
    }
    // Free the Trick allocated memory for the user supplied tag.
-   if ( user_supplied_tag != NULL ) {
+   if ( user_supplied_tag != nullptr ) {
       if ( MemoryServices::is_alloced( user_supplied_tag )
            && !MemoryServices::delete_var( user_supplied_tag ) ) {
          message_publish( MSG_WARNING, "InteractionItem::initialize():%d WARNING failed to delete Trick Memory for 'user_supplied_tag'\n",
                           __LINE__ );
       }
-      user_supplied_tag = NULL;
+      user_supplied_tag = nullptr;
    }
 
    // Put the user supplied tag into a buffer.
@@ -240,7 +240,7 @@ void InteractionItem::checkpoint_queue()
       parm_items_count = parameter_queue.size();
 
       parm_items = MemoryServices::declare_var( parm_items, parm_items_count );
-      if ( parm_items == NULL ) {
+      if ( parm_items == nullptr ) {
          ostringstream errmsg;
          errmsg << "InteractionItem::checkpoint_queue():" << __LINE__
                 << " ERROR: Failed to allocate enough memory for a parm_items linear"
@@ -253,7 +253,7 @@ void InteractionItem::checkpoint_queue()
 
       // Iterate through the parameter-queue.
       for ( i = 0, item = static_cast< ParameterItem * >( parameter_queue.front() );
-            ( i < parm_items_count ) && ( item != NULL );
+            ( i < parm_items_count ) && ( item != nullptr );
             ++i, item = static_cast< ParameterItem * >( item->next ) ) {
 
          parm_items[i].index = item->index;
@@ -263,7 +263,7 @@ void InteractionItem::checkpoint_queue()
 
             memcpy( parm_items[i].data, item->data, item->size ); // flawfinder: ignore
          } else {
-            parm_items[i].data = NULL;
+            parm_items[i].data = nullptr;
          }
       }
    }
@@ -271,7 +271,7 @@ void InteractionItem::checkpoint_queue()
 
 void InteractionItem::clear_parm_items()
 {
-   if ( parm_items != NULL ) {
+   if ( parm_items != nullptr ) {
       for ( size_t i = 0; i < parm_items_count; ++i ) {
          parm_items[i].clear();
       }
@@ -280,7 +280,7 @@ void InteractionItem::clear_parm_items()
          message_publish( MSG_WARNING, "InteractionItem::clear_parm_items():%d WARNING failed to delete Trick Memory for 'parm_items'\n",
                           __LINE__ );
       }
-      parm_items       = NULL;
+      parm_items       = nullptr;
       parm_items_count = 0;
    }
 }

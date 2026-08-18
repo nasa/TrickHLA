@@ -69,9 +69,9 @@ ParameterItem::ParameterItem(
    : Item(),
      index( parameter_index ),
      size( 0 ),
-     data( NULL )
+     data( nullptr )
 {
-   if ( param_value != NULL ) {
+   if ( param_value != nullptr ) {
       size = param_value->size();
       if ( size > 0 ) {
          data = MemoryServices::declare_var( data, size );
@@ -87,10 +87,10 @@ ParameterItem::ParameterItem(
    ParameterItem const &rhs )
    : Item(),
      index( rhs.index ),
-     size( ( rhs.data != NULL ) ? rhs.size : 0 ),
-     data( NULL )
+     size( ( rhs.data != nullptr ) ? rhs.size : 0 ),
+     data( nullptr )
 {
-   if ( ( size > 0 ) && ( rhs.data != NULL ) ) {
+   if ( ( size > 0 ) && ( rhs.data != nullptr ) ) {
       data = MemoryServices::declare_var( data, size );
       memcpy( data, rhs.data, size ); // flawfinder: ignore
    }
@@ -106,12 +106,12 @@ ParameterItem::~ParameterItem()
 
 void ParameterItem::clear()
 {
-   if ( data != NULL ) {
+   if ( data != nullptr ) {
       if ( MemoryServices::is_alloced( data )
            && !MemoryServices::delete_var( data ) ) {
          message_publish( MSG_WARNING, "ParameterItem::clear():%d WARNING failed to delete Trick Memory for 'data'\n", __LINE__ );
       }
-      data  = NULL;
+      data  = nullptr;
       size  = 0;
       index = 0;
    }

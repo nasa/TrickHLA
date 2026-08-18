@@ -56,7 +56,7 @@ using namespace SpaceFOM;
  * @job_class{initialization}
  */
 LRTreeNodeBase::LRTreeNodeBase()
-   : parent( NULL ),
+   : parent( nullptr ),
      debug( false ),
      is_root_node( false ),
      node_id( 0 )
@@ -77,7 +77,7 @@ LRTreeNodeBase::LRTreeNodeBase(
      node_id( 0 )
 {
    // Determine root node status.
-   if ( node_parent == NULL ) {
+   if ( node_parent == nullptr ) {
       is_root_node = true;
    } else {
       is_root_node = false;
@@ -103,8 +103,8 @@ bool LRTreeNodeBase::set_root( bool root_status )
    if ( root_status ) {
 
       // Check to make sure predicates are satisfied.
-      if ( this->parent == NULL ) {
-         // Parent frame is NULL so set the root state.
+      if ( this->parent == nullptr ) {
+         // Parent frame is nullptr so set the root state.
          this->is_root_node = true;
          return ( true );
       } else {
@@ -117,7 +117,7 @@ bool LRTreeNodeBase::set_root( bool root_status )
    else {
 
       // Check to make sure predicates are satisfied.
-      if ( this->parent != NULL ) {
+      if ( this->parent != nullptr ) {
 
          // Set the is_root_node state to false.
          this->is_root_node = false;
@@ -125,7 +125,7 @@ bool LRTreeNodeBase::set_root( bool root_status )
 
       } else {
 
-         // Parent frame is NULL.  Automatic fail.
+         // Parent frame is nullptr.  Automatic fail.
          // Note that we DO NOT change the is_root_node state.
          return ( false );
       }
@@ -142,8 +142,8 @@ void LRTreeNodeBase::print_node( std::ostream &stream ) const
    stream << "Node Name: '" << this->name << "'\n"
           << "\tID: " << this->node_id << "\n";
 
-   if ( parent == NULL ) {
-      stream << "\tParent: <NULL>\n";
+   if ( parent == nullptr ) {
+      stream << "\tParent: <nullptr>\n";
    } else {
       stream << "\tParent: '" << this->parent->name << "'\n";
    }

@@ -125,7 +125,7 @@ void Attribute::initialize(
    if ( obj_FOM_name.empty() ) {
       ostringstream errmsg;
       errmsg << "Attribute::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL Object FOM-Name argument passed to this"
+             << " ERROR: Unexpected nullptr Object FOM-Name argument passed to this"
              << " function.";
       if ( !get_FOM_name().empty() ) {
          errmsg << " For FOM Attribute Named '" << get_FOM_name() << "'.";
@@ -232,10 +232,10 @@ void Attribute::initialize(
    // Initialize the element encoders including a fixed record encoder.
    initialize_element_encoder();
 
-   if ( this->encoder == NULL ) {
+   if ( this->encoder == nullptr ) {
       ostringstream errmsg;
       errmsg << "Attribute::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL encoder for Trick variable '"
+             << " ERROR: Unexpected nullptr encoder for Trick variable '"
              << get_trick_name() << "' with an 'rti_encoding' value of "
              << encoding_enum_to_string( rti_encoding ) << ".\n";
       DebugHandler::terminate( errmsg.str() );

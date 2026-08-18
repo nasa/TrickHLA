@@ -87,8 +87,8 @@ RelStateBase::RelStateBase(
  */
 RelStateBase::~RelStateBase()
 {
-   this->express_frame = NULL;
-   this->frame_tree    = NULL;
+   this->express_frame = nullptr;
+   this->frame_tree    = nullptr;
 
    return;
 }
@@ -174,11 +174,11 @@ bool RelStateBase::compute_state(
    double wdot_s_t_bdy[3]; /* Angular acceleration of the subject frame with respect to
                               the target frame expressed in the entity body frame. */
 
-   // Check for NULL frame.
-   if ( entity == NULL ) {
+   // Check for nullptr frame.
+   if ( entity == nullptr ) {
       if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
          ostringstream errmsg;
-         errmsg << "RelStateBase::compute_state() Warning: PhysicalEntityData NULL!\n";
+         errmsg << "RelStateBase::compute_state() Warning: PhysicalEntityData nullptr!\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
       return ( false );
@@ -186,7 +186,7 @@ bool RelStateBase::compute_state(
 
    // Find the entity parent frame in the tree.
    RefFrameBase const *entity_subject_frame = frame_tree->find_frame( entity->parent_frame );
-   if ( entity_subject_frame == NULL ) {
+   if ( entity_subject_frame == nullptr ) {
       if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
          ostringstream errmsg;
          errmsg << "RelStateBase::compute_state() Warning: Could not find subject frame: %s!\n";
@@ -362,11 +362,11 @@ bool RelStateBase::compute_state(
    PhysicalEntityData const *entity,
    RefFrameBase const       *wrt_frame )
 {
-   // Check for NULL frame.
-   if ( wrt_frame == NULL ) {
+   // Check for nullptr frame.
+   if ( wrt_frame == nullptr ) {
       if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
          ostringstream errmsg;
-         errmsg << "RelStateBase::compute_state() Warning: Reference frame NULL!\n";
+         errmsg << "RelStateBase::compute_state() Warning: Reference frame nullptr!\n";
          message_publish( MSG_WARNING, errmsg.str().c_str() );
       }
       return ( false );

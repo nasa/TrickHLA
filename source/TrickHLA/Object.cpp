@@ -134,15 +134,15 @@ Object::Object()
      blocking_cyclic_read( false ),
      thread_ids(),
      attr_count( 0 ),
-     attributes( NULL ),
-     lag_comp( NULL ),
+     attributes( nullptr ),
+     lag_comp( nullptr ),
      lag_comp_type( LAG_COMPENSATION_NONE ),
-     packing( NULL ),
-     ownership( NULL ),
-     deleted( NULL ),
-     conditional( NULL ),
+     packing( nullptr ),
+     ownership( nullptr ),
+     deleted( nullptr ),
+     conditional( nullptr ),
      thread_ids_array_count( 0 ),
-     thread_ids_array( NULL ),
+     thread_ids_array( nullptr ),
      process_object_deleted_from_RTI( false ),
      object_deleted_from_RTI( false ),
      push_mutex(),
@@ -165,7 +165,7 @@ Object::Object()
      thla_attribute_map(),
      class_handle(),
      instance_handle(),
-     federate( NULL ),
+     federate( nullptr ),
      elapsed_time_stats()
 {
 #ifdef TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
@@ -195,23 +195,23 @@ Object::~Object()
       // blocking threads go.
       set_to_unblocking_cyclic_reads();
 
-      if ( this->thread_ids_array != NULL
+      if ( this->thread_ids_array != nullptr
            && MemoryServices::is_alloced( this->thread_ids_array ) ) {
          if ( !MemoryServices::delete_var( this->thread_ids_array ) ) {
             message_publish( MSG_WARNING, "Object::~Object():%d WARNING failed to delete Trick Memory for 'this->thread_ids_array'\n",
                              __LINE__ );
          }
-         this->thread_ids_array       = NULL;
+         this->thread_ids_array       = nullptr;
          this->thread_ids_array_count = 0;
       }
 
       // FIXME: There is a problem with deleting attribute_values_map?
-      if ( attribute_values_map != NULL ) {
+      if ( attribute_values_map != nullptr ) {
          if ( !attribute_values_map->empty() ) {
             attribute_values_map->clear();
          }
          delete attribute_values_map;
-         attribute_values_map = NULL;
+         attribute_values_map = nullptr;
       }
 
       thla_attribute_map.clear();
@@ -238,10 +238,10 @@ void Object::initialize(
 
    // FIXME: This needs to me switched to use the Federate and then access the
    // services from the Federate instance.
-   if ( federate == NULL ) {
+   if ( federate == nullptr ) {
       ostringstream errmsg;
       errmsg << "Object::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL TrickHLA::Federate!\n";
+             << " ERROR: Unexpected nullptr TrickHLA::Federate!\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -292,18 +292,18 @@ void Object::initialize(
    }
 
    // Make sure we have a lag compensation object if lag-compensation is specified.
-   if ( ( lag_comp_type != LAG_COMPENSATION_NONE ) && ( lag_comp == NULL ) ) {
+   if ( ( lag_comp_type != LAG_COMPENSATION_NONE ) && ( lag_comp == nullptr ) ) {
       ostringstream errmsg;
       errmsg << "Object::initialize():" << __LINE__
              << " ERROR: For object '" << name << "', Lag-Compensation 'lag_comp_type'"
-             << " is specified, but 'lag_comp' is NULL! Please check your input"
+             << " is specified, but 'lag_comp' is nullptr! Please check your input"
              << " or modified-data files to make sure the Lag-Compensation type"
              << " and object are correctly specified.\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
    // If we have an attribute count but no attributes then let the user know.
-   if ( ( attr_count > 0 ) && ( attributes == NULL ) ) {
+   if ( ( attr_count > 0 ) && ( attributes == nullptr ) ) {
       ostringstream errmsg;
       errmsg << "Object::initialize():" << __LINE__
              << " ERROR: For object '" << name << "', the 'attr_count' is "
@@ -315,7 +315,7 @@ void Object::initialize(
 
    // If we have attributes but the attribute-count is invalid then let
    // the user know.
-   if ( ( attr_count <= 0 ) && ( attributes != NULL ) ) {
+   if ( ( attr_count <= 0 ) && ( attributes != nullptr ) ) {
       ostringstream errmsg;
       errmsg << "Object::initialize():" << __LINE__
              << " ERROR: For object '" << name << "', the 'attr_count' is "
@@ -327,7 +327,7 @@ void Object::initialize(
 
    // If the user specified a packing object then make sure it extends the
    // Packing virtual class.
-   if ( ( packing != NULL ) && ( dynamic_cast< Packing * >( packing ) == NULL ) ) {
+   if ( ( packing != nullptr ) && ( dynamic_cast< Packing * >( packing ) == nullptr ) ) {
       ostringstream errmsg;
       errmsg << "Object::initialize():" << __LINE__
              << " ERROR: For object '" << name << "',"
@@ -340,7 +340,7 @@ void Object::initialize(
 
    // If the user specified ownership handler object then make sure it extends
    // the OwnershipHandler virtual class.
-   if ( ( ownership != NULL ) && ( dynamic_cast< OwnershipHandler * >( ownership ) == NULL ) ) {
+   if ( ( ownership != nullptr ) && ( dynamic_cast< OwnershipHandler * >( ownership ) == nullptr ) ) {
       ostringstream errmsg;
       errmsg << "Object::initialize():" << __LINE__
              << " ERROR: For object '" << name << "',"
@@ -353,7 +353,7 @@ void Object::initialize(
 
    // If the user specified a resignation identification object then make sure
    // it extends the ObjectDeletedHandler virtual class.
-   if ( ( deleted != NULL ) && ( dynamic_cast< ObjectDeletedHandler * >( deleted ) == NULL ) ) {
+   if ( ( deleted != nullptr ) && ( dynamic_cast< ObjectDeletedHandler * >( deleted ) == nullptr ) ) {
       ostringstream errmsg;
       errmsg << "Object::initialize():" << __LINE__
              << " ERROR: For object '" << name << "', the 'deleted' setting does not"
@@ -365,7 +365,7 @@ void Object::initialize(
 
    // Reset the TrickHLA Attributes count if it is negative or if there
    // are no attributes.
-   if ( ( this->attr_count < 0 ) || ( attributes == NULL ) ) {
+   if ( ( this->attr_count < 0 ) || ( attributes == nullptr ) ) {
       this->attr_count = 0;
    }
 
@@ -422,7 +422,7 @@ void Object::initialize(
    // If any attribute is configured for zero-lookahead then lag compensation
    // cannot be specified because zero-lookahead avoids any latency in the data
    // transfer (i.e. intra-frame).
-   if ( any_zero_lookahead_attr && ( lag_comp != NULL ) && ( lag_comp_type != LAG_COMPENSATION_NONE ) ) {
+   if ( any_zero_lookahead_attr && ( lag_comp != nullptr ) && ( lag_comp_type != LAG_COMPENSATION_NONE ) ) {
       ostringstream errmsg;
       errmsg << "Object::initialize():" << __LINE__
              << " ERROR: For object '" << name << "', detected Attributes"
@@ -439,7 +439,7 @@ void Object::initialize(
    // If any attribute is configured for blocking I/O then lag compensation
    // cannot be specified because blocking I/O avoids any latency in the data
    // transfer (i.e. intra-frame).
-   if ( any_blocking_io_attr && ( lag_comp != NULL ) && ( lag_comp_type != LAG_COMPENSATION_NONE ) ) {
+   if ( any_blocking_io_attr && ( lag_comp != nullptr ) && ( lag_comp_type != LAG_COMPENSATION_NONE ) ) {
       ostringstream errmsg;
       errmsg << "Object::initialize():" << __LINE__
              << " ERROR: For object '" << name << "', detected Attributes"
@@ -528,7 +528,7 @@ void Object::initialize(
 
    // If the user specified a lag_comp object then make sure it extends the
    // LagCompensation virtual class.
-   if ( ( lag_comp != NULL ) && ( dynamic_cast< LagCompensation * >( lag_comp ) == NULL ) ) {
+   if ( ( lag_comp != nullptr ) && ( dynamic_cast< LagCompensation * >( lag_comp ) == nullptr ) ) {
       ostringstream errmsg;
       errmsg << "Object::initialize():" << __LINE__
              << " ERROR: For object '" << name << "', the 'lag_comp' setting does not"
@@ -539,27 +539,27 @@ void Object::initialize(
    }
 
    // Initialize the Packing handler.
-   if ( packing != NULL ) {
+   if ( packing != nullptr ) {
       packing->initialize_callback( this );
    }
 
    // Initialize the Lag-Compensation handler.
-   if ( lag_comp != NULL ) {
+   if ( lag_comp != nullptr ) {
       lag_comp->initialize_callback( this );
    }
 
    // Initialize the Conditional handler.
-   if ( conditional != NULL ) {
+   if ( conditional != nullptr ) {
       conditional->initialize_callback( this );
    }
 
    // Initialize the Ownership handler.
-   if ( ownership != NULL ) {
+   if ( ownership != nullptr ) {
       ownership->initialize_callback( this );
    }
 
    // Initialize the deleted object instance handler.
-   if ( deleted != NULL ) {
+   if ( deleted != nullptr ) {
       deleted->initialize_callback( this );
    }
 
@@ -581,11 +581,11 @@ void Object::remove()
       // Get the RTI-Ambassador.
       RTIambassador *rti_amb = federate->get_RTI_ambassador();
 
-      if ( rti_amb == NULL ) {
+      if ( rti_amb == nullptr ) {
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
          TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-         message_publish( MSG_WARNING, "Object::remove():%d Unexpected NULL RTIambassador.\n",
+         message_publish( MSG_WARNING, "Object::remove():%d Unexpected nullptr RTIambassador.\n",
                           __LINE__ );
          return;
       }
@@ -658,7 +658,7 @@ void Object::remove()
                 << " Object '" << get_name() << "'"
                 << " NotConnected: " << rti_err_msg << "\n";
          DebugHandler::terminate( errmsg.str() );
-         if ( federate != NULL ) {
+         if ( federate != nullptr ) {
             federate->set_connection_lost();
          }
       } catch ( RTIinternalError const &e ) {
@@ -740,7 +740,7 @@ void Object::process_deleted_object()
       }
 
       // If the callback class has been defined, call it...
-      if ( ( deleted != NULL ) && ( dynamic_cast< ObjectDeletedHandler * >( deleted ) != NULL ) ) {
+      if ( ( deleted != nullptr ) && ( dynamic_cast< ObjectDeletedHandler * >( deleted ) != nullptr ) ) {
          deleted->deleted();
       }
    }
@@ -798,11 +798,11 @@ void Object::publish_object_attributes()
    RTIambassador *rti_amb = federate->get_RTI_ambassador();
 
    // Publish our associated CLASS & attributes
-   if ( rti_amb == NULL ) {
+   if ( rti_amb == nullptr ) {
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-      message_publish( MSG_WARNING, "Object::publish_object_attributes():%d Unexpected NULL RTIambassador.\n",
+      message_publish( MSG_WARNING, "Object::publish_object_attributes():%d Unexpected nullptr RTIambassador.\n",
                        __LINE__ );
       return;
    }
@@ -873,7 +873,7 @@ void Object::publish_object_attributes()
              << " Object '" << get_name() << "'"
              << " NotConnected: " << rti_err_msg << "\n";
       DebugHandler::terminate( errmsg.str() );
-      if ( federate != NULL ) {
+      if ( federate != nullptr ) {
          federate->set_connection_lost();
       }
    } catch ( RTIinternalError const &e ) {
@@ -910,11 +910,11 @@ void Object::unpublish_all_object_attributes()
    RTIambassador *rti_amb = federate->get_RTI_ambassador();
 
    // Subscribe to CLASS & attributes
-   if ( rti_amb == NULL ) {
+   if ( rti_amb == nullptr ) {
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-      message_publish( MSG_WARNING, "Object::unpublish_all_object_attributes():%d Unexpected NULL RTIambassador.\n",
+      message_publish( MSG_WARNING, "Object::unpublish_all_object_attributes():%d Unexpected nullptr RTIambassador.\n",
                        __LINE__ );
       return;
    }
@@ -975,7 +975,7 @@ void Object::unpublish_all_object_attributes()
                 << " Object '" << get_name() << "'"
                 << " NotConnected: " << rti_err_msg << "\n";
          DebugHandler::terminate( errmsg.str() );
-         if ( federate != NULL ) {
+         if ( federate != nullptr ) {
             federate->set_connection_lost();
          }
       } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
@@ -1013,11 +1013,11 @@ void Object::subscribe_to_object_attributes()
    RTIambassador *rti_amb = federate->get_RTI_ambassador();
 
    // Subscribe to CLASS & attributes
-   if ( rti_amb == NULL ) {
+   if ( rti_amb == nullptr ) {
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-      message_publish( MSG_WARNING, "Object::subscribe_to_object_attributes():%d Unexpected NULL RTIambassador.\n",
+      message_publish( MSG_WARNING, "Object::subscribe_to_object_attributes():%d Unexpected nullptr RTIambassador.\n",
                        __LINE__ );
       return;
    }
@@ -1101,7 +1101,7 @@ void Object::subscribe_to_object_attributes()
              << " Object '" << get_name() << "'"
              << " NotConnected: " << rti_err_msg << "\n";
       DebugHandler::terminate( errmsg.str() );
-      if ( federate != NULL ) {
+      if ( federate != nullptr ) {
          federate->set_connection_lost();
       }
    } catch ( RTIinternalError const &e ) {
@@ -1138,11 +1138,11 @@ void Object::unsubscribe_all_object_attributes()
    RTIambassador *rti_amb = federate->get_RTI_ambassador();
 
    // Subscribe to CLASS & attributes
-   if ( rti_amb == NULL ) {
+   if ( rti_amb == nullptr ) {
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-      message_publish( MSG_WARNING, "Object::unsubscribe_all_object_attributes():%d Unexpected NULL RTIambassador.\n",
+      message_publish( MSG_WARNING, "Object::unsubscribe_all_object_attributes():%d Unexpected nullptr RTIambassador.\n",
                        __LINE__ );
       return;
    }
@@ -1196,7 +1196,7 @@ void Object::unsubscribe_all_object_attributes()
                 << " Object '" << get_name() << "'"
                 << " NotConnected: " << rti_err_msg << "\n";
          DebugHandler::terminate( errmsg.str() );
-         if ( federate != NULL ) {
+         if ( federate != nullptr ) {
             federate->set_connection_lost();
          }
       } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
@@ -1244,11 +1244,11 @@ void Object::reserve_object_name_with_RTI()
    // Get the RTI-Ambassador.
    RTIambassador *rti_amb = federate->get_RTI_ambassador();
 
-   if ( rti_amb == NULL ) {
+   if ( rti_amb == nullptr ) {
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-      message_publish( MSG_WARNING, "Object::reserve_object_name_with_RTI():%d Unexpected NULL RTIambassador.\n",
+      message_publish( MSG_WARNING, "Object::reserve_object_name_with_RTI():%d Unexpected nullptr RTIambassador.\n",
                        __LINE__ );
       return;
    }
@@ -1316,7 +1316,7 @@ Requesting reservation of Object instance name '%s'.\n",
                 << " Object '" << get_name() << "'"
                 << " NotConnected: " << rti_err_msg << "\n";
          DebugHandler::terminate( errmsg.str() );
-         if ( federate != NULL ) {
+         if ( federate != nullptr ) {
             federate->set_connection_lost();
          }
       } catch ( RTIinternalError const &e ) {
@@ -1434,11 +1434,11 @@ void Object::register_object_with_RTI()
    // Get the RTI-Ambassador.
    RTIambassador *rti_amb = federate->get_RTI_ambassador();
 
-   if ( rti_amb == NULL ) {
+   if ( rti_amb == nullptr ) {
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-      message_publish( MSG_WARNING, "Object::register_object_with_RTI():%d Unexpected NULL RTIambassador.\n",
+      message_publish( MSG_WARNING, "Object::register_object_with_RTI():%d Unexpected nullptr RTIambassador.\n",
                        __LINE__ );
       return;
    }
@@ -1526,7 +1526,7 @@ Detected object already registered '%s' Instance-ID:%s\n",
                 << " Object '" << get_name() << "'"
                 << " NotConnected: " << rti_err_msg << "\n";
          DebugHandler::terminate( errmsg.str() );
-         if ( federate != NULL ) {
+         if ( federate != nullptr ) {
             federate->set_connection_lost();
          }
       } catch ( RTIinternalError const &e ) {
@@ -1586,7 +1586,7 @@ Detected object already registered '%s' Instance-ID:%s\n",
                    << " Object '" << get_name() << "'"
                    << " NotConnected: " << rti_err_msg << "\n";
             DebugHandler::terminate( errmsg.str() );
-            if ( federate != NULL ) {
+            if ( federate != nullptr ) {
                federate->set_connection_lost();
             }
          } catch ( RTIinternalError const &e ) {
@@ -1815,7 +1815,7 @@ void Object::setup_preferred_order_with_RTI()
              << " Object '" << get_name() << "'"
              << " NotConnected: " << rti_err_msg << "\n";
       DebugHandler::terminate( errmsg.str() );
-      if ( federate != NULL ) {
+      if ( federate != nullptr ) {
          federate->set_connection_lost();
       }
    } catch ( RTIinternalError const &e ) {
@@ -1920,7 +1920,7 @@ void Object::request_attribute_value_update()
              << " Object '" << get_name() << "'"
              << " NotConnected: " << rti_err_msg << "\n";
       DebugHandler::terminate( errmsg.str() );
-      if ( federate != NULL ) {
+      if ( federate != nullptr ) {
          federate->set_connection_lost();
       }
    } catch ( RTIinternalError const &e ) {
@@ -2026,7 +2026,7 @@ void Object::send_requested_data(
    MutexProtection const auto_unlock_mutex( &send_mutex );
 
    // Do lag compensation.
-   if ( lag_comp != NULL ) {
+   if ( lag_comp != nullptr ) {
       switch ( lag_comp_type ) {
          case LAG_COMPENSATION_SEND_SIDE: {
             lag_comp->send_lag_compensation();
@@ -2049,7 +2049,7 @@ void Object::send_requested_data(
    }
 
    // If we have a data packing object then pack the data now.
-   if ( packing != NULL ) {
+   if ( packing != nullptr ) {
       packing->pack();
    }
 
@@ -2279,7 +2279,7 @@ void Object::send_cyclic_and_requested_data(
    MutexProtection const auto_unlock_mutex( &send_mutex );
 
    // Do lag compensation.
-   if ( lag_comp != NULL ) {
+   if ( lag_comp != nullptr ) {
       switch ( lag_comp_type ) {
          case LAG_COMPENSATION_SEND_SIDE: {
             lag_comp->send_lag_compensation();
@@ -2302,7 +2302,7 @@ void Object::send_cyclic_and_requested_data(
    }
 
    // If we have a data packing object then pack the data now.
-   if ( packing != NULL ) {
+   if ( packing != nullptr ) {
       packing->pack();
    }
 
@@ -2532,7 +2532,7 @@ void Object::send_zero_lookahead_and_requested_data(
 
    // Lag-compensation is not supported for zero-lookahead, but if specified
    // we call the bypass function.
-   if ( lag_comp != NULL ) {
+   if ( lag_comp != nullptr ) {
       switch ( lag_comp_type ) {
          case LAG_COMPENSATION_NONE: {
             lag_comp->bypass_send_lag_compensation();
@@ -2558,7 +2558,7 @@ void Object::send_zero_lookahead_and_requested_data(
    }
 
    // If we have a data packing object then pack the data now.
-   if ( packing != NULL ) {
+   if ( packing != nullptr ) {
       packing->pack();
    }
 
@@ -2803,7 +2803,7 @@ void Object::send_blocking_io_data()
 
    // Lag-compensation is not supported for blocking I/O (intraframe), but if
    // specified we call the bypass function.
-   if ( lag_comp != NULL ) {
+   if ( lag_comp != nullptr ) {
       switch ( lag_comp_type ) {
          case LAG_COMPENSATION_NONE: {
             lag_comp->bypass_send_lag_compensation();
@@ -2829,7 +2829,7 @@ void Object::send_blocking_io_data()
    }
 
    // If we have a data packing object then pack the data now.
-   if ( packing != NULL ) {
+   if ( packing != nullptr ) {
       packing->pack();
    }
 
@@ -3104,12 +3104,12 @@ void Object::receive_cyclic_data()
 #endif
 
          // Unpack the data for the object if we have a packing object.
-         if ( packing != NULL ) {
+         if ( packing != nullptr ) {
             packing->unpack();
          }
 
          // Do lag compensation.
-         if ( lag_comp != NULL ) {
+         if ( lag_comp != nullptr ) {
             switch ( lag_comp_type ) {
                case LAG_COMPENSATION_RECEIVE_SIDE: {
                   lag_comp->receive_lag_compensation();
@@ -3179,13 +3179,13 @@ void Object::receive_zero_lookahead_data()
 #endif
 
       // Unpack the data for the object if we have a packing object.
-      if ( packing != NULL ) {
+      if ( packing != nullptr ) {
          packing->unpack();
       }
 
       // Lag-compensation is not supported for zero-lookahead, but if
       // specified we call the bypass function.
-      if ( lag_comp != NULL ) {
+      if ( lag_comp != nullptr ) {
          switch ( lag_comp_type ) {
             case LAG_COMPENSATION_NONE: {
                lag_comp->bypass_receive_lag_compensation();
@@ -3254,13 +3254,13 @@ void Object::receive_blocking_io_data()
 #endif
 
       // Unpack the data for the object if we have a packing object.
-      if ( packing != NULL ) {
+      if ( packing != nullptr ) {
          packing->unpack();
       }
 
       // Lag-compensation is not supported for blocking I/O, but if
       // specified we call the bypass function.
-      if ( lag_comp != NULL ) {
+      if ( lag_comp != nullptr ) {
          switch ( lag_comp_type ) {
             case LAG_COMPENSATION_NONE: {
                lag_comp->bypass_receive_lag_compensation();
@@ -3324,12 +3324,12 @@ void Object::send_init_data()
 
    // Lag-compensation is not supported for init-data, but if
    // specified we call the bypass function.
-   if ( lag_comp != NULL ) {
+   if ( lag_comp != nullptr ) {
       lag_comp->bypass_send_lag_compensation();
    }
 
    // If we have a data packing object then pack the data now.
-   if ( packing != NULL ) {
+   if ( packing != nullptr ) {
       packing->pack();
    }
 
@@ -3522,13 +3522,13 @@ void Object::receive_init_data()
 #endif
 
       // Unpack the data for the object if we have a packing object.
-      if ( packing != NULL ) {
+      if ( packing != nullptr ) {
          packing->unpack();
       }
 
       // Lag-compensation is not supported for init-data, but if
       // specified we call the bypass function.
-      if ( lag_comp != NULL ) {
+      if ( lag_comp != nullptr ) {
          lag_comp->bypass_receive_lag_compensation();
       }
 
@@ -3606,7 +3606,7 @@ void Object::create_attribute_set(
             // it should be sent, then add this attribute into the attribute
             // map. NOTE: Override the Conditional if the attribute has been
             // requested by another Federate to make sure it is sent.
-            if ( ( conditional == NULL )
+            if ( ( conditional == nullptr )
                  || conditional->should_send( &attributes[i] )
                  || ( include_requested && attributes[i].is_update_requested() ) ) {
 
@@ -3637,7 +3637,7 @@ void Object::create_attribute_set(
             // it should be sent, then add this attribute into the attribute
             // map. NOTE: Override the Conditional if the attribute has been
             // requested by another Federate to make sure it is sent.
-            if ( ( conditional == NULL )
+            if ( ( conditional == nullptr )
                  || conditional->should_send( &attributes[i] )
                  || ( include_requested && attributes[i].is_update_requested() ) ) {
 
@@ -3720,7 +3720,7 @@ bool Object::decode(
       Attribute *attr = get_attribute( iter->first );
 
       // Determine if this object has this attribute.
-      if ( attr != NULL ) {
+      if ( attr != nullptr ) {
          if ( attr->decode( iter->second ) ) {
             any_attr_received = true;
          }
@@ -3771,11 +3771,11 @@ void Object::release_ownership()
    // Get the RTI-Ambassador.
    RTIambassador *rti_amb = federate->get_RTI_ambassador();
 
-   if ( rti_amb == NULL ) {
+   if ( rti_amb == nullptr ) {
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-      message_publish( MSG_WARNING, "Object::release_ownership():%d Unexpected NULL RTIambassador.\n",
+      message_publish( MSG_WARNING, "Object::release_ownership():%d Unexpected nullptr RTIambassador.\n",
                        __LINE__ );
       return;
    }
@@ -3794,7 +3794,7 @@ void Object::release_ownership()
       // mutex even if there is an exception.
       MutexProtection const auto_unlock_mutex( &ownership_mutex );
 
-      if ( ownership != NULL ) {
+      if ( ownership != nullptr ) {
          if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
             message_publish( MSG_NORMAL, "Object::release_ownership():%d Telling ownership handler to clear checkpoint.\n",
                              __LINE__ );
@@ -3848,7 +3848,7 @@ void Object::release_ownership()
 
          Attribute *trick_hla_attr = get_attribute( *divest_iter );
 
-         if ( trick_hla_attr != NULL ) {
+         if ( trick_hla_attr != nullptr ) {
 
             // The attribute is now divested which means it is now remotely owned.
             trick_hla_attr->mark_remotely_owned();
@@ -3917,7 +3917,7 @@ RTIAmbassador::confirmDivestiture() generated RestoreInProgress: '%s'\n",
       message_publish( MSG_WARNING, "Object::release_ownership():%d call to \
 RTIAmbassador::confirmDivestiture() generated NotConnected: '%s'\n",
                        __LINE__, rti_err_msg.c_str() );
-      if ( federate != NULL ) {
+      if ( federate != nullptr ) {
          federate->set_connection_lost();
       }
    } catch ( RTIinternalError const &e ) {
@@ -3945,7 +3945,7 @@ RTIAmbassador::confirmDivestiture() generated Exception: '%s'\n",
 void Object::pull_ownership()
 {
    // Just return if we don't have any pull requests or an ownership object.
-   if ( ( ownership == NULL ) || ownership->pull_requests.empty() ) {
+   if ( ( ownership == nullptr ) || ownership->pull_requests.empty() ) {
       return;
    }
 
@@ -3958,7 +3958,7 @@ void Object::pull_ownership()
 
    // We need an RTI ambassador to be able to continue.
    RTIambassador *rti_amb = federate->get_RTI_ambassador();
-   if ( rti_amb == NULL ) {
+   if ( rti_amb == nullptr ) {
       message_publish( MSG_NORMAL, "Object::pull_ownership():%d Unexpected Null RTIambassador!\n",
                        __LINE__ );
       return;
@@ -4136,7 +4136,7 @@ void Object::pull_ownership_at_init(
       for ( int i = 0; i < (int)attr_name_vector.size(); ++i ) {
          Attribute const *attr = get_attribute( attr_name_vector[i] );
 
-         if ( attr == NULL ) {
+         if ( attr == nullptr ) {
             ostringstream errmsg;
             errmsg << "Object::pull_ownership_at_init():" << __LINE__
                    << " ERROR: For object '" << get_name()
@@ -4193,7 +4193,7 @@ pull ownership of Attribute '%s'->'%s' of object '%s' because it is already owne
       RTIambassador *rti_amb = federate->get_RTI_ambassador();
 
       // We need an RTI ambassador to be able to continue.
-      if ( rti_amb == NULL ) {
+      if ( rti_amb == nullptr ) {
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
          TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
@@ -4368,11 +4368,11 @@ void Object::grant_pull_request()
    // Get the RTI-Ambassador.
    RTIambassador *rti_amb = federate->get_RTI_ambassador();
 
-   if ( rti_amb == NULL ) {
+   if ( rti_amb == nullptr ) {
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-      message_publish( MSG_WARNING, "Object::grant_pull_request():%d Unexpected NULL RTIambassador!\n",
+      message_publish( MSG_WARNING, "Object::grant_pull_request():%d Unexpected nullptr RTIambassador!\n",
                        __LINE__ );
       return;
    }
@@ -4439,7 +4439,7 @@ No attributes Divested since no federate wanted them for object '%s'.\n",
                Attribute *trick_hla_attr = get_attribute( *divested_iter );
 
                // Mark the attribute as remotely owned since it was divested.
-               if ( trick_hla_attr != NULL ) {
+               if ( trick_hla_attr != nullptr ) {
 
                   trick_hla_attr->mark_remotely_owned();
 
@@ -4480,7 +4480,7 @@ pull request for TrickHLA Object '%s'\n",
  * @brief The function that runs in the push P-thread that handles the push
  * request grant.
  * @details This function is local to this file and is NOT part of the class.
- * @return Void pointer and is always NULL.
+ * @return Void pointer and is always nullptr.
  * @param arg Arguments list.
  * @job_class{scheduled}
  */
@@ -4489,8 +4489,8 @@ void *grant_push_pthread_function(
 {
    Object *pushThreadTHLAObj = static_cast< Object * >( arg );
    pushThreadTHLAObj->grant_push_request();
-   pthread_exit( NULL );
-   return ( NULL );
+   pthread_exit( nullptr );
+   return ( nullptr );
 }
 
 /*!
@@ -4500,7 +4500,7 @@ void Object::grant_push_request_pthread()
 {
    pthread_t push; // NOLINT
 
-   int const ret = pthread_create( &push, NULL, grant_push_pthread_function, this );
+   int const ret = pthread_create( &push, nullptr, grant_push_pthread_function, this );
 
    if ( ret ) {
       message_publish( MSG_NORMAL, "Object::grant_push_request_pthread():%d Failed to create a thread!\n",
@@ -4527,11 +4527,11 @@ void Object::grant_push_request()
    // Get the RTI-Ambassador.
    RTIambassador *rti_amb = federate->get_RTI_ambassador();
 
-   if ( rti_amb == NULL ) {
+   if ( rti_amb == nullptr ) {
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-      message_publish( MSG_WARNING, "Object::grant_push_request():%d Unexpected NULL RTIambassador.\n",
+      message_publish( MSG_WARNING, "Object::grant_push_request():%d Unexpected nullptr RTIambassador.\n",
                        __LINE__ );
       return;
    }
@@ -4603,14 +4603,14 @@ available to acquire ownership for object '%s'.\n",
  * @brief The function that runs in the ownership divestiture P-thread that
  * handles ownership transfer.
  * @details This function is local to this file and is NOT part of the class.
- * @return Void pointer and is always NULL.
+ * @return Void pointer and is always nullptr.
  * @param arg Arguments list.
  * @job_class{scheduled}
  */
 void *ownership_divestiture_pthread_function(
    void *arg )
 {
-   if ( arg != NULL ) {
+   if ( arg != nullptr ) {
       DivestThreadArgs *divest_thread_args = reinterpret_cast< DivestThreadArgs * >( arg );
 
 #if THLA_OBJ_OWNERSHIP_DEBUG
@@ -4631,8 +4631,8 @@ returned from calling negotiated_attribute_ownership_divestiture()\n",
 
       delete divest_thread_args;
    }
-   pthread_exit( NULL );
-   return ( NULL );
+   pthread_exit( nullptr );
+   return ( nullptr );
 }
 
 /*!
@@ -4641,7 +4641,7 @@ returned from calling negotiated_attribute_ownership_divestiture()\n",
 void Object::negotiated_attribute_ownership_divestiture(
    AttributeHandleSet *attr_hdl_set )
 {
-   if ( attr_hdl_set == NULL ) {
+   if ( attr_hdl_set == nullptr ) {
       return;
    }
 
@@ -4650,11 +4650,11 @@ void Object::negotiated_attribute_ownership_divestiture(
 
    RTIambassador *rti_amb = federate->get_RTI_ambassador();
 
-   if ( rti_amb == NULL ) {
+   if ( rti_amb == nullptr ) {
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-      message_publish( MSG_WARNING, "Object::negotiated_attribute_ownership_divestiture():%d Unexpected NULL RTIambassador.\n",
+      message_publish( MSG_WARNING, "Object::negotiated_attribute_ownership_divestiture():%d Unexpected nullptr RTIambassador.\n",
                        __LINE__ );
       return;
    }
@@ -4738,7 +4738,7 @@ void Object::negotiated_attribute_ownership_divestiture(
              << " Object '" << get_name() << "'"
              << " NotConnected: " << rti_err_msg << "\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
-      if ( federate != NULL ) {
+      if ( federate != nullptr ) {
          federate->set_connection_lost();
       }
    } catch ( RTIinternalError const &e ) {
@@ -4773,7 +4773,7 @@ void Object::negotiated_attribute_ownership_divestiture(
 void Object::push_ownership()
 {
    // Just return if we don't have any push requests or an ownership object.
-   if ( ( ownership == NULL ) || ownership->push_requests.empty() ) {
+   if ( ( ownership == nullptr ) || ownership->push_requests.empty() ) {
       return;
    }
 
@@ -4790,7 +4790,7 @@ void Object::push_ownership()
    RTIambassador const *rti_amb = federate->get_RTI_ambassador();
 
    // We need an RTI ambassador to be able to continue.
-   if ( rti_amb == NULL ) {
+   if ( rti_amb == nullptr ) {
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
@@ -4906,7 +4906,7 @@ for Attributes of object '%s'.\n",
 
       pthread_t divest;
       int const ret = pthread_create( &divest,
-                                      NULL,
+                                      nullptr,
                                       ownership_divestiture_pthread_function,
                                       divest_thread_args );
       if ( ret ) {
@@ -4970,7 +4970,7 @@ void Object::push_ownership_at_init(
       for ( int i = 0; i < (int)attr_name_vector.size(); ++i ) {
          Attribute const *attr = get_attribute( attr_name_vector[i] );
 
-         if ( attr == NULL ) {
+         if ( attr == nullptr ) {
             delete attr_hdl_set;
 
             ostringstream errmsg;
@@ -5032,7 +5032,7 @@ push Attribute '%s'->'%s' of object '%s' because it is already remotely owned.\n
       pthread_t divest;
 
       int const ret = pthread_create( &divest,
-                                      NULL,
+                                      nullptr,
                                       ownership_divestiture_pthread_function,
                                       divest_thread_args );
       if ( ret ) {
@@ -5189,21 +5189,21 @@ void Object::convert_data_before_checkpoint()
    // TODO: Convert other data structures to checkpoint form such as
    // the ReflectedAttributesQueue.
 
-   if ( lag_comp != NULL ) {
+   if ( lag_comp != nullptr ) {
       lag_comp->convert_data_before_checkpoint();
    }
    // Free the Packing data as long as this isn't the same and this object.
    // This coveres a special case where the ExCO is both Object and Packing.
-   if ( packing != NULL && this->packing != dynamic_cast< Packing * >( this ) ) {
+   if ( packing != nullptr && this->packing != dynamic_cast< Packing * >( this ) ) {
       packing->convert_data_before_checkpoint();
    }
-   if ( ownership != NULL ) {
+   if ( ownership != nullptr ) {
       ownership->convert_data_before_checkpoint();
    }
-   if ( deleted != NULL ) {
+   if ( deleted != nullptr ) {
       deleted->convert_data_before_checkpoint();
    }
-   if ( conditional != NULL ) {
+   if ( conditional != nullptr ) {
       conditional->convert_data_before_checkpoint();
    }
 }
@@ -5218,21 +5218,21 @@ void Object::restore_data_after_checkpoint()
    // TODO: Restore other data structures from checkpoint form such as
    // the ReflectedAttributesQueue.
 
-   if ( lag_comp != NULL ) {
+   if ( lag_comp != nullptr ) {
       lag_comp->restore_data_after_checkpoint();
    }
    // Free the Packing data as long as this isn't the same and this object.
    // This coveres a special case where the ExCO is both Object and Packing.
-   if ( packing != NULL && this->packing != dynamic_cast< Packing * >( this ) ) {
+   if ( packing != nullptr && this->packing != dynamic_cast< Packing * >( this ) ) {
       packing->restore_data_after_checkpoint();
    }
-   if ( ownership != NULL ) {
+   if ( ownership != nullptr ) {
       ownership->restore_data_after_checkpoint();
    }
-   if ( deleted != NULL ) {
+   if ( deleted != nullptr ) {
       deleted->restore_data_after_checkpoint();
    }
-   if ( conditional != NULL ) {
+   if ( conditional != nullptr ) {
       conditional->restore_data_after_checkpoint();
    }
 }
@@ -5247,21 +5247,21 @@ void Object::free_converted_data_for_checkpoint()
    // TODO: Free other data structures in checkpoint form such as
    // the ReflectedAttributesQueue.
 
-   if ( lag_comp != NULL ) {
+   if ( lag_comp != nullptr ) {
       lag_comp->free_converted_data_for_checkpoint();
    }
    // Free the Packing data as long as this isn't the same and this object.
    // This coveres a special case where the ExCO is both Object and Packing.
-   if ( packing != NULL && this->packing != dynamic_cast< Packing * >( this ) ) {
+   if ( packing != nullptr && this->packing != dynamic_cast< Packing * >( this ) ) {
       packing->free_converted_data_for_checkpoint();
    }
-   if ( ownership != NULL ) {
+   if ( ownership != nullptr ) {
       ownership->free_converted_data_for_checkpoint();
    }
-   if ( deleted != NULL ) {
+   if ( deleted != nullptr ) {
       deleted->free_converted_data_for_checkpoint();
    }
-   if ( conditional != NULL ) {
+   if ( conditional != nullptr ) {
       conditional->free_converted_data_for_checkpoint();
    }
 }
@@ -5294,7 +5294,7 @@ Attribute *Object::get_attribute(
 {
    // We use a map with the key being the AttributeHandle for fast lookups.
    AttributeMap::const_iterator const iter = thla_attribute_map.find( attr_handle );
-   return ( ( iter != thla_attribute_map.end() ) ? iter->second : NULL );
+   return ( ( iter != thla_attribute_map.end() ) ? iter->second : nullptr );
 }
 
 Attribute *Object::get_attribute(
@@ -5307,7 +5307,7 @@ Attribute *Object::get_attribute(
          }
       }
    }
-   return NULL;
+   return nullptr;
 }
 
 void Object::stop_publishing_attributes()
@@ -5530,7 +5530,7 @@ void Object::pull_ownership_upon_rejoin()
    RTIambassador *rti_amb = federate->get_RTI_ambassador();
 
    // We need an RTI ambassador to be able to continue.
-   if ( rti_amb == NULL ) {
+   if ( rti_amb == nullptr ) {
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
@@ -5750,12 +5750,12 @@ void Object::initialize_thread_ID_array()
    // If the list of thread IDs was not specified in the input file then clear
    // out the thread ID array if it exists and return.
    if ( thread_ids.empty() ) {
-      if ( this->thread_ids_array != NULL ) {
+      if ( this->thread_ids_array != nullptr ) {
          if ( !MemoryServices::delete_var( this->thread_ids_array ) ) {
             message_publish( MSG_WARNING, "Object::initialize_thread_ID_array():%d WARNING failed to delete Trick Memory for 'this->thread_ids_array'\n",
                              __LINE__ );
          }
-         this->thread_ids_array       = NULL;
+         this->thread_ids_array       = nullptr;
          this->thread_ids_array_count = 0;
       }
       return;
@@ -5773,7 +5773,7 @@ void Object::initialize_thread_ID_array()
    // Allocate memory for the data cycle times per each thread.
    this->thread_ids_array = MemoryServices::declare_var( this->thread_ids_array,
                                                          this->thread_ids_array_count );
-   if ( this->thread_ids_array == NULL ) {
+   if ( this->thread_ids_array == nullptr ) {
       ostringstream errmsg;
       errmsg << "Object::initialize_thread_ID_array():" << __LINE__
              << " ERROR: Could not allocate memory for 'thread_ids_array'"

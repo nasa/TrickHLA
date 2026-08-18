@@ -55,7 +55,7 @@ using namespace SpaceFOM;
  * @job_class{initialization}
  */
 PhysicalInterface::PhysicalInterface()
-   : interface_data( NULL )
+   : interface_data( nullptr )
 {
    return;
 }
@@ -75,7 +75,7 @@ PhysicalInterface::PhysicalInterface(
  */
 PhysicalInterface::~PhysicalInterface()
 {
-   interface_data = NULL;
+   interface_data = nullptr;
 }
 
 /*!
@@ -84,10 +84,10 @@ PhysicalInterface::~PhysicalInterface()
 void PhysicalInterface::initialize()
 {
    // Check to make sure the PhysicalInterface data is set.
-   if ( interface_data == NULL ) {
+   if ( interface_data == nullptr ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterface::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL PhysicalInterfaceData: "
+             << " ERROR: Unexpected nullptr PhysicalInterfaceData: "
              << packing_data.name << "\n";
       // Print message and terminate.
       DebugHandler::terminate( errmsg.str() );
@@ -214,10 +214,10 @@ void PhysicalInterface::set_parent( std::string const &new_parent_name )
 void PhysicalInterface::set_data( PhysicalInterfaceData *interface_data_ptr )
 {
    // Set the reference to the PhysicalInterface data.
-   if ( interface_data_ptr == NULL ) {
+   if ( interface_data_ptr == nullptr ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalInterface::set_data():" << __LINE__
-             << " ERROR: Unexpected NULL PhysicalInterfaceData: "
+             << " ERROR: Unexpected nullptr PhysicalInterfaceData: "
              << packing_data.name << "\n";
       // Print message and terminate.
       DebugHandler::terminate( errmsg.str() );

@@ -185,7 +185,7 @@ void ExecutionConfiguration::configure_attributes()
  */
 void ExecutionConfiguration::configure()
 {
-   if ( this->federate == NULL ) {
+   if ( this->federate == nullptr ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionConfiguration::configure():" << __LINE__
              << " ERROR: Null TrickHLA::Federate passed in!\n";

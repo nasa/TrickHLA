@@ -64,15 +64,15 @@ class SpaceFOMEMMRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObjec
                                      unsigned short               _INIT = P_HLA_INIT,
                                      unsigned short               _BUILD = (P_HLA_INIT+1) )
       : SpaceFOMRefFrameTreeBaseSimObject( thla_fed, exec_cntrl_in, _INIT, _BUILD ),
-        ssbary_frame_ptr( NULL ),
-        sun_frame_ptr( NULL ),
-        embary_frame_ptr( NULL ),
-        earth_frame_ptr( NULL ),
-        moon_frame_ptr( NULL ),
-        mars_frame_ptr( NULL ),
-        earth_pfix_frame_ptr( NULL ),
-        moon_pfix_frame_ptr( NULL ),
-        mars_pfix_frame_ptr( NULL )
+        ssbary_frame_ptr( nullptr ),
+        sun_frame_ptr( nullptr ),
+        embary_frame_ptr( nullptr ),
+        earth_frame_ptr( nullptr ),
+        moon_frame_ptr( nullptr ),
+        mars_frame_ptr( nullptr ),
+        earth_pfix_frame_ptr( nullptr ),
+        moon_pfix_frame_ptr( nullptr ),
+        mars_pfix_frame_ptr( nullptr )
    {
       // For now, everything is handled in the base SimObject.
       return;
@@ -116,7 +116,7 @@ class SpaceFOMEMMRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObjec
       TrickHLA::ObjectServices * obj_service = thla_federate.get_object_service();
       
       // Check for objects allocation.
-      if ( (obj_service->obj_count == 0) || (obj_service->objects == NULL) ) {
+      if ( (obj_service->obj_count == 0) || (obj_service->objects == nullptr) ) {
          std::ostringstream errmsg;
          errmsg << "SpaceFOMEMMRefFrameTreeSimObject::configure_tree():" << __LINE__
                 << " ERROR: The TrickHLA::ObjectServices Object array has not been allocated!\n";
@@ -126,7 +126,7 @@ class SpaceFOMEMMRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObjec
 
       // Check to see if the root reference frame is actualy being configured.
       // If not, don't tell the ExecutionControl about it.
-      if ( ssbary_frame_ptr->get_object() != NULL ) {
+      if ( ssbary_frame_ptr->get_object() != nullptr ) {
          // Set the root reference frame in the ExCO.
          exec_cntrl.root_ref_frame = ssbary_frame_ptr;
       }

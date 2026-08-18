@@ -65,13 +65,13 @@ class SpaceFOMPhysicalEntityRelState : public Trick::SimObject {
       bool error = false;
 
       // Make sure that all the references are set.
-      if ( rel_state_frame == NULL ) {
-         errmsg << "SpaceFOMPhysicalEntityRelState:initialize(): Entity: " << entity_data.name << " NULL rel_state_frame!\n";
+      if ( rel_state_frame == nullptr ) {
+         errmsg << "SpaceFOMPhysicalEntityRelState:initialize(): Entity: " << entity_data.name << " nullptr rel_state_frame!\n";
          errmsg << "\t You probably forgot to set the RelStateBase reference frame in the input file.\n";
          error = true;
       } else {
          entity_frame = frame_tree.find_frame( entity_data.parent_frame );
-         if ( entity_frame == NULL ) {
+         if ( entity_frame == nullptr ) {
             errmsg << "SpaceFOMPhysicalEntityRelState:initialize(): ref_entity parent frame not found: "
                    << entity_data.parent_frame << "!";
             error = true;

@@ -24,9 +24,6 @@ NASA, Johnson Space Center\n
 @revs_end
 */
 
-// System includes.
-#include <cstdio>
-
 // Trick includes.
 #include "trick/message_proto.h"
 #include "trick/message_type.h"
@@ -60,6 +57,6 @@ MutexProtection::~MutexProtection()
    // could be recursive and we must only unlock once per constructor call.
    mutex->unlock();
 
-   // Make sure to NULL the pointer so this class can be reclaimed.
-   this->mutex = NULL;
+   // Make sure to nullptr the pointer so this class can be reclaimed.
+   this->mutex = nullptr;
 }

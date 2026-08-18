@@ -54,8 +54,8 @@ using namespace TrickHLA;
 ItemQueue::ItemQueue()
    : mutex(),
      count( 0 ),
-     head( NULL ),
-     tail( NULL )
+     head( nullptr ),
+     tail( nullptr )
 {
    return;
 }
@@ -81,7 +81,7 @@ ItemQueue::~ItemQueue()
 bool ItemQueue::empty()
 {
    MutexProtection const auto_unlock_mutex( &mutex );
-   return ( head == NULL );
+   return ( head == nullptr );
 }
 
 /*!
@@ -125,13 +125,13 @@ void ItemQueue::pop()
    // mutex even if there is an exception.
    MutexProtection const auto_unlock_mutex( &mutex );
 
-   if ( head != NULL ) {
+   if ( head != nullptr ) {
       Item const *item = head;
 
       // Adjust the "head" to point to the next item in the linked-list.
       if ( head == tail ) {
-         head  = NULL;
-         tail  = NULL;
+         head  = nullptr;
+         tail  = nullptr;
          count = 0;
       } else {
          head = item->next;
@@ -157,7 +157,7 @@ void ItemQueue::push( // RETURN: -- None.
    MutexProtection const auto_unlock_mutex( &mutex );
 
    // Add the item to the tail-end of the linked list.
-   if ( tail == NULL ) {
+   if ( tail == nullptr ) {
       head = item;
    } else {
       tail->next = item;
@@ -179,10 +179,10 @@ void ItemQueue::dump_linked_list(
 
    ostringstream msg;
    msg << "ItemQueue::dump_linked_list(" << name << "):" << __LINE__ << " ";
-   for ( Item const *item = head; item != NULL; item = item->next ) {
+   for ( Item const *item = head; item != nullptr; item = item->next ) {
       msg << item << "->";
    }
-   msg << "NULL\n";
+   msg << "nullptr\n";
 
    message_publish( MSG_NORMAL, msg.str().c_str() );
 }

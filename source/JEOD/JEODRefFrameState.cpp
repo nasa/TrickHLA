@@ -72,8 +72,8 @@ using namespace SpaceFOM;
  */
 JEODRefFrameState::JEODRefFrameState()
    : RefFrameBase(),
-     time_tt( NULL ),
-     ref_frame_state( NULL )
+     time_tt( nullptr ),
+     ref_frame_state( nullptr )
 {
    return;
 }
@@ -105,18 +105,18 @@ JEODRefFrameState::~JEODRefFrameState()
 void JEODRefFrameState::initialize()
 {
    // Check for the reference frame data.
-   if ( this->ref_frame_state == NULL ) {
+   if ( this->ref_frame_state == nullptr ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODRefFrameState::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL reference frame data: " << this->packing_data.name << "\n";
+             << " ERROR: Unexpected nullptr reference frame data: " << this->packing_data.name << "\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
    // Check for the JEOD time reference.
-   if ( this->time_tt == NULL ) {
+   if ( this->time_tt == nullptr ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODRefFrameState::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL time reference: " << this->packing_data.name << "\n";
+             << " ERROR: Unexpected nullptr time reference: " << this->packing_data.name << "\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -132,13 +132,13 @@ void JEODRefFrameState::pack_from_working_data()
    int iinc;
 
    // Set the reference frame name and parent frame name.
-   // if ( packing_data.name != NULL ) {
+   // if ( packing_data.name != nullptr ) {
    // NOTE: We don't currently support renaming an ReferenceFrame for JEOD
    // based applications.  The changed name is updated in the RefFrameBase
    // name attribute but we do not do anything with it now.
    //}
 
-   // if ( packing_data.parent_name != NULL ) {
+   // if ( packing_data.parent_name != nullptr ) {
    // NOTE: We don't currently support reparenting a ReferenceFrame for JEOD
    // based applications.  The changed the ReferencFrame parent name is
    // ignored for now.
@@ -245,19 +245,19 @@ void JEODRefFrameState::set_data(
 {
 
    // Set the reference to the reference frame.
-   if ( ref_frame_state_ptr == NULL ) {
+   if ( ref_frame_state_ptr == nullptr ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODRefFrameState::pre_initialize():" << __LINE__
-             << " ERROR: Unexpected NULL reference frame: " << this->packing_data.name << "\n";
+             << " ERROR: Unexpected nullptr reference frame: " << this->packing_data.name << "\n";
       DebugHandler::terminate( errmsg.str() );
    }
    this->ref_frame_state = ref_frame_state_ptr;
 
    // Set the JEOD time reference.
-   if ( time_tt_in == NULL ) {
+   if ( time_tt_in == nullptr ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::JEODRefFrameState::pre_initialize():" << __LINE__
-             << " ERROR: Unexpected NULL time reference: " << this->packing_data.name << "\n";
+             << " ERROR: Unexpected nullptr time reference: " << this->packing_data.name << "\n";
       DebugHandler::terminate( errmsg.str() );
    }
    time_tt = time_tt_in;

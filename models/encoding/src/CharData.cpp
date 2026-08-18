@@ -81,7 +81,7 @@ CharData::CharData(
    for ( int i = 0; i < str.size(); ++i ) {
       ptr_char[i] = str.at( i );
    }
-   ptr_char[ptr_char_size - 1] = '\0'; // Must be NULL terminated
+   ptr_char[ptr_char_size - 1] = '\0'; // Must be nullptr terminated
 #endif
 }
 

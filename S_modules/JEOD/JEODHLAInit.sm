@@ -114,8 +114,8 @@ class JEODHLAInitSimObject : public Trick::SimObject {
          time_tai.trunc_julian_time = time_tai.initializing_value;
 
          std::cout.precision( 15 );
-         std::cout << "JEODHLAInitSimObject::set_scenario_timeline_epoch():" << __LINE__ << std::endl
-                   << "\tSeconds: " << (time_tai.trunc_julian_time * 86400.0) << std::endl;
+         std::cout << "JEODHLAInitSimObject::set_scenario_timeline_epoch():" << __LINE__ << "\n"
+                   << "\tSeconds: " << (time_tai.trunc_julian_time * 86400.0) << "\n";
       }
       return;
    }
@@ -127,15 +127,15 @@ class JEODHLAInitSimObject : public Trick::SimObject {
       if( execution_control.is_master() ) {
          execution_control.scenario_timeline->set_epoch((tt_time.trunc_julian_time * 86400.0));
          std::cout.precision( 15 );
-         std::cout << "JEODHLAInitSimObject::set_scenario_timeline_epoch():" << __LINE__ << std::endl
-                   << "\tSeconds: " << (time_tt.trunc_julian_time * 86400.0) << std::endl
+         std::cout << "JEODHLAInitSimObject::set_scenario_timeline_epoch():" << __LINE__ << "\n"
+                   << "\tSeconds: " << (time_tt.trunc_julian_time * 86400.0) << "\n"
                    << "\tDate: " << time_tt.calendar_year
                    << "-" << time_tt.calendar_month
                    << "-" << time_tt.calendar_day
                    << "::" << time_tt.calendar_hour
                    << ":" << time_tt.calendar_minute
-                   << ":" << time_tt.calendar_second << std::endl
-                   << std::endl;
+                   << ":" << time_tt.calendar_second << "\n"
+                   << "\n;
       }
       return;
    }

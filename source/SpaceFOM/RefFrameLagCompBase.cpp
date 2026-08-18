@@ -57,7 +57,7 @@ RefFrameLagCompBase::RefFrameLagCompBase( RefFrameBase &ref_frame_ref ) // RETUR
    : TrickHLA::LagCompensation( "RefFrameLagCompBase" ),
      debug( false ),
      ref_frame( ref_frame_ref ),
-     state_attr( NULL ),
+     state_attr( nullptr ),
      compensate_dt( 0.0 )
 {
    return;

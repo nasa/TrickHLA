@@ -252,7 +252,7 @@ class ExecutionControlBase : public SyncPointManagerBase
    /*! @brief Returns the first object that is remotely owned, has the same
     * Object-Class, is not registered, and does not have an Object Instance
     * Name associated with it.
-    *  @return The associated TrickHLA::Object instance; otherwise NULL.
+    *  @return The associated TrickHLA::Object instance; otherwise nullptr.
     *  @param theObjectClass RTI Object class type. */
    virtual Object *get_unregistered_remote_object(
       RTI1516_NAMESPACE::ObjectClassHandle const &theObjectClass );
@@ -328,21 +328,21 @@ class ExecutionControlBase : public SyncPointManagerBase
     *  @return True if it exists, False otherwise. */
    bool does_scenario_timeline_exist() const
    {
-      return ( scenario_timeline != NULL );
+      return ( scenario_timeline != nullptr );
    }
 
    /*! @brief Check to see if the Simulation Timeline exists.
     *  @return True if it exists, False otherwise. */
    bool does_sim_timeline_exist() const
    {
-      return ( sim_timeline != NULL );
+      return ( sim_timeline != nullptr );
    }
 
    /*! @brief Check to see if the CTE Timeline exists.
     *  @return True if it exists, False otherwise. */
    bool does_cte_timeline_exist() const
    {
-      return ( cte_timeline != NULL );
+      return ( cte_timeline != nullptr );
    }
 
    /*! @brief Get the current simulation elapsed time from Simulation Timeline.
@@ -626,7 +626,7 @@ class ExecutionControlBase : public SyncPointManagerBase
     *  @return True if an execution configuration object is used. */
    virtual bool is_execution_configuration_used()
    {
-      return ( execution_configuration != NULL );
+      return ( execution_configuration != nullptr );
    }
 
    //-------------------------------------------------------------------------

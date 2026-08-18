@@ -73,15 +73,15 @@ using namespace SpaceFOM;
 PhysicalEntityBase::PhysicalEntityBase() // RETURN: -- None.
    : TrickHLA::Packing( "PhysicalEntityBase" ),
      debug( false ),
-     name_attr( NULL ),
-     type_attr( NULL ),
-     status_attr( NULL ),
-     parent_frame_attr( NULL ),
-     state_attr( NULL ),
-     accel_attr( NULL ),
-     ang_accel_attr( NULL ),
-     cm_attr( NULL ),
-     body_frame_attr( NULL )
+     name_attr( nullptr ),
+     type_attr( nullptr ),
+     status_attr( nullptr ),
+     parent_frame_attr( nullptr ),
+     state_attr( nullptr ),
+     accel_attr( nullptr ),
+     ang_accel_attr( nullptr ),
+     cm_attr( nullptr ),
+     body_frame_attr( nullptr )
 #if defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
      ,
      stc_encoder( pe_packing_data.state ),
@@ -118,9 +118,9 @@ PhysicalEntityBase::PhysicalEntityBase() // RETURN: -- None.
 PhysicalEntityBase::~PhysicalEntityBase() // RETURN: -- None.
 {
    initialized     = false;
-   name_attr       = NULL;
-   state_attr      = NULL;
-   body_frame_attr = NULL;
+   name_attr       = nullptr;
+   state_attr      = nullptr;
+   body_frame_attr = nullptr;
 
    return;
 }
@@ -140,17 +140,17 @@ void PhysicalEntityBase::base_config(
 {
    string const entity_full_name_str = sim_obj_name + "." + entity_pkg_name;
 
-   // Make sure that the TrickHLA::Object pointer is not NULL.
-   // If NULL, this it means this object has not been allocated yet.
+   // Make sure that the TrickHLA::Object pointer is not nullptr.
+   // If nullptr, this it means this object has not been allocated yet.
    // If not allocated, there are two options:
    // 1). We are configuring in the input file, which is okay.
    // 2). We are configuring in default_data but forgot to allocate and
    //     assign the associated object in the 'create_connections()' routine.
-   if ( mngr_object == NULL ) {
+   if ( mngr_object == nullptr ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          ostringstream errmsg;
          errmsg << "PhysicalEntityBase::base_config() Warning: \n"
-                << "\tThe TrickHLA::Object associated with object \'" << entity_fed_name << "\' is NULL.\n"
+                << "\tThe TrickHLA::Object associated with object \'" << entity_fed_name << "\' is nullptr.\n"
                 << "\tEither of the two things are possible:\n"
                 << "\t1). We are configuring in the input file, which is okay.\n"
                 << "\t2). We are configuring in default_data but forgot to allocate and\n"
@@ -311,7 +311,7 @@ void PhysicalEntityBase::initialize()
    if ( pe_packing_data.parent_frame.empty() ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL entity parent_ref_frame!"
+             << " ERROR: Unexpected nullptr entity parent_ref_frame!"
              << " Setting parent_ref_frame to empty string."
              << "\n";
       // Print message and terminate.
@@ -417,7 +417,7 @@ void PhysicalEntityBase::pack()
    }
 
    // Check for latency/lag compensation.
-   if ( this->object->lag_comp == NULL ) {
+   if ( this->object->lag_comp == nullptr ) {
       pack_from_working_data();
    }
 

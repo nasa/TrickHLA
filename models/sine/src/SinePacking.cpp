@@ -62,19 +62,19 @@ using namespace TrickHLAModel;
 SinePacking::SinePacking()
    : SineData(),
      TrickHLA::Packing( "SinePacking" ),
-     sim_data( NULL ),
+     sim_data( nullptr ),
      phase_deg( 0.0 ),
      pack_count( 0 ),
      buff_size( 0 ),
-     buff( NULL ),
-     time_attr( NULL ),
-     value_attr( NULL ),
-     dvdt_attr( NULL ),
-     phase_attr( NULL ),
-     freq_attr( NULL ),
-     amp_attr( NULL ),
-     tol_attr( NULL ),
-     name_attr( NULL )
+     buff( nullptr ),
+     time_attr( nullptr ),
+     value_attr( nullptr ),
+     dvdt_attr( nullptr ),
+     phase_attr( nullptr ),
+     freq_attr( nullptr ),
+     amp_attr( nullptr ),
+     tol_attr( nullptr ),
+     name_attr( nullptr )
 {
    return;
 }
@@ -84,12 +84,12 @@ SinePacking::SinePacking()
  */
 SinePacking::~SinePacking()
 {
-   if ( buff != NULL ) {
+   if ( buff != nullptr ) {
       if ( trick_MM->delete_var( static_cast< void * >( buff ) ) ) {
          message_publish( MSG_WARNING, "TrickHLAModel::SinePacking::~SinePacking():%d WARNING failed to delete Trick Memory for 'buff'\n",
                           __LINE__ );
       }
-      buff      = NULL;
+      buff      = nullptr;
       buff_size = 0;
    }
 }
@@ -167,7 +167,7 @@ void SinePacking::pack()
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_PACKING ) ) {
-      string const  obj_name = ( this->object != NULL ) ? object->get_name() : "";
+      string const  obj_name = ( this->object != nullptr ) ? object->get_name() : "";
       ostringstream msg;
       msg << "SinePacking::pack():" << __LINE__ << "\n"
           << "\t Object-Name:'" << obj_name << "'\n";
@@ -236,7 +236,7 @@ void SinePacking::pack()
 
       ostringstream msg;
 
-      if ( buff != NULL ) {
+      if ( buff != nullptr ) {
 
          msg << " SinePacking::pack():" << __LINE__ << " ADDITIONAL DEBUG:\n"
              << " buff_size: " << buff_size << "\n";
@@ -249,7 +249,7 @@ void SinePacking::pack()
          }
       }
 
-      string const obj_name = ( this->object != NULL ) ? object->get_name() : "";
+      string const obj_name = ( this->object != nullptr ) ? object->get_name() : "";
 
       msg << "SinePacking::pack():" << __LINE__ << " ADDITIONAL DEBUG:\n"
           << "\t Object-Name:'" << obj_name << "'\n";
@@ -317,7 +317,7 @@ void SinePacking::unpack()
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_PACKING ) ) {
 
-      string const obj_name = ( this->object != NULL ) ? object->get_name() : "";
+      string const obj_name = ( this->object != nullptr ) ? object->get_name() : "";
 
       ostringstream msg;
       msg << "SinePacking::unpack():" << __LINE__ << "\n"
@@ -386,7 +386,7 @@ void SinePacking::unpack()
 
       ostringstream msg;
 
-      if ( buff != NULL ) {
+      if ( buff != nullptr ) {
          msg << " SinePacking::unpack():" << __LINE__ << " ADDITIONAL DEBUG:\n"
              << " buff_size: " << buff_size << "\n";
          for ( int i = 0; i < buff_size; ++i ) {
@@ -395,7 +395,7 @@ void SinePacking::unpack()
          }
       }
 
-      string const obj_name = ( this->object != NULL ) ? object->get_name() : "";
+      string const obj_name = ( this->object != nullptr ) ? object->get_name() : "";
 
       msg << "SinePacking::unpack():" << __LINE__ << " ADDITIONAL DEBUG:\n"
           << "\t Object-Name:'" << obj_name << "'\n";

@@ -99,7 +99,7 @@ using namespace TrickHLA;
  * @details NOTE: In most cases, we would allocate and set default names in
  * the constructor. However, since we want this class to be Input Processor
  * friendly, we cannot do that here since the Input Processor may not have
- * been initialized yet. So, we have to set the name information to NULL and
+ * been initialized yet. So, we have to set the name information to nullptr and
  * then allocate and set the defaults in the initialization job if not
  * already set in the input stream.
  *
@@ -490,7 +490,7 @@ void TimeManagementServices::time_advance_request_to_GALT()
    } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
       message_publish( MSG_WARNING, "TimeManagementServices::time_advance_request_to_GALT():%d Query-GALT EXCEPTION: NotConnected\n",
                        __LINE__ );
-      if ( federate != NULL ) {
+      if ( federate != nullptr ) {
          federate->set_connection_lost();
       }
    } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
@@ -552,7 +552,7 @@ void TimeManagementServices::time_advance_request_to_GALT_LCTS_multiple()
    } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
       message_publish( MSG_WARNING, "TimeManagementServices::time_advance_request_to_GALT_LCTS_multiple():%d Query-GALT EXCEPTION: NotConnected\n",
                        __LINE__ );
-      if ( federate != NULL ) {
+      if ( federate != nullptr ) {
          federate->set_connection_lost();
       }
    } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
@@ -667,8 +667,8 @@ void TimeManagementServices::setup_time_constrained()
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
    // Sanity check.
-   if ( federate->RTI_ambassador.get() == NULL ) {
-      DebugHandler::terminate( "TimeManagementServices::setup_time_constrained() ERROR: NULL pointer to RTIambassador!" );
+   if ( federate->RTI_ambassador.get() == nullptr ) {
+      DebugHandler::terminate( "TimeManagementServices::setup_time_constrained() ERROR: nullptr pointer to RTIambassador!" );
       return;
    }
 
@@ -861,8 +861,8 @@ void TimeManagementServices::setup_time_regulation()
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
    // Sanity check.
-   if ( federate->RTI_ambassador.get() == NULL ) {
-      DebugHandler::terminate( "TimeManagementServices::setup_time_regulation() ERROR: NULL pointer to RTIambassador!" );
+   if ( federate->RTI_ambassador.get() == nullptr ) {
+      DebugHandler::terminate( "TimeManagementServices::setup_time_regulation() ERROR: nullptr pointer to RTIambassador!" );
       return;
    }
 
@@ -1506,7 +1506,7 @@ void TimeManagementServices::shutdown_time_constrained()
       TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
       // Make sure we've been able to get the RTI ambassador.
-      if ( federate->RTI_ambassador.get() == NULL ) {
+      if ( federate->RTI_ambassador.get() == nullptr ) {
          return;
       }
 
@@ -1568,7 +1568,7 @@ void TimeManagementServices::shutdown_time_regulating()
       TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
       // Make sure we've been able to get the RTI ambassador.
-      if ( federate->RTI_ambassador.get() == NULL ) {
+      if ( federate->RTI_ambassador.get() == nullptr ) {
          return;
       }
 

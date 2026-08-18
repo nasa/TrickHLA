@@ -104,13 +104,13 @@ class PhysicalEntityLagCompSA : public TrickHLA::LagCompensationIntegBase, publi
 
    /*! @brief Compute the first time derivative of the lag compensation state vector.
     *  @param user_data Any special user data needed to compute the derivative values. */
-   virtual void derivative_first( void *user_data = NULL ) override;
+   virtual void derivative_first( void *user_data = nullptr ) override;
 
    /*! @brief Compute the second time derivative of the lag compensation state vector.
     *  @details This function is called for second order integrators to compute
     *  second time derivative of the state vector.
     *  @param user_data Any special user data needed to compute the derivative values. */
-   virtual void derivative_second( void *user_data = NULL ) override { return; }
+   virtual void derivative_second( void *user_data = nullptr ) override { return; }
 
    /*! @brief Compensate the state data from the data time to the current scenario time.
     *  @param t_begin Scenario time at the start of the compensation step.

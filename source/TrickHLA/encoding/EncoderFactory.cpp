@@ -84,7 +84,7 @@ EncoderBase *EncoderFactory::create(
    REF2 *ref2 = trick_MM->ref_attributes( trick_name.c_str() );
 
    // Determine if we had an error getting the ref-attributes.
-   if ( ref2 == NULL ) {
+   if ( ref2 == nullptr ) {
       ostringstream errmsg;
       errmsg << "EncoderFactory::create():" << __LINE__
              << " ERROR: Could not retrieve Trick ref-attributes for '"
@@ -95,7 +95,7 @@ EncoderBase *EncoderFactory::create(
              << " uses either the 'public' or 'protected' access level for"
              << " the variable.\n";
       DebugHandler::terminate( errmsg.str() );
-      return NULL;
+      return nullptr;
    }
 
    EncoderBase *encoder = create( ref2->address, ref2->attr, hla_encoding, trick_name );
@@ -111,37 +111,37 @@ EncoderBase *EncoderFactory::create(
    EncodingEnum const hla_encoding,
    string const      &trick_name )
 {
-   if ( attr == NULL ) {
+   if ( attr == nullptr ) {
       ostringstream errmsg;
       errmsg << "EncoderFactory::create():" << __LINE__
-             << " ERROR: Unexpected NULL Trick attributes. Please make sure the"
+             << " ERROR: Unexpected nullptr Trick attributes. Please make sure the"
              << " variable is allocated memory by the Trick Memory Manager.\n";
       DebugHandler::terminate( errmsg.str() );
-      return NULL;
+      return nullptr;
    }
 
    string data_name;
    if ( !trick_name.empty() ) {
       // Fully qualified Trick variable name of the form 'SimObjName.var_name'.
       data_name = trick_name;
-   } else if ( attr->name != NULL ) {
+   } else if ( attr->name != nullptr ) {
       // Short variable name of the form 'var_name'.
       data_name = attr->name;
    } else {
       data_name = "";
    }
 
-   if ( address == NULL ) {
+   if ( address == nullptr ) {
       ostringstream errmsg;
       errmsg << "EncoderFactory::create():" << __LINE__
-             << " ERROR: The variable address is NULL for variable '"
+             << " ERROR: The variable address is nullptr for variable '"
              << data_name << "'. Please make sure the Trick variable"
              << " is allocated memory by the Trick Memory Manager.\n";
       DebugHandler::terminate( errmsg.str() );
-      return NULL;
+      return nullptr;
    }
 
-   EncoderBase *encoder = NULL;
+   EncoderBase *encoder = nullptr;
 
    switch ( attr->type ) {
       case TRICK_VOID: {
@@ -523,7 +523,7 @@ EncoderBase *EncoderFactory::create_char_encoder(
          break;
       }
    }
-   return NULL;
+   return nullptr;
 }
 
 EncoderBase *EncoderFactory::create_string_encoder(
@@ -571,7 +571,7 @@ EncoderBase *EncoderFactory::create_string_encoder(
          break;
       }
    }
-   return NULL;
+   return nullptr;
 }
 
 EncoderBase *EncoderFactory::create_wchar_encoder(
@@ -607,7 +607,7 @@ EncoderBase *EncoderFactory::create_wchar_encoder(
          break;
       }
    }
-   return NULL;
+   return nullptr;
 }
 
 EncoderBase *EncoderFactory::create_wstring_encoder(
@@ -643,7 +643,7 @@ EncoderBase *EncoderFactory::create_wstring_encoder(
          break;
       }
    }
-   return NULL;
+   return nullptr;
 }
 
 EncoderBase *EncoderFactory::create_int16_encoder(
@@ -691,7 +691,7 @@ EncoderBase *EncoderFactory::create_int16_encoder(
          break;
       }
    }
-   return NULL;
+   return nullptr;
 }
 
 EncoderBase *EncoderFactory::create_int32_encoder(
@@ -739,7 +739,7 @@ EncoderBase *EncoderFactory::create_int32_encoder(
          break;
       }
    }
-   return NULL;
+   return nullptr;
 }
 
 EncoderBase *EncoderFactory::create_int64_encoder(
@@ -787,7 +787,7 @@ EncoderBase *EncoderFactory::create_int64_encoder(
          break;
       }
    }
-   return NULL;
+   return nullptr;
 }
 
 #if defined( IEEE_1516_2025 )
@@ -836,7 +836,7 @@ EncoderBase *EncoderFactory::create_uint16_encoder(
          break;
       }
    }
-   return NULL;
+   return nullptr;
 }
 
 EncoderBase *EncoderFactory::create_uint32_encoder(
@@ -884,7 +884,7 @@ EncoderBase *EncoderFactory::create_uint32_encoder(
          break;
       }
    }
-   return NULL;
+   return nullptr;
 }
 
 EncoderBase *EncoderFactory::create_uint64_encoder(
@@ -932,7 +932,7 @@ EncoderBase *EncoderFactory::create_uint64_encoder(
          break;
       }
    }
-   return NULL;
+   return nullptr;
 }
 #endif // IEEE_1516_2025
 
@@ -981,7 +981,7 @@ EncoderBase *EncoderFactory::create_float32_encoder(
          break;
       }
    }
-   return NULL;
+   return nullptr;
 }
 
 EncoderBase *EncoderFactory::create_float64_encoder(
@@ -1044,7 +1044,7 @@ EncoderBase *EncoderFactory::create_float64_encoder(
          break;
       }
    }
-   return NULL;
+   return nullptr;
 }
 
 EncoderBase *EncoderFactory::create_bool_encoder(
@@ -1080,7 +1080,7 @@ EncoderBase *EncoderFactory::create_bool_encoder(
          break;
       }
    }
-   return NULL;
+   return nullptr;
 }
 
 EncoderBase *EncoderFactory::create_enum_encoder(
@@ -1122,5 +1122,5 @@ EncoderBase *EncoderFactory::create_enum_encoder(
          DebugHandler::terminate( errmsg.str() );
       }
    }
-   return NULL;
+   return nullptr;
 }

@@ -61,15 +61,15 @@ using namespace TrickHLAModel;
 SineConditional::SineConditional()
    : SineData(),
      TrickHLA::Conditional( "SineConditional" ),
-     sim_data( NULL ),
-     time_attr( NULL ),
-     value_attr( NULL ),
-     dvdt_attr( NULL ),
-     phase_attr( NULL ),
-     freq_attr( NULL ),
-     amp_attr( NULL ),
-     tol_attr( NULL ),
-     name_attr( NULL )
+     sim_data( nullptr ),
+     time_attr( nullptr ),
+     value_attr( nullptr ),
+     dvdt_attr( nullptr ),
+     phase_attr( nullptr ),
+     freq_attr( nullptr ),
+     amp_attr( nullptr ),
+     tol_attr( nullptr ),
+     name_attr( nullptr )
 {
    return;
 }
@@ -96,10 +96,10 @@ void SineConditional::set_data(
  */
 void SineConditional::initialize()
 {
-   if ( this->sim_data == NULL ) {
+   if ( this->sim_data == nullptr ) {
       ostringstream errmsg;
       errmsg << "SineConditional::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL sim_data!\n";
+             << " ERROR: Unexpected nullptr sim_data!\n";
       DebugHandler::terminate( errmsg.str() );
    }
 
@@ -157,13 +157,13 @@ bool SineConditional::should_send(
       DebugHandler::terminate( errmsg.str() );
    }
 
-   if ( attr == NULL ) {
+   if ( attr == nullptr ) {
       return false;
    }
-   if ( this->sim_data == NULL ) {
+   if ( this->sim_data == nullptr ) {
       ostringstream errmsg;
       errmsg << "SineConditional::should_send('" << attr->get_FOM_name() << "):" << __LINE__
-             << " ERROR: Unexpected NULL sim_data!\n";
+             << " ERROR: Unexpected nullptr sim_data!\n";
       DebugHandler::terminate( errmsg.str() );
    }
 

@@ -76,7 +76,7 @@ using namespace TrickHLA;
                                                                                                                                       \
    std::size_t EncoderClassName::get_data_size()                                                                                      \
    {                                                                                                                                  \
-      if ( data_encoder != NULL ) {                                                                                                   \
+      if ( data_encoder != nullptr ) {                                                                                                \
          if ( typeid( SimpleDataType ) == typeid( std::string ) ) {                                                                   \
             return dynamic_cast< HLAASCIIstring * >( data_encoder )->get().size();                                                    \
          } else if ( typeid( SimpleDataType ) == typeid( std::wstring ) ) {                                                           \

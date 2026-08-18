@@ -61,10 +61,10 @@ void SpaceTimeCoordinateConfig::configure(
    bool const           subscribe,
    bool const           locally_owned )
 {
-   if ( attribute == NULL ) {
+   if ( attribute == nullptr ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::SpaceTimeCoordinateConfig::configure():" << __LINE__
-             << " ERROR: Unexpected NULL attribute specified!\n";
+             << " ERROR: Unexpected nullptr attribute specified!\n";
       DebugHandler::terminate( errmsg.str() );
       return;
    }
@@ -86,10 +86,10 @@ void SpaceTimeCoordinateConfig::configure(
    RecordElement *rec_element,
    string const  &trick_root_name )
 {
-   if ( rec_element == NULL ) {
+   if ( rec_element == nullptr ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::SpaceTimeCoordinateConfig::configure():" << __LINE__
-             << " ERROR: Unexpected NULL rec_element specified!\n";
+             << " ERROR: Unexpected nullptr rec_element specified!\n";
       DebugHandler::terminate( errmsg.str() );
       return;
    }

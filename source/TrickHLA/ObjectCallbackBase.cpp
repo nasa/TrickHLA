@@ -54,9 +54,9 @@ using namespace TrickHLA;
  */
 ObjectCallbackBase::ObjectCallbackBase()
    : initialized( false ),
-     object( NULL ),
+     object( nullptr ),
      callback_name(),
-     exec_control( NULL )
+     exec_control( nullptr )
 {
    return;
 }
@@ -64,9 +64,9 @@ ObjectCallbackBase::ObjectCallbackBase()
 ObjectCallbackBase::ObjectCallbackBase(
    string name )
    : initialized( false ),
-     object( NULL ),
+     object( nullptr ),
      callback_name( name ), // NOLINT(performance-unnecessary-value-param)
-     exec_control( NULL )
+     exec_control( nullptr )
 {
    return;
 }
@@ -84,7 +84,7 @@ ObjectCallbackBase::~ObjectCallbackBase()
  */
 void ObjectCallbackBase::initialize()
 {
-   if ( ( this->object != NULL ) && this->object->name.empty() ) {
+   if ( ( this->object != nullptr ) && this->object->name.empty() ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ObjectCallbackBase::initialize():" << __LINE__
              << " ERROR: No Object name found, and it needs to be set"
@@ -135,7 +135,7 @@ void ObjectCallbackBase::set_object(
 Attribute *ObjectCallbackBase::get_attribute(
    string const &attr_FOM_name )
 {
-   return ( object != NULL ) ? object->get_attribute( attr_FOM_name ) : NULL;
+   return ( object != nullptr ) ? object->get_attribute( attr_FOM_name ) : nullptr;
 }
 
 /*!
@@ -158,11 +158,11 @@ Attribute *ObjectCallbackBase::get_attribute_and_validate(
    Attribute *attr = get_attribute( attr_FOM_name );
 
    // Make sure we have found the attribute.
-   if ( attr == NULL ) {
+   if ( attr == nullptr ) {
       ostringstream errmsg;
       errmsg << "ObjectCallbackBase::get_attribute_and_validate():" << __LINE__
              << " ERROR: For FOM object '"
-             << ( ( object != NULL ) ? object->get_FOM_name() : "NULL" )
+             << ( ( object != nullptr ) ? object->get_FOM_name() : "nullptr" )
              << "', failed to find the TrickHLA Attribute for an attribute named"
              << " '" << attr_FOM_name << "'. Make sure the FOM attribute name is"
              << " correct, the FOM contains an attribute named '"
@@ -195,8 +195,8 @@ Int64Time const &ObjectCallbackBase::get_granted_time() const
  */
 double ObjectCallbackBase::get_scenario_time() const
 {
-   return ( exec_control != NULL ) ? exec_control->get_scenario_time()
-                                   : std::numeric_limits< double >::lowest();
+   return ( exec_control != nullptr ) ? exec_control->get_scenario_time()
+                                      : std::numeric_limits< double >::lowest();
 }
 
 /*!
@@ -205,8 +205,8 @@ double ObjectCallbackBase::get_scenario_time() const
  */
 double ObjectCallbackBase::get_cte_time() const
 {
-   return ( exec_control != NULL ) ? exec_control->get_cte_time()
-                                   : std::numeric_limits< double >::lowest();
+   return ( exec_control != nullptr ) ? exec_control->get_cte_time()
+                                      : std::numeric_limits< double >::lowest();
 }
 
 /*!
@@ -214,9 +214,9 @@ double ObjectCallbackBase::get_cte_time() const
  */
 void ObjectCallbackBase::update_exec_control_ptr()
 {
-   if ( object != NULL ) {
+   if ( object != nullptr ) {
       Federate *fed = object->get_federate();
-      if ( fed != NULL ) {
+      if ( fed != nullptr ) {
          exec_control = fed->get_execution_control();
       }
    }

@@ -75,7 +75,7 @@ using namespace RTI1516_NAMESPACE;
  * @job_class{initialization}
  */
 FreezeInteractionHandler::FreezeInteractionHandler() // RETURN: -- None.
-   : execution_control( NULL ),
+   : execution_control( nullptr ),
      time( 0.0 )
 {
    return;
@@ -105,7 +105,7 @@ void FreezeInteractionHandler::send_scenario_freeze_interaction(
    bool    late_joining_federate )
 {
    // if the interaction was not initialized in the parent class, get out of here...
-   if ( interaction == NULL ) {
+   if ( interaction == nullptr ) {
       ostringstream errmsg;
       errmsg << "IMSim::FreezeInteractionHandler::send_scenario_freeze_interaction("
              << freeze_time << ", " << (int)late_joining_federate << "):" << __LINE__
@@ -308,7 +308,7 @@ void FreezeInteractionHandler::receive_interaction(
    message_publish( MSG_NORMAL, msg.str().c_str() );
 
    // if the interaction was not initialized into the parent class, get out of here...
-   if ( interaction == NULL ) {
+   if ( interaction == nullptr ) {
       ostringstream errmsg;
       errmsg << "IMSim::FreezeInteractionHandler::receive_interaction():"
              << __LINE__ << " ERROR:"

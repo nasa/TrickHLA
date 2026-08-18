@@ -131,17 +131,17 @@ class LRTreeBase
    virtual LRTreeNodeBase *get_root_node() { return ( root_node_ptr ); }
 
    /*! @brief Find a node in the tree.
-    *  @return Tree node instance if found, NULL otherwise.
+    *  @return Tree node instance if found, nullptr otherwise.
     *  @param node_id ID of the node to check for. */
    LRTreeNodeBase *find_node( std::size_t const node_id );
 
    /*! @brief Find a node in the tree.
-    *  @return Tree node instance if found, NULL otherwise.
+    *  @return Tree node instance if found, nullptr otherwise.
     *  @param name Name of the node to check for. */
    LRTreeNodeBase *find_node( char const *name );
 
    /*! @brief Find a node in the tree.
-    *  @return Tree node instance if found, NULL otherwise.
+    *  @return Tree node instance if found, nullptr otherwise.
     *  @param name Name of the node to check for. */
    LRTreeNodeBase *find_node( std::string const &name );
 
@@ -188,7 +188,7 @@ class LRTreeBase
    virtual void print_paths( std::ostream &stream = std::cout ) const;
 
    /*! @brief Find the root node in the list of nodes in the tree.
-    *  @return Instance of the root node, else NULL if error. */
+    *  @return Instance of the root node, else nullptr if error. */
    virtual LRTreeNodeBase *find_root();
 
    /*! @brief Check to insure that a node is not in a cyclic branch.

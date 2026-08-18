@@ -115,7 +115,7 @@ ExecutionControlBase::ExecutionControlBase()
    : SyncPointManagerBase(),
      scenario_timeline( &def_scenario_timeline ),
      sim_timeline( &def_sim_timeline ),
-     cte_timeline( NULL ),
+     cte_timeline( nullptr ),
      use_preset_master( false ),
      master( false ),
      multiphase_init_sync_points(),
@@ -123,7 +123,7 @@ ExecutionControlBase::ExecutionControlBase()
      enable_least_common_time_step( false ),
      least_common_time_step_seconds( -1.0 ),
      least_common_time_step( -1 ),
-     execution_configuration( NULL ),
+     execution_configuration( nullptr ),
      mode_transition_requested( false ),
      requested_execution_control_mode( EXECUTION_CONTROL_UNINITIALIZED ),
      current_execution_control_mode( EXECUTION_CONTROL_UNINITIALIZED ),
@@ -135,10 +135,10 @@ ExecutionControlBase::ExecutionControlBase()
      freeze_the_federation( false ),
      late_joiner( false ),
      late_joiner_determined( false ),
-     time_management_service( NULL ),
-     object_service( NULL ),
-     interaction_service( NULL ),
-     save_restore_service( NULL )
+     time_management_service( nullptr ),
+     object_service( nullptr ),
+     interaction_service( nullptr ),
+     save_restore_service( nullptr )
 {
    return;
 }
@@ -151,7 +151,7 @@ ExecutionControlBase::ExecutionControlBase(
    : SyncPointManagerBase(),
      scenario_timeline( &def_scenario_timeline ),
      sim_timeline( &def_sim_timeline ),
-     cte_timeline( NULL ),
+     cte_timeline( nullptr ),
      use_preset_master( false ),
      master( false ),
      multiphase_init_sync_points(),
@@ -171,10 +171,10 @@ ExecutionControlBase::ExecutionControlBase(
      freeze_the_federation( false ),
      late_joiner( false ),
      late_joiner_determined( false ),
-     time_management_service( NULL ),
-     object_service( NULL ),
-     interaction_service( NULL ),
-     save_restore_service( NULL )
+     time_management_service( nullptr ),
+     object_service( nullptr ),
+     interaction_service( nullptr ),
+     save_restore_service( nullptr )
 {
    return;
 }
@@ -219,7 +219,7 @@ void ExecutionControlBase::setup(
 
    // Check to see if the ExecutionConfigurationBase instance is set.
    // NOTE: This should always be set!!!
-   if ( this->execution_configuration != NULL ) {
+   if ( this->execution_configuration != nullptr ) {
 
       // Setup the TrickHLA::ExecutionConfigurationBase instance.
       execution_configuration->setup( *this );
@@ -279,7 +279,7 @@ void ExecutionControlBase::initialize()
    }
 
    // Verify the time constraints for the federate.
-   if ( ( federate != NULL ) && !federate->time_management_service.verify_time_constraints() ) {
+   if ( ( federate != nullptr ) && !federate->time_management_service.verify_time_constraints() ) {
       ostringstream errmsg;
       errmsg << "ExecutionControlBase::initialize():" << __LINE__
              << " ERROR: Time constraints verification failed!\n";
@@ -296,7 +296,7 @@ Trick simulation time as the default scenario-timeline.\n",
 
       // Use the simulation timeline as the default scenario timeline.
       scenario_timeline = &def_scenario_timeline;
-      if ( scenario_timeline == NULL ) { // cppcheck-suppress [knownConditionTrueFalse]
+      if ( scenario_timeline == nullptr ) { // cppcheck-suppress [knownConditionTrueFalse]
          ostringstream errmsg;
          errmsg << "ExecutionControlBase::initialize():" << __LINE__
                 << " FAILED to allocate enough memory for ScenarioTimeline class!"
@@ -316,7 +316,7 @@ Trick simulation time as the default scenario-timeline.\n",
    }
 
    // Initialize then Configure the ExecutionConfiguration object if present.
-   if ( execution_configuration != NULL ) {
+   if ( execution_configuration != nullptr ) {
       execution_configuration->Object::initialize( this->federate );
       execution_configuration->configure();
    }
@@ -361,7 +361,7 @@ bool ExecutionControlBase::object_instance_name_reservation_succeeded(
    wstring const &obj_instance_name )
 {
    // If ExecutionConfiguration is not set, then there is no match.
-   if ( execution_configuration != NULL ) {
+   if ( execution_configuration != nullptr ) {
 
       // We need the wide-string version of the ExCO name.
       wstring ws_exec_config_name;
@@ -400,7 +400,7 @@ bool ExecutionControlBase::object_instance_name_reservation_failed(
    wstring const &obj_instance_name )
 {
    // If ExecutionConfiguration is not set, then there is no match.
-   if ( execution_configuration == NULL ) {
+   if ( execution_configuration == nullptr ) {
       return false;
    }
 
@@ -455,7 +455,7 @@ void ExecutionControlBase::register_objects_with_RTI()
    }
 
    // Register any ExecutionConfiguration objects.
-   if ( execution_configuration != NULL ) {
+   if ( execution_configuration != nullptr ) {
 
       // Register the execution configuration object.
       execution_configuration->register_object_with_RTI();
@@ -574,7 +574,7 @@ void ExecutionControlBase::wait_for_all_multiphase_init_sync_points()
  */
 void ExecutionControlBase::send_execution_configuration()
 {
-   if ( execution_configuration == NULL ) {
+   if ( execution_configuration == nullptr ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          message_publish( MSG_NORMAL, "ExecutionControlBase::send_execution_configuration():%d This call \
 will be ignored because the Simulation Initialization Scheme does not support it.\n",
@@ -615,7 +615,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
  */
 void ExecutionControlBase::receive_execution_configuration()
 {
-   if ( execution_configuration == NULL ) {
+   if ( execution_configuration == nullptr ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          message_publish( MSG_NORMAL, "ExecutionControlBase::receive_execution_configuration():%d This call \
 will be ignored because the Simulation Initialization Scheme does not support it.\n",
@@ -703,7 +703,7 @@ void ExecutionControlBase::send_requested_data(
    Int64Time const &update_time )
 {
    // Send the requested data for the ExecutionConfiguration if we have one.
-   if ( execution_configuration != NULL ) {
+   if ( execution_configuration != nullptr ) {
       // Send the data for the execution-configuration.
       execution_configuration->send_requested_data( update_time );
    }
@@ -715,7 +715,7 @@ void ExecutionControlBase::send_requested_data(
 void ExecutionControlBase::receive_cyclic_data()
 {
    // Receive the requested data for the ExecutionConfiguration if we have one.
-   if ( execution_configuration != NULL ) {
+   if ( execution_configuration != nullptr ) {
 
       // Process all the received ExecutionConfiguration data in the
       // buffer/queue, which shows up as changed.
@@ -734,7 +734,7 @@ void ExecutionControlBase::provide_attribute_update(
    AttributeHandleSet const   &theAttributes )
 {
    // If we have an ExecutionConfiguration then provide attribute updates.
-   if ( ( execution_configuration != NULL )
+   if ( ( execution_configuration != nullptr )
         && ( execution_configuration->get_instance_handle() == theObject ) ) {
       execution_configuration->provide_attribute_update( theAttributes );
    }
@@ -747,7 +747,7 @@ Object *ExecutionControlBase::get_trickhla_object(
    string const &obj_instance_name )
 {
    // Check to see if there is and ExecutionConfiguration object.
-   if ( execution_configuration != NULL ) {
+   if ( execution_configuration != nullptr ) {
 
       // Execution Configuration object.
       if ( obj_instance_name == get_execution_configuration()->get_name() ) {
@@ -756,7 +756,7 @@ Object *ExecutionControlBase::get_trickhla_object(
    }
 
    // Default return if we don't have an ExecutionConfiguration match.
-   return ( NULL );
+   return ( nullptr );
 }
 
 /*!
@@ -766,7 +766,7 @@ Object *ExecutionControlBase::get_trickhla_object(
    wstring const &obj_instance_name )
 {
    // Check to see if there is and ExecutionConfiguration object.
-   if ( execution_configuration != NULL ) {
+   if ( execution_configuration != nullptr ) {
 
       // Execution Configuration object.
       wstring ws_obj_name;
@@ -777,7 +777,7 @@ Object *ExecutionControlBase::get_trickhla_object(
    }
 
    // Default return if we don't have an ExecutionConfiguration match.
-   return ( NULL );
+   return ( nullptr );
 }
 
 /*!
@@ -788,7 +788,7 @@ Object *ExecutionControlBase::get_unregistered_object(
    wstring const           &theObjectInstanceName )
 {
    // Check to see if there is and ExecutionConfiguration object.
-   if ( execution_configuration != NULL ) {
+   if ( execution_configuration != nullptr ) {
 
       // Check the execution configuration next.
       if ( ( execution_configuration->get_class_handle() == theObjectClass )
@@ -805,7 +805,7 @@ Object *ExecutionControlBase::get_unregistered_object(
    }
 
    // Default return if we don't have an ExecutionConfiguration match.
-   return ( NULL );
+   return ( nullptr );
 }
 
 /*!
@@ -815,7 +815,7 @@ Object *ExecutionControlBase::get_unregistered_remote_object(
    ObjectClassHandle const &theObjectClass )
 {
    // Check to see if there is and ExecutionConfiguration object.
-   if ( execution_configuration != NULL ) {
+   if ( execution_configuration != nullptr ) {
       // See if we have a match with the ExecutionConfigruation object.
       if ( ( !execution_configuration->is_create_HLA_instance() )
            && ( execution_configuration->get_class_handle() == theObjectClass )
@@ -827,14 +827,14 @@ Object *ExecutionControlBase::get_unregistered_remote_object(
    }
 
    // Default return if we don't have an ExecutionConfiguration match.
-   return ( NULL );
+   return ( nullptr );
 }
 
 bool ExecutionControlBase::mark_object_as_deleted_from_federation(
    ObjectInstanceHandle const &instance_id )
 {
    // Remove the ExecitionControl object if present and the ID matches.
-   if ( execution_configuration != NULL
+   if ( execution_configuration != nullptr
         && ( execution_configuration->get_instance_handle() == instance_id ) ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          string id_str;
@@ -855,7 +855,7 @@ bool ExecutionControlBase::mark_object_as_deleted_from_federation(
 void ExecutionControlBase::process_deleted_objects()
 {
    // Process ExecutionConfiguration deletion if we have one.
-   if ( execution_configuration != NULL ) {
+   if ( execution_configuration != nullptr ) {
       if ( execution_configuration->process_object_deleted_from_RTI ) {
          execution_configuration->process_deleted_object();
       }
@@ -982,7 +982,7 @@ void ExecutionControlBase::set_master( bool master_flag )
    if ( !is_master_preset() ) {
       this->master = master_flag;
       // Make sure that the Execution Configuration object is set properly.
-      if ( execution_configuration != NULL ) {
+      if ( execution_configuration != nullptr ) {
          execution_configuration->set_master( master_flag );
       }
    }
@@ -1635,7 +1635,7 @@ void ExecutionControlBase::convert_data_before_checkpoint()
    SyncPointManagerBase::convert_data_before_checkpoint();
 
    // Convert the ExecutionConfiguration data.
-   if ( execution_configuration != NULL ) {
+   if ( execution_configuration != nullptr ) {
       execution_configuration->convert_data_before_checkpoint();
    }
 
@@ -1663,7 +1663,7 @@ void ExecutionControlBase::restore_data_after_checkpoint()
    SyncPointManagerBase::restore_data_after_checkpoint();
 
    // Restoring the ExecutionConfiguration data.
-   if ( execution_configuration != NULL ) {
+   if ( execution_configuration != nullptr ) {
       execution_configuration->restore_data_after_checkpoint();
    }
 
@@ -1691,7 +1691,7 @@ void ExecutionControlBase::free_converted_data_for_checkpoint()
    SyncPointManagerBase::free_converted_data_for_checkpoint();
 
    // Freeing the ExecutionConfiguration checkpoint data.
-   if ( execution_configuration != NULL ) {
+   if ( execution_configuration != nullptr ) {
       execution_configuration->free_converted_data_for_checkpoint();
    }
 
@@ -1847,7 +1847,7 @@ void ExecutionControlBase::checkpoint_restart()
 void ExecutionControlBase::remove_execution_configuration()
 {
    // Remove the ExecutionConfiguration object instance if present.
-   if ( execution_configuration != NULL ) {
+   if ( execution_configuration != nullptr ) {
       execution_configuration->remove();
    }
 }

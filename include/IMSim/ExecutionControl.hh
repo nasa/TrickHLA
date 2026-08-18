@@ -198,7 +198,7 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    virtual std::string get_interaction_FOM_names() override
    {
       // Only have one interaction used by this execution control.
-      return ( freeze_interaction != NULL ) ? freeze_interaction->get_FOM_name() : "";
+      return ( freeze_interaction != nullptr ) ? freeze_interaction->get_FOM_name() : "";
    }
 
    /*! @brief Sets the next ExecutionControl run mode.

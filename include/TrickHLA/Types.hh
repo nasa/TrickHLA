@@ -366,7 +366,7 @@ typedef std::vector< std::string > VectorOfStrings;
 
 typedef std::vector< std::wstring > VectorOfWstrings;
 
-static RTI1516_NAMESPACE::VariableLengthData const EMPTY_USER_SUPPLIED_TAG = RTI1516_NAMESPACE::VariableLengthData( NULL, 0 );
+static RTI1516_NAMESPACE::VariableLengthData const EMPTY_USER_SUPPLIED_TAG = RTI1516_NAMESPACE::VariableLengthData( nullptr, 0 );
 
 //
 // Helper methods for these enumerations.

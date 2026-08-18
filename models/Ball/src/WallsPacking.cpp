@@ -65,15 +65,15 @@ using namespace TrickHLAModel;
  */
 WallsPacking::WallsPacking()
    : debug( false ),
-     floor_y_pos_attr( NULL ),
-     right_wall_x_pos_attr( NULL ),
-     ceiling_y_pos_attr( NULL ),
-     left_wall_x_pos_attr( NULL ),
+     floor_y_pos_attr( nullptr ),
+     right_wall_x_pos_attr( nullptr ),
+     ceiling_y_pos_attr( nullptr ),
+     left_wall_x_pos_attr( nullptr ),
      floor_y_pos( 0.0 ),
      right_wall_x_pos( 0.0 ),
      ceiling_y_pos( 0.0 ),
      left_wall_x_pos( 0.0 ),
-     walls( NULL )
+     walls( nullptr )
 {
    return;
 }
@@ -83,10 +83,10 @@ WallsPacking::WallsPacking()
  */
 WallsPacking::WallsPacking( BallWalls &walls_ref )
    : debug( false ),
-     floor_y_pos_attr( NULL ),
-     right_wall_x_pos_attr( NULL ),
-     ceiling_y_pos_attr( NULL ),
-     left_wall_x_pos_attr( NULL ),
+     floor_y_pos_attr( nullptr ),
+     right_wall_x_pos_attr( nullptr ),
+     ceiling_y_pos_attr( nullptr ),
+     left_wall_x_pos_attr( nullptr ),
      floor_y_pos( 0.0 ),
      right_wall_x_pos( 0.0 ),
      ceiling_y_pos( 0.0 ),
@@ -102,10 +102,10 @@ WallsPacking::WallsPacking( BallWalls &walls_ref )
 WallsPacking::~WallsPacking()
 {
    initialized           = false;
-   floor_y_pos_attr      = NULL;
-   right_wall_x_pos_attr = NULL;
-   ceiling_y_pos_attr    = NULL;
-   left_wall_x_pos_attr  = NULL;
+   floor_y_pos_attr      = nullptr;
+   right_wall_x_pos_attr = nullptr;
+   ceiling_y_pos_attr    = nullptr;
+   left_wall_x_pos_attr  = nullptr;
 }
 
 /*!
@@ -236,7 +236,7 @@ void WallsPacking::pack()
    }
 
    // Check for latency/lag compensation.
-   if ( this->object->lag_comp == NULL ) {
+   if ( this->object->lag_comp == nullptr ) {
       pack_from_working_data();
    }
 

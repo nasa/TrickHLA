@@ -143,17 +143,17 @@ bool RefFrameTree::build_transform(
    RefFrameBase const *express_frame,
    RefFrameData       *transform_data )
 {
-   RefFrameBase const *current_frame = NULL;
-   RefFrameBase const *next_frame    = NULL;
+   RefFrameBase const *current_frame = nullptr;
+   RefFrameBase const *next_frame    = nullptr;
 
    LRTreeNodeVector::iterator path_itr;
 
    RefFrameDataState in_frame_data;
    RefFrameDataState out_frame_data;
 
-   // Check for a NULL allocation.
-   if ( transform_data == NULL ) {
-      message_publish( MSG_WARNING, "SpaceFOM::RefFrameTree::build_transform: %d ERROR NULL transform data!\n",
+   // Check for a nullptr allocation.
+   if ( transform_data == nullptr ) {
+      message_publish( MSG_WARNING, "SpaceFOM::RefFrameTree::build_transform: %d ERROR nullptr transform data!\n",
                        __LINE__ );
       return ( false );
    }

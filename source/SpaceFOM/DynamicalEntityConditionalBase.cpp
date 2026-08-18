@@ -63,12 +63,12 @@ DynamicalEntityConditionalBase::DynamicalEntityConditionalBase(
    : SpaceFOM::PhysicalEntityConditionalBase( entity_ref ),
      de_entity( entity_ref ),
      prev_de_data(),
-     force_attr( NULL ),
-     torque_attr( NULL ),
-     mass_attr( NULL ),
-     mass_rate_attr( NULL ),
-     inertia_attr( NULL ),
-     inertia_rate_attr( NULL )
+     force_attr( nullptr ),
+     torque_attr( nullptr ),
+     mass_attr( nullptr ),
+     mass_rate_attr( nullptr ),
+     inertia_attr( nullptr ),
+     inertia_rate_attr( nullptr )
 {
    return;
 }

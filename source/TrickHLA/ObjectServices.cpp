@@ -105,7 +105,7 @@ using namespace TrickHLA;
  */
 ObjectServices::ObjectServices( Federate &fed )
    : obj_count( 0 ),
-     objects( NULL ),
+     objects( nullptr ),
      obj_discovery_mutex(),
      object_map(),
      obj_name_index_map(),
@@ -143,10 +143,10 @@ void ObjectServices::verify_object_arrays()
 {
    // Check for the error condition of a valid object count but a null
    // objects array.
-   if ( ( obj_count > 0 ) && ( objects == NULL ) ) {
+   if ( ( obj_count > 0 ) && ( objects == nullptr ) ) {
       ostringstream errmsg;
       errmsg << "ObjectServices::verify_object_arrays():" << __LINE__
-             << " ERROR: Unexpected NULL 'objects' array for a non zero"
+             << " ERROR: Unexpected nullptr 'objects' array for a non zero"
              << " obj_count:" << obj_count << ". Please check your input or"
              << " modified-data files to make sure the 'ObjectServices::objects'"
              << " array is correctly configured.\n";
@@ -154,13 +154,13 @@ void ObjectServices::verify_object_arrays()
       return;
    }
 
-   // If we have a non-NULL objects array but the object-count is invalid
+   // If we have a non-nullptr objects array but the object-count is invalid
    // then let the user know.
-   if ( ( obj_count <= 0 ) && ( objects != NULL ) ) {
+   if ( ( obj_count <= 0 ) && ( objects != nullptr ) ) {
       ostringstream errmsg;
       errmsg << "ObjectServices::verify_object_arrays():" << __LINE__
              << " ERROR: Unexpected " << ( ( obj_count == 0 ) ? "zero" : "negative" )
-             << " obj_count:" << obj_count << " for a non-NULL 'objects' array."
+             << " obj_count:" << obj_count << " for a non-nullptr 'objects' array."
              << " Please check your input or modified-data files to make sure"
              << " the 'ObjectServices::objects' array is correctly configured.\n";
       DebugHandler::terminate( errmsg.str() );
@@ -288,7 +288,7 @@ federate so the data will not be sent for '%s'.\n",
 
    Object *obj = get_trickhla_object( obj_instance_name );
 
-   if ( obj == NULL ) {
+   if ( obj == nullptr ) {
       ostringstream errmsg;
       errmsg << "ObjectServices::send_init_data():" << __LINE__
              << " ERROR: The specified Object Instance"
@@ -459,7 +459,7 @@ void ObjectServices::receive_init_data(
 
    Object *obj = get_trickhla_object( obj_instance_name );
 
-   if ( obj == NULL ) {
+   if ( obj == nullptr ) {
       ostringstream errmsg;
       errmsg << "ObjectServices::receive_init_data():" << __LINE__
              << " ERROR: The specified Object Instance Name '" << instance_name
@@ -578,7 +578,7 @@ void ObjectServices::request_data_update(
    // If not ExecutionConfiguration, then check for other objects.
    if ( !found ) {
       Object *obj = get_trickhla_object( instance_name );
-      if ( obj != NULL ) {
+      if ( obj != nullptr ) {
          obj->request_attribute_value_update();
       }
    }
@@ -608,7 +608,7 @@ void ObjectServices::object_instance_name_reservation_succeeded(
    if ( !federate->execution_control->object_instance_name_reservation_succeeded( obj_instance_name ) ) {
 
       Object *trickhla_obj = get_trickhla_object( obj_instance_name );
-      if ( trickhla_obj != NULL ) {
+      if ( trickhla_obj != nullptr ) {
          trickhla_obj->set_name_registered();
 
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
@@ -807,10 +807,10 @@ void ObjectServices::setup_object_RTI_handles(
    int const data_obj_count,
    Object   *data_objects )
 {
-   if ( this->federate == NULL ) {
+   if ( this->federate == nullptr ) {
       ostringstream errmsg;
       errmsg << "ObjectServices::setup_object_RTI_handles():" << __LINE__
-             << " ERROR: Unexpected NULL 'federate' pointer!\n";
+             << " ERROR: Unexpected nullptr 'federate' pointer!\n";
       DebugHandler::terminate( errmsg.str() );
       return;
    }
@@ -819,10 +819,10 @@ void ObjectServices::setup_object_RTI_handles(
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
    RTIambassador *rti_amb = federate->get_RTI_ambassador();
-   if ( rti_amb == NULL ) {
+   if ( rti_amb == nullptr ) {
       ostringstream errmsg;
       errmsg << "ObjectServices::setup_object_RTI_handles():" << __LINE__
-             << " ERROR: Unexpected NULL RTIambassador!\n";
+             << " ERROR: Unexpected nullptr RTIambassador!\n";
       DebugHandler::terminate( errmsg.str() );
       return;
    }
@@ -1450,10 +1450,10 @@ void ObjectServices::set_object_instance_handles_by_name(
    int const data_obj_count,
    Object   *data_objects )
 {
-   if ( this->federate == NULL ) {
+   if ( this->federate == nullptr ) {
       ostringstream errmsg;
       errmsg << "ObjectServices::set_object_instance_handles_by_name():" << __LINE__
-             << " ERROR: Unexpected NULL 'federate' pointer!\n";
+             << " ERROR: Unexpected nullptr 'federate' pointer!\n";
       DebugHandler::terminate( errmsg.str() );
       return;
    }
@@ -1462,10 +1462,10 @@ void ObjectServices::set_object_instance_handles_by_name(
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
    RTIambassador *rti_amb = federate->get_RTI_ambassador();
-   if ( rti_amb == NULL ) {
+   if ( rti_amb == nullptr ) {
       ostringstream errmsg;
       errmsg << "ObjectServices::set_object_instance_handles_by_name():" << __LINE__
-             << " ERROR: Unexpected NULL RTIambassador!\n";
+             << " ERROR: Unexpected nullptr RTIambassador!\n";
       DebugHandler::terminate( errmsg.str() );
       return;
    }
@@ -1590,7 +1590,7 @@ void ObjectServices::provide_attribute_update(
 {
    // Determine which data object the user is requesting an update for.
    Object *trickhla_obj = get_trickhla_object( theObject );
-   if ( trickhla_obj != NULL ) {
+   if ( trickhla_obj != nullptr ) {
       trickhla_obj->provide_attribute_update( theAttributes );
    } else {
       federate->execution_control->provide_attribute_update( theObject, theAttributes );
@@ -1714,7 +1714,7 @@ Object *ObjectServices::get_trickhla_object(
 {
    // We use a map with the key being the ObjectIntanceHandle for fast lookups.
    ObjectInstanceMap::const_iterator const iter = object_map.find( instance_id );
-   return ( ( iter != object_map.end() ) ? iter->second : NULL );
+   return ( ( iter != object_map.end() ) ? iter->second : nullptr );
 }
 
 /*!
@@ -1731,7 +1731,7 @@ Object *ObjectServices::get_trickhla_object(
    }
 
    // Check for a match with the ExecutionConfiguration object associated with
-   // ExecutionControl. Returns NULL if match not found.
+   // ExecutionControl. Returns nullptr if match not found.
    return ( federate->execution_control->get_trickhla_object( obj_instance_name ) );
 }
 
@@ -1768,7 +1768,7 @@ bool ObjectServices::discover_object_instance(
    // If we did not find the object by class handle and instance name then
    // get the first unregistered object that is remotely owned for the given
    // object class type.
-   if ( trickhla_obj == NULL ) {
+   if ( trickhla_obj == nullptr ) {
 
       // Get the first unregistered remotely owned object that has the
       // given object class type and only if the object instance name is
@@ -1777,7 +1777,7 @@ bool ObjectServices::discover_object_instance(
    }
 
    // Determine if the discovered instance was for a data object.
-   if ( trickhla_obj != NULL ) {
+   if ( trickhla_obj != nullptr ) {
 
       // Set the Instance ID for the discovered object.
       trickhla_obj->set_instance_handle_and_name( theObject, theObjectInstanceName );
@@ -1796,7 +1796,7 @@ bool ObjectServices::discover_object_instance(
                           __LINE__, trickhla_obj->get_name().c_str(), id_str.c_str() );
       }
 
-   } else if ( ( federate != NULL ) && federate->is_MOM_HLAfederate_class( theObjectClass ) ) {
+   } else if ( ( federate != nullptr ) && federate->is_MOM_HLAfederate_class( theObjectClass ) ) {
 
       // Add this to the list of joined federates.
       federate->add_joined_federate( theObject, theObjectInstanceName );
@@ -1811,7 +1811,7 @@ bool ObjectServices::discover_object_instance(
                           __LINE__, id_str.c_str(), name_str.c_str() );
       }
 
-   } else if ( ( federate != NULL ) && federate->is_MOM_HLAfederation_class( theObjectClass ) ) {
+   } else if ( ( federate != nullptr ) && federate->is_MOM_HLAfederation_class( theObjectClass ) ) {
 
       federate->add_MOM_HLAfederation_instance_handle( theObject );
       return_value = true;
@@ -1857,7 +1857,7 @@ Object *ObjectServices::get_unregistered_object(
    }
 
    // Check for a match with the ExecutionConfiguration object associated with
-   // ExecutionControl. Returns NULL if match not found.
+   // ExecutionControl. Returns nullptr if match not found.
    return ( federate->execution_control->get_unregistered_object( theObjectClass, theObjectInstanceName ) );
 }
 
@@ -1884,7 +1884,7 @@ Object *ObjectServices::get_unregistered_remote_object(
    }
 
    // Check for a match with the ExecutionConfiguration object associated with
-   // ExecutionControl. Returns NULL if match not found.
+   // ExecutionControl. Returns nullptr if match not found.
    return ( federate->execution_control->get_unregistered_remote_object( theObjectClass ) );
 }
 
@@ -1918,7 +1918,7 @@ void ObjectServices::mark_object_as_deleted_from_federation(
    if ( !federate->execution_control->mark_object_as_deleted_from_federation( instance_id ) ) {
 
       Object *obj = get_trickhla_object( instance_id );
-      if ( obj != NULL ) {
+      if ( obj != nullptr ) {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
             string id_str;
             StringUtilities::to_string( id_str, instance_id );
@@ -1989,7 +1989,7 @@ void ObjectServices::pull_ownership_at_init(
    }
 
    Object *obj = get_trickhla_object( obj_instance_name );
-   if ( obj == NULL ) {
+   if ( obj == nullptr ) {
       ostringstream errmsg;
       errmsg << "ObjectServices::pull_ownership_at_init():" << __LINE__
              << " ERROR: Failed to find object with instance name: '"
@@ -2019,7 +2019,7 @@ void ObjectServices::handle_pulled_ownership_at_init(
    }
 
    Object *obj = get_trickhla_object( obj_instance_name );
-   if ( obj == NULL ) {
+   if ( obj == nullptr ) {
       ostringstream errmsg;
       errmsg << "ObjectServices::handle_pulled_ownership_at_init():" << __LINE__
              << " ERROR: Failed to find object with instance name: '"
@@ -2085,7 +2085,7 @@ void ObjectServices::push_ownership_at_init(
    }
 
    Object *obj = get_trickhla_object( obj_instance_name );
-   if ( obj == NULL ) {
+   if ( obj == nullptr ) {
       ostringstream errmsg;
       errmsg << "ObjectServices::push_ownership_at_init():" << __LINE__
              << " ERROR: Failed to find object with instance name: '"
@@ -2115,7 +2115,7 @@ void ObjectServices::handle_pushed_ownership_at_init(
    }
 
    Object *obj = get_trickhla_object( obj_instance_name );
-   if ( obj == NULL ) {
+   if ( obj == nullptr ) {
       ostringstream errmsg;
       errmsg << "ObjectServices::handle_pushed_ownership_at_init():" << __LINE__
              << " ERROR: Failed to find object with instance name: '"

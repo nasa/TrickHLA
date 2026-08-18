@@ -55,7 +55,7 @@ using namespace SpaceFOM;
  * @job_class{initialization}
  */
 DynamicalEntity::DynamicalEntity() // RETURN: -- None.
-   : dynamical_data( NULL )
+   : dynamical_data( nullptr )
 {
    return;
 }
@@ -77,7 +77,7 @@ DynamicalEntity::DynamicalEntity(
  */
 DynamicalEntity::~DynamicalEntity() // RETURN: -- None.
 {
-   physical_data = NULL;
+   physical_data = nullptr;
 }
 
 /*!
@@ -86,10 +86,10 @@ DynamicalEntity::~DynamicalEntity() // RETURN: -- None.
 void DynamicalEntity::initialize()
 {
    // Check to make sure the DynamicalEntity data is set.
-   if ( dynamical_data == NULL ) {
+   if ( dynamical_data == nullptr ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::DynamicalEntity::initialize():" << __LINE__
-             << " ERROR: Unexpected NULL DynamicalEntityData: "
+             << " ERROR: Unexpected nullptr DynamicalEntityData: "
              << pe_packing_data.name << "\n";
       // Print message and terminate.
       DebugHandler::terminate( errmsg.str() );
@@ -111,10 +111,10 @@ void DynamicalEntity::set_data(
    DynamicalEntityData *dynamics_data_ptr )
 {
    // Set the reference to the reference frame.
-   if ( dynamics_data_ptr == NULL ) {
+   if ( dynamics_data_ptr == nullptr ) {
       ostringstream errmsg;
       errmsg << "SpaceFOM::DynamicalEntity::set_data():" << __LINE__
-             << " ERROR: Unexpected NULL DynamicalEntityData: "
+             << " ERROR: Unexpected nullptr DynamicalEntityData: "
              << pe_packing_data.name << "\n";
       // Print message and terminate.
       DebugHandler::terminate( errmsg.str() );

@@ -71,13 +71,13 @@ using namespace TrickHLA;
  * @job_class{initialization}
  */
 OwnershipHandler::OwnershipHandler()
-   : object( NULL ),
+   : object( nullptr ),
      pull_requests(),
      push_requests(),
      pull_items_cnt( 0 ),
-     pull_items( NULL ),
+     pull_items( nullptr ),
      push_items_cnt( 0 ),
-     push_items( NULL )
+     push_items( nullptr )
 {
    return;
 }
@@ -119,7 +119,7 @@ void OwnershipHandler::convert_data_before_checkpoint()
                           __LINE__, pull_items_cnt );
       }
       pull_items = MemoryServices::declare_var( pull_items, pull_items_cnt );
-      if ( pull_items == NULL ) {
+      if ( pull_items == nullptr ) {
          ostringstream errmsg;
          errmsg << "OwnershipHandler::convert_data_before_checkpoint():" << __LINE__
                 << " CERROR: ould not allocate memory for pull_items (array of OwnershipItem type)!"
@@ -157,7 +157,7 @@ void OwnershipHandler::convert_data_before_checkpoint()
                           __LINE__, push_items_cnt );
       }
       push_items = MemoryServices::declare_var( push_items, push_items_cnt );
-      if ( push_items == NULL ) {
+      if ( push_items == nullptr ) {
          ostringstream errmsg;
          errmsg << "OwnershipHandler::convert_data_before_checkpoint():" << __LINE__
                 << "ERROR:  Could not allocate memory for push_items (array of OwnershipItem type)!"
@@ -259,7 +259,7 @@ void OwnershipHandler::free_converted_data_for_checkpoint()
          message_publish( MSG_WARNING, "OwnershipHandler::free_converted_data_for_checkpoint():%d WARNING failed to delete Trick Memory for 'pull_items'\n",
                           __LINE__ );
       }
-      pull_items     = NULL;
+      pull_items     = nullptr;
       pull_items_cnt = 0;
    }
 
@@ -272,7 +272,7 @@ void OwnershipHandler::free_converted_data_for_checkpoint()
          message_publish( MSG_WARNING, "OwnershipHandler::free_converted_data_for_checkpoint():%d WARNING failed to delete Trick Memory for 'push_items'\n",
                           __LINE__ );
       }
-      push_items     = NULL;
+      push_items     = nullptr;
       push_items_cnt = 0;
    }
 }
@@ -285,56 +285,56 @@ void OwnershipHandler::initialize_callback(
 
 string OwnershipHandler::get_object_name() const
 {
-   return ( ( this->object != NULL ) ? object->get_name() : "" );
+   return ( ( this->object != nullptr ) ? object->get_name() : "" );
 }
 
 string OwnershipHandler::get_object_FOM_name() const
 {
-   return ( ( this->object != NULL ) ? object->get_FOM_name() : "" );
+   return ( ( this->object != nullptr ) ? object->get_FOM_name() : "" );
 }
 
 int OwnershipHandler::get_attribute_count() const
 {
-   return ( ( this->object != NULL ) ? object->get_attribute_count() : 0 );
+   return ( ( this->object != nullptr ) ? object->get_attribute_count() : 0 );
 }
 
 VectorOfStrings const OwnershipHandler::get_attribute_FOM_names() const
 {
-   return ( ( this->object != NULL ) ? object->get_attribute_FOM_names() : VectorOfStrings() );
+   return ( ( this->object != nullptr ) ? object->get_attribute_FOM_names() : VectorOfStrings() );
 }
 
 Attribute *OwnershipHandler::get_attribute(
    string const &attribute_FOM_name )
 {
-   return ( ( object != NULL ) ? object->get_attribute( attribute_FOM_name ) : NULL );
+   return ( ( object != nullptr ) ? object->get_attribute( attribute_FOM_name ) : nullptr );
 }
 
 bool OwnershipHandler::is_locally_owned(
    string const &attribute_FOM_name )
 {
    Attribute const *attribute = get_attribute( attribute_FOM_name );
-   return ( ( attribute != NULL ) ? attribute->is_locally_owned() : false );
+   return ( ( attribute != nullptr ) ? attribute->is_locally_owned() : false );
 }
 
 bool OwnershipHandler::is_remotely_owned(
    string const &attribute_FOM_name )
 {
    Attribute const *attribute = get_attribute( attribute_FOM_name );
-   return ( ( attribute != NULL ) ? attribute->is_remotely_owned() : false );
+   return ( ( attribute != nullptr ) ? attribute->is_remotely_owned() : false );
 }
 
 bool OwnershipHandler::is_published(
    string const &attribute_FOM_name )
 {
    Attribute const *attribute = get_attribute( attribute_FOM_name );
-   return ( ( attribute != NULL ) ? attribute->is_publish() : false );
+   return ( ( attribute != nullptr ) ? attribute->is_publish() : false );
 }
 
 bool OwnershipHandler::is_subscribed(
    string const &attribute_FOM_name )
 {
    Attribute const *attribute = get_attribute( attribute_FOM_name );
-   return ( ( attribute != NULL ) ? attribute->is_subscribe() : false );
+   return ( ( attribute != nullptr ) ? attribute->is_subscribe() : false );
 }
 
 void OwnershipHandler::pull_ownership()
@@ -345,7 +345,7 @@ void OwnershipHandler::pull_ownership()
 void OwnershipHandler::pull_ownership(
    double time )
 {
-   if ( this->object == NULL ) {
+   if ( this->object == nullptr ) {
       return;
    }
 
@@ -403,7 +403,7 @@ void OwnershipHandler::pull_ownership(
    Attribute *attribute = get_attribute( attribute_FOM_name );
 
    // Just return if the attribute was not found.
-   if ( attribute == NULL ) {
+   if ( attribute == nullptr ) {
       return;
    }
 
@@ -448,7 +448,7 @@ void OwnershipHandler::push_ownership()
 void OwnershipHandler::push_ownership(
    double const time )
 {
-   if ( this->object == NULL ) {
+   if ( this->object == nullptr ) {
       return;
    }
 
@@ -506,7 +506,7 @@ void OwnershipHandler::push_ownership(
    Attribute *attribute = get_attribute( attribute_FOM_name );
 
    // Just return if the attribute was not found.
-   if ( attribute == NULL ) {
+   if ( attribute == nullptr ) {
       return;
    }
 
@@ -555,11 +555,11 @@ Int64Time const &OwnershipHandler::get_granted_time() const
 
 double OwnershipHandler::get_scenario_time() const
 {
-   if ( object != NULL ) {
+   if ( object != nullptr ) {
       Federate *fed = object->get_federate();
-      if ( fed != NULL ) {
+      if ( fed != nullptr ) {
          ExecutionControlBase const *exec_control = fed->get_execution_control();
-         if ( exec_control != NULL ) {
+         if ( exec_control != nullptr ) {
             return exec_control->get_scenario_time();
          }
       }
@@ -569,11 +569,11 @@ double OwnershipHandler::get_scenario_time() const
 
 double OwnershipHandler::get_cte_time() const
 {
-   if ( object != NULL ) {
+   if ( object != nullptr ) {
       Federate *fed = object->get_federate();
-      if ( fed != NULL ) {
+      if ( fed != nullptr ) {
          ExecutionControlBase const *exec_control = fed->get_execution_control();
-         if ( exec_control != NULL ) {
+         if ( exec_control != nullptr ) {
             return exec_control->get_cte_time();
          }
       }

@@ -174,7 +174,7 @@ std::string TrickHLA::to_string( THLARestoreProcessEnum restore_state )
  * @details NOTE: In most cases, we would allocate and set default names in
  * the constructor. However, since we want this class to be Input Processor
  * friendly, we cannot do that here since the Input Processor may not have
- * been initialized yet. So, we have to set the name information to NULL and
+ * been initialized yet. So, we have to set the name information to nullptr and
  * then allocate and set the defaults in the initialization job if not
  * already set in the input stream.
  *
@@ -185,7 +185,7 @@ SaveRestoreServices::SaveRestoreServices( Federate &fed )
      object_service( fed.get_object_service() ),
      interaction_service( fed.get_interaction_service() ),
      time_management_service( fed.get_time_management_service() ),
-     execution_control( NULL ),
+     execution_control( nullptr ),
      joined_federates_file_name( "" ),
      HLA_save_directory( "" ),
      save_state( THLASaveProcessEnum::SAVE_UNSUPPORTED ),
@@ -1773,7 +1773,7 @@ void SaveRestoreServices::restore_after_checkpoint_load()
 
    // Restore the data constructs from loading the checkpoint file.
    federate->restore_data_after_checkpoint();
-   if ( execution_control != NULL ) {
+   if ( execution_control != nullptr ) {
       execution_control->restore_data_after_checkpoint();
    }
 

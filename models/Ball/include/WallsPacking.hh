@@ -84,7 +84,7 @@ class WallsPacking : public TrickHLA::Packing, public TrickHLA::OpaqueBuffer
                              char const       *walls_obj_name,
                              char const       *walls_name,
                              bool              publishes,
-                             TrickHLA::Object *mngr_object = NULL );
+                             TrickHLA::Object *mngr_object = nullptr );
 
    /*! @brief Entity instance initialization routine. */
    virtual void initialize() override;

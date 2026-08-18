@@ -118,9 +118,9 @@ bool RefFrameData::transform_to_parent(
    RefFrameData       *frame_out )
 {
    // Check for null reference to transformed frame data.
-   if ( frame_out == NULL ) {
+   if ( frame_out == nullptr ) {
       std::ostringstream errmsg;
-      errmsg << "SpaceFOM::RefFrameData::transform_to_parent() ERROR:%d NULL transformed frame reference!\n";
+      errmsg << "SpaceFOM::RefFrameData::transform_to_parent() ERROR:%d nullptr transformed frame reference!\n";
       message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__ );
       return ( false );
    }
@@ -168,9 +168,9 @@ bool RefFrameData::transform_to_child(
    RefFrameData       *frame_out )
 {
    // Check for null reference to transformed frame data.
-   if ( frame_out == NULL ) {
+   if ( frame_out == nullptr ) {
       std::ostringstream errmsg;
-      errmsg << "SpaceFOM::RefFrameData::transform_to_child() ERROR:%d NULL transformed frame reference!\n";
+      errmsg << "SpaceFOM::RefFrameData::transform_to_child() ERROR:%d nullptr transformed frame reference!\n";
       message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__ );
       return ( false );
    }
