@@ -128,12 +128,12 @@ bool PhysicalInterfaceConditionalBase::should_send(
    TrickHLA::Attribute *attr )
 {
    if ( !initialized ) {
+
+#if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "The initialize() function has not been called!\n" );
+#else
       ostringstream errmsg;
       errmsg << "PhysicalInterfaceConditionalBase::should_send():" << __LINE__
-#if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
-             << " ERROR: The initialize() function has not been called!\n";
-      DebugHandler::terminate( errmsg.str() );
-#else
              << " WARNING: The initialize() function has not been called!\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
 #endif
@@ -195,12 +195,9 @@ bool PhysicalInterfaceConditionalBase::should_send(
 
    } else {
       ostringstream errmsg;
-      errmsg << "PhysicalInterfaceConditionalBase::should_send("
-             << attr->get_FOM_name() << "):" << __LINE__
-             << "ERROR: Could not find the data for the specified FOM attribute!"
-             << "\n";
-      // Print message and terminate.
-      DebugHandler::terminate( errmsg.str() );
+      errmsg << "Could not find the data for the FOM attribute '"
+             << attr->get_FOM_name() << "'!\n";
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    return send_attr;

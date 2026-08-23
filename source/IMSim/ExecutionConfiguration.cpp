@@ -152,10 +152,7 @@ void ExecutionConfiguration::configure_attributes(
 {
    // Check to make sure we have a reference to the TrickHLA::FedAmb.
    if ( sim_config_name.empty() ) {
-      ostringstream errmsg;
-      errmsg << "IMSim::ExecutionConfiguration::configure_attributes():" << __LINE__
-             << " ERROR: Unexpected empty sim_config_name.\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Unexpected empty sim_config_name.\n" );
    }
 
    // Set the S_define instance name.
@@ -175,10 +172,7 @@ void ExecutionConfiguration::configure_attributes()
 {
    // Check to make sure we have an S_define name for this simulation configuration instance.
    if ( S_define_name.empty() ) {
-      ostringstream errmsg;
-      errmsg << "IMSim::ExecutionConfiguration::configure_attributes():" << __LINE__
-             << " ERROR: Unexpected empty S_define_name.\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Unexpected empty S_define_name.\n" );
    }
 
    //---------------------------------------------------------
@@ -255,18 +249,12 @@ void ExecutionConfiguration::configure()
 {
    // Check to make sure we have a reference to the TrickHLA::FedAmb.
    if ( federate == nullptr ) {
-      ostringstream errmsg;
-      errmsg << "IMSim::ExecutionConfiguration::configure():" << __LINE__
-             << " ERROR: Unexpected nullptr TrickHLA::Federate.\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr TrickHLA::Federate.\n" );
    }
 
    // The Simulation Configuration object must have a name.
    if ( name.empty() ) {
-      ostringstream errmsg;
-      errmsg << "IMSim::ExecutionConfiguration::configure():" << __LINE__
-             << " ERROR: Simulation configuration must have a name!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Simulation configuration must have a name!\n" );
    }
 
    // Lag compensation is not supported for the Execution Configuration object.
@@ -297,10 +285,7 @@ IMSim::ExecutionControl *ExecutionConfiguration::get_imsim_control()
 
    imsim_exec_cntrl = dynamic_cast< IMSim::ExecutionControl * >( execution_control );
    if ( imsim_exec_cntrl == nullptr ) {
-      ostringstream errmsg;
-      errmsg << "IMSim::ExecutionConfiguration::get_imsim_control():" << __LINE__
-             << " ERROR: Dynamic cast error from base class reference to IMSim reference!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Dynamic cast error from base class reference to IMSim reference!\n" );
    }
 
    return imsim_exec_cntrl;
@@ -385,10 +370,7 @@ void ExecutionConfiguration::set_required_federates(
 void ExecutionConfiguration::setup_ref_attributes(
    TrickHLA::Packing *packing_obj )
 {
-   ostringstream errormsg;
-   errormsg << "IMSim::ExecutionConfiguration::setup_ref_attributes():" << __LINE__
-            << " ERROR: This routine does NOT work and should not be called!\n";
-   DebugHandler::terminate( errormsg.str() );
+   DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "This routine does NOT work and should not be called!\n" );
 }
 #pragma GCC diagnostic pop
 
@@ -453,13 +435,12 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
                sleep_timer.reset();
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
-                  errmsg << "IMSim::ExecutionConfiguration::wait_for_update():" << __LINE__
-                         << " ERROR: Unexpectedly the Federate is no longer an execution member."
+                  errmsg << "Unexpectedly the Federate is no longer an execution member."
                          << " This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
                          << " the Central RTI Component (CRC) level!\n";
-                  DebugHandler::terminate( errmsg.str() );
+                  DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
                }
             }
 
@@ -481,13 +462,12 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
 
    } else {
       ostringstream errmsg;
-      errmsg << "IMSim::ExecutionConfiguration::wait_for_update():" << __LINE__
-             << " ERROR: Execution-Configuration"
-             << " is not configured to receive at least one object attribute."
-             << " Make sure at least one 'exec_config' attribute has"
-             << " 'subscribe = true' set. Please check your input or modified-data"
-             << " files to make sure the 'subscribe' value is correctly specified.\n";
-      DebugHandler::terminate( errmsg.str() );
+      errmsg << "Execution Configuration is not configured to receive at least"
+             << " one object attribute. Make sure at least one 'exec_config'"
+             << " attribute has 'subscribe = true' set. Please check your input"
+             << " or modified-data files to make sure the 'subscribe' value is"
+             << " correctly specified.\n";
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    return true;

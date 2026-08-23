@@ -198,7 +198,7 @@ std::string const ElapsedTimeStats::to_string()
       double const moe         = ( Z * std_dev ) / sqrt( count ); // milliseconds
       double const moe_percent = moe / mean;
 
-      // We have to double escape the % sign so that message_publish() will
+      // We have to double escape the % sign so the Trick message_publish will
       // print the percent character '%' correctly and not as a c-string
       // formating code.
       msg << "    sample-count: " << count << "\n"

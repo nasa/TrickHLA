@@ -29,7 +29,6 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstdlib>
-#include <ostream>
 #include <sstream>
 
 // JEOD model includes.
@@ -93,10 +92,9 @@ void JEODPhysicalEntity::initialize()
    // Check to make sure the JEODPhysicalEntity data is set.
    if ( dyn_body_data == nullptr ) {
       ostringstream errmsg;
-      errmsg << "SpaceFOM::JEODPhysicalEntity::initialize():" << __LINE__
-             << " ERROR: Unexpected nullptr dyn_body_data: "
+      errmsg << "Unexpected nullptr dyn_body_data: "
              << this->pe_packing_data.name << "\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    // Mark this as initialized.
@@ -249,10 +247,9 @@ void JEODPhysicalEntity::set_data(
    // Set the reference to the JEODPhysicalEntity data.
    if ( dyn_body_data_ptr == nullptr ) {
       ostringstream errmsg;
-      errmsg << "SpaceFOM::JEODPhysicalEntity::set_data():" << __LINE__
-             << " ERROR: Unexpected nullptr JEODPhysicalEntityData: "
+      errmsg << "Unexpected nullptr JEODPhysicalEntityData: "
              << this->pe_packing_data.name << "\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
    this->dyn_body_data = dyn_body_data_ptr;
 

@@ -39,7 +39,6 @@ NASA, Johnson Space Center\n
 // System include files.
 #include <cstddef>
 #include <cstring>
-#include <ostream>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -75,22 +74,20 @@ CharRawDataEncoder::CharRawDataEncoder(
    if ( ( this->type != TRICK_CHARACTER )
         && ( this->type != TRICK_UNSIGNED_CHARACTER ) ) {
       ostringstream errmsg;
-      errmsg << "CharRawDataEncoder::CharRawDataEncoder():" << __LINE__
-             << " ERROR: Trick type for the '" << data_name
+      errmsg << "Trick type for the '" << data_name
              << "' simulation variable (type:" << attr->type_name
              << ") is not the expected type '"
              << trickTypeCharString( TRICK_CHARACTER, "UNSUPPORTED_TYPE" )
              << "'.\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       return;
    }
 
    if ( !is_dynamic_array() ) {
       ostringstream errmsg;
-      errmsg << "CharRawDataEncoder::CharRawDataEncoder():" << __LINE__
-             << " ERROR: Trick ref-attributes for '" << data_name
+      errmsg << "Trick ref-attributes for '" << data_name
              << "' the variable must be a dynamic variable array!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       return;
    }
 }
@@ -141,10 +138,8 @@ size_t CharRawDataEncoder::decodeFrom(
    throw( EncoderException )
 #endif
 {
-   ostringstream errmsg;
-   errmsg << "CharRawDataEncoder::decodeFrom():" << __LINE__
-          << " ERROR: Encoding not supported for a field of an HLA Record!\n";
-   DebugHandler::terminate( errmsg.str() );
+   DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__,
+                            "Encoding not supported for a field of an HLA Record!\n" );
    return index;
 }
 #pragma GCC diagnostic pop

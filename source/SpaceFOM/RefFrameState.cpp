@@ -35,7 +35,6 @@ NASA, Johnson Space Center\n
 // System includes.
 #include <cstdlib>
 #include <cstring>
-#include <ostream>
 #include <sstream>
 
 // SpaceFOM includes.
@@ -94,10 +93,9 @@ void RefFrameState::set_data(
    // Set the reference to the reference frame.
    if ( ref_frame_data_ptr == nullptr ) {
       ostringstream errmsg;
-      errmsg << "SpaceFOM::RefFrameState::pre_initialize():" << __LINE__
-             << " ERROR: Unexpected nullptr reference frame: " << this->packing_data.name << "\n";
-      // Print message and terminate.
-      DebugHandler::terminate( errmsg.str() );
+      errmsg << " Unexpected nullptr reference frame: "
+             << this->packing_data.name << "\n";
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       return;
    }
    this->ref_frame_data = ref_frame_data_ptr;
@@ -114,10 +112,9 @@ void RefFrameState::initialize()
    // Set the reference to the reference frame.
    if ( ref_frame_data == nullptr ) {
       ostringstream errmsg;
-      errmsg << "SpaceFOM::RefFrameState::initialize():" << __LINE__
-             << " ERROR: Unexpected nullptr reference frame: " << this->packing_data.name << "\n";
-      // Print message and terminate.
-      DebugHandler::terminate( errmsg.str() );
+      errmsg << "Unexpected nullptr reference frame: "
+             << this->packing_data.name << "\n";
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       return;
    }
 

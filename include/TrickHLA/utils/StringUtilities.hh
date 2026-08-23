@@ -30,6 +30,7 @@ NASA, Johnson Space Center\n
 @rev_entry{Dan Dexter, L3 Titan Group, DSES, June 2006, --, Initial implementation.}
 @rev_entry{Dan Dexter, NASA ER7, TrickHLA, March 2019, --, Version 2 origin.}
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, March 2019, --, Version 3 rewrite.}
+@rev_entry{Dan Dexter, NASA ER6, TrickHLA, August 2026, --, Added format function name.}
 @revs_end
 
 */
@@ -205,6 +206,23 @@ class StringUtilities
           << time.get_base_time() << " "
           << Int64BaseTime::get_base_unit() << ")";
       return msg.str();
+   }
+
+   /*! @brief Format the pretty function name.
+    *  @param pretty_func_name The pretty function name from the __PRETTY_FUNCTION__ macro.
+    *  @param line_number The line number of the calling code. */
+   static std::string format(
+      std::string const &pretty_func_name,
+      size_t const       line_number )
+   {
+      // Extract the function name from the __PRETTY_FUNCTION__ macro of the form:
+      // namespace::class_name::func_name()
+      size_t const scope_delim = pretty_func_name.find( "::" );
+      size_t const name_start  = pretty_func_name.rfind( " ", scope_delim ) + 1;
+      size_t const name_end    = pretty_func_name.rfind( "(" );
+      return ( pretty_func_name.substr( name_start, name_end - name_start )
+                  .append( "():" )
+                  .append( std::to_string( line_number ) ) );
    }
 
    /*! @brief HLA RTI User Data to printable C++ string conversion routine.

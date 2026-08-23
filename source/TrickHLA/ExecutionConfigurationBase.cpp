@@ -305,13 +305,12 @@ void ExecutionConfigurationBase::wait_for_registration()
                sleep_timer.reset();
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
-                  errmsg << "ExecutionConfigurationBase::wait_for_registration():" << __LINE__
-                         << " ERROR: Unexpectedly the Federate is no longer an execution member."
+                  errmsg << "Unexpectedly the Federate is no longer an execution member."
                          << " This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
                          << " the Central RTI Component (CRC) level!\n";
-                  DebugHandler::terminate( errmsg.str() );
+                  DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
                }
             }
 
@@ -361,13 +360,12 @@ bool ExecutionConfigurationBase::wait_for_update() // RETURN: -- None.
                sleep_timer.reset();
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
-                  errmsg << "ExecutionConfigurationBase::wait_for_update():" << __LINE__
-                         << " ERROR: Unexpectedly the Federate is no longer an execution member."
+                  errmsg << "Unexpectedly the Federate is no longer an execution member."
                          << " This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
                          << " the Central RTI Component (CRC) level!\n";
-                  DebugHandler::terminate( errmsg.str() );
+                  DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
                }
             }
 
@@ -389,14 +387,12 @@ bool ExecutionConfigurationBase::wait_for_update() // RETURN: -- None.
 
    } else {
       ostringstream errmsg;
-      errmsg << "ExecutionConfigurationBase::wait_for_update():" << __LINE__
-             << " ERROR: Execution-Configuration"
-             << " is not configured to receive at least one object attribute."
-             << " Make sure at least one 'exec_config' attribute has"
-             << " 'subscribe = true' set. Please check your input or modified-data"
-             << " files to make sure the 'subscribe' value is correctly specified."
-             << "\n";
-      DebugHandler::terminate( errmsg.str() );
+      errmsg << "Execution Configuration is not configured to receive at least"
+             << " one object attribute. Make sure at least one 'exec_config'"
+             << " attribute has 'subscribe = true' set. Please check your input"
+             << " or modified-data files to make sure the 'subscribe' value is"
+             << " correctly specified.\n";
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    return true;

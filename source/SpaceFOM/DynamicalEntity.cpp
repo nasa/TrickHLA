@@ -33,7 +33,6 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstdlib>
-#include <ostream>
 #include <sstream>
 
 // Trick includes.
@@ -88,11 +87,10 @@ void DynamicalEntity::initialize()
    // Check to make sure the DynamicalEntity data is set.
    if ( dynamical_data == nullptr ) {
       ostringstream errmsg;
-      errmsg << "SpaceFOM::DynamicalEntity::initialize():" << __LINE__
-             << " ERROR: Unexpected nullptr DynamicalEntityData: "
+      errmsg << "Unexpected nullptr DynamicalEntityData: "
              << pe_packing_data.name << "\n";
       // Print message and terminate.
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    // Mark this as initialized.
@@ -113,11 +111,9 @@ void DynamicalEntity::set_data(
    // Set the reference to the reference frame.
    if ( dynamics_data_ptr == nullptr ) {
       ostringstream errmsg;
-      errmsg << "SpaceFOM::DynamicalEntity::set_data():" << __LINE__
-             << " ERROR: Unexpected nullptr DynamicalEntityData: "
+      errmsg << "Unexpected nullptr DynamicalEntityData: "
              << pe_packing_data.name << "\n";
-      // Print message and terminate.
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
    this->dynamical_data = dynamics_data_ptr;
 

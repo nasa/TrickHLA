@@ -36,7 +36,6 @@ NASA, Johnson Space Center\n
 #include <cstdlib>
 #include <cstring>
 #include <limits>
-#include <ostream>
 #include <sstream>
 #include <string>
 
@@ -97,11 +96,8 @@ void InteractionHandler::set_interaction( TrickHLA::Interaction *inter )
 {
    // Check for initialization.
    if ( initialized ) {
-      ostringstream errmsg;
-      errmsg << "TrickHLA::InteractionHandler::set_interaction():" << __LINE__
-             << " ERROR: The initialize() function has already been called\n";
-      // Print message and terminate.
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__,
+                               "The initialize() function has already been called\n" );
    }
 
    // Assign the object.
@@ -225,10 +221,8 @@ Parameter *InteractionHandler::get_parameter_and_validate(
 {
    // Make sure the FOM name is not nullptr.
    if ( param_FOM_name.empty() ) {
-      ostringstream errmsg;
-      errmsg << "InteractionHandler::get_parameter_and_validate():" << __LINE__
-             << " ERROR: Unexpected nullptr parameter FOM name specified.\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__,
+                               "Unexpected nullptr parameter FOM name specified.\n" );
    }
 
    // Get the parameter by FOM name.
@@ -237,14 +231,13 @@ Parameter *InteractionHandler::get_parameter_and_validate(
    // Make sure we have found the parameter.
    if ( param == nullptr ) {
       ostringstream errmsg;
-      errmsg << "InteractionHandler::get_parameter_and_validate():" << __LINE__
-             << " ERROR: For FOM interaction '" << interaction->get_FOM_name()
+      errmsg << "For FOM interaction '" << interaction->get_FOM_name()
              << "', failed to find the TrickHLA Parameter for an parameter named"
              << " '" << param_FOM_name << "'. Make sure the FOM parameter name is"
              << " correct, the FOM contains an parameter named '"
              << param_FOM_name << "' and that your input.py file is properly"
              << " configured for this parameter.\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
    return param;
 }

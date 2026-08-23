@@ -31,7 +31,6 @@ NASA, Johnson Space Center\n
 
 // System include files.
 #include <cstring>
-#include <ostream>
 #include <sstream>
 #include <string>
 
@@ -76,22 +75,20 @@ CharASCIIStringEncoder::CharASCIIStringEncoder(
    if ( ( this->type != TRICK_CHARACTER )
         && ( this->type != TRICK_UNSIGNED_CHARACTER ) ) {
       ostringstream errmsg;
-      errmsg << "CharASCIIStringEncoder::CharASCIIStringEncoder():" << __LINE__
-             << " ERROR: Trick type for the '" << data_name
+      errmsg << "Trick type for the '" << data_name
              << "' simulation variable (type:" << attr->type_name
              << ") is not the expected type '"
              << trickTypeCharString( TRICK_CHARACTER, "UNSUPPORTED_TYPE" )
              << "'.\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       return;
    }
 
    if ( !is_dynamic_array() ) {
       ostringstream errmsg;
-      errmsg << "CharASCIIStringEncoder::CharASCIIStringEncoder():" << __LINE__
-             << " ERROR: Trick ref-attributes for '" << data_name
+      errmsg << "Trick ref-attributes for '" << data_name
              << "' the variable must be a dynamic variable array!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       return;
    }
 

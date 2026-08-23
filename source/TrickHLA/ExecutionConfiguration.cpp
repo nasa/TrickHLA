@@ -130,10 +130,8 @@ void ExecutionConfiguration::configure_attributes()
 {
    // Check to make sure we have an S_define name for this ExCO instance.
    if ( S_define_name.empty() ) {
-      ostringstream errmsg;
-      errmsg << "TrickHLA::ExecutionConfiguration::configure_attributes():" << __LINE__
-             << " ERROR: Unexpected empty S_define_name.\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__,
+                               "Unexpected empty S_define_name.\n" );
    }
 
    //---------------------------------------------------------
@@ -186,10 +184,8 @@ void ExecutionConfiguration::configure_attributes()
 void ExecutionConfiguration::configure()
 {
    if ( this->federate == nullptr ) {
-      ostringstream errmsg;
-      errmsg << "TrickHLA::ExecutionConfiguration::configure():" << __LINE__
-             << " ERROR: Null TrickHLA::Federate passed in!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__,
+                               "Null TrickHLA::Federate passed in!\n" );
       return;
    }
 

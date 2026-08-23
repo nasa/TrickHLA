@@ -164,14 +164,7 @@ void SpaceTimeCoordinateEncoder::encode()
    try {
       encoder.encode( encoded_data );
    } catch ( RTI1516_NAMESPACE::EncoderException &e ) {
-      ostringstream errmsg;
-      std::string   what_s;
-      StringUtilities::to_string( what_s, e.what() );
-      errmsg << "SpaceFOM::SpaceTimeCoordinateEncoder::encode():" << __LINE__
-             << " Error: Encoder exception!\n";
-      errmsg << what_s;
-      // Print message and terminate.
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, e );
    }
 
    // Copy the encoded data into the buffer.
@@ -208,14 +201,7 @@ void SpaceTimeCoordinateEncoder::decode()
    try {
       encoder.decode( encoded_data );
    } catch ( RTI1516_NAMESPACE::EncoderException &e ) {
-      ostringstream errmsg;
-      std::string   what_s;
-      StringUtilities::to_string( what_s, e.what() );
-      errmsg << "SpaceFOM::SpaceTimeCoordinateEncoder::decode():" << __LINE__
-             << " Error: Encoder exception!\n";
-      errmsg << what_s;
-      // Print message and terminate.
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, e );
    }
 
    return;

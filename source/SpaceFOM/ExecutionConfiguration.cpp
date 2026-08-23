@@ -147,10 +147,7 @@ void ExecutionConfiguration::configure_attributes()
 {
    // Check to make sure we have a reference to the TrickHLA::FedAmb.
    if ( S_define_name.empty() ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::ExecutionConfiguration::configure_attributes():" << __LINE__
-             << " ERROR: Unexpected empty S_define_name.\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Unexpected empty S_define_name.\n" );
    }
 
    //
@@ -218,10 +215,7 @@ void ExecutionConfiguration::configure()
 {
    // Check to make sure we have a reference to the TrickHLA::FedAmb.
    if ( federate == nullptr ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::ExecutionConfiguration::configure():" << __LINE__
-             << " ERROR: Unexpected nullptr TrickHLA::Federate.\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr TrickHLA::Federate.\n" );
       return;
    }
 
@@ -276,10 +270,7 @@ void ExecutionConfiguration::pack()
    }
 
    if ( ( federate != nullptr ) && !federate->verify_time_constraints() ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::ExecutionConfiguration::pack():" << __LINE__
-             << " ERROR: Invalid time constraints!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Invalid time constraints!\n" );
    }
 }
 
@@ -327,12 +318,11 @@ void ExecutionConfiguration::verify_ExCO_data()
    if ( execution_control->does_cte_timeline_exist()
         && ( next_mode_cte_time <= std::numeric_limits< double >::lowest() ) ) {
       ostringstream errmsg;
-      errmsg << "SpaceFOM::ExecutionConfiguration::verify_ExCO_data():" << __LINE__
-             << " ERROR: Execution Configuration has an invalid next mode"
+      errmsg << "Execution Configuration has an invalid next mode"
              << " CTE time of " << next_mode_cte_time << "! Please make sure"
              << " all your Central Timing Equipment is using the same"
              << " synchronized time source.\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 }
 
@@ -451,10 +441,7 @@ void ExecutionConfiguration::set_least_common_time_step(
 void ExecutionConfiguration::setup_ref_attributes(
    Packing *packing_obj )
 {
-   ostringstream errormsg;
-   errormsg << "SpaceFOM::ExecutionConfiguration::setup_ref_attributes():" << __LINE__
-            << " ERROR: This routine does NOT work and should not be called!\n";
-   DebugHandler::terminate( errormsg.str() );
+   DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "This routine does NOT work and should not be called!\n" );
 
    //
    // Set up object properties specifically for the ExCO.
@@ -499,10 +486,7 @@ void ExecutionConfiguration::setup_ref_attributes(
    this->attr_count = 7;
    this->attributes = MemoryServices::declare_var( this->attributes, this->attr_count );
    if ( this->attributes == nullptr ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::ExecutionConfiguration::setup_ref_attributes():" << __LINE__
-             << " FAILED to allocate enough memory for the attributes of the ExCO!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Failed to allocate enough memory for the attributes of the ExCO!\n" );
       return;
    }
 
@@ -539,10 +523,9 @@ void ExecutionConfiguration::setup_ref_attributes(
    REF2 *exco_ref2 = reinterpret_cast< REF2 * >( malloc( sizeof( REF2 ) ) );
    if ( exco_ref2 == nullptr ) {
       ostringstream errmsg;
-      errmsg << "SpaceFOM::ExecutionConfiguration::setup_ref_attributes():" << __LINE__
-             << " FAILED to allocate enough memory for the REF2 structure for"
+      errmsg << "Failed to allocate enough memory for the REF2 structure for"
              << " the 'root_frame_name' value of the ExCO!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       return;
    }
 
@@ -555,10 +538,9 @@ void ExecutionConfiguration::setup_ref_attributes(
       exco_ref2 = nullptr;
 
       ostringstream errmsg;
-      errmsg << "SpaceFOM::ExecutionConfiguration::setup_ref_attributes():" << __LINE__
-             << " FAILED to allocate enough memory for the ATTRIBUTES for the"
+      errmsg << "Failed to allocate enough memory for the ATTRIBUTES for the"
              << " 'root_frame_name' value of the ExCO!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       return;
    }
 
@@ -678,13 +660,12 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
                sleep_timer.reset();
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
-                  errmsg << "SpaceFOM::ExecutionConfiguration::wait_for_update():" << __LINE__
-                         << " ERROR: Unexpectedly the Federate is no longer an execution member."
+                  errmsg << "Unexpectedly the Federate is no longer an execution member."
                          << " This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
                          << " the Central RTI Component (CRC) level!\n";
-                  DebugHandler::terminate( errmsg.str() );
+                  DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
                }
             }
 
@@ -706,13 +687,12 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
 
    } else {
       ostringstream errmsg;
-      errmsg << "SpaceFOM::ExecutionConfiguration::wait_for_update():" << __LINE__
-             << " ERROR: Execution-Configuration"
+      errmsg << "Execution-Configuration"
              << " is not configured to receive at least one object attribute."
              << " Make sure at least one 'exec_config' attribute has"
              << " 'subscribe = true' set. Please check your input or modified-data"
              << " files to make sure the 'subscribe' value is correctly specified.\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    return true;

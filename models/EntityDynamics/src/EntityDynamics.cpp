@@ -30,10 +30,6 @@ NASA, Johnson Space Center\n
 
 */
 
-// System includes.
-#include <iostream>
-#include <sstream>
-
 // Trick includes.
 #include "trick/Integrator.hh"
 #include "trick/matrix_macros.h"
@@ -89,11 +85,7 @@ void EntityDynamics::initialize()
 {
    // Compute the inverse of the inertia matrix.
    if ( dm_invert_symm( I_inv, de_data.inertia ) != TM_SUCCESS ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::PhysicalEntityBase::set_object():" << __LINE__
-             << " ERROR: The initialize() function has already been called\n";
-      // Print message and terminate.
-      TrickHLA::DebugHandler::terminate( errmsg.str() );
+      TrickHLA::DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "The initialize() function has already been called\n" );
    }
 
    return;

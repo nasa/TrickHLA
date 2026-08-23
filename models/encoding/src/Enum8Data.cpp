@@ -74,10 +74,7 @@ Enum8Data::Enum8Data(
    ptr_enum8 = static_cast< TrickHLAModel::Int8Enum * >(
       TMM_declare_var_1d( "TrickHLAModel::Int8Enum", ptr_enum8_size ) );
    if ( ptr_enum8 == nullptr ) {
-      ostringstream errmsg;
-      errmsg << "Enum8Data::Enum8Data():" << __LINE__
-             << " ERROR: Failed to allocate memory for ptr_enum8!\n";
-      TrickHLA::DebugHandler::terminate( errmsg.str() );
+      TrickHLA::DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Failed to allocate memory for ptr_enum8!\n" );
       return;
    }
    for ( int i = 0; i < ptr_enum8_size; ++i ) {

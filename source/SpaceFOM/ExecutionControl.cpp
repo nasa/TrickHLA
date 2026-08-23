@@ -251,13 +251,12 @@ void ExecutionControl::initialize()
    // A designated late joiner federate cannot be the preset Master.
    if ( is_designated_late_joiner() && is_master() ) {
       ostringstream errmsg;
-      errmsg << "SpaceFOM::ExecutionControl::initialize():" << __LINE__
-             << " ERROR: This federate is configured as both a designated late"
+      errmsg << "This federate is configured as both a designated late"
              << " joiner and as the preset Master, which is not allowed. Check"
              << " your input.py file or Modified data files to make sure this"
              << " federate is not configured as both the preset master and a"
              << " designated late joiner.\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
@@ -298,11 +297,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
    // Allocate the Mode Transition Request Interaction.
    mtr_interaction = MemoryServices::declare_var( mtr_interaction, 1 );
    if ( mtr_interaction == nullptr ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::ExecutionControl::setup_MTR_interaction_ref_attributes():" << __LINE__
-             << " FAILED to allocate enough memory for Interaction specialized"
-             << " to MTR the sim!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Failed to allocate enough memory for Interaction specialized to MTR the sim!\n" );
       return;
    }
 
@@ -321,11 +316,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
    Parameter *tParm = nullptr;
    tParm            = MemoryServices::declare_var( tParm, mtr_interaction->get_parameter_count() );
    if ( tParm == nullptr ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__
-             << " FAILED to allocate enough memory for the parameters of the"
-             << " MTR interaction!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Failed to allocate enough memory for the parameters of then MTR interaction!\n" );
       return;
    }
 
@@ -346,10 +337,9 @@ void ExecutionControl::setup_interaction_ref_attributes()
    ATTRIBUTES *mode_attr = static_cast< ATTRIBUTES * >( malloc( 2 * sizeof( ATTRIBUTES ) ) );
    if ( mode_attr == nullptr ) {
       ostringstream errmsg;
-      errmsg << "SpaceFOM::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__
-             << " FAILED to aallocate enough memory for the ATTRIBUTES for the"
+      errmsg << "Failed to allocate enough memory for the ATTRIBUTES for the"
              << " 'execution_mode' value of the MTR interaction!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       return;
    }
 
@@ -410,10 +400,7 @@ void ExecutionControl::setup_object_RTI_handles()
 {
    ExecutionConfiguration *ExCO = get_execution_configuration();
    if ( ExCO == nullptr ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::ExecutionControl::setup_object_RTI_handles():" << __LINE__
-             << " ERROR: Unexpected nullptr ExCO!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr ExCO!\n" );
       return;
    }
    object_service->setup_object_RTI_handles( 1, ExCO );
@@ -485,10 +472,9 @@ void ExecutionControl::sync_point_announced(
          string label_str;
          StringUtilities::to_string( label_str, label );
          ostringstream errmsg;
-         errmsg << "SpaceFOM::ExecutionControl::sync_point_announced():" << __LINE__
-                << " ERROR: Failed to mark sync-point '" << label_str
+         errmsg << "Failed to mark sync-point '" << label_str
                 << "' as announced.\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       }
 
       // For a designated late joiner, achieve sync-points during initialization.
@@ -524,15 +510,14 @@ void ExecutionControl::sync_point_announced(
          string init_complete_sp_label;
          StringUtilities::to_string( init_complete_sp_label, SpaceFOM::INIT_COMPLETED_SYNC_POINT );
          ostringstream errmsg;
-         errmsg << "SpaceFOM::ExecutionControl::sync_point_announced():" << __LINE__
-                << " ERROR: All multiphase initialization sync-points were not"
+         errmsg << "All multiphase initialization sync-points were not"
                 << " synchronized by the time the '" << init_complete_sp_label
                 << "' sync-point label was announced. Make sure all federates"
                 << " are configured to use all the multiphase initialization"
                 << " sync-points. The state of the multiphase initialization"
                 << " sync-points configured for this federate:\n"
                 << to_string( TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST ) << "\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       }
    }
 }
@@ -757,13 +742,12 @@ void ExecutionControl::role_determination_process()
                   // Check that we maintain federation membership.
                   if ( !federate->is_execution_member() ) {
                      ostringstream errmsg;
-                     errmsg << "SpaceFOM::ExecutionControl::role_determination_process():" << __LINE__
-                            << " ERROR: Unexpectedly the Federate is no longer an execution member."
+                     errmsg << "Unexpectedly the Federate is no longer an execution member."
                             << " This means we are either not connected to the"
                             << " RTI or we are no longer joined to the federation"
                             << " execution because someone forced our resignation at"
                             << " the Central RTI Component (CRC) level!\n";
-                     DebugHandler::terminate( errmsg.str() );
+                     DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
                   }
                }
 
@@ -946,13 +930,12 @@ void ExecutionControl::designated_late_joiner_init_process()
             // Check that we maintain federation membership.
             if ( !federate->is_execution_member() ) {
                ostringstream errmsg;
-               errmsg << "SpaceFOM::ExecutionControl::designated_late_joiner_init_process():" << __LINE__
-                      << " ERROR: Unexpectedly the Federate is no longer an execution member."
+               errmsg << "Unexpectedly the Federate is no longer an execution member."
                       << " This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
                       << " the Central RTI Component (CRC) level!\n";
-               DebugHandler::terminate( errmsg.str() );
+               DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
             }
          }
 
@@ -1089,19 +1072,13 @@ void ExecutionControl::pre_multi_phase_init_processes()
 
    // The User Must specify an ExCO.
    if ( ExCO == nullptr ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
-             << " ERROR: Unexpected nullptr THLA.federate.exec_config object.\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr THLA.federate.exec_config object.\n" );
       return;
    }
 
    // Make sure the ExCO has at least a FOM-name to be valid.
    if ( ExCO->get_FOM_name().empty() ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
-             << " ERROR: Unexpected nullptr FOM-name for the THLA.federate.exec_config object.\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr FOM-name for the THLA.federate.exec_config object.\n" );
       return;
    }
 
@@ -1111,11 +1088,10 @@ void ExecutionControl::pre_multi_phase_init_processes()
       // must have the root_ref_frame reference set.
       if ( is_master() || is_root_frame_publisher() ) {
          ostringstream errmsg;
-         errmsg << "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
-                << " ERROR: Unexpected nullptr THLA.federate.root_ref_frame object."
+         errmsg << "Unexpected nullptr THLA.federate.root_ref_frame object."
                 << " The Master federate or the Root Reference Frame Publisher"
                 << " federate must have the root_ref_frame reference set.\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       } else {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             message_publish( MSG_WARNING, "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():%d WARNING: No root reference frame!\n",
@@ -1132,30 +1108,25 @@ void ExecutionControl::pre_multi_phase_init_processes()
       // associated ExCO.
       if ( this->least_common_time_step != ExCO->get_least_common_time_step() ) {
          ostringstream errmsg;
-         errmsg << "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
-                << " ERROR: Least-Common-Time-Step (LCTS) time ("
+         errmsg << "Least-Common-Time-Step (LCTS) time ("
                 << this->least_common_time_step << " " << Int64BaseTime::get_base_unit()
                 << ") is not equal to ExCO LCTS ("
                 << ExCO->get_least_common_time_step() << " " << Int64BaseTime::get_base_unit()
                 << ")!\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       }
 
       // The Master federate must have a padding time set.
       if ( get_time_padding() <= 0.0 ) {
          ostringstream errmsg;
-         errmsg << "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
-                << " ERROR: For this Master federate, the time padding ("
+         errmsg << "For this Master federate, the time padding ("
                 << get_time_padding() << " seconds) must be greater than zero!\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       }
 
       // Verify the Master federate time constraints.
       if ( !federate->verify_time_constraints() ) {
-         ostringstream errmsg;
-         errmsg << "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
-                << " ERROR: Time constraints verification failed!\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Time constraints verification failed!\n" );
       }
    }
 
@@ -1225,10 +1196,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
    if ( !is_master() ) {
       // Verify the non-Master federate time constraints.
       if ( !federate->verify_time_constraints() ) {
-         ostringstream errmsg;
-         errmsg << "SpaceFOM::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
-                << " ERROR: Time constraints verification failed!\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Time constraints verification failed!\n" );
       }
    }
 }
@@ -1335,11 +1303,10 @@ void ExecutionControl::post_multi_phase_init_processes()
          default: {
             ExCO->print_execution_configuration();
             ostringstream errmsg;
-            errmsg << "SpaceFOM::ExecutionControl::post_multi_phase_init_process():" << __LINE__
-                   << " ERROR: SpaceFOM ExecutionControl invalid execution mode"
+            errmsg << "SpaceFOM ExecutionControl invalid execution mode"
                    << " (" << execution_control_enum_to_string( this->requested_execution_control_mode )
                    << "), exiting...\n";
-            DebugHandler::terminate( errmsg.str() );
+            DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
             break;
          }
       }
@@ -1396,11 +1363,10 @@ void ExecutionControl::post_multi_phase_init_processes()
                   ExCO->print_execution_configuration();
 
                   ostringstream errmsg;
-                  errmsg << "SpaceFOM::ExecutionControl::post_multi_phase_init_process():" << __LINE__
-                         << " ERROR: SpaceFOM ExecutionControl invalid execution mode"
+                  errmsg << "SpaceFOM ExecutionControl invalid execution mode"
                          << " (" << execution_control_enum_to_string( this->requested_execution_control_mode )
                          << "), exiting...\n";
-                  DebugHandler::terminate( errmsg.str() );
+                  DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
                   break;
                }
             }
@@ -1552,10 +1518,7 @@ void ExecutionControl::set_next_execution_control_mode(
 
    // This should only be called by the Master federate.
    if ( !is_master() ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::ExecutionControl::set_next_execution_control_mode():" << __LINE__
-             << " ERROR: This should only be called by the Master federate!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "This should only be called by the Master federate!\n" );
    }
 
    switch ( exec_control ) {
@@ -1908,10 +1871,7 @@ bool ExecutionControl::process_execution_control_updates()
       // software-frame, Least Common Time Step (LCTS), lookahead and delta
       // time step times.
       if ( ( federate != nullptr ) && !federate->verify_time_constraints() ) {
-         ostringstream errmsg;
-         errmsg << "SpaceFOM::ExecutionControl::process_execution_control_updates():" << __LINE__
-                << " ERROR: Time constraints verification failed!\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Time constraints verification failed!\n" );
       }
    }
 
@@ -2266,10 +2226,7 @@ bool ExecutionControl::run_mode_transition()
 
    // Make sure that we have a valid sync-point.
    if ( !contains_sync_point( SpaceFOM::MTR_RUN_SYNC_POINT ) ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::ExecutionControl::run_mode_transition():" << __LINE__
-             << " ERROR: The 'mtr_run' sync-point was not found!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "The 'mtr_run' sync-point was not found!\n" );
       return false;
    }
 
@@ -2386,10 +2343,7 @@ bool ExecutionControl::freeze_mode_transition()
 {
    // Make sure that we have a valid sync-point.
    if ( !contains_sync_point( SpaceFOM::MTR_FREEZE_SYNC_POINT ) ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::ExecutionControl::freeze_mode_transition():" << __LINE__
-             << " ERROR: The 'mtr_freeze' sync-point was not found!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "The 'mtr_freeze' sync-point was not found!\n" );
    } else {
 
       // Wait for 'mtr_freeze' sync-point announce.
@@ -2489,17 +2443,15 @@ bool ExecutionControl::check_for_shutdown_with_termination()
    // If so, it's time to say good bye.
    if ( check_for_shutdown() ) {
       ostringstream errmsg;
-      errmsg << "SpaceFOM::ExecutionControl::check_for_shutdown_with_termination():" << __LINE__
-             << " WARNING: This Federate '" << federate->get_federate_name()
-             << "' detected a";
+      errmsg << "WARNING: This Federate '" << federate->get_federate_name()
+             << "' detected the";
       if ( is_sync_point_announced( SpaceFOM::MTR_SHUTDOWN_SYNC_POINT ) ) {
          errmsg << " Shutdown sync-point 'mtr_shutdown',";
       }
       if ( execution_configuration->is_object_deleted_from_RTI() ) {
-         errmsg << " Execution Configuration Object (ExCO) deleted from the RTI";
+         errmsg << " Execution Configuration Object (ExCO) was deleted";
       }
-      errmsg << " for the '" << federate->get_federation_name()
-             << "' Federation.\n";
+      errmsg << " for the '" << federate->get_federation_name() << "' Federation.\n";
 
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          message_publish( MSG_WARNING, errmsg.str().c_str() );
@@ -2511,7 +2463,7 @@ bool ExecutionControl::check_for_shutdown_with_termination()
       // Wait a little while for the Federate HLA interface to shutdown before
       // we terminate.
       Utilities::micro_sleep( 500000 );
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
 
       return true;
    }
@@ -2755,12 +2707,11 @@ void ExecutionControl::exit_freeze()
       // aligned with the other federates.
       if ( ExCO->get_next_mode_cte_time() <= std::numeric_limits< double >::lowest() ) {
          ostringstream errmsg;
-         errmsg << "SpaceFOM::ExecutionControl::exit_freeze():" << __LINE__
-                << " ERROR: Execution Configuration has an invalid next mode"
+         errmsg << "Execution Configuration has an invalid next mode"
                 << " CTE time of " << ExCO->get_next_mode_cte_time()
                 << "! Please make sure all your Central Timing Equipment is"
                 << " using the same synchronized time.\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       }
       ref = the_exec->get_time_tics()
             + (int64_t)( ( get_cte_time() - ExCO->get_next_mode_cte_time() )
@@ -2781,10 +2732,7 @@ ExecutionConfiguration *ExecutionControl::get_execution_configuration()
 {
    ExecutionConfiguration *ExCO = dynamic_cast< SpaceFOM::ExecutionConfiguration * >( execution_configuration );
    if ( ExCO == nullptr ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::ExecutionControl::get_execution_configuration():" << __LINE__
-             << " ERROR: Execution Configuration is not an SpaceFOM ExCO.\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Execution Configuration is not an SpaceFOM ExCO.\n" );
    }
    return ( ExCO );
 }
@@ -2850,10 +2798,9 @@ void ExecutionControl::epoch_and_root_frame_discovery_process()
       if ( ExCO->get_scenario_time_epoch() <= std::numeric_limits< double >::lowest() ) {
          ExCO->print_execution_configuration();
          ostringstream errmsg;
-         errmsg << "SpaceFOM::ExecutionControl::epoch_and_root_frame_discovery_process():" << __LINE__
-                << " ERROR: Did not receive an Execution Configuration scenario"
+         errmsg << "Did not receive an Execution Configuration scenario"
                 << " time epoch from the Master SpaceFOM federate!\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       }
 
       // Process the just received ExCO update.
@@ -2936,10 +2883,7 @@ void ExecutionControl::send_root_ref_frame()
 
    // Make sure that the root reference frame is set.
    if ( root_ref_frame == nullptr ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::ExecutionControl::send_root_ref_frame():" << __LINE__
-             << " ERROR: Root Reference Frame is not set!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Root Reference Frame is not set!\n" );
       return;
    }
 
@@ -2947,10 +2891,9 @@ void ExecutionControl::send_root_ref_frame()
 
    if ( rrf_object == nullptr ) {
       ostringstream errmsg;
-      errmsg << "SpaceFOM::ExecutionControl::send_root_ref_frame():" << __LINE__
-             << " ERROR: Unexpected null Root Reference Frame object from"
+      errmsg << "Unexpected null Root Reference Frame object from"
              << " call to root_ref_frame->get_object()!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       return;
    }
 
@@ -2967,13 +2910,12 @@ void ExecutionControl::send_root_ref_frame()
 
    } else {
       ostringstream errmsg;
-      errmsg << "SpaceFOM::ExecutionControl::send_root_ref_frame():" << __LINE__
-             << " ERROR: Root Reference Frame is not configured to send at"
+      errmsg << "Root Reference Frame is not configured to send at"
              << " least one object attribute. Make sure at least one"
              << " 'root_ref_frame' attribute has 'publish = true' set. Please"
              << " check your input or modified-data files to make sure the"
              << " 'publish' value is correctly specified.\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 }
 
@@ -3009,10 +2951,9 @@ void ExecutionControl::receive_root_ref_frame()
 
    if ( rrf_object == nullptr ) {
       ostringstream errmsg;
-      errmsg << "SpaceFOM::ExecutionControl::receive_root_ref_frame():" << __LINE__
-             << " ERROR: Unexpected null Root Reference Frame object from"
+      errmsg << "Unexpected null Root Reference Frame object from"
              << " call to root_ref_frame->get_object()!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       return;
    }
 
@@ -3049,13 +2990,12 @@ void ExecutionControl::receive_root_ref_frame()
                sleep_timer.reset();
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
-                  errmsg << "SpaceFOM::ExecutionControl::receive_root_ref_frame():" << __LINE__
-                         << " ERROR: Unexpectedly the Federate is no longer an execution member."
+                  errmsg << "Unexpectedly the Federate is no longer an execution member."
                          << " This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
                          << " the Central RTI Component (CRC) level!\n";
-                  DebugHandler::terminate( errmsg.str() );
+                  DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
                }
             }
 
@@ -3077,13 +3017,12 @@ void ExecutionControl::receive_root_ref_frame()
 
    } else {
       ostringstream errmsg;
-      errmsg << "SpaceFOM::ExecutionControl::receive_root_ref_frame():" << __LINE__
-             << " ERROR: Execution-Configuration is not configured to receive"
+      errmsg << "Execution-Configuration is not configured to receive"
              << " at least one object attribute. Make sure at least one"
              << " 'root_ref_frame' attribute has 'subscribe = true' set. Please"
              << " check your input or modified-data files to make sure the"
              << " 'subscribe' value is correctly specified.\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 }
 
@@ -3101,10 +3040,7 @@ void ExecutionControl::start_federation_save_at_SST(
    double         freeze_sst,
    wstring const &file_name )
 {
-   ostringstream errmsg;
-   errmsg << "SpaceFOM::ExecutionControl::start_federation_save_at_scenario_time:" << __LINE__
-          << " ERROR: The ExecutionControl does not yet support SAVE/RESTORE!\n";
-   DebugHandler::terminate( errmsg.str() );
+   DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "The ExecutionControl does not yet support SAVE/RESTORE!\n" );
 }
 #pragma GCC diagnostic pop
 
@@ -3116,10 +3052,7 @@ void ExecutionControl::set_least_common_time_step(
 {
    // SpaceFOM depends on the LCTS being enabled and used.
    if ( !is_enabled_least_common_time_step() ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::ExecutionControl::set_least_common_time_step():" << __LINE__
-             << " ERROR: Least Common Time Step (LCTS) is not enabled!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Least Common Time Step (LCTS) is not enabled!\n" );
    }
 
    // WARNING: Only the Master federate should ever set this.
@@ -3127,10 +3060,7 @@ void ExecutionControl::set_least_common_time_step(
 
       ExecutionConfiguration *ExCO = dynamic_cast< SpaceFOM::ExecutionConfiguration * >( execution_configuration );
       if ( ExCO == nullptr ) {
-         ostringstream errmsg;
-         errmsg << "SpaceFOM::ExecutionControl::set_least_common_time_step():" << __LINE__
-                << " ERROR: Execution Configuration is not an SpaceFOM ExCO.\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Execution Configuration is not an SpaceFOM ExCO.\n" );
          return;
       }
 
@@ -3161,10 +3091,9 @@ void ExecutionControl::set_time_padding(
 {
    if ( t <= 0.0 ) {
       ostringstream errmsg;
-      errmsg << "TrickHLA::ExecutionControl::set_time_padding():" << __LINE__
-             << " ERROR: Time padding value (" << t
+      errmsg << "Time padding value (" << t
              << " seconds) must be greater than zero!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    int64_t const padding_base_time = Int64BaseTime::to_base_time( t );
@@ -3172,25 +3101,23 @@ void ExecutionControl::set_time_padding(
    // At a minimum the Padding time must be >= LCTS.
    if ( padding_base_time < this->least_common_time_step ) {
       ostringstream errmsg;
-      errmsg << "SpaceFOM::ExecutionControl::set_time_padding():" << __LINE__
-             << " ERROR: Mode transition padding time ("
+      errmsg << "Mode transition padding time ("
              << padding_base_time << " " << Int64BaseTime::get_base_unit()
              << ") can not be less than the ExCO Least Common Time Step (LCTS:"
              << this->least_common_time_step << " " << Int64BaseTime::get_base_unit()
              << ")!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    // Time padding needs to be an integer multiple of the LCTS.
    if ( ( padding_base_time % this->least_common_time_step ) != 0 ) {
       ostringstream errmsg;
-      errmsg << "SpaceFOM::ExecutionControl::set_time_padding():" << __LINE__
-             << " ERROR: Time padding value ("
+      errmsg << "Time padding value ("
              << padding_base_time << " " << Int64BaseTime::get_base_unit()
              << ") must be an integer multiple of the Least Common Time Step (LCTS:"
              << this->least_common_time_step << " " << Int64BaseTime::get_base_unit()
              << ")!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    // The Master federate padding time must be 3 or more times the Least
@@ -3199,15 +3126,14 @@ void ExecutionControl::set_time_padding(
    if ( ( padding_base_time < Int64BaseTime::to_base_time( THLA_PADDING_DEFAULT ) )
         && ( padding_base_time < ( 3 * this->least_common_time_step ) ) ) {
       ostringstream errmsg;
-      errmsg << "SpaceFOM::ExecutionControl::set_time_padding():" << __LINE__
-             << " ERROR: Mode transition padding time ("
+      errmsg << "Mode transition padding time ("
              << padding_base_time << " " << Int64BaseTime::get_base_unit()
              << ") is not a multiple of 3 or more of the ExCO"
              << " Least Common Time Step (LCTS:"
              << this->least_common_time_step << " " << Int64BaseTime::get_base_unit()
              << ") when the time padding is less than "
              << THLA_PADDING_DEFAULT << " seconds!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    // For a Master federate using CTE, we need to make sure the padding
@@ -3217,8 +3143,7 @@ void ExecutionControl::set_time_padding(
 
       if ( t <= ( 2.0 * exec_get_freeze_frame() ) ) {
          ostringstream errmsg;
-         errmsg << "SpaceFOM::ExecutionControl::set_time_padding():" << __LINE__
-                << " ERROR: Mode transition padding time (" << t
+         errmsg << "Mode transition padding time (" << t
                 << " seconds) must be more than two times the Trick freeze"
                 << " frame time (" << exec_get_freeze_frame() << " seconds)!"
                 << " In your input.py file, please update the padding time"
@@ -3236,7 +3161,7 @@ void ExecutionControl::set_time_padding(
             errmsg << "   federate.set_time_padding( " << t << " )\n"
                    << "   trick.exec_set_freeze_frame( " << ( t / 4 ) << " )\n";
          }
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       }
    }
 

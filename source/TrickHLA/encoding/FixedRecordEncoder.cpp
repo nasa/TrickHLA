@@ -30,8 +30,6 @@ NASA, Johnson Space Center\n
 
 // System include files.
 #include <cstddef>
-#include <ostream>
-#include <sstream>
 #include <typeinfo>
 
 // TrickHLA include files.
@@ -89,10 +87,8 @@ void FixedRecordEncoder::update_before_encode(
             EncoderBase &element_encoder = dynamic_cast< EncoderBase & >( data_elem );
             element_encoder.update_before_encode();
          } catch ( std::bad_cast &e ) {
-            ostringstream errmsg;
-            errmsg << "FixedRecordEncoder::update_before_encode():" << __LINE__
-                   << " ERROR: Unexpected encoder that does not extend EncoderBase!\n";
-            DebugHandler::terminate( errmsg.str() );
+            DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__,
+                                     "Unexpected encoder that does not extend EncoderBase!\n" );
          }
       }
    }
@@ -116,10 +112,8 @@ void FixedRecordEncoder::update_after_decode(
             EncoderBase &element_encoder = dynamic_cast< EncoderBase & >( data_elem );
             element_encoder.update_after_decode();
          } catch ( std::bad_cast &e ) {
-            ostringstream errmsg;
-            errmsg << "FixedRecordEncoder::update_after_decode():" << __LINE__
-                   << " ERROR: Unexpected encoder that does not extend EncoderBase!\n";
-            DebugHandler::terminate( errmsg.str() );
+            DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__,
+                                     "Unexpected encoder that does not extend EncoderBase!\n" );
          }
       }
    }
@@ -129,10 +123,6 @@ size_t FixedRecordEncoder::get_data_size()
 {
    // TODO: Implement this function.
 
-   ostringstream errmsg;
-   errmsg << "FixedRecordEncoder::get_data_size():" << __LINE__
-          << " ERROR: Not Supported!\n";
-   DebugHandler::terminate( errmsg.str() );
-
+   DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Not Supported!\n" );
    return 0;
 }

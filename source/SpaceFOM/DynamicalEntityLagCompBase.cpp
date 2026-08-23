@@ -160,12 +160,12 @@ void DynamicalEntityLagCompBase::initialize_states()
 void DynamicalEntityLagCompBase::send_lag_compensation()
 {
    if ( !initialized ) {
+
+#if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "The initialize() function has not been called!\n" );
+#else
       ostringstream errmsg;
       errmsg << "DynamicalEntityLagCompBase::send_lag_compensation():" << __LINE__
-#if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
-             << " ERROR: The initialize() function has not been called!\n";
-      DebugHandler::terminate( errmsg.str() );
-#else
              << " WARNING: The initialize() function has not been called!\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
 #endif
@@ -223,12 +223,12 @@ void DynamicalEntityLagCompBase::send_lag_compensation()
 void DynamicalEntityLagCompBase::receive_lag_compensation()
 {
    if ( !initialized ) {
+
+#if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "The initialize() function has not been called!\n" );
+#else
       ostringstream errmsg;
       errmsg << "DynamicalEntityLagCompBase::receive_lag_compensation():" << __LINE__
-#if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
-             << " ERROR: The initialize() function has not been called!\n";
-      DebugHandler::terminate( errmsg.str() );
-#else
              << " WARNING: The initialize() function has not been called!\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
 #endif
@@ -293,7 +293,7 @@ void DynamicalEntityLagCompBase::receive_lag_compensation()
       // torque affects in the lag compensation dynamics.
       if ( dm_invert_symm( this->inertia_inv, this->inertia ) != TM_SUCCESS ) {
          message_publish( MSG_WARNING,
-                          "SpaceFOM::DynamicalEntityLagCompInteg::receive_lag_compensation():%d ERROR: Singular inertia matrix! Inversion failed!\n",
+                          "SpaceFOM::DynamicalEntityLagCompInteg::receive_lag_compensation():%d Singular inertia matrix! Inversion failed!\n",
                           __LINE__ );
          M_INIT( this->inertia_inv );
       }

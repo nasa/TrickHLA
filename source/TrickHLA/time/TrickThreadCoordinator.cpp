@@ -49,7 +49,6 @@ thread data cycle time being longer than the main thread data cycle time.}
 #include "trick/Threads.hh"
 #include "trick/exec_proto.h"
 #include "trick/exec_proto.hh"
-#include "trick/message_proto.h"
 #include "trick/message_type.h"
 
 // TrickHLA includes.
@@ -99,36 +98,41 @@ TrickThreadCoordinator::~TrickThreadCoordinator() // RETURN: -- None.
    if ( this->thread_state != nullptr ) {
       this->thread_cnt = 0;
       if ( !MemoryServices::delete_var( this->thread_state ) ) {
-         message_publish( MSG_WARNING, "TrickThreadCoordinator::~TrickThreadCoordinator():%d WARNING failed to delete Trick Memory for 'this->thread_state'\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      "Failed to delete Trick Memory for 'this->thread_state'\n",
+                                      MSG_WARNING );
       }
       this->thread_state = nullptr;
    }
    if ( this->data_cycle_time_per_thread != nullptr ) {
       if ( !MemoryServices::delete_var( this->data_cycle_time_per_thread ) ) {
-         message_publish( MSG_WARNING, "TrickThreadCoordinator::~TrickThreadCoordinator():%d WARNING failed to delete Trick Memory for 'this->data_cycle_time_per_thread'\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      "Failed to delete Trick Memory for 'this->data_cycle_time_per_thread'\n",
+                                      MSG_WARNING );
       }
       this->data_cycle_time_per_thread = nullptr;
    }
    if ( this->data_cycle_base_time_per_thread != nullptr ) {
       if ( !MemoryServices::delete_var( this->data_cycle_base_time_per_thread ) ) {
-         message_publish( MSG_WARNING, "TrickThreadCoordinator::~TrickThreadCoordinator():%d WARNING failed to delete Trick Memory for 'this->data_cycle_base_time_per_thread'\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      "Failed to delete Trick Memory for 'this->data_cycle_base_time_per_thread'\n",
+                                      MSG_WARNING );
       }
       this->data_cycle_base_time_per_thread = nullptr;
    }
    if ( this->data_cycle_time_per_obj != nullptr ) {
       if ( !MemoryServices::delete_var( this->data_cycle_time_per_obj ) ) {
-         message_publish( MSG_WARNING, "TrickThreadCoordinator::~TrickThreadCoordinator():%d WARNING failed to delete Trick Memory for 'this->data_cycle_time_per_obj'\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      "Failed to delete Trick Memory for 'this->data_cycle_time_per_obj'\n",
+                                      MSG_WARNING );
       }
       this->data_cycle_time_per_obj = nullptr;
    }
    if ( this->data_cycle_base_time_per_obj != nullptr ) {
       if ( !MemoryServices::delete_var( this->data_cycle_base_time_per_obj ) ) {
-         message_publish( MSG_WARNING, "TrickThreadCoordinator::~TrickThreadCoordinator():%d WARNING failed to delete Trick Memory for 'this->data_cycle_base_time_per_obj'\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      "Failed to delete Trick Memory for 'this->data_cycle_base_time_per_obj'\n",
+                                      MSG_WARNING );
       }
       this->data_cycle_base_time_per_obj = nullptr;
    }
@@ -149,8 +153,7 @@ void TrickThreadCoordinator::initialize_thread_coordinator(
    // exceeds the configured base time.
    if ( Int64BaseTime::exceeds_base_time_resolution( main_thread_data_cycle_time ) ) {
       ostringstream errmsg;
-      errmsg << "TrickThreadCoordinator::initialize_thread_coordinator():" << __LINE__
-             << " ERROR: The main_thread_data_cycle_time specified (thread-id:0, "
+      errmsg << "The main_thread_data_cycle_time specified (thread-id:0, "
              << setprecision( 18 ) << main_thread_data_cycle_time
              << " seconds) requires more resolution"
              << " than whole " << Int64BaseTime::get_base_unit()
@@ -170,20 +173,19 @@ void TrickThreadCoordinator::initialize_thread_coordinator(
              << " Specific Federation Agreement (FESFA) and Federate Compliance"
              << " Declaration (FCD) documents for your Federation to document"
              << " the change in timing class resolution.\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    // Determine if the Trick time Tic can represent the job cycle time.
    if ( Int64BaseTime::exceeds_base_time_resolution( main_thread_data_cycle_time, exec_get_time_tic_value() ) ) {
       ostringstream errmsg;
-      errmsg << "TrickThreadCoordinator::initialize_thread_coordinator():" << __LINE__
-             << " ERROR: The main_thread_data_cycle_time specified (thread-id:0, "
+      errmsg << "The main_thread_data_cycle_time specified (thread-id:0, "
              << setprecision( 18 ) << main_thread_data_cycle_time
              << " seconds) requires more resolution"
              << " than the Trick time Tic value (" << exec_get_time_tic_value()
              << "). Please update the Trick time tic value in your input.py"
              << " file (i.e. by calling 'trick.exec_set_time_tic_value()').\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
@@ -192,11 +194,10 @@ void TrickThreadCoordinator::initialize_thread_coordinator(
 
    if ( thread_state != nullptr ) {
       ostringstream errmsg;
-      errmsg << "TrickThreadCoordinator::initialize_thread_coordinator():" << __LINE__
-             << " ERROR: This function can only be called once. Detected the"
+      errmsg << "This function can only be called once. Detected the"
              << " this->thread_state variable is already allocated memory and"
              << " is not nullptr.\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    // Set the Trick main thread data cycle time.
@@ -205,11 +206,10 @@ void TrickThreadCoordinator::initialize_thread_coordinator(
    // Verify the thread state data cycle time.
    if ( main_thread_data_cycle_base_time <= 0 ) {
       ostringstream errmsg;
-      errmsg << "TrickThreadCoordinator::initialize_thread_coordinator():" << __LINE__
-             << " ERROR: main_thread_data_cycle_time time ("
+      errmsg << "main_thread_data_cycle_time time ("
              << setprecision( 18 ) << main_thread_data_cycle_time
              << ") must be > 0.0!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    // Determine the total number of Trick threads (main + child).
@@ -225,11 +225,10 @@ void TrickThreadCoordinator::initialize_thread_coordinator(
    thread_state = MemoryServices::declare_var( thread_state, thread_cnt );
    if ( thread_state == nullptr ) {
       ostringstream errmsg;
-      errmsg << "TrickThreadCoordinator::initialize_thread_coordinator():" << __LINE__
-             << " ERROR: Could not allocate memory for 'thread_state'"
+      errmsg << "Could not allocate memory for 'thread_state'"
              << " for requested size " << thread_cnt
              << "!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    // We don't know if the Child threads are running TrickHLA jobs yet so
@@ -260,27 +259,27 @@ void TrickThreadCoordinator::initialize_thread_coordinator(
             thread_state[thread_id] = TrickHLA::THREAD_STATE_DISABLED;
 
             if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
-               message_publish( MSG_NORMAL, "TrickThreadCoordinator::initialize_thread_coordinator():%d Disabled Trick child thread association (thread-id:%d).\n",
-                                __LINE__, thread_id );
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                            string( "Disabled Trick child thread association (thread-id:" )
+                                               .append( std::to_string( thread_id ) )
+                                               .append( ").\n" ) );
             }
          } else if ( thread_id == 0 ) {
             ostringstream errmsg;
-            errmsg << "TrickThreadCoordinator::initialize_thread_coordinator():" << __LINE__
-                   << " ERROR: The Trick thread-ID '" << thread_id_vec[k]
+            errmsg << "The Trick thread-ID '" << thread_id_vec[k]
                    << "' specified in the input file for 'federate.disable_associated_thread_ids'"
                    << " is not valid because the Trick main thread (id:0) cannot"
                    << " be disabled!\n";
-            DebugHandler::terminate( errmsg.str() );
+            DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
          } else {
             ostringstream errmsg;
-            errmsg << "TrickThreadCoordinator::initialize_thread_coordinator():" << __LINE__
-                   << " ERROR: The Trick child thread-ID '" << thread_id_vec[k]
+            errmsg << "The Trick child thread-ID '" << thread_id_vec[k]
                    << "' specified in the input file for 'federate.disable_associated_thread_ids'"
                    << " is not valid because this Trick child thread does not"
                    << " exist in the S_define file! Valid Trick child thread-ID"
                    << " range is 1 to " << ( thread_cnt - 1 )
                    << "!\n";
-            DebugHandler::terminate( errmsg.str() );
+            DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
          }
       }
    }
@@ -289,20 +288,18 @@ void TrickThreadCoordinator::initialize_thread_coordinator(
    data_cycle_time_per_thread = MemoryServices::declare_var( data_cycle_time_per_thread, thread_cnt );
    if ( data_cycle_time_per_thread == nullptr ) {
       ostringstream errmsg;
-      errmsg << "TrickThreadCoordinator::initialize_thread_coordinator():" << __LINE__
-             << " ERROR: Could not allocate memory for 'data_cycle_time_per_thread'"
+      errmsg << "Could not allocate memory for 'data_cycle_time_per_thread'"
              << " for requested size " << thread_cnt
              << "!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
    data_cycle_base_time_per_thread = MemoryServices::declare_var( data_cycle_base_time_per_thread, thread_cnt );
    if ( data_cycle_base_time_per_thread == nullptr ) {
       ostringstream errmsg;
-      errmsg << "TrickThreadCoordinator::initialize_thread_coordinator():" << __LINE__
-             << " ERROR: Could not allocate memory for 'data_cycle_base_time_per_thread'"
+      errmsg << "Could not allocate memory for 'data_cycle_base_time_per_thread'"
              << " for requested size " << thread_cnt
              << "!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
    for ( unsigned int thread_id = 0; thread_id < thread_cnt; ++thread_id ) {
       data_cycle_time_per_thread[thread_id]      = 0.0;
@@ -316,21 +313,19 @@ void TrickThreadCoordinator::initialize_thread_coordinator(
       data_cycle_time_per_obj = MemoryServices::declare_var( data_cycle_time_per_obj, object_service->obj_count );
       if ( data_cycle_time_per_obj == nullptr ) {
          ostringstream errmsg;
-         errmsg << "TrickThreadCoordinator::initialize_thread_coordinator():" << __LINE__
-                << " ERROR: Could not allocate memory for 'data_cycle_time_per_obj'"
+         errmsg << "Could not allocate memory for 'data_cycle_time_per_obj'"
                 << " for requested size " << object_service->obj_count
                 << "'!\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
          return;
       }
       data_cycle_base_time_per_obj = MemoryServices::declare_var( data_cycle_base_time_per_obj, object_service->obj_count );
       if ( data_cycle_base_time_per_obj == nullptr ) {
          ostringstream errmsg;
-         errmsg << "TrickThreadCoordinator::initialize_thread_coordinator():" << __LINE__
-                << " ERROR: Could not allocate memory for 'data_cycle_base_time_per_obj'"
+         errmsg << "Could not allocate memory for 'data_cycle_base_time_per_obj'"
                 << " for requested size " << object_service->obj_count
                 << "'!\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
          return;
       }
       for ( int obj_index = 0; obj_index < object_service->obj_count; ++obj_index ) {
@@ -340,8 +335,10 @@ void TrickThreadCoordinator::initialize_thread_coordinator(
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
-      message_publish( MSG_NORMAL, "TrickThreadCoordinator::initialize_thread_coordinator():%d Trick main thread (id:0, data_cycle:%.9f).\n",
-                       __LINE__, main_thread_data_cycle_time );
+      ostringstream msg;
+      msg << "Trick main thread (id:0, data_cycle:"
+          << setprecision( 18 ) << main_thread_data_cycle_time << ").\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    // Associate the Trick main thread. TrickHLA will maintain data coherency
@@ -351,11 +348,10 @@ void TrickThreadCoordinator::initialize_thread_coordinator(
 
    if ( !verify_time_constraints( 0, main_thread_data_cycle_base_time ) ) {
       ostringstream errmsg;
-      errmsg << "TrickThreadCoordinator::initialize_thread_coordinator():" << __LINE__
-             << " ERROR: Invalid HLA cycle time ("
+      errmsg << "Invalid HLA cycle time ("
              << setprecision( 18 ) << main_thread_data_cycle_time
              << " seconds)!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 }
 
@@ -385,40 +381,38 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
    // was initialized.
    if ( ( thread_cnt == 0 ) || ( thread_state == nullptr ) ) {
       ostringstream errmsg;
-      errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
-             << " ERROR: Federate::initialize_thread_state() must be called"
+      errmsg << "Federate::initialize_thread_state() must be called"
              << " once before calling this function.\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    // Verify the total Trick thread count (main + child).
    if ( thread_cnt != exec_get_num_threads() ) {
       ostringstream errmsg;
-      errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
-             << " ERROR: The total number of Trick threads "
+      errmsg << "The total number of Trick threads "
              << exec_get_num_threads() << " (main + child threads) does"
              << " not match the number (" << thread_cnt
              << ") we initialized to in TrickThreadCoordinator::initialize()"
              << " for the specified thread-id:" << thread_id << "\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    // Verify the child thread-id specified is in range.
    if ( thread_id >= thread_cnt ) {
       ostringstream errmsg;
-      errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
-             << " ERROR: Total Trick thread count " << thread_cnt
+      errmsg << "Total Trick thread count " << thread_cnt
              << " (main + child threads), Invalid specified "
              << ( ( thread_id == 0 ) ? "main" : "child" )
              << " thread-id:" << thread_id << "\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    // Just return if this trick child thread association has been disabled.
    if ( thread_state[thread_id] == TrickHLA::THREAD_STATE_DISABLED ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
-         message_publish( MSG_NORMAL, "TrickThreadCoordinator::associate_to_trick_child_thread():%d Disabled thread_id:%d.\n",
-                          __LINE__, thread_id );
+         ostringstream msg;
+         msg << "Disabled thread_id:" << thread_id << "\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
       return;
    }
@@ -426,20 +420,18 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
    // We do not support more than one thread association to the same thread-id.
    if ( thread_state[thread_id] != TrickHLA::THREAD_STATE_NOT_ASSOCIATED ) {
       ostringstream errmsg;
-      errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
-             << " ERROR: You can not associate the same Trick "
+      errmsg << "You can not associate the same Trick "
              << ( ( thread_id == 0 ) ? "main" : "child" )
              << " thread (thread-id:" << thread_id
              << ") more than once with TrickHLA!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    // Determine if the data_cycle time needs a resolution that exceeds the
    // configured base time.
    if ( Int64BaseTime::exceeds_base_time_resolution( data_cycle ) ) {
       ostringstream errmsg;
-      errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
-             << " ERROR: The data_cycle time specified (thread-id:" << thread_id
+      errmsg << "The data_cycle time specified (thread-id:" << thread_id
              << ", data_cycle:" << setprecision( 18 ) << data_cycle
              << " seconds) requires more resolution than whole "
              << Int64BaseTime::get_base_unit()
@@ -459,20 +451,19 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
              << " Specific Federation Agreement (FESFA) and Federate Compliance"
              << " Declaration (FCD) documents for your Federation to document"
              << " the change in timing class resolution.\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    // Determine if the Trick time Tic can represent the job cycle time.
    if ( Int64BaseTime::exceeds_base_time_resolution( data_cycle, exec_get_time_tic_value() ) ) {
       ostringstream errmsg;
-      errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
-             << " ERROR: The data_cycle time specified (thread-id:" << thread_id
+      errmsg << "The data_cycle time specified (thread-id:" << thread_id
              << ", data_cycle:" << setprecision( 18 ) << data_cycle
              << " seconds) requires more resolution than the Trick time Tic value ("
              << setprecision( 18 ) << exec_get_time_tic_value()
              << "). Please update the Trick time tic value in your input"
              << " file (i.e. by calling 'trick.exec_set_time_tic_value()').\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    int64_t const data_cycle_base_time = Int64BaseTime::to_base_time( data_cycle );
@@ -480,19 +471,17 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
    // Verify all the time constraints for this thread data cycle time are valid.
    if ( !verify_time_constraints( thread_id, data_cycle_base_time ) ) {
       ostringstream errmsg;
-      errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
-             << " ERROR: The data_cycle time specified (thread-id:" << thread_id
+      errmsg << "The data_cycle time specified (thread-id:" << thread_id
              << ", data_cycle:" << setprecision( 18 ) << data_cycle
              << " seconds) requires more resolution than the Trick time Tic value ("
              << setprecision( 18 ) << exec_get_time_tic_value()
              << "). Please update the Trick time tic value in your input"
              << " file (i.e. by calling 'trick.exec_set_time_tic_value()').\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    ostringstream summary;
-   summary << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
-           << " Summary:\n";
+   summary << "Summary:\n";
 
    ObjectServices const *object_service = federate->get_object_service();
 
@@ -506,8 +495,7 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
          if ( ( data_cycle_base_time_per_thread[thread_id] > 0LL )
               && ( data_cycle_base_time_per_thread[thread_id] != data_cycle_base_time ) ) {
             ostringstream errmsg;
-            errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
-                   << " ERROR: For the object instance name '"
+            errmsg << "For the object instance name '"
                    << object_service->objects[obj_index].get_name() << "', the Trick "
                    << ( ( thread_id == 0 ) ? "main" : "child" )
                    << " thread (thread-id:" << thread_id << ", data_cycle:"
@@ -519,13 +507,12 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
                    << " thread must use the same data cycle time across all"
                    << " associated objects so that TrickHLA can properly"
                    << " ensure data coherency.\n";
-            DebugHandler::terminate( errmsg.str() );
+            DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
 
          } else if ( ( data_cycle_base_time_per_obj[obj_index] > 0LL )
                      && ( data_cycle_base_time_per_obj[obj_index] != data_cycle_base_time ) ) {
             ostringstream errmsg;
-            errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
-                   << " ERROR: For the object instance name '"
+            errmsg << "For the object instance name '"
                    << object_service->objects[obj_index].get_name()
                    << "', an existing entry for this"
                    << " object (thread-id:" << thread_id << ", data_cycle:"
@@ -536,7 +523,7 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
                    << ". An object instance must use the same data cycle"
                    << " time across all threads so that TrickHLA can properly"
                    << " ensure data coherency.\n";
-            DebugHandler::terminate( errmsg.str() );
+            DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
 
          } else {
             summary << "  thread-id:" << thread_id
@@ -560,7 +547,7 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
               << thread_id << ")\n";
    }
    if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
-      message_publish( MSG_NORMAL, summary.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, summary.str() );
    }
 
    // If the data cycle time for this child thread does not match the
@@ -569,8 +556,7 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
    if ( ( data_cycle_base_time != main_thread_data_cycle_base_time )
         && !any_valid_thread_id_found ) {
       ostringstream errmsg;
-      errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
-             << " ERROR: For the Trick " << ( ( thread_id == 0 ) ? "main" : "child" )
+      errmsg << "For the Trick " << ( ( thread_id == 0 ) ? "main" : "child" )
              << " thread (thread-id:" << thread_id
              << ") specified, you have specified a data cycle time ("
              << setprecision( 18 ) << data_cycle
@@ -582,7 +568,7 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
              << " names associated with this Trick "
              << ( ( thread_id == 0 ) ? "main" : "child" ) << " thread so that TrickHLA"
              << " can properly ensure data coherency.\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    // Make sure we mark the thread state as reset now that we associated to it.
@@ -612,8 +598,7 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
             // TrickHLA does not support Trick Asynchronous child threads
             // because the job scheduling is not compatible.
             ostringstream errmsg;
-            errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
-                   << " ERROR: The Trick child thread (thread-id:" << thread_id
+            errmsg << "The Trick child thread (thread-id:" << thread_id
                    << ") specified is configured as an Asynchronous Trick child"
                    << " thread, which is not compatible with job scheduling needs"
                    << " of TrickHLA to coordinate HLA data between threads at"
@@ -627,7 +612,7 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
                    << ", trick.PROCESS_TYPE_AMF_CHILD )\n"
                    << "trick.exec_set_thread_amf_cycle_time( " << thread_id << ", "
                    << setprecision( 18 ) << data_cycle << " )\n";
-            DebugHandler::terminate( errmsg.str() );
+            DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
             break;
          }
          case Trick::PROCESS_TYPE_AMF_CHILD: {
@@ -635,8 +620,7 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
             // time needs to match the data cycle time specified in the association.
             if ( child_thread->amf_cycle != data_cycle ) {
                ostringstream errmsg;
-               errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
-                      << " ERROR: The Trick child thread (thread-id:" << thread_id
+               errmsg << "The Trick child thread (thread-id:" << thread_id
                       << ") specified is configured as Asynchronous Must Finish"
                       << " (AMF) with an AMF cycle time of "
                       << setprecision( 18 ) << child_thread->amf_cycle
@@ -652,17 +636,16 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
                       << ", trick.PROCESS_TYPE_AMF_CHILD )\n"
                       << "trick.exec_set_thread_amf_cycle_time( " << thread_id << ", "
                       << setprecision( 18 ) << data_cycle << " )\n";
-               DebugHandler::terminate( errmsg.str() );
+               DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
             }
             break;
          }
          default: {
             ostringstream errmsg;
-            errmsg << "TrickThreadCoordinator::associate_to_trick_child_thread():" << __LINE__
-                   << " ERROR: Unknown Trick child thread type (process_type:"
+            errmsg << "Unknown Trick child thread type (process_type:"
                    << child_thread->process_type << ") for (thread-id:"
                    << thread_id << ")!\n";
-            DebugHandler::terminate( errmsg.str() );
+            DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
             break;
          }
       }
@@ -682,8 +665,6 @@ void TrickThreadCoordinator::verify_trick_thread_associations()
 
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
       ostringstream summary;
-      summary << "TrickThreadCoordinator::verify_trick_thread_associations():"
-              << __LINE__;
 
       if ( !any_child_thread_associated ) {
          // This status message only makes sense only if we have simulation
@@ -743,7 +724,7 @@ void TrickThreadCoordinator::verify_trick_thread_associations()
             summary << "\n";
          }
       }
-      message_publish( MSG_NORMAL, summary.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, summary.str() );
    }
 
    // Verify every thread ID specified in the input file for each object has a
@@ -755,12 +736,11 @@ void TrickThreadCoordinator::verify_trick_thread_associations()
               && object_service->objects[obj_index].thread_ids_array[thread_id]
               && ( data_cycle_base_time_per_thread[thread_id] == 0LL ) ) {
             ostringstream errmsg;
-            errmsg << "TrickThreadCoordinator::verify_trick_thread_associations():"
-                   << __LINE__ << " ERROR: Object instance '"
+            errmsg << "Object instance '"
                    << object_service->objects[obj_index].get_name()
                    << "' specified a Trick thread-ID:" << thread_id << ", but no thread"
                    << " with this ID was associated in the S_define file!\n";
-            DebugHandler::terminate( errmsg.str() );
+            DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
          }
       }
    }
@@ -799,8 +779,7 @@ void TrickThreadCoordinator::refresh_thread_base_times()
 void TrickThreadCoordinator::announce_data_available()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
-      message_publish( MSG_NORMAL, "TrickThreadCoordinator::announce_data_available():%d\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    // Process Trick child thread states associated to TrickHLA.
@@ -833,8 +812,7 @@ void TrickThreadCoordinator::announce_data_available()
 void TrickThreadCoordinator::announce_data_sent()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
-      message_publish( MSG_NORMAL, "TrickThreadCoordinator::announce_data_sent():%d\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    // Process Trick child thread states associated to TrickHLA.
@@ -857,8 +835,7 @@ void TrickThreadCoordinator::announce_data_sent()
 void TrickThreadCoordinator::wait_to_send_data()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
-      message_publish( MSG_NORMAL, "TrickThreadCoordinator::wait_to_send_data():%d\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    // Only wait to send data for child threads if any are associated.
@@ -886,8 +863,7 @@ void TrickThreadCoordinator::wait_to_send_data()
 void TrickThreadCoordinator::wait_to_send_data_for_main_thread()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
-      message_publish( MSG_NORMAL, "TrickThreadCoordinator::wait_to_send_data_for_main_thread():%d Waiting...\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Waiting...\n" );
    }
 
    // The main thread will wait for all the child threads to be ready to send
@@ -995,28 +971,28 @@ void TrickThreadCoordinator::wait_to_send_data_for_main_thread()
                sleep_timer.reset();
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
-                  errmsg << "TrickThreadCoordinator::wait_to_send_data_for_main_thread():" << __LINE__
-                         << " ERROR: Unexpectedly the Federate is no longer an execution"
+                  errmsg << "Unexpectedly the Federate is no longer an execution"
                          << " member. This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
                          << " the Central RTI Component (CRC) level!\n";
-                  DebugHandler::terminate( errmsg.str() );
+                  DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
                }
             }
 
             if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
-               message_publish( MSG_NORMAL, "TrickThreadCoordinator::wait_to_send_data_for_main_thread():%d Trick main thread, waiting on child thread %d...\n",
-                                __LINE__, thread_id );
+               ostringstream msg;
+               msg << "Trick main thread, waiting on child thread "
+                   << thread_id << "...\n";
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
             }
          }
       } while ( !all_ready_to_send );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
-      message_publish( MSG_NORMAL, "TrickThreadCoordinator::wait_to_send_data_for_main_thread():%d Done\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Done\n" );
    }
 }
 
@@ -1029,15 +1005,17 @@ void TrickThreadCoordinator::wait_to_send_data_for_child_thread(
    // Just return if this thread association is disabled.
    if ( thread_state[thread_id] == TrickHLA::THREAD_STATE_DISABLED ) {
       if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
-         message_publish( MSG_NORMAL, "TrickThreadCoordinator::wait_to_send_data_for_child_thread():%d Child Thread:%d, Disabled, Done\n",
-                          __LINE__, thread_id );
+         ostringstream msg;
+         msg << "Child Thread:" << thread_id << ", Disabled, Done\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
       return;
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
-      message_publish( MSG_NORMAL, "TrickThreadCoordinator::wait_to_send_data_for_child_thread():%d Child Thread:%d, waiting...\n",
-                       __LINE__, thread_id );
+      ostringstream msg;
+      msg << "Child Thread:" << thread_id << ", waiting...\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    // Trick Child Threads associated to TrickHLA need to wait for the Trick
@@ -1090,28 +1068,29 @@ void TrickThreadCoordinator::wait_to_send_data_for_child_thread(
                sleep_timer.reset();
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
-                  errmsg << "TrickThreadCoordinator::wait_to_send_data_for_child_thread():" << __LINE__
-                         << " ERROR: Unexpectedly the Federate is no longer an execution"
+                  errmsg << "Unexpectedly the Federate is no longer an execution"
                          << " member. This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
                          << " the Central RTI Component (CRC) level!\n";
-                  DebugHandler::terminate( errmsg.str() );
+                  DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
                }
             }
 
             if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
-               message_publish( MSG_NORMAL, "TrickThreadCoordinator::wait_to_send_data_for_child_thread():%d Child Thread:%d, waiting...\n",
-                                __LINE__, thread_id );
+               ostringstream msg;
+               msg << "Child Thread:" << thread_id << ", waiting...\n";
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
             }
          }
       } while ( !sent_data );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
-      message_publish( MSG_NORMAL, "TrickThreadCoordinator::wait_to_send_data_for_child_thread():%d Child Thread:%d, Done\n",
-                       __LINE__, thread_id );
+      ostringstream msg;
+      msg << "Child Thread:" << thread_id << ", Done\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 }
 
@@ -1121,8 +1100,7 @@ void TrickThreadCoordinator::wait_to_receive_data()
    // Don't process Trick child thread states associated to TrickHLA if none exist.
    if ( !any_child_thread_associated ) {
       if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
-         message_publish( MSG_NORMAL, "TrickThreadCoordinator::wait_to_receive_data():%d Done\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Done\n" );
       }
       return;
    }
@@ -1133,17 +1111,19 @@ void TrickThreadCoordinator::wait_to_receive_data()
    // Just return if this thread association is disabled.
    if ( thread_state[thread_id] == TrickHLA::THREAD_STATE_DISABLED ) {
       if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
-         message_publish( MSG_NORMAL, "TrickThreadCoordinator::wait_to_receive_data():%d %s Thread:%d, Disabled, Done\n",
-                          __LINE__, ( ( thread_id == 0 ) ? "Main" : "Child" ),
-                          thread_id );
+         ostringstream msg;
+         msg << ( ( thread_id == 0 ) ? "Main" : "Child" )
+             << " Thread:" << thread_id << ", Disabled, Done\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
       return;
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
-      message_publish( MSG_NORMAL, "TrickThreadCoordinator::wait_to_receive_data():%d %s Thread:%d, waiting...\n",
-                       __LINE__, ( ( thread_id == 0 ) ? "Main" : "Child" ),
-                       thread_id );
+      ostringstream msg;
+      msg << ( ( thread_id == 0 ) ? "Main" : "Child" )
+          << " Thread:" << thread_id << ", waiting...\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    bool ready_to_receive;
@@ -1185,30 +1165,31 @@ void TrickThreadCoordinator::wait_to_receive_data()
                sleep_timer.reset();
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
-                  errmsg << "TrickThreadCoordinator::wait_to_receive_data():" << __LINE__
-                         << " ERROR: Unexpectedly the Federate is no longer an execution"
+                  errmsg << "Unexpectedly the Federate is no longer an execution"
                          << " member. This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
                          << " the Central RTI Component (CRC) level!\n";
-                  DebugHandler::terminate( errmsg.str() );
+                  DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
                }
             }
 
             if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
-               message_publish( MSG_NORMAL, "TrickThreadCoordinator::wait_to_receive_data():%d %s Thread:%d, waiting...\n",
-                                __LINE__, ( ( thread_id == 0 ) ? "Main" : "Child" ),
-                                thread_id );
+               ostringstream msg;
+               msg << ( ( thread_id == 0 ) ? "Main" : "Child" )
+                   << " Thread:" << thread_id << ", waiting...\n";
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
             }
          }
       } while ( !ready_to_receive );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
-      message_publish( MSG_NORMAL, "TrickThreadCoordinator::wait_to_receive_data():%d %s Thread:%d, Done\n",
-                       __LINE__, ( ( thread_id == 0 ) ? "Main" : "Child" ),
-                       thread_id );
+      ostringstream msg;
+      msg << ( ( thread_id == 0 ) ? "Main" : "Child" )
+          << " Thread:" << thread_id << ", Done\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 }
 
@@ -1266,12 +1247,11 @@ bool TrickThreadCoordinator::verify_time_constraints(
    // Verify the child thread-id specified is in range.
    if ( thread_id >= thread_cnt ) {
       ostringstream errmsg;
-      errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
-             << " ERROR: Total Trick thread count " << thread_cnt
+      errmsg << "Total Trick thread count " << thread_cnt
              << " (main + child threads), Invalid specified "
              << ( ( thread_id == 0 ) ? "main" : "child" )
              << " thread-id:" << thread_id << "\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       return false;
    }
 
@@ -1282,11 +1262,10 @@ bool TrickThreadCoordinator::verify_time_constraints(
    // Verify the lookahead time.
    if ( lookahead_base_time < 0 ) {
       ostringstream errmsg;
-      errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
-             << " ERROR: Lookahead time must be greater than or equal zero (lookahead:"
+      errmsg << "Lookahead time must be greater than or equal zero (lookahead:"
              << setprecision( 18 ) << Int64BaseTime::to_seconds( lookahead_base_time )
              << " seconds)!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       return false;
    }
 
@@ -1297,28 +1276,26 @@ bool TrickThreadCoordinator::verify_time_constraints(
       // Time constraint: (dt[i] > 0)
       if ( data_cycle_base_time <= 0 ) {
          ostringstream errmsg;
-         errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
-                << " ERROR: The data cycle time for the Trick "
+         errmsg << "The data cycle time for the Trick "
                 << ( ( thread_id == 0 ) ? "main" : "child" )
                 << " thread (thread-id:" << thread_id << ", data_cycle:"
                 << setprecision( 18 ) << Int64BaseTime::to_seconds( data_cycle_base_time )
                 << " seconds) cannot be less than or equal zero (0)!\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
          return false;
       }
 
       // Time constraint: (dt[i] ≥ L[i])
       if ( data_cycle_base_time < lookahead_base_time ) {
          ostringstream errmsg;
-         errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
-                << " ERROR: The data cycle time for the Trick "
+         errmsg << "The data cycle time for the Trick "
                 << ( ( thread_id == 0 ) ? "main" : "child" )
                 << " thread (thread-id:" << thread_id << ", data_cycle:"
                 << setprecision( 18 ) << Int64BaseTime::to_seconds( data_cycle_base_time )
                 << " seconds) cannot be less than the lookahead time ("
                 << setprecision( 18 ) << Int64BaseTime::to_seconds( lookahead_base_time )
                 << " seconds)!\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
          return false;
       }
 
@@ -1326,8 +1303,7 @@ bool TrickThreadCoordinator::verify_time_constraints(
       // than the main thread cycle time.
       if ( data_cycle_base_time < main_thread_data_cycle_base_time ) {
          ostringstream errmsg;
-         errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
-                << " ERROR: The data cycle time for the Trick "
+         errmsg << "The data cycle time for the Trick "
                 << ( ( thread_id == 0 ) ? "main" : "child" ) << " thread (thread-id:"
                 << thread_id << ", data_cycle:" << setprecision( 18 )
                 << Int64BaseTime::to_seconds( data_cycle_base_time )
@@ -1335,7 +1311,7 @@ bool TrickThreadCoordinator::verify_time_constraints(
                 << " time (data_cycle:" << setprecision( 18 )
                 << Int64BaseTime::to_seconds( main_thread_data_cycle_base_time )
                 << " seconds)!\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
          return false;
       }
 
@@ -1343,8 +1319,7 @@ bool TrickThreadCoordinator::verify_time_constraints(
       // multiple of the Trick main thread cycle time.
       if ( data_cycle_base_time % main_thread_data_cycle_base_time != 0 ) {
          ostringstream errmsg;
-         errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
-                << " ERROR: The data cycle time for the Trick "
+         errmsg << "The data cycle time for the Trick "
                 << ( ( thread_id == 0 ) ? "main" : "child" ) << " thread (thread-id:"
                 << thread_id << ", data_cycle:" << setprecision( 18 )
                 << Int64BaseTime::to_seconds( data_cycle_base_time )
@@ -1352,7 +1327,7 @@ bool TrickThreadCoordinator::verify_time_constraints(
                 << " thread data cycle time (data_cycle:" << setprecision( 18 )
                 << Int64BaseTime::to_seconds( main_thread_data_cycle_base_time )
                 << " seconds)!\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
          return false;
       }
 
@@ -1364,8 +1339,7 @@ bool TrickThreadCoordinator::verify_time_constraints(
          // Time constraint: (LCTS ≥ dt[i])
          if ( lcts_base_time < data_cycle_base_time ) {
             ostringstream errmsg;
-            errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
-                   << " ERROR: The Least Common Time Step (LCTS:"
+            errmsg << "The Least Common Time Step (LCTS:"
                    << setprecision( 18 ) << Int64BaseTime::to_seconds( lcts_base_time )
                    << " seconds) must be greater or equal to the data cycle time"
                    << " for the Trick " << ( ( thread_id == 0 ) ? "main" : "child" )
@@ -1373,7 +1347,7 @@ bool TrickThreadCoordinator::verify_time_constraints(
                    << setprecision( 18 ) << Int64BaseTime::to_seconds( data_cycle_base_time )
                    << " seconds)! Please adjust the LCTS set in your input file"
                    << " as appropriate.\n";
-            DebugHandler::terminate( errmsg.str() );
+            DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
             return false;
          }
 
@@ -1381,8 +1355,7 @@ bool TrickThreadCoordinator::verify_time_constraints(
          // Time constraint: (LCTS % dt[i] = 0)
          if ( lcts_base_time % data_cycle_base_time != 0 ) {
             ostringstream errmsg;
-            errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
-                   << " ERROR: The Least Common Time Step (LCTS:"
+            errmsg << "The Least Common Time Step (LCTS:"
                    << setprecision( 18 ) << Int64BaseTime::to_seconds( lcts_base_time )
                    << " seconds) must be an integer multiple of the data cycle"
                    << " time for the Trick " << ( ( thread_id == 0 ) ? "main" : "child" )
@@ -1390,7 +1363,7 @@ bool TrickThreadCoordinator::verify_time_constraints(
                    << setprecision( 18 ) << Int64BaseTime::to_seconds( data_cycle_base_time )
                    << " seconds)! Please adjust the LCTS set in your input"
                    << " file as appropriate.\n";
-            DebugHandler::terminate( errmsg.str() );
+            DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
             return false;
          }
       }
@@ -1413,26 +1386,24 @@ bool TrickThreadCoordinator::verify_time_constraints(
          // The Trick software frame must be configured.
          if ( RT_frame <= 0.0 ) {
             ostringstream errmsg;
-            errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
-                   << " ERROR: The Trick software frame ("
+            errmsg << "The Trick software frame ("
                    << setprecision( 18 ) << RT_frame
                    << ( ( RT_frame == 1.0 ) ? " second)" : " seconds)" )
                    << " cannot be less than or equal to zero!\n";
-            DebugHandler::terminate( errmsg.str() );
+            DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
             return false;
          }
 
          // Verify the RT frame can be represented in base time.
          if ( Int64BaseTime::exceeds_base_time_resolution( RT_frame ) ) {
             ostringstream errmsg;
-            errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
-                   << " ERROR: The Trick software frame ("
+            errmsg << " The Trick software frame ("
                    << setprecision( 18 ) << RT_frame
                    << ( ( RT_frame == 1.0 ) ? " second)" : " seconds)" )
                    << " cannot be represented in base-time because it"
                    << " exceeds the base-time resolution of "
                    << Int64BaseTime::get_base_unit() << "!\n";
-            DebugHandler::terminate( errmsg.str() );
+            DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
             return false;
          }
 
@@ -1441,8 +1412,7 @@ bool TrickThreadCoordinator::verify_time_constraints(
          // Time Constraint: (LCTS ≥ RT)
          if ( lcts_base_time < RT_base_time ) {
             ostringstream errmsg;
-            errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
-                   << " ERROR: The Least Common Time Step (LCTS:"
+            errmsg << "The Least Common Time Step (LCTS:"
                    << setprecision( 18 ) << Int64BaseTime::to_seconds( lcts_base_time )
                    << " seconds) must be greater than or equal to the Trick"
                    << " software frame time (" << setprecision( 18 ) << RT_frame
@@ -1451,15 +1421,14 @@ bool TrickThreadCoordinator::verify_time_constraints(
                    << " set the Trick software frame to the same time as the"
                    << " LCTS time of " << setprecision( 18 )
                    << Int64BaseTime::to_seconds( lcts_base_time ) << " seconds.\n";
-            DebugHandler::terminate( errmsg.str() );
+            DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
             return false;
          }
 
          // Time Constraint: (LCTS % RT = 0)
          if ( ( lcts_base_time % RT_base_time ) != 0 ) {
             ostringstream errmsg;
-            errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
-                   << " ERROR: The Least Common Time Step (LCTS:"
+            errmsg << "The Least Common Time Step (LCTS:"
                    << setprecision( 18 ) << Int64BaseTime::to_seconds( lcts_base_time )
                    << " seconds) must be an integer multiple of the Trick"
                    << " software frame time (" << setprecision( 18 ) << RT_frame
@@ -1468,7 +1437,7 @@ bool TrickThreadCoordinator::verify_time_constraints(
                    << " set the Trick software frame to the same time as the"
                    << " LCTS time of " << setprecision( 18 )
                    << Int64BaseTime::to_seconds( lcts_base_time ) << " seconds.\n";
-            DebugHandler::terminate( errmsg.str() );
+            DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
             return false;
          }
       }
@@ -1483,12 +1452,11 @@ bool TrickThreadCoordinator::verify_time_constraints(
          // Time Constraints: (LCTS > 0)
          if ( lcts_base_time <= 0 ) {
             ostringstream errmsg;
-            errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
-                   << " ERROR: For this Master federate, the ExCO Least Common"
+            errmsg << "For this Master federate, the ExCO Least Common"
                    << " Time Step (LCTS:"
                    << lcts_base_time << " " << Int64BaseTime::get_base_unit()
                    << ") must be greater than zero!\n";
-            DebugHandler::terminate( errmsg.str() );
+            DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
             return false;
          }
 
@@ -1502,27 +1470,25 @@ bool TrickThreadCoordinator::verify_time_constraints(
             // At a minimum the Padding time must be >= LCTS.
             if ( pad_base_time < lcts_base_time ) {
                ostringstream errmsg;
-               errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
-                      << " ERROR: Mode transition padding time ("
+               errmsg << "Mode transition padding time ("
                       << pad_base_time << " " << Int64BaseTime::get_base_unit()
                       << ") can not be less than the ExCO Least Common Time Step (LCTS:"
                       << lcts_base_time << " " << Int64BaseTime::get_base_unit()
                       << ")!\n";
-               DebugHandler::terminate( errmsg.str() );
+               DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
                return false;
             }
 
             // Padding time must be an integer multiple of the LCTS.
             if ( pad_base_time % lcts_base_time != 0 ) {
                ostringstream errmsg;
-               errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
-                      << " ERROR: Mode transition padding time ("
+               errmsg << "Mode transition padding time ("
                       << pad_base_time << " " << Int64BaseTime::get_base_unit()
                       << ") is not an integer multiple of the ExCO"
                       << " Least Common Time Step (LCTS:"
                       << lcts_base_time << " " << Int64BaseTime::get_base_unit()
                       << ")!\n";
-               DebugHandler::terminate( errmsg.str() );
+               DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
                return false;
             }
 
@@ -1533,15 +1499,14 @@ bool TrickThreadCoordinator::verify_time_constraints(
             if ( ( pad_base_time < Int64BaseTime::to_base_time( THLA_PADDING_DEFAULT ) )
                  && ( pad_base_time < ( 3 * lcts_base_time ) ) ) {
                ostringstream errmsg;
-               errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
-                      << " ERROR: Mode transition padding time ("
+               errmsg << "Mode transition padding time ("
                       << pad_base_time << " " << Int64BaseTime::get_base_unit()
                       << ") is not a multiple of 3 or more of the ExCO"
                       << " Least Common Time Step (LCTS:"
                       << lcts_base_time << " " << Int64BaseTime::get_base_unit()
                       << ") when the time padding is less than "
                       << THLA_PADDING_DEFAULT << " seconds!\n";
-               DebugHandler::terminate( errmsg.str() );
+               DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
                return false;
             }
          }
@@ -1557,8 +1522,7 @@ bool TrickThreadCoordinator::verify_time_constraints(
 
          if ( time_padding <= ( 2.0 * exec_get_freeze_frame() ) ) {
             ostringstream errmsg;
-            errmsg << "TrickThreadCoordinator::verify_time_constraints():" << __LINE__
-                   << " ERROR: Mode transition padding time (" << time_padding
+            errmsg << "Mode transition padding time (" << time_padding
                    << " seconds) must be more than two times the Trick freeze"
                    << " frame time (" << exec_get_freeze_frame() << " seconds)!"
                    << " In your input.py file, please update the padding time"
@@ -1576,7 +1540,7 @@ bool TrickThreadCoordinator::verify_time_constraints(
                errmsg << "   federate.set_time_padding( " << time_padding << " )\n"
                       << "   trick.exec_set_freeze_frame( " << ( time_padding / 4 ) << " )\n";
             }
-            DebugHandler::terminate( errmsg.str() );
+            DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
             return false;
          }
       }

@@ -212,10 +212,7 @@ ExecutionConfiguration *ExecutionControl::get_execution_configuration()
 {
    ExecutionConfiguration *ExCO = dynamic_cast< ExecutionConfiguration * >( ExecutionControlBase::get_execution_configuration() );
    if ( ExCO == nullptr ) {
-      ostringstream errmsg;
-      errmsg << "IMSim::ExecutionControl::get_execution_configuration():" << __LINE__
-             << " ERROR: Execution Configuration base is not an IMSim::ExecutionConfiguration instance.\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Execution Configuration base is not an IMSim::ExecutionConfiguration instance.\n" );
    }
    return ( ExCO );
 }
@@ -351,19 +348,15 @@ void ExecutionControl::pre_multi_phase_init_processes()
    // The Master federate must have a padding time set.
    if ( is_master() && ( get_time_padding() <= 0.0 ) ) {
       ostringstream errmsg;
-      errmsg << "IMSim::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
-             << " ERROR: For this Master federate, the time padding ("
+      errmsg << "For this Master federate, the time padding ("
              << get_time_padding() << " seconds) must be greater than zero!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       return;
    }
 
    // Verify the federate time constraints.
    if ( !federate->verify_time_constraints() ) {
-      ostringstream errmsg;
-      errmsg << "IMSim::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
-             << " ERROR: Time constraints verification failed!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Time constraints verification failed!\n" );
       return;
    }
 
@@ -421,9 +414,8 @@ Waiting for the required federates to join.\n",
             return_string = federate->wait_for_required_federates_to_join();
             if ( !return_string.empty() ) {
                ostringstream errmsg;
-               errmsg << "IMSim::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
-                      << " ERROR: " << return_string << "\n";
-               DebugHandler::terminate( errmsg.str() );
+               errmsg << return_string << "\n";
+               DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
                return;
             }
 
@@ -466,9 +458,7 @@ initiating restore request for '%s' with the RTI.\n",
 
             if ( save_restore_service->has_restore_request_failed() ) {
                ostringstream errmsg;
-               errmsg << "IMSim::ExecutionControl::pre_multi_phase_init_processes():"
-                      << __LINE__
-                      << " ERROR: You indicated that you wanted to restore a "
+               errmsg << "You indicated that you wanted to restore a "
                       << "checkpoint => I AM THE MASTER <= RTI rejected the "
                       << "restore request!!!! Make sure that you are restoring "
                       << "the federates from an identical federation save set."
@@ -476,7 +466,7 @@ initiating restore request for '%s' with the RTI.\n",
                       << "      See IEEE 1516.1-2010, Section 4.18 for "
                       << "further info for the reasons why the RTI would reject"
                       << " the federation restore request...\n";
-               DebugHandler::terminate( errmsg.str() );
+               DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
                return;
             }
 
@@ -500,14 +490,12 @@ initiating restore request for '%s' with the RTI.\n",
                save_restore_service->wait_for_federation_restore_failed_callback_to_complete();
 
                ostringstream errmsg;
-               errmsg << "IMSim::ExecutionControl::pre_multi_phase_init_processes():"
-                      << __LINE__
-                      << " ERROR: You indicated that you wanted to restore a "
+               errmsg << "You indicated that you wanted to restore a "
                       << "checkpoint => I AM THE MASTER <= "
-                      << "wait_for_federation_restore_to_complete() failed!!!\n";
-               errmsg << "\n"
+                      << "wait_for_federation_restore_to_complete() failed!!!\n"
+                      << "\n"
                       << tStr;
-               DebugHandler::terminate( errmsg.str() );
+               DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
                return;
             }
 
@@ -560,11 +548,10 @@ Simulation has started and is now running...\n",
 
          } else {
             ostringstream errmsg;
-            errmsg << "IMSim::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
-                   << " ERROR: You indicated that you wanted to restore a checkpoint"
+            errmsg << "You indicated that you wanted to restore a checkpoint"
                    << " => I AM THE MASTER <= but you failed to specify the"
-                   << "  checkpoint FILE NAME!\n";
-            DebugHandler::terminate( errmsg.str() );
+                   << " checkpoint FILE NAME!\n";
+            DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
             return;
          }
       } else { // MASTER but restore was not specified
@@ -664,7 +651,7 @@ You indicated that you want a restore => I AM NOT THE MASTER <= \
 loading of the federate from the checkpoint file '%s'.\n",
                              __LINE__, tRestoreName );
          }
-         string restore_name = ( tRestoreName != nullptr ) ? tRestoreName : "";
+         string const restore_name = ( tRestoreName != nullptr ) ? tRestoreName : "";
          save_restore_service->restore_checkpoint( restore_name );
 
          //
@@ -705,15 +692,12 @@ loading of the federate from the checkpoint file '%s'.\n",
             save_restore_service->wait_for_federation_restore_failed_callback_to_complete();
 
             ostringstream errmsg;
-            errmsg << "IMSim::ExecutionControl::pre_multi_phase_init_processes():"
-                   << __LINE__
-                   << " ERROR: You indicated that you wanted to restore a "
+            errmsg << "You indicated that you wanted to restore a "
                    << "checkpoint => I AM THE NOT MASTER <= "
                    << "wait_for_federation_restore_to_complete() failed!!!"
-                   << "\n"
-                   << "\n"
+                   << "\n\n"
                    << tStr;
-            DebugHandler::terminate( errmsg.str() );
+            DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
             return;
          }
 
@@ -809,10 +793,9 @@ Simulation has started and is now running...\n",
 
             if ( !federate->get_time_management_service()->is_time_management_enabled() ) {
                ostringstream errmsg;
-               errmsg << "IMSim::ExecutionControl::pre_multi_phase_init_processes():" << __LINE__
-                      << " ERROR: Late joining federates that do not use HLA"
+               errmsg << "Late joining federates that do not use HLA"
                       << " time management are not supported yet!\n";
-               DebugHandler::terminate( errmsg.str() );
+               DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
                return;
             }
 
@@ -931,13 +914,12 @@ FederateJoinConstraintsEnum ExecutionControl::determine_if_late_joining_or_resto
                sleep_timer.reset();
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
-                  errmsg << "IMSim::ExecutionControl::determine_if_late_joining_or_restoring_federate_IMSim():" << __LINE__
-                         << " ERROR: Unexpectedly the Federate is no longer an execution member."
+                  errmsg << "Unexpectedly the Federate is no longer an execution member."
                          << " This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
                          << " the Central RTI Component (CRC) level!\n";
-                  DebugHandler::terminate( errmsg.str() );
+                  DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
                }
             }
 
@@ -967,10 +949,7 @@ FederateJoinConstraintsEnum ExecutionControl::determine_if_late_joining_or_resto
       return TrickHLA::FEDERATE_JOIN_RESTORING;
 
    } else {
-      ostringstream errmsg;
-      errmsg << "IMSim::ExecutionControl::determine_if_late_joining_or_restoring_federate_IMSim():"
-             << __LINE__ << " ERROR: Failed to determine if late joiner or restore federate!!!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Failed to determine if late joiner or restore federate!\n" );
    }
 
    return TrickHLA::FEDERATE_JOIN_EARLY_OR_LATE;
@@ -1043,11 +1022,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
       alloc_type( freeze_inter_count, "TrickHLA::Interaction" ) );
 
    if ( freeze_interaction == nullptr ) {
-      ostringstream errmsg;
-      errmsg << "IMSim::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__
-             << " FAILED to allocate enough memory for Interaction specialized"
-             << " to FREEZE the sim!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Failed to allocate enough memory for Interaction specialized to FREEZE the sim!\n" );
       return;
    }
 
@@ -1056,10 +1031,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
          alloc_type( 1, "IMSim::FreezeInteractionHandler" ) );
 
    if ( freeze_handler == nullptr ) {
-      ostringstream errmsg;
-      errmsg << "IMSim::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__
-             << " FAILED to allocate enough memory for FreezeInteractionHandler!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Failed to allocate enough memory for FreezeInteractionHandler!\n" );
       return;
    }
 
@@ -1079,11 +1051,7 @@ void ExecutionControl::setup_interaction_ref_attributes()
       alloc_type( freeze_interaction->get_parameter_count(), "TrickHLA::Parameter" ) );
 
    if ( tParm == nullptr ) {
-      ostringstream errmsg;
-      errmsg << "IMSim::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__
-             << " FAILED to allocate enough memory for the parameters of the"
-             << " FREEZE interaction!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Failed to allocate enough memory for the parameters of the FREEZE interaction!\n" );
       return;
    }
    tParm[0].set_FOM_name( "time" );
@@ -1103,10 +1071,9 @@ void ExecutionControl::setup_interaction_ref_attributes()
    time_attr = static_cast< ATTRIBUTES * >( malloc( 2 * sizeof( ATTRIBUTES ) ) );
    if ( time_attr == nullptr ) {
       ostringstream errmsg;
-      errmsg << "IMSim::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__
-             << " FAILED to allocate enough memory for the ATTRIBUTES for the"
+      errmsg << "Failed to allocate enough memory for the ATTRIBUTES for the"
              << " 'time' value of the FREEZE interaction!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       return;
    }
 
@@ -1167,10 +1134,7 @@ void ExecutionControl::setup_object_RTI_handles()
 {
    ExecutionConfiguration *ExCO = get_execution_configuration();
    if ( ExCO == nullptr ) {
-      ostringstream errmsg;
-      errmsg << "IMSim::ExecutionControl::setup_object_RTI_handles():" << __LINE__
-             << " ERROR: Unexpected nullptr SimConfig!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr SimConfig!\n" );
       return;
    }
    object_service->setup_object_RTI_handles( 1, ExCO );
@@ -1221,15 +1185,14 @@ void ExecutionControl::sync_point_announced(
       string init_complete_sp_label;
       StringUtilities::to_string( init_complete_sp_label, IMSim::INIT_COMPLETE_SYNC_POINT );
       ostringstream errmsg;
-      errmsg << "IMSim::ExecutionControl::sync_point_announced():" << __LINE__
-             << " ERROR: All multiphase initialization sync-points were not"
+      errmsg << "All multiphase initialization sync-points were not"
              << " synchronized by the time the '" << init_complete_sp_label
              << "' sync-point label was announced. Make sure all federates"
              << " are configured to use all the multiphase initialization"
              << " sync-points. The state of the multiphase initialization"
              << " sync-points configured for this federate:\n"
              << to_string( TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST ) << "\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       return;
    }
 
@@ -1497,10 +1460,7 @@ void ExecutionControl::set_next_execution_control_mode(
 
    // This should only be called by the Master federate.
    if ( !is_master() ) {
-      ostringstream errmsg;
-      errmsg << "IMSim::ExecutionControl::set_next_execution_mode():" << __LINE__
-             << " ERROR: This should only be called by the Master federate!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "This should only be called by the Master federate!\n" );
       return;
    }
 
@@ -2063,10 +2023,7 @@ bool ExecutionControl::run_mode_transition()
 
      // Make sure that we have a valid sync-point.
      if ( sync_pnt == nullptr ) {
-        ostringstream errmsg;
-        errmsg << "IMSim::ExecutionControl::run_mode_transition():" << __LINE__
-               << " ERROR: The 'mtr_run' sync-point was not found!\n";
-        DebugHandler::terminate( errmsg.str() );
+        DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "The 'mtr_run' sync-point was not found!\n" );
         return;
      } else {
 
@@ -2153,10 +2110,7 @@ bool ExecutionControl::freeze_mode_transition()
 
    // Make sure that we have a valid sync-point.
    if ( !contains_sync_point( SpaceFOM::MTR_FREEZE_SYNC_POINT ) ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::ExecutionControl::freeze_mode_transition():" << __LINE__
-             << " ERROR: The 'mtr_freeze' sync-point was not found!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "The 'mtr_freeze' sync-point was not found!\n" );
       return;
    } else {
 
@@ -2513,13 +2467,12 @@ bool ExecutionControl::is_save_initiated()
                sleep_timer.reset();
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
-                  errmsg << "IMSim::ExecutionControl::is_save_initiated():" << __LINE__
-                         << " ERROR: Unexpectedly the Federate is no longer an execution"
+                  errmsg << "Unexpectedly the Federate is no longer an execution"
                          << " member. This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
                          << " the Central RTI Component (CRC) level!\n";
-                  DebugHandler::terminate( errmsg.str() );
+                  DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
                   return false;
                }
             }

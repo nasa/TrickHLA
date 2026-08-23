@@ -202,20 +202,14 @@ void PhysicalInterfaceBase::initialize()
 {
    // Check for a nullptr object pointer.
    if ( this->object == nullptr ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::PhysicalInterfaceBase::initialize():" << __LINE__
-             << " ERROR: Unexpected nullptr TrickHLA Object pointer!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr TrickHLA Object pointer!\n" );
       return;
    }
 
    // Must have interface instance name.
    if ( this->object->create_HLA_instance
         && this->packing_data.name.empty() ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::PhysicalInterfaceBase::initialize():" << __LINE__
-             << " ERROR: Unexpected empty interface name!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Unexpected empty interface name!\n" );
    }
 
    // Should have interface parent specified if creating this interface.
@@ -302,12 +296,12 @@ void PhysicalInterfaceBase::pack()
 {
    // Check for initialization.
    if ( !initialized ) {
+
+#if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "The initialize() function has not been called!\n" );
+#else
       ostringstream errmsg;
       errmsg << "PhysicalInterfaceBase::pack():" << __LINE__
-#if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
-             << " ERROR: The initialize() function has not been called!\n";
-      DebugHandler::terminate( errmsg.str() );
-#else
              << " WARNING: The initialize() function has not been called!\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
 #endif
@@ -337,12 +331,12 @@ void PhysicalInterfaceBase::pack()
 void PhysicalInterfaceBase::unpack()
 {
    if ( !initialized ) {
+
+#if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "The initialize() function has not been called!\n" );
+#else
       ostringstream errmsg;
       errmsg << "PhysicalInterfaceBase::unpack():" << __LINE__
-#if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
-             << " ERROR: The initialize() function has not been called!\n";
-      DebugHandler::terminate( errmsg.str() );
-#else
              << " WARNING: The initialize() function has not been called!\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
 #endif

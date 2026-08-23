@@ -108,13 +108,12 @@ void RecordElement::initialize_element_encoder()
       // If we have an element count but no elements then let the user know.
       if ( ( element_count > 0 ) && ( elements == nullptr ) ) {
          ostringstream errmsg;
-         errmsg << "RecordElement::initialize_element_encoder():" << __LINE__
-                << " ERROR: For element with trick_name '" << get_trick_name()
+         errmsg << "For element with trick_name '" << get_trick_name()
                 << "', the 'element_count' is " << element_count
                 << " but no 'elements' are specified. Please check your input.py"
                 << " or modified-data files to make sure the attributes are"
                 << " correctly specified.\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
          return;
       }
 
@@ -122,36 +121,33 @@ void RecordElement::initialize_element_encoder()
       // the user know.
       if ( ( element_count <= 0 ) && ( elements != nullptr ) ) {
          ostringstream errmsg;
-         errmsg << "RecordElement::initialize_element_encoder():" << __LINE__
-                << " ERROR: For element with trick_name '" << get_trick_name()
+         errmsg << "For element with trick_name '" << get_trick_name()
                 << "', the 'element_count' is " << element_count
                 << " but 'elements' are specified. Please check your input.py"
                 << " or modified-data files to make sure the elements are"
                 << " correctly specified.\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
          return;
       }
 
       if ( element_count >= INT_MAX ) {
          ostringstream errmsg;
-         errmsg << "RecordElement::initialize_element_encoder():" << __LINE__
-                << " ERROR: For element with trick_name '" << get_trick_name()
+         errmsg << "For element with trick_name '" << get_trick_name()
                 << "', the 'element_count' is " << element_count
                 << " and is unexpectantly >= " << INT_MAX
                 << ". Please check your input.py or modified-data files to make"
                 << " sure the elements are correctly specified.\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
          return;
       }
 
       if ( elements == nullptr ) {
          ostringstream errmsg;
-         errmsg << "RecordElement::initialize_element_encoder():" << __LINE__
-                << " ERROR: For element with trick_name '" << get_trick_name()
+         errmsg << "For element with trick_name '" << get_trick_name()
                 << "', no 'elements' have been specified. Please check your"
                 << " input.py or modified-data files to make sure the elements"
                 << " are correctly specified.\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
          return;
       }
 
@@ -165,12 +161,10 @@ void RecordElement::initialize_element_encoder()
    } else {
       if ( trick_name.empty() ) {
          ostringstream errmsg;
-         errmsg << "RecordElement::initialize_element_encoder():" << __LINE__
-                << " ERROR: The fixed record element has a missing Trick name."
+         errmsg << "The fixed record element has a missing Trick name."
                 << " Make sure the trick_name is set in either your input.py"
-                << " file or modified-data files is correctly specified."
-                << "\n";
-         DebugHandler::terminate( errmsg.str() );
+                << " file or modified-data files is correctly specified.\n";
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
          return;
       }
 
@@ -184,11 +178,10 @@ void RecordElement::initialize_element_encoder(
 {
    if ( rti_encoding == ENCODING_FIXED_RECORD ) {
       ostringstream errmsg;
-      errmsg << "RecordElement::initialize_element_encoder():" << __LINE__
-             << " ERROR: For element with trick_name '" << get_trick_name()
+      errmsg << "For element with trick_name '" << get_trick_name()
              << "', this function does not support the ENCODING_FIXED_RECORD"
              << " encoding for a given address and ATTRIBUTES.\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    this->encoder = EncoderFactory::create( address, attr, rti_encoding, "" );

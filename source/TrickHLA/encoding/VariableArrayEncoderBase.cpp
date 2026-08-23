@@ -66,19 +66,17 @@ VariableArrayEncoderBase::VariableArrayEncoderBase(
 {
    if ( this->address == nullptr ) {
       ostringstream errmsg;
-      errmsg << "VariableArrayEncoderBase::VariableArrayEncoderBase():" << __LINE__
-             << " ERROR: The variable address is nullptr for variable '"
+      errmsg << "The variable address is nullptr for variable '"
              << data_name << "'. Please make sure the Trick variable"
              << " is allocated memory by the Trick Memory Manager.\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    if ( attr == nullptr ) {
       ostringstream errmsg;
-      errmsg << "VariableArrayEncoderBase::VariableArrayEncoderBase():" << __LINE__
-             << " ERROR: Unexpected nullptr Trick attributes. Please make sure the"
+      errmsg << "Unexpected nullptr Trick attributes. Please make sure the"
              << " variable is allocated memory by the Trick Memory Manager.\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       return;
    }
 
@@ -207,13 +205,12 @@ void VariableArrayEncoderBase::resize_trick_var(
 
       if ( *static_cast< void ** >( address ) == nullptr ) {
          ostringstream errmsg;
-         errmsg << "VariableArrayEncoderBase::resize_trick_var():" << __LINE__
-                << " ERROR: Could not allocate memory for Trick variable"
+         errmsg << "Could not allocate memory for Trick variable"
                 << " '" << data_name << "' of Trick determined type (name:'"
                 << trickTypeCharString( type, type_name.c_str() )
                 << "', type:" << type << ") for user defined type '"
                 << type_name << "' for " << new_size << " elements!\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       }
    }
 }

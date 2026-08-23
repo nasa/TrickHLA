@@ -41,8 +41,6 @@ NASA, Johnson Space Center\n
 // System includes.
 #include <cstddef>
 #include <limits>
-#include <ostream>
-#include <sstream>
 #include <string>
 #include <utility>
 
@@ -120,11 +118,8 @@ void OwnershipHandler::convert_data_before_checkpoint()
       }
       pull_items = MemoryServices::declare_var( pull_items, pull_items_cnt );
       if ( pull_items == nullptr ) {
-         ostringstream errmsg;
-         errmsg << "OwnershipHandler::convert_data_before_checkpoint():" << __LINE__
-                << " CERROR: ould not allocate memory for pull_items (array of OwnershipItem type)!"
-                << "\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__,
+                                  "Could not allocate memory for pull_items (array of OwnershipItem type)!\n" );
       }
 
       // FIXME: Is this needed anymore?
@@ -158,11 +153,8 @@ void OwnershipHandler::convert_data_before_checkpoint()
       }
       push_items = MemoryServices::declare_var( push_items, push_items_cnt );
       if ( push_items == nullptr ) {
-         ostringstream errmsg;
-         errmsg << "OwnershipHandler::convert_data_before_checkpoint():" << __LINE__
-                << "ERROR:  Could not allocate memory for push_items (array of OwnershipItem type)!"
-                << "\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__,
+                                  "Could not allocate memory for push_items (array of OwnershipItem type)!\n" );
       }
 
       // Now, encode them to get checkpointed.

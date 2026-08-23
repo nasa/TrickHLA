@@ -74,10 +74,7 @@ Enum16Data::Enum16Data(
    ptr_enum16 = static_cast< TrickHLAModel::Int16Enum * >(
       TMM_declare_var_1d( "TrickHLAModel::Int16Enum", ptr_enum16_size ) );
    if ( ptr_enum16 == nullptr ) {
-      ostringstream errmsg;
-      errmsg << "Enum16Data::Enum16Data():" << __LINE__
-             << " ERROR: Failed to allocate memory for ptr_enum16!\n";
-      TrickHLA::DebugHandler::terminate( errmsg.str() );
+      TrickHLA::DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Failed to allocate memory for ptr_enum16!\n" );
       return;
    }
    for ( int i = 0; i < ptr_enum16_size; ++i ) {

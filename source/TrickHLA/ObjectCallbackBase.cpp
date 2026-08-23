@@ -32,7 +32,6 @@ NASA, Johnson Space Center\n
 // System includes.
 #include <cstring>
 #include <limits>
-#include <ostream>
 #include <sstream>
 #include <string>
 
@@ -86,10 +85,9 @@ void ObjectCallbackBase::initialize()
 {
    if ( ( this->object != nullptr ) && this->object->name.empty() ) {
       ostringstream errmsg;
-      errmsg << "TrickHLA::ObjectCallbackBase::initialize():" << __LINE__
-             << " ERROR: No Object name found, and it needs to be set"
+      errmsg << "No Object name found, and it needs to be set"
              << " before calling the initialize() function!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    this->initialized = true;
@@ -114,12 +112,8 @@ void ObjectCallbackBase::set_object(
 {
    // Check for initialization.
    if ( initialized ) {
-      ostringstream errmsg;
-      errmsg << "TrickHLA::ObjectCallbackBase::set_object():" << __LINE__
-             << " ERROR: The initialize() function has already been called!"
-             << "\n";
-      // Print message and terminate.
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__,
+                               "The initialize() function has already been called!\n" );
    }
 
    // Assign the object.
@@ -148,10 +142,8 @@ Attribute *ObjectCallbackBase::get_attribute_and_validate(
 {
    // Make sure the FOM name is not empty.
    if ( attr_FOM_name.empty() ) {
-      ostringstream errmsg;
-      errmsg << "ObjectCallbackBase::get_attribute_and_validate():" << __LINE__
-             << " ERROR: No attribute FOM name specified.\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__,
+                               "No attribute FOM name specified.\n" );
    }
 
    // Get the attribute by FOM name.
@@ -160,15 +152,14 @@ Attribute *ObjectCallbackBase::get_attribute_and_validate(
    // Make sure we have found the attribute.
    if ( attr == nullptr ) {
       ostringstream errmsg;
-      errmsg << "ObjectCallbackBase::get_attribute_and_validate():" << __LINE__
-             << " ERROR: For FOM object '"
+      errmsg << "For FOM object '"
              << ( ( object != nullptr ) ? object->get_FOM_name() : "nullptr" )
              << "', failed to find the TrickHLA Attribute for an attribute named"
              << " '" << attr_FOM_name << "'. Make sure the FOM attribute name is"
              << " correct, the FOM contains an attribute named '"
              << attr_FOM_name << "' and that your input.py file is properly"
              << " configured for this attribute.\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
    return attr;
 }

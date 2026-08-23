@@ -72,12 +72,9 @@ void DynamicalEntityLagCompInteg::initialize()
 {
    if ( this->integ_dt < this->integ_tol ) {
       ostringstream errmsg;
-
-      errmsg << "SpaceFOM::DynamicalEntityLagCompInteg::initialize():" << __LINE__ << "\n"
-             << " ERROR: Tolerance must be less that the dt!: dt = "
+      errmsg << "Tolerance must be less that the dt!: dt = "
              << this->integ_dt << "; tolerance = " << this->integ_tol << "\n";
-      // Print message and terminate.
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    // Call the base class initialize routine.

@@ -71,7 +71,7 @@ void *MemoryServices::declare_var( char const *declaration )
 
 void *MemoryServices::declare_var( char const *enh_type_spec, size_t n_elems )
 {
-   return ( trick_MM->declare_var( enh_type_spec, n_elems ) );
+   return ( trick_MM->declare_var( enh_type_spec, (int)n_elems ) );
 }
 
 bool MemoryServices::delete_var( std::string const &var_name )
@@ -134,7 +134,7 @@ wchar_t *MemoryServices::cwstrdup( char const *input )
 
    /** @li Copy the contents of the original character string to the duplicate. */
    std::size_t const ret = mbstowcs( addr, input, size );
-   if ( ret == -1 ) {
+   if ( ret == static_cast< std::size_t >( -1 ) ) {
       // Delete the allocated memory.
       MemoryServices::delete_var( addr );
       addr = nullptr;

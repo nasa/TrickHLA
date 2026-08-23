@@ -145,12 +145,11 @@ void ObjectServices::verify_object_arrays()
    // objects array.
    if ( ( obj_count > 0 ) && ( objects == nullptr ) ) {
       ostringstream errmsg;
-      errmsg << "ObjectServices::verify_object_arrays():" << __LINE__
-             << " ERROR: Unexpected nullptr 'objects' array for a non zero"
+      errmsg << "Unexpected nullptr 'objects' array for a non zero"
              << " obj_count:" << obj_count << ". Please check your input or"
              << " modified-data files to make sure the 'ObjectServices::objects'"
              << " array is correctly configured.\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       return;
    }
 
@@ -158,22 +157,20 @@ void ObjectServices::verify_object_arrays()
    // then let the user know.
    if ( ( obj_count <= 0 ) && ( objects != nullptr ) ) {
       ostringstream errmsg;
-      errmsg << "ObjectServices::verify_object_arrays():" << __LINE__
-             << " ERROR: Unexpected " << ( ( obj_count == 0 ) ? "zero" : "negative" )
+      errmsg << "Unexpected " << ( ( obj_count == 0 ) ? "zero" : "negative" )
              << " obj_count:" << obj_count << " for a non-nullptr 'objects' array."
              << " Please check your input or modified-data files to make sure"
              << " the 'ObjectServices::objects' array is correctly configured.\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       return;
    }
 
    if ( obj_count >= INT_MAX ) {
       ostringstream errmsg;
-      errmsg << "ObjectServices::verify_object_arrays():" << __LINE__
-             << " ERROR: Unexpected obj_count:" << obj_count << " >= " << INT_MAX
+      errmsg << "Unexpected obj_count:" << obj_count << " >= " << INT_MAX
              << ". Please check your input or modified-data files to make sure"
              << " the 'ObjectServices::objects' array is correctly configured.\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    // Reset the TrickHLA Object count if negative.
@@ -190,14 +187,13 @@ void ObjectServices::verify_object_arrays()
 
                if ( objects[n].get_name() == objects[k].get_name() ) {
                   ostringstream errmsg;
-                  errmsg << "ObjectServices::verify_object_arrays():" << __LINE__
-                         << " ERROR: Object instance '" << objects[n].get_name()
+                  errmsg << "Object instance '" << objects[n].get_name()
                          << "' at array index " << n << " has the same name as"
                          << " object instance '" << objects[k].get_name()
                          << "' at array index " << k << ". Please check your"
                          << " input or modified-data files to make sure the"
                          << " object instance names are unique with no duplicates.\n";
-                  DebugHandler::terminate( errmsg.str() );
+                  DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
                   return;
                }
             }
@@ -276,10 +272,7 @@ federate so the data will not be sent for '%s'.\n",
    }
 
    if ( instance_name.empty() ) {
-      ostringstream errmsg;
-      errmsg << "ObjectServices::send_init_data():" << __LINE__
-             << " ERROR: Empty Object Instance Name\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Empty Object Instance Name\n" );
       return;
    }
 
@@ -290,12 +283,11 @@ federate so the data will not be sent for '%s'.\n",
 
    if ( obj == nullptr ) {
       ostringstream errmsg;
-      errmsg << "ObjectServices::send_init_data():" << __LINE__
-             << " ERROR: The specified Object Instance"
+      errmsg << "The specified Object Instance"
              << " Name '" << instance_name << "' does not correspond to any"
              << " known object. Please check your S_define file or simulation"
              << " module to verify the settings.\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       return;
    }
 
@@ -384,13 +376,12 @@ federate so this call will be ignored.\n",
                      sleep_timer.reset();
                      if ( !federate->is_execution_member() ) {
                         ostringstream errmsg;
-                        errmsg << "ObjectServices::receive_init_data():" << __LINE__
-                               << " ERROR: Unexpectedly the Federate is no longer an execution member."
+                        errmsg << "Unexpectedly the Federate is no longer an execution member."
                                << " This means we are either not connected to the"
                                << " RTI or we are no longer joined to the federation"
                                << " execution because someone forced our resignation at"
                                << " the Central RTI Component (CRC) level!\n";
-                        DebugHandler::terminate( errmsg.str() );
+                        DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
                         return;
                      }
                   }
@@ -447,10 +438,7 @@ void ObjectServices::receive_init_data(
    }
 
    if ( instance_name.empty() ) {
-      ostringstream errmsg;
-      errmsg << "ObjectServices::receive_init_data():" << __LINE__
-             << " ERROR: Empty Object Instance Name";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Empty Object Instance Name" );
       return;
    }
 
@@ -461,11 +449,10 @@ void ObjectServices::receive_init_data(
 
    if ( obj == nullptr ) {
       ostringstream errmsg;
-      errmsg << "ObjectServices::receive_init_data():" << __LINE__
-             << " ERROR: The specified Object Instance Name '" << instance_name
+      errmsg << " The specified Object Instance Name '" << instance_name
              << "' does not correspond to any known object. Please check your"
              << " S_define file or simulation module to verify the settings.\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       return;
    }
 
@@ -503,13 +490,12 @@ void ObjectServices::receive_init_data(
                   sleep_timer.reset();
                   if ( !federate->is_execution_member() ) {
                      ostringstream errmsg;
-                     errmsg << "ObjectServices::receive_init_data():" << __LINE__
-                            << " ERROR: Unexpectedly the Federate is no longer an execution member."
+                     errmsg << "Unexpectedly the Federate is no longer an execution member."
                             << " This means we are either not connected to the"
                             << " RTI or we are no longer joined to the federation"
                             << " execution because someone forced our resignation at"
                             << " the Central RTI Component (CRC) level!\n";
-                     DebugHandler::terminate( errmsg.str() );
+                     DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
                      return;
                   }
                }
@@ -679,10 +665,7 @@ which keeps the instance attribute's object from becoming a Federation orphan. *
    exec_set_exec_command( ExitCmd );
 
    // Bail from the execution just in case the above command fails
-   ostringstream errmsg;
-   errmsg << "ObjectServices::object_instance_name_reservation_failed():" << __LINE__
-          << " Exiting...\n";
-   DebugHandler::terminate( errmsg.str() );
+   DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Exiting...\n" );
 }
 
 /*!
@@ -808,10 +791,7 @@ void ObjectServices::setup_object_RTI_handles(
    Object   *data_objects )
 {
    if ( this->federate == nullptr ) {
-      ostringstream errmsg;
-      errmsg << "ObjectServices::setup_object_RTI_handles():" << __LINE__
-             << " ERROR: Unexpected nullptr 'federate' pointer!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr 'federate' pointer!\n" );
       return;
    }
 
@@ -820,10 +800,7 @@ void ObjectServices::setup_object_RTI_handles(
 
    RTIambassador *rti_amb = federate->get_RTI_ambassador();
    if ( rti_amb == nullptr ) {
-      ostringstream errmsg;
-      errmsg << "ObjectServices::setup_object_RTI_handles():" << __LINE__
-             << " ERROR: Unexpected nullptr RTIambassador!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr RTIambassador!\n" );
       return;
    }
 
@@ -917,74 +894,38 @@ void ObjectServices::setup_object_RTI_handles(
       switch ( FOM_name_type ) {
          case 1: { // Object
             ostringstream errmsg;
-            errmsg << "ObjectServices::setup_object_RTI_handles():" << __LINE__
-                   << " ERROR: Object FOM Name '" << obj_FOM_name << "' Not Found. Please check"
+            errmsg << "Object FOM Name '" << obj_FOM_name << "' Not Found. Please check"
                    << " your input or modified-data files to make sure the"
                    << " Object FOM Name is correctly specified.\n";
-            DebugHandler::terminate( errmsg.str() );
+            DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
             break;
          }
          case 2: { // Attribute
             ostringstream errmsg;
-            errmsg << "ObjectServices::setup_object_RTI_handles():" << __LINE__
-                   << " ERROR: For Object FOM Name '" << obj_FOM_name << "', Attribute FOM Name '"
+            errmsg << "For Object FOM Name '" << obj_FOM_name << "', Attribute FOM Name '"
                    << attr_FOM_name << "' Not Found. Please check your input or"
                    << " modified-data files to make sure the Object Attribute"
                    << " FOM Name is correctly specified.\n";
-            DebugHandler::terminate( errmsg.str() );
+            DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
             break;
          }
          default: { // FOM name we are working with is unknown.
             ostringstream errmsg;
-            errmsg << "ObjectServices::setup_object_RTI_handles():" << __LINE__
-                   << " ERROR: Object or Attribute FOM Name Not Found. Please check your input or"
+            errmsg << "Object or Attribute FOM Name Not Found. Please check your input or"
                    << " modified-data files to make sure the FOM Name is"
                    << " correctly specified.\n";
-            DebugHandler::terminate( errmsg.str() );
+            DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
             break;
          }
       }
    } catch ( FederateNotExecutionMember const &e ) {
-      // Macro to restore the saved FPU Control Word register value.
-      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-      ostringstream errmsg;
-      errmsg << "ObjectServices::setup_object_RTI_handles():" << __LINE__
-             << " ERROR: Federate Not Execution Member\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, e );
    } catch ( NotConnected const &e ) {
-      // Macro to restore the saved FPU Control Word register value.
-      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-      ostringstream errmsg;
-      errmsg << "ObjectServices::setup_object_RTI_handles():" << __LINE__
-             << " ERROR: Not Connected\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, e );
    } catch ( RTIinternalError const &e ) {
-      // Macro to restore the saved FPU Control Word register value.
-      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-      string rti_err_msg;
-      StringUtilities::to_string( rti_err_msg, e.what() );
-      ostringstream errmsg;
-      errmsg << "ObjectServices::setup_object_RTI_handles():" << __LINE__
-             << " ERROR: RTIinternalError: '"
-             << rti_err_msg << "'\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, e );
    } catch ( RTI1516_NAMESPACE::Exception const &e ) {
-      // Macro to restore the saved FPU Control Word register value.
-      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-      string rti_err_msg;
-      StringUtilities::to_string( rti_err_msg, e.what() );
-      ostringstream errmsg;
-      errmsg << "ObjectServices::setup_object_RTI_handles():" << __LINE__
-             << " ERROR: Exception for '"
-             << rti_err_msg << "'\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, e );
    }
    // Macro to restore the saved FPU Control Word register value.
    TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -1374,13 +1315,12 @@ void ObjectServices::wait_for_registration_of_required_objects()
 
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
-                  errmsg << "ObjectServices::wait_for_registration_of_required_objects():" << __LINE__
-                         << " ERROR: Unexpectedly the Federate is no longer an execution"
+                  errmsg << "Unexpectedly the Federate is no longer an execution"
                          << " member. This means we are either not connected to"
                          << " the RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation"
                          << " at the Central RTI Component (CRC) level!\n";
-                  DebugHandler::terminate( errmsg.str() );
+                  DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
                   return;
                }
             }
@@ -1451,10 +1391,7 @@ void ObjectServices::set_object_instance_handles_by_name(
    Object   *data_objects )
 {
    if ( this->federate == nullptr ) {
-      ostringstream errmsg;
-      errmsg << "ObjectServices::set_object_instance_handles_by_name():" << __LINE__
-             << " ERROR: Unexpected nullptr 'federate' pointer!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr 'federate' pointer!\n" );
       return;
    }
 
@@ -1463,10 +1400,7 @@ void ObjectServices::set_object_instance_handles_by_name(
 
    RTIambassador *rti_amb = federate->get_RTI_ambassador();
    if ( rti_amb == nullptr ) {
-      ostringstream errmsg;
-      errmsg << "ObjectServices::set_object_instance_handles_by_name():" << __LINE__
-             << " ERROR: Unexpected nullptr RTIambassador!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr RTIambassador!\n" );
       return;
    }
 
@@ -1511,15 +1445,7 @@ void ObjectServices::set_object_instance_handles_by_name(
             // If this object is not required, just ignore the object instance
             // not known exception, otherwise handle the exception.
             if ( data_objects[n].is_required() ) {
-               // Macro to restore the saved FPU Control Word register value.
-               TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-               TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-               ostringstream errmsg;
-               errmsg << "ObjectServices::set_object_instance_handles_by_name():" << __LINE__
-                      << " ERROR: Object Instance Not Known for '"
-                      << instance_name << "'\n";
-               DebugHandler::terminate( errmsg.str() );
+               DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, e );
                return;
             } else {
                if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
@@ -1530,46 +1456,13 @@ void ObjectServices::set_object_instance_handles_by_name(
          }
       }
    } catch ( FederateNotExecutionMember const &e ) {
-      // Macro to restore the saved FPU Control Word register value.
-      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-      ostringstream errmsg;
-      errmsg << "ObjectServices::set_object_instance_handles_by_name():" << __LINE__
-             << " ERROR: Federation Not Execution Member\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, e );
    } catch ( NotConnected const &e ) {
-      // Macro to restore the saved FPU Control Word register value.
-      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-      ostringstream errmsg;
-      errmsg << "ObjectServices::set_object_instance_handles_by_name():" << __LINE__
-             << " ERROR: Not Connected\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, e );
    } catch ( RTIinternalError const &e ) {
-      // Macro to restore the saved FPU Control Word register value.
-      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-      string rti_err_msg;
-      StringUtilities::to_string( rti_err_msg, e.what() );
-      ostringstream errmsg;
-      errmsg << "ObjectServices::set_object_instance_handles_by_name():" << __LINE__
-             << " ERROR: RTIinternalError: '" << rti_err_msg << "'\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, e );
    } catch ( RTI1516_NAMESPACE::Exception const &e ) {
-      // Macro to restore the saved FPU Control Word register value.
-      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-      string rti_err_msg;
-      StringUtilities::to_string( rti_err_msg, e.what() );
-      ostringstream errmsg;
-      errmsg << "ObjectServices::set_object_instance_handles_by_name():" << __LINE__
-             << " ERROR: Exception for '"
-             << rti_err_msg << "'\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, e );
    }
    // Macro to restore the saved FPU Control Word register value.
    TRICKHLA_RESTORE_FPU_CONTROL_WORD;
@@ -1981,20 +1874,16 @@ void ObjectServices::pull_ownership_at_init(
    string const &attribute_list )
 {
    if ( obj_instance_name.empty() ) {
-      ostringstream errmsg;
-      errmsg << "ObjectServices::pull_ownership_at_init():" << __LINE__
-             << " ERROR: Unexpected empty obj_instance_name specified!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Unexpected empty obj_instance_name specified!\n" );
       return;
    }
 
    Object *obj = get_trickhla_object( obj_instance_name );
    if ( obj == nullptr ) {
       ostringstream errmsg;
-      errmsg << "ObjectServices::pull_ownership_at_init():" << __LINE__
-             << " ERROR: Failed to find object with instance name: '"
+      errmsg << "Failed to find object with instance name: '"
              << obj_instance_name << "'!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       return;
    }
 
@@ -2011,20 +1900,16 @@ void ObjectServices::handle_pulled_ownership_at_init(
    string const &obj_instance_name )
 {
    if ( obj_instance_name.empty() ) {
-      ostringstream errmsg;
-      errmsg << "ObjectServices::handle_pulled_ownership_at_init():" << __LINE__
-             << " ERROR: Unexpected empty obj_instance_name specified!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Unexpected empty obj_instance_name specified!\n" );
       return;
    }
 
    Object *obj = get_trickhla_object( obj_instance_name );
    if ( obj == nullptr ) {
       ostringstream errmsg;
-      errmsg << "ObjectServices::handle_pulled_ownership_at_init():" << __LINE__
-             << " ERROR: Failed to find object with instance name: '"
+      errmsg << "Failed to find object with instance name: '"
              << obj_instance_name << "'!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       return;
    }
 
@@ -2077,20 +1962,16 @@ void ObjectServices::push_ownership_at_init(
    string const &attribute_list )
 {
    if ( obj_instance_name.empty() ) {
-      ostringstream errmsg;
-      errmsg << "ObjectServices::push_ownership_at_init():" << __LINE__
-             << " ERROR: Unexpected empty obj_instance_name specified!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Unexpected empty obj_instance_name specified!\n" );
       return;
    }
 
    Object *obj = get_trickhla_object( obj_instance_name );
    if ( obj == nullptr ) {
       ostringstream errmsg;
-      errmsg << "ObjectServices::push_ownership_at_init():" << __LINE__
-             << " ERROR: Failed to find object with instance name: '"
+      errmsg << "Failed to find object with instance name: '"
              << obj_instance_name << "'!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       return;
    }
 
@@ -2107,20 +1988,16 @@ void ObjectServices::handle_pushed_ownership_at_init(
    string const &obj_instance_name )
 {
    if ( obj_instance_name.empty() ) {
-      ostringstream errmsg;
-      errmsg << "ObjectServices::handle_pushed_ownership_at_init():" << __LINE__
-             << " ERROR: Unexpected empty obj_instance_name specified!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Unexpected empty obj_instance_name specified!\n" );
       return;
    }
 
    Object *obj = get_trickhla_object( obj_instance_name );
    if ( obj == nullptr ) {
       ostringstream errmsg;
-      errmsg << "ObjectServices::handle_pushed_ownership_at_init():" << __LINE__
-             << " ERROR: Failed to find object with instance name: '"
+      errmsg << "Failed to find object with instance name: '"
              << obj_instance_name << "'!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       return;
    }
 
@@ -2242,13 +2119,12 @@ void ObjectServices::wait_for_discovery_of_objects()
                sleep_timer.reset();
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
-                  errmsg << "ObjectServices::wait_for_discovery_of_object_instance():" << __LINE__
-                         << " ERROR: Unexpectedly the Federate is no longer an execution member."
+                  errmsg << "Unexpectedly the Federate is no longer an execution member."
                          << " This means we are either not connected to the"
                          << " RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
                          << " the Central RTI Component (CRC) level!\n";
-                  DebugHandler::terminate( errmsg.str() );
+                  DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
                   return;
                }
             }

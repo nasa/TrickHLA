@@ -32,7 +32,6 @@ NASA, Johnson Space Center\n
 // System include files.
 #include <cstddef>
 #include <cstdlib>
-#include <ostream>
 #include <sstream>
 #include <string>
 
@@ -97,10 +96,7 @@ void SineConditional::set_data(
 void SineConditional::initialize()
 {
    if ( this->sim_data == nullptr ) {
-      ostringstream errmsg;
-      errmsg << "SineConditional::initialize():" << __LINE__
-             << " ERROR: Unexpected nullptr sim_data!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr sim_data!\n" );
    }
 
    // Make a copy of the incoming data so that we have a previous state
@@ -151,20 +147,14 @@ bool SineConditional::should_send(
    TrickHLA::Attribute *attr )
 {
    if ( !initialized ) {
-      ostringstream errmsg;
-      errmsg << "SineConditional::should_send():" << __LINE__
-             << " ERROR: The initialize() function has not been called!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "The initialize() function has not been called!\n" );
    }
 
    if ( attr == nullptr ) {
       return false;
    }
    if ( this->sim_data == nullptr ) {
-      ostringstream errmsg;
-      errmsg << "SineConditional::should_send('" << attr->get_FOM_name() << "):" << __LINE__
-             << " ERROR: Unexpected nullptr sim_data!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr sim_data!\n" );
    }
 
    bool send_attr = false;
@@ -210,9 +200,9 @@ bool SineConditional::should_send(
       }
    } else {
       ostringstream errmsg;
-      errmsg << "SineConditional::should_send('" << attr->get_FOM_name() << "):" << __LINE__
-             << " ERROR: Could not find the data for the specified FOM attribute!\n";
-      DebugHandler::terminate( errmsg.str() );
+      errmsg << "Could not find the data for the FOM attribute '"
+             << attr->get_FOM_name() << "'!\n";
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Could not find the data for the specified FOM attribute!\n" );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_CONDITIONAL ) ) {

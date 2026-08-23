@@ -101,9 +101,8 @@ void OpaqueBuffer::set_byte_alignment( unsigned int const size )
 
       default:
          ostringstream errmsg;
-         errmsg << "OpaqueBuffer::set_byte_alignment():" << __LINE__
-                << " ERROR: Unsupported byte alignment: " << size << "!\n";
-         DebugHandler::terminate( errmsg.str() );
+         errmsg << " Unsupported byte alignment: " << size << "!\n";
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
          break;
    }
 }
@@ -142,10 +141,9 @@ void OpaqueBuffer::ensure_buffer_capacity(
 
    if ( buffer == nullptr ) {
       ostringstream errmsg;
-      errmsg << "OpaqueBuffer::ensure_buffer_capacity():" << __LINE__
-             << " ERROR: Could not allocate memory for buffer for requested"
+      errmsg << "Could not allocate memory for buffer for requested"
              << " capacity " << capacity << "!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 }
 
@@ -228,11 +226,10 @@ void OpaqueBuffer::pull_from_buffer(
    // Determine if we are overflowing the capacity of the buffer.
    if ( ( pull_pos + size ) > capacity ) {
       ostringstream errmsg;
-      errmsg << "OpaqueBuffer::pull_from_buffer():" << __LINE__
-             << " ERROR: Trying to pull " << size << " bytes from the buffer at"
+      errmsg << "Trying to pull " << size << " bytes from the buffer at"
              << " position " << pull_pos << ", which exceeds the end of the buffer"
              << " by " << ( ( pull_pos + size ) - capacity ) << " bytes!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    // Display a warning if an unsupported encoding is used.
@@ -290,12 +287,11 @@ void OpaqueBuffer::pull_pad_from_buffer(
    // Determine if we are overflowing the capacity of the buffer.
    if ( ( pull_pos + pad_size ) > capacity ) {
       ostringstream errmsg;
-      errmsg << "OpaqueBuffer::pull_pad_from_buffer():" << __LINE__
-             << " ERROR: Trying to pull " << pad_size << " pad bytes from the"
+      errmsg << "Trying to pull " << pad_size << " pad bytes from the"
              << " buffer at position " << pull_pos << ", which exceeds the end of"
              << " the buffer by " << ( ( pull_pos + pad_size ) - capacity )
              << " bytes!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    // Update the buffer position where we pull data from.
@@ -356,10 +352,8 @@ void OpaqueBuffer::byteswap_buffer_copy(
                ull_dest[0]                        = Utilities::byteswap_unsigned_long_long( ull_src[0] );
             } else {
                ostringstream errmsg;
-               errmsg << "OpaqueBuffer::byteswap_buffer_copy():"
-                      << __LINE__ << " ERROR: Don't know how to byteswap "
-                      << size << " bytes!\n";
-               DebugHandler::terminate( errmsg.str() );
+               errmsg << "Don't know how to byteswap " << size << " bytes!\n";
+               DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
             }
             break;
          }

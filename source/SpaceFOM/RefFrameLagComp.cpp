@@ -31,8 +31,6 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstddef>
-#include <ostream>
-#include <sstream>
 
 // Trick includes.
 #include "trick/Integrator.hh"
@@ -104,11 +102,7 @@ void RefFrameLagComp::initialize()
    this->integrator = Trick::getIntegrator( Euler, 26, this->integ_dt );
 
    if ( this->integrator == nullptr ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::RefFrameLagComp::initialize():" << __LINE__
-             << " ERROR: Unexpected nullptr Trick integrator!\n";
-      // Print message and terminate.
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr Trick integrator!\n" );
    }
 
    // Call the base class initialize function.l

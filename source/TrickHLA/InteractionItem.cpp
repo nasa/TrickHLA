@@ -242,10 +242,9 @@ void InteractionItem::checkpoint_queue()
       parm_items = MemoryServices::declare_var( parm_items, parm_items_count );
       if ( parm_items == nullptr ) {
          ostringstream errmsg;
-         errmsg << "InteractionItem::checkpoint_queue():" << __LINE__
-                << " ERROR: Failed to allocate enough memory for a parm_items linear"
+         errmsg << "Failed to allocate enough memory for a parm_items linear"
                 << " array of " << parm_items_count << " elements\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       }
 
       size_t         i;

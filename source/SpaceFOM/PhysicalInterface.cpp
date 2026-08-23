@@ -34,7 +34,6 @@ NASA, Johnson Space Center\n
 #include <cstddef>
 #include <cstdlib>
 #include <cstring>
-#include <ostream>
 #include <sstream>
 
 // SpaceFOM includes.
@@ -86,11 +85,9 @@ void PhysicalInterface::initialize()
    // Check to make sure the PhysicalInterface data is set.
    if ( interface_data == nullptr ) {
       ostringstream errmsg;
-      errmsg << "SpaceFOM::PhysicalInterface::initialize():" << __LINE__
-             << " ERROR: Unexpected nullptr PhysicalInterfaceData: "
+      errmsg << "Unexpected nullptr PhysicalInterfaceData: "
              << packing_data.name << "\n";
-      // Print message and terminate.
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       return;
    }
 
@@ -216,11 +213,9 @@ void PhysicalInterface::set_data( PhysicalInterfaceData *interface_data_ptr )
    // Set the reference to the PhysicalInterface data.
    if ( interface_data_ptr == nullptr ) {
       ostringstream errmsg;
-      errmsg << "SpaceFOM::PhysicalInterface::set_data():" << __LINE__
-             << " ERROR: Unexpected nullptr PhysicalInterfaceData: "
+      errmsg << "Unexpected nullptr PhysicalInterfaceData: "
              << packing_data.name << "\n";
-      // Print message and terminate.
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       return;
    }
    this->interface_data = interface_data_ptr;

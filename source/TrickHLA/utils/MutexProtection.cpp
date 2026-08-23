@@ -17,6 +17,7 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{MutexLock.cpp}
 @trick_link_dependency{MutexProtection.cpp}
+@trick_link_dependency{../DebugHandler.cpp}
 
 @revs_title
 @revs_begin
@@ -25,10 +26,10 @@ NASA, Johnson Space Center\n
 */
 
 // Trick includes.
-#include "trick/message_proto.h"
 #include "trick/message_type.h"
 
 // TrickHLA includes.
+#include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/utils/MutexLock.hh"
 #include "TrickHLA/utils/MutexProtection.hh"
 
@@ -42,8 +43,8 @@ MutexProtection::MutexProtection(
    : mutex( mutex_lock )
 {
    if ( mutex->lock() != 0 ) {
-      message_publish( MSG_ERROR, "MutexProtection::MutexProtection():%d ERROR Locking the MutexLock!\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   "Failed to lock the MutexLock!\n", MSG_ERROR );
    }
 }
 

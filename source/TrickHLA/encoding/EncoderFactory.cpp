@@ -49,7 +49,6 @@ NASA, Johnson Space Center\n
 // Trick include files.
 #include "trick/MemoryManager.hh"
 #include "trick/attributes.h"
-#include "trick/message_proto.h"
 #include "trick/message_type.h"
 #include "trick/parameter_types.h"
 #include "trick/reference.h"
@@ -86,15 +85,14 @@ EncoderBase *EncoderFactory::create(
    // Determine if we had an error getting the ref-attributes.
    if ( ref2 == nullptr ) {
       ostringstream errmsg;
-      errmsg << "EncoderFactory::create():" << __LINE__
-             << " ERROR: Could not retrieve Trick ref-attributes for '"
+      errmsg << "Could not retrieve Trick ref-attributes for '"
              << trick_name << "'. Please check your input or modified-data"
              << " files to make sure the object attribute Trick name is"
              << " correctly specified. If '" << trick_name
              << "' is an inherited variable then make sure the base class"
              << " uses either the 'public' or 'protected' access level for"
              << " the variable.\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       return nullptr;
    }
 
@@ -113,10 +111,9 @@ EncoderBase *EncoderFactory::create(
 {
    if ( attr == nullptr ) {
       ostringstream errmsg;
-      errmsg << "EncoderFactory::create():" << __LINE__
-             << " ERROR: Unexpected nullptr Trick attributes. Please make sure the"
+      errmsg << "Unexpected nullptr Trick attributes. Please make sure the"
              << " variable is allocated memory by the Trick Memory Manager.\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       return nullptr;
    }
 
@@ -133,11 +130,10 @@ EncoderBase *EncoderFactory::create(
 
    if ( address == nullptr ) {
       ostringstream errmsg;
-      errmsg << "EncoderFactory::create():" << __LINE__
-             << " ERROR: The variable address is nullptr for variable '"
+      errmsg << "The variable address is nullptr for variable '"
              << data_name << "'. Please make sure the Trick variable"
              << " is allocated memory by the Trick Memory Manager.\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       return nullptr;
    }
 
@@ -147,10 +143,9 @@ EncoderBase *EncoderFactory::create(
       case TRICK_VOID: {
          // No type, not supported.
          ostringstream errmsg;
-         errmsg << "EncoderFactory::create():" << __LINE__
-                << " ERROR: Trick attributes for the variable '" << data_name
+         errmsg << "Trick attributes for the variable '" << data_name
                 << "' is of type 'void', and is not supported.\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
          break;
       }
       case TRICK_CHARACTER: { // NOLINT(bugprone-branch-clone)
@@ -179,13 +174,12 @@ EncoderBase *EncoderFactory::create(
          encoder = create_uint16_encoder( address, attr, hla_encoding, data_name );
 #else
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_HLA_ENCODERS ) ) {
-            ostringstream errmsg;
-            errmsg << "EncoderFactory::create():" << __LINE__
-                   << " WARNING: Trick attributes for the variable '" << data_name
-                   << "' is of type 'unsigned short', but the IEEE 1516-2010"
-                   << " standard does not support encoding unsigned integers."
-                   << " Using int16 encoder instead.\n";
-            message_publish( MSG_WARNING, errmsg.str().c_str() );
+            ostringstream msg;
+            msg << "Trick attributes for the variable '" << data_name
+                << "' is of type 'unsigned short', but the IEEE 1516-2010"
+                << " standard does not support encoding unsigned integers."
+                << " Using int16 encoder instead.\n";
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
          }
          encoder = create_int16_encoder( address, attr, hla_encoding, data_name );
 #endif // IEEE_1516_2025
@@ -202,13 +196,12 @@ EncoderBase *EncoderFactory::create(
          encoder = create_uint32_encoder( address, attr, hla_encoding, data_name );
 #else
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_HLA_ENCODERS ) ) {
-            ostringstream errmsg;
-            errmsg << "EncoderFactory::create():" << __LINE__
-                   << " WARNING: Trick attributes for the variable '" << data_name
-                   << "' is of type 'unsigned int', but the IEEE 1516-2010"
-                   << " standard does not support encoding unsigned integers."
-                   << " Using int32 encoder instead.\n";
-            message_publish( MSG_WARNING, errmsg.str().c_str() );
+            ostringstream msg;
+            msg << "Trick attributes for the variable '" << data_name
+                << "' is of type 'unsigned int', but the IEEE 1516-2010"
+                << " standard does not support encoding unsigned integers."
+                << " Using int32 encoder instead.\n";
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
          }
          encoder = create_int32_encoder( address, attr, hla_encoding, data_name );
 #endif // IEEE_1516_2025
@@ -227,12 +220,11 @@ EncoderBase *EncoderFactory::create(
             }
             default: {
                ostringstream errmsg;
-               errmsg << "EncoderFactory::create():" << __LINE__
-                      << " ERROR: Trick attributes for the variable '"
+               errmsg << "Trick attributes for the variable '"
                       << data_name << "' is of type 'long', but has"
                       << " an unrecognized size of " << sizeof( long )
                       << " bytes.\n";
-               DebugHandler::terminate( errmsg.str() );
+               DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
                break;
             }
          }
@@ -246,13 +238,12 @@ EncoderBase *EncoderFactory::create(
                encoder = create_uint32_encoder( address, attr, hla_encoding, data_name );
 #else
                if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_HLA_ENCODERS ) ) {
-                  ostringstream errmsg;
-                  errmsg << "EncoderFactory::create():" << __LINE__
-                         << " WARNING: Trick attributes for the variable '" << data_name
-                         << "' is of type 'unsigned long', but the IEEE 1516-2010"
-                         << " standard does not support encoding unsigned integers."
-                         << " Using int32 encoder instead.\n";
-                  message_publish( MSG_WARNING, errmsg.str().c_str() );
+                  ostringstream msg;
+                  msg << "Trick attributes for the variable '" << data_name
+                      << "' is of type 'unsigned long', but the IEEE 1516-2010"
+                      << " standard does not support encoding unsigned integers."
+                      << " Using int32 encoder instead.\n";
+                  DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
                }
                encoder = create_int32_encoder( address, attr, hla_encoding, data_name );
 #endif // IEEE_1516_2025
@@ -263,13 +254,12 @@ EncoderBase *EncoderFactory::create(
                encoder = create_uint64_encoder( address, attr, hla_encoding, data_name );
 #else
                if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_HLA_ENCODERS ) ) {
-                  ostringstream errmsg;
-                  errmsg << "EncoderFactory::create():" << __LINE__
-                         << " WARNING: Trick attributes for the variable '" << data_name
-                         << "' is of type 'unsigned long', but the IEEE 1516-2010"
-                         << " standard does not support encoding unsigned integers."
-                         << " Using int64 encoder instead.\n";
-                  message_publish( MSG_WARNING, errmsg.str().c_str() );
+                  ostringstream msg;
+                  msg << "Trick attributes for the variable '" << data_name
+                      << "' is of type 'unsigned long', but the IEEE 1516-2010"
+                      << " standard does not support encoding unsigned integers."
+                      << " Using int64 encoder instead.\n";
+                  DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
                }
                encoder = create_int64_encoder( address, attr, hla_encoding, data_name );
 #endif // IEEE_1516_2025
@@ -277,12 +267,11 @@ EncoderBase *EncoderFactory::create(
             }
             default: {
                ostringstream errmsg;
-               errmsg << "EncoderFactory::create():" << __LINE__
-                      << " ERROR: Trick attributes for the variable '"
+               errmsg << "Trick attributes for the variable '"
                       << data_name << "' is of type 'unsigned long', but has"
                       << " an unrecognized size of " << sizeof( unsigned long )
                       << " bytes.\n";
-               DebugHandler::terminate( errmsg.str() );
+               DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
                break;
             }
          }
@@ -301,21 +290,19 @@ EncoderBase *EncoderFactory::create(
       case TRICK_BITFIELD: {
          // (signed int : 1), Not supported
          ostringstream errmsg;
-         errmsg << "EncoderFactory::create():" << __LINE__
-                << " ERROR: Trick attributes for the variable '" << data_name
+         errmsg << "Trick attributes for the variable '" << data_name
                 << "' is of type bit-field 'int : 1', and is"
                 << " not supported.\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
          break;
       }
       case TRICK_UNSIGNED_BITFIELD: {
          // (unsigned int : 1), Not supported
          ostringstream errmsg;
-         errmsg << "EncoderFactory::create():" << __LINE__
-                << " ERROR: Trick attributes for the variable '" << data_name
+         errmsg << "Trick attributes for the variable '" << data_name
                 << "' is of type bit-field 'unsigned int : 1',"
                 << " and is not supported.\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
          break;
       }
       case TRICK_LONG_LONG: {
@@ -329,13 +316,12 @@ EncoderBase *EncoderFactory::create(
          encoder = create_uint64_encoder( address, attr, hla_encoding, data_name );
 #else
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_HLA_ENCODERS ) ) {
-            ostringstream errmsg;
-            errmsg << "EncoderFactory::create():" << __LINE__
-                   << " WARNING: Trick attributes for the variable '" << data_name
-                   << "' is of type 'unsigned long long', but the IEEE 1516-2010"
-                   << " standard does not support encoding unsigned integers."
-                   << " Using int64 encoder instead.\n";
-            message_publish( MSG_WARNING, errmsg.str().c_str() );
+            ostringstream msg;
+            msg << "Trick attributes for the variable '" << data_name
+                << "' is of type 'unsigned long long', but the IEEE 1516-2010"
+                << " standard does not support encoding unsigned integers."
+                << " Using int64 encoder instead.\n";
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
          }
          encoder = create_int64_encoder( address, attr, hla_encoding, data_name );
 #endif // IEEE_1516_2025
@@ -344,10 +330,9 @@ EncoderBase *EncoderFactory::create(
       case TRICK_FILE_PTR: {
          // (file *), Not supported
          ostringstream errmsg;
-         errmsg << "EncoderFactory::create():" << __LINE__
-                << " ERROR: Trick attributes for the variable '" << data_name
+         errmsg << "Trick attributes for the variable '" << data_name
                 << "' is of type 'file *', and is not supported.\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
          break;
       }
       case TRICK_BOOLEAN: {
@@ -368,10 +353,9 @@ EncoderBase *EncoderFactory::create(
       case TRICK_VOID_PTR: {
          // An arbitrary address (void *), Not supported
          ostringstream errmsg;
-         errmsg << "EncoderFactory::create():" << __LINE__
-                << " ERROR: Trick attributes for the variable '" << data_name
+         errmsg << "Trick attributes for the variable '" << data_name
                 << "' is of type 'void *', and is not supported.\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
          break;
       }
       case TRICK_ENUMERATED: {
@@ -382,38 +366,34 @@ EncoderBase *EncoderFactory::create(
       case TRICK_STRUCTURED: {
          // User defined type (struct/class), Not supported
          ostringstream errmsg;
-         errmsg << "EncoderFactory::create():" << __LINE__
-                << " ERROR: Trick attributes for the variable '" << data_name
+         errmsg << "Trick attributes for the variable '" << data_name
                 << "' is of type 'struct' or class, and is not supported.\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
          break;
       }
       case TRICK_OPAQUE_TYPE: {
          // User defined type (where type details are as yet unknown)
          ostringstream errmsg;
-         errmsg << "EncoderFactory::create():" << __LINE__
-                << " ERROR: Trick attributes for the variable '" << data_name
+         errmsg << "Trick attributes for the variable '" << data_name
                 << "' is of type 'opaque', and is not supported.\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
          break;
       }
       case TRICK_STL: {
          // stl::type, Not supported
          ostringstream errmsg;
-         errmsg << "EncoderFactory::create():" << __LINE__
-                << " ERROR: Trick attributes for the variable '" << data_name
+         errmsg << "Trick attributes for the variable '" << data_name
                 << "' is of type 'stl::type', and is not supported.\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
          break;
       }
       default: {
          // Unrecognized types are not supported.
          ostringstream errmsg;
-         errmsg << "EncoderFactory::create():" << __LINE__
-                << " ERROR: Trick attributes for the variable '" << data_name
+         errmsg << "Trick attributes for the variable '" << data_name
                 << "' is of unknown type '" << attr->type_name
                 << "', and is not supported.\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
          break;
       }
    }
@@ -461,12 +441,11 @@ EncoderBase *EncoderFactory::create_char_encoder(
             return new CharASCIIStringEncoder( address, attr, data_name );
          } else {
             ostringstream errmsg;
-            errmsg << "EncoderFactory::create_char_encoder():" << __LINE__
-                   << " ERROR: Trick attributes for the variable '" << data_name
+            errmsg << "Trick attributes for the variable '" << data_name
                    << "' is of type 'char' for the specified"
                    << " ENCODING_ASCII_STRING encoding and only a dynamic"
                    << " array of characters (i.e. char *) is supported!\n";
-            DebugHandler::terminate( errmsg.str() );
+            DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
          }
          break;
       }
@@ -475,12 +454,11 @@ EncoderBase *EncoderFactory::create_char_encoder(
             return new CharUnicodeStringEncoder( address, attr, data_name );
          } else {
             ostringstream errmsg;
-            errmsg << "EncoderFactory::create_char_encoder():" << __LINE__
-                   << " ERROR: Trick attributes for the variable '" << data_name
+            errmsg << "Trick attributes for the variable '" << data_name
                    << "' is of type 'char' for the specified"
                    << " ENCODING_UNICODE_STRING encoding and only a dynamic"
                    << " array of characters (i.e. char *) is supported!\n";
-            DebugHandler::terminate( errmsg.str() );
+            DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
          }
          break;
       }
@@ -489,12 +467,11 @@ EncoderBase *EncoderFactory::create_char_encoder(
             return new CharOpaqueDataEncoder( address, attr, data_name );
          } else {
             ostringstream errmsg;
-            errmsg << "EncoderFactory::create_char_encoder():" << __LINE__
-                   << " ERROR: Trick attributes for the variable '" << data_name
+            errmsg << "Trick attributes for the variable '" << data_name
                    << "' is of type 'char' for the specified"
                    << " ENCODING_OPAQUE_DATA encoding and only a dynamic"
                    << " array of characters (i.e. char *) is supported!\n";
-            DebugHandler::terminate( errmsg.str() );
+            DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
          }
          break;
       }
@@ -503,23 +480,21 @@ EncoderBase *EncoderFactory::create_char_encoder(
             return new CharRawDataEncoder( address, attr, data_name );
          } else {
             ostringstream errmsg;
-            errmsg << "EncoderFactory::create_char_encoder():" << __LINE__
-                   << " ERROR: Trick attributes for the variable '" << data_name
+            errmsg << "Trick attributes for the variable '" << data_name
                    << "' is of type 'char' for the specified"
                    << " ENCODING_NONE encoding and only a dynamic"
                    << " array of characters (i.e. char *) is supported!\n";
-            DebugHandler::terminate( errmsg.str() );
+            DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
          }
          break;
       }
       default: {
          ostringstream errmsg;
-         errmsg << "EncoderFactory::create_char_encoder():" << __LINE__
-                << " ERROR: Trick attributes for the variable '" << data_name
+         errmsg << "Trick attributes for the variable '" << data_name
                 << "' is of type 'char', the specified HLA-encoding ("
                 << encoding_enum_to_string( hla_encoding )
                 << ") is not supported.\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
          break;
       }
    }
@@ -562,12 +537,11 @@ EncoderBase *EncoderFactory::create_string_encoder(
       }
       default: {
          ostringstream errmsg;
-         errmsg << "EncoderFactory::create_string_encoder():" << __LINE__
-                << " ERROR: Trick attributes for the variable '" << data_name
+         errmsg << "Trick attributes for the variable '" << data_name
                 << "' is of type 'std::string', the specified HLA-encoding ("
                 << encoding_enum_to_string( hla_encoding )
                 << ") is not supported.\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
          break;
       }
    }
@@ -598,12 +572,11 @@ EncoderBase *EncoderFactory::create_wchar_encoder(
       }
       default: {
          ostringstream errmsg;
-         errmsg << "EncoderFactory::create_wchar_encoder():" << __LINE__
-                << " ERROR: Trick attributes for the variable '" << data_name
+         errmsg << "Trick attributes for the variable '" << data_name
                 << "' is of type 'wchar', the specified HLA-encoding ("
                 << encoding_enum_to_string( hla_encoding )
                 << ") is not supported.\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
          break;
       }
    }
@@ -634,12 +607,11 @@ EncoderBase *EncoderFactory::create_wstring_encoder(
       }
       default: {
          ostringstream errmsg;
-         errmsg << "EncoderFactory::create_wstring_encoder():" << __LINE__
-                << " ERROR: Trick attributes for the variable '" << data_name
+         errmsg << "Trick attributes for the variable '" << data_name
                 << "' is of type 'std::wstring', the specified HLA-encoding ("
                 << encoding_enum_to_string( hla_encoding )
                 << ") is not supported.\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
          break;
       }
    }
@@ -682,12 +654,11 @@ EncoderBase *EncoderFactory::create_int16_encoder(
       }
       default: {
          ostringstream errmsg;
-         errmsg << "EncoderFactory::create_int16_encoder():" << __LINE__
-                << " ERROR: Trick attributes for the variable '" << data_name
+         errmsg << "Trick attributes for the variable '" << data_name
                 << "' is of type 'short', the specified HLA-encoding ("
                 << encoding_enum_to_string( hla_encoding )
                 << ") is not supported.\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
          break;
       }
    }
@@ -730,12 +701,11 @@ EncoderBase *EncoderFactory::create_int32_encoder(
       }
       default: {
          ostringstream errmsg;
-         errmsg << "EncoderFactory::create_int32_encoder():" << __LINE__
-                << " ERROR: Trick attributes for the variable '" << data_name
+         errmsg << "Trick attributes for the variable '" << data_name
                 << "' is of type 'int', the specified HLA-encoding ("
                 << encoding_enum_to_string( hla_encoding )
                 << ") is not supported.\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
          break;
       }
    }
@@ -778,12 +748,11 @@ EncoderBase *EncoderFactory::create_int64_encoder(
       }
       default: {
          ostringstream errmsg;
-         errmsg << "EncoderFactory::create_int64_encoder():" << __LINE__
-                << " ERROR: Trick attributes for the variable '" << data_name
+         errmsg << "Trick attributes for the variable '" << data_name
                 << "' is of type 'long long', the specified HLA-encoding ("
                 << encoding_enum_to_string( hla_encoding )
                 << ") is not supported.\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
          break;
       }
    }
@@ -827,12 +796,11 @@ EncoderBase *EncoderFactory::create_uint16_encoder(
       }
       default: {
          ostringstream errmsg;
-         errmsg << "EncoderFactory::create_uint16_encoder():" << __LINE__
-                << " ERROR: Trick attributes for the variable '" << data_name
+         errmsg << "Trick attributes for the variable '" << data_name
                 << "' is of type 'unsigned short', the specified HLA-encoding ("
                 << encoding_enum_to_string( hla_encoding )
                 << ") is not supported.\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
          break;
       }
    }
@@ -875,12 +843,11 @@ EncoderBase *EncoderFactory::create_uint32_encoder(
       }
       default: {
          ostringstream errmsg;
-         errmsg << "EncoderFactory::create_uint32_encoder():" << __LINE__
-                << " ERROR: Trick attributes for the variable '" << data_name
+         errmsg << "Trick attributes for the variable '" << data_name
                 << "' is of type 'unsigned int', the specified HLA-encoding ("
                 << encoding_enum_to_string( hla_encoding )
                 << ") is not supported.\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
          break;
       }
    }
@@ -923,12 +890,11 @@ EncoderBase *EncoderFactory::create_uint64_encoder(
       }
       default: {
          ostringstream errmsg;
-         errmsg << "EncoderFactory::create_uint64_encoder():" << __LINE__
-                << " ERROR: Trick attributes for the variable '" << data_name
+         errmsg << "Trick attributes for the variable '" << data_name
                 << "' is of type 'unsigned long long', the specified"
                 << " hla_encoding (" << encoding_enum_to_string( hla_encoding )
                 << ") is not supported.\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
          break;
       }
    }
@@ -972,12 +938,11 @@ EncoderBase *EncoderFactory::create_float32_encoder(
       }
       default: {
          ostringstream errmsg;
-         errmsg << "EncoderFactory::create_float32_encoder():" << __LINE__
-                << " ERROR: Trick attributes for the variable '" << data_name
+         errmsg << "Trick attributes for the variable '" << data_name
                 << "' is of type 'float', the specified HLA-encoding ("
                 << encoding_enum_to_string( hla_encoding )
                 << ") is not supported.\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
          break;
       }
    }
@@ -1023,24 +988,22 @@ EncoderBase *EncoderFactory::create_float64_encoder(
             return new Float64ToLogicalTimeEncoder( address, attr, data_name );
          } else {
             ostringstream errmsg;
-            errmsg << "EncoderFactory::create_float64_encoder():" << __LINE__
-                   << " ERROR: Trick attributes for the variable '" << data_name
+            errmsg << "Trick attributes for the variable '" << data_name
                    << "' is an array of type 'double', the specified HLA-encoding ("
                    << encoding_enum_to_string( hla_encoding )
                    << ") is only supported for a primitive double value"
                    << " (i.e. not an array).\n";
-            DebugHandler::terminate( errmsg.str() );
+            DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
          }
          break;
       }
       default: {
          ostringstream errmsg;
-         errmsg << "EncoderFactory::create_float64_encoder():" << __LINE__
-                << " ERROR: Trick attributes for the variable '" << data_name
+         errmsg << "Trick attributes for the variable '" << data_name
                 << "' is of type 'double', the specified HLA-encoding ("
                 << encoding_enum_to_string( hla_encoding )
                 << ") is not supported.\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
          break;
       }
    }
@@ -1071,12 +1034,11 @@ EncoderBase *EncoderFactory::create_bool_encoder(
       }
       default: {
          ostringstream errmsg;
-         errmsg << "EncoderFactory::create_bool_encoder():" << __LINE__
-                << " ERROR: Trick attributes for the variable '" << data_name
+         errmsg << "Trick attributes for the variable '" << data_name
                 << "' is of type 'bool', the specified HLA-encoding ("
                 << encoding_enum_to_string( hla_encoding )
                 << ") is not supported.\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
          break;
       }
    }
@@ -1094,12 +1056,11 @@ EncoderBase *EncoderFactory::create_enum_encoder(
          if ( ( hla_encoding != ENCODING_BYTE )
               && DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_HLA_ENCODERS ) ) {
             ostringstream msg;
-            msg << "EncoderFactory::create_enum_encoder():" << __LINE__
-                << " WARNING: HLA encoding (" << encoding_enum_to_string( hla_encoding )
+            msg << "HLA encoding (" << encoding_enum_to_string( hla_encoding )
                 << ") specified for variable '" << data_name
                 << "' is not appropriate for an enum type. Using ENCODING_BYTE"
                 << " encoding instead.\n";
-            message_publish( MSG_WARNING, msg.str().c_str() );
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
          }
          return create_char_encoder( address, attr, ENCODING_BYTE, data_name );
       }
@@ -1114,12 +1075,11 @@ EncoderBase *EncoderFactory::create_enum_encoder(
       }
       default: {
          ostringstream errmsg;
-         errmsg << "EncoderFactory::create_enum_encoder():" << __LINE__
-                << " ERROR: Trick attributes for the variable '" << data_name
+         errmsg << "Trick attributes for the variable '" << data_name
                 << "' is of type TRICK_ENUMERATED (" << attr->type_name
                 << "), but the specified size (" << attr->size
                 << ") is not supported.\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       }
    }
    return nullptr;

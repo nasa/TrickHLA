@@ -107,17 +107,17 @@ void JEODRefFrameState::initialize()
    // Check for the reference frame data.
    if ( this->ref_frame_state == nullptr ) {
       ostringstream errmsg;
-      errmsg << "SpaceFOM::JEODRefFrameState::initialize():" << __LINE__
-             << " ERROR: Unexpected nullptr reference frame data: " << this->packing_data.name << "\n";
-      DebugHandler::terminate( errmsg.str() );
+      errmsg << "Unexpected nullptr reference frame data: "
+             << this->packing_data.name << "\n";
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    // Check for the JEOD time reference.
    if ( this->time_tt == nullptr ) {
       ostringstream errmsg;
-      errmsg << "SpaceFOM::JEODRefFrameState::initialize():" << __LINE__
-             << " ERROR: Unexpected nullptr time reference: " << this->packing_data.name << "\n";
-      DebugHandler::terminate( errmsg.str() );
+      errmsg << "Unexpected nullptr time reference: "
+             << this->packing_data.name << "\n";
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    // Mark this as initialized.
@@ -243,22 +243,20 @@ void JEODRefFrameState::set_data(
    jeod::TimeTT        *time_tt_in,
    jeod::RefFrameState *ref_frame_state_ptr )
 {
-
    // Set the reference to the reference frame.
    if ( ref_frame_state_ptr == nullptr ) {
       ostringstream errmsg;
-      errmsg << "SpaceFOM::JEODRefFrameState::pre_initialize():" << __LINE__
-             << " ERROR: Unexpected nullptr reference frame: " << this->packing_data.name << "\n";
-      DebugHandler::terminate( errmsg.str() );
+      errmsg << "Unexpected nullptr reference frame: " << this->packing_data.name << "\n";
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
    this->ref_frame_state = ref_frame_state_ptr;
 
    // Set the JEOD time reference.
    if ( time_tt_in == nullptr ) {
       ostringstream errmsg;
-      errmsg << "SpaceFOM::JEODRefFrameState::pre_initialize():" << __LINE__
-             << " ERROR: Unexpected nullptr time reference: " << this->packing_data.name << "\n";
-      DebugHandler::terminate( errmsg.str() );
+      errmsg << "Unexpected nullptr time reference: "
+             << this->packing_data.name << "\n";
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
    time_tt = time_tt_in;
 }

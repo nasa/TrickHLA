@@ -144,10 +144,9 @@ bool SyncPointList::add(
 
    if ( contains( label ) ) {
       ostringstream errmsg;
-      errmsg << "SyncPointList::add():" << __LINE__
-             << " ERROR: The sync-point label '" << label_str
+      errmsg << "The sync-point label '" << label_str
              << "' has already been added!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       return false;
    }
 
@@ -165,10 +164,9 @@ bool SyncPointList::add(
 
    if ( sp == nullptr ) {
       ostringstream errmsg;
-      errmsg << "SyncPointList::add():" << __LINE__
-             << " ERROR: Cannot allocate Trick Managed Memory for TrickHLA::SyncPoint with label '"
+      errmsg << "Cannot allocate Trick Managed Memory for TrickHLA::SyncPoint with label '"
              << label_str << "'!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       return false;
    }
 
@@ -187,10 +185,9 @@ bool SyncPointList::add(
 
    if ( contains( label ) ) {
       ostringstream errmsg;
-      errmsg << "SyncPointList::add():" << __LINE__
-             << " ERROR: The sync-point label '" << label_str
+      errmsg << "The sync-point label '" << label_str
              << "' has already been added!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       return false;
    }
 
@@ -206,10 +203,9 @@ bool SyncPointList::add(
                                                                   cdims );
    if ( sp == nullptr ) {
       ostringstream errmsg;
-      errmsg << "SyncPointList::add():" << __LINE__
-             << " ERROR: Cannot allocate Trick Managed Memory for TrickHLA::SyncPointTimed with label '"
+      errmsg << "Cannot allocate Trick Managed Memory for TrickHLA::SyncPointTimed with label '"
              << label_str << "' and time " << time.to_string() << "!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       return false;
    }
 

@@ -74,10 +74,7 @@ Enum32Data::Enum32Data(
    ptr_enum32 = static_cast< TrickHLAModel::Int32Enum * >(
       TMM_declare_var_1d( "TrickHLAModel::Int32Enum", ptr_enum32_size ) );
    if ( ptr_enum32 == nullptr ) {
-      ostringstream errmsg;
-      errmsg << "Enum32Data::Enum32Data():" << __LINE__
-             << " ERROR: Failed to allocate memory for ptr_enum32!\n";
-      TrickHLA::DebugHandler::terminate( errmsg.str() );
+      TrickHLA::DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Failed to allocate memory for ptr_enum32!\n" );
       return;
    }
    for ( int i = 0; i < ptr_enum32_size; ++i ) {

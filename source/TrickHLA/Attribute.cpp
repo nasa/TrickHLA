@@ -124,82 +124,76 @@ void Attribute::initialize(
    // Make sure we have a valid Object FOM name.
    if ( obj_FOM_name.empty() ) {
       ostringstream errmsg;
-      errmsg << "Attribute::initialize():" << __LINE__
-             << " ERROR: Unexpected nullptr Object FOM-Name argument passed to this"
+      errmsg << "Unexpected nullptr Object FOM-Name argument passed to this"
              << " function.";
       if ( !get_FOM_name().empty() ) {
          errmsg << " For FOM Attribute Named '" << get_FOM_name() << "'.";
       }
       errmsg << "\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    // Make sure we have a valid attribute FOM name.
    if ( get_FOM_name().empty() ) {
       ostringstream errmsg;
-      errmsg << "Attribute::initialize():" << __LINE__
-             << " ERROR: Object with FOM Name '" << obj_FOM_name << "' has a missing"
+      errmsg << "Object with FOM Name '" << obj_FOM_name << "' has a missing"
              << " FOM name for the attribute. Make sure THLA.federate.object_service.objects["
              << object_index << "].attributes[" << attribute_index
              << "].FOM_name' in either your input.py file or modified-data files"
              << " is correctly specified.\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    if ( rti_encoding != ENCODING_FIXED_RECORD ) {
       // Make sure we have a valid attribute Trick-Name.
       if ( trick_name.empty() ) {
          ostringstream errmsg;
-         errmsg << "Attribute::initialize():" << __LINE__
-                << " ERROR: FOM Object Attribute '"
+         errmsg << "FOM Object Attribute '"
                 << obj_FOM_name << "'->'" << get_FOM_name() << "' has a missing Trick name"
                 << " for the attribute. Make sure THLA.federate.object_service.objects["
                 << object_index << "].attributes[" << attribute_index
                 << "].trick_name' in either your input.py file or modified-data files"
                 << " is correctly specified.\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       }
    }
 
    // Do a quick bounds check on the 'rti_encoding' value.
    if ( ( rti_encoding < ENCODING_FIRST_VALUE ) || ( rti_encoding > ENCODING_LAST_VALUE ) ) {
       ostringstream errmsg;
-      errmsg << "Attribute::initialize():" << __LINE__
-             << " ERROR: FOM Object Attribute '"
+      errmsg << "FOM Object Attribute '"
              << obj_FOM_name << "'->'" << get_FOM_name() << "' with Trick name '"
              << get_trick_name() << "' has an 'rti_encoding' value of " << rti_encoding
              << " which is out of the valid range of " << ENCODING_FIRST_VALUE
              << " to " << ENCODING_LAST_VALUE << ". Please check your input or"
              << " modified-data files to make sure the value for the 'rti_encoding'"
              << " is correctly specified.\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    // Do a quick bounds check on the 'preferred_order' value.
    if ( ( preferred_order < TRANSPORT_FIRST_VALUE ) || ( preferred_order > TRANSPORT_LAST_VALUE ) ) {
       ostringstream errmsg;
-      errmsg << "Attribute::initialize():" << __LINE__
-             << " ERROR: FOM Object Attribute '"
+      errmsg << "FOM Object Attribute '"
              << obj_FOM_name << "'->'" << get_FOM_name() << "' with Trick name '"
              << get_trick_name() << "' has an invalid 'preferred_order' and it must be"
              << " one of TRANSPORT_TYPE_SPECIFIED_IN_FOM, THLA_TIMESTAMP_ORDER or"
              << " THLA_RECEIVE_ORDER. Please check your input or modified-data"
              << " files to make sure the 'preferred_order' is correctly specified.\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    // Do a bounds check on the 'config' value.
    if ( ( config < CONFIG_NONE ) || ( config > CONFIG_MAX_VALUE ) ) {
       ostringstream errmsg;
-      errmsg << "Attribute::initialize():" << __LINE__
-             << " ERROR: FOM Object Attribute '"
+      errmsg << "FOM Object Attribute '"
              << obj_FOM_name << "'->'" << get_FOM_name() << "' with Trick name '"
              << get_trick_name() << "' has a 'config' value of " << config
              << " which is out of the valid range of " << CONFIG_NONE
              << " to " << CONFIG_MAX_VALUE << ". Please check your input or"
              << " modified-data files to make sure the value for 'config'"
              << " is correctly specified.\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    // Warn the user if the object attribute has a CONFIG_TYPE_NONE configuration.
@@ -218,15 +212,14 @@ void Attribute::initialize(
    // job-cycle-time we will do another bounds check against that value.
    if ( ( this->cycle_time <= 0.0 ) && ( this->cycle_time > std::numeric_limits< double >::lowest() ) ) {
       ostringstream errmsg;
-      errmsg << "Attribute::initialize():" << __LINE__
-             << " ERROR: FOM Object Attribute '"
+      errmsg << "FOM Object Attribute '"
              << obj_FOM_name << "'->'" << get_FOM_name()
              << "' with Trick name '" << get_trick_name()
              << "' has a 'cycle_time' value of " << this->cycle_time
              << " seconds, which is not valid. The 'cycle_time' must be > 0."
              << " Please check your input or modified-data files to make sure"
              << " the value for the 'cycle_time' is correctly specified.\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    // Initialize the element encoders including a fixed record encoder.
@@ -234,11 +227,10 @@ void Attribute::initialize(
 
    if ( this->encoder == nullptr ) {
       ostringstream errmsg;
-      errmsg << "Attribute::initialize():" << __LINE__
-             << " ERROR: Unexpected nullptr encoder for Trick variable '"
+      errmsg << "Unexpected nullptr encoder for Trick variable '"
              << get_trick_name() << "' with an 'rti_encoding' value of "
              << encoding_enum_to_string( rti_encoding ) << ".\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
@@ -276,11 +268,10 @@ VariableLengthData &Attribute::encode()
       string err_details;
       StringUtilities::to_string( err_details, e.what() );
       ostringstream errmsg;
-      errmsg << "Attribute::encode():" << __LINE__
-             << " ERROR: Unexpected error encoding HLA data for Trick variable '"
+      errmsg << "Unexpected error encoding HLA data for Trick variable '"
              << get_trick_name() << "' and FOM name '" << get_FOM_name()
-             << "' with error: " << err_details << "\n";
-      DebugHandler::terminate( errmsg.str() );
+             << "' with " << err_details << "\n";
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    return encoder->data;
@@ -295,11 +286,10 @@ bool Attribute::decode(
       string err_details;
       StringUtilities::to_string( err_details, e.what() );
       ostringstream errmsg;
-      errmsg << "Attribute::decode():" << __LINE__
-             << " ERROR: Unexpected error decoding HLA data for Trick variable '"
+      errmsg << "Unexpected error decoding HLA data for Trick variable '"
              << get_trick_name() << "' and FOM name '" << get_FOM_name()
-             << "' with error: " << err_details << "\n";
-      DebugHandler::terminate( errmsg.str() );
+             << "' with " << err_details << "\n";
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    update_after_decode();
@@ -326,22 +316,20 @@ void Attribute::determine_cycle_ratio(
       // Do a bounds check on the core job cycle time.
       if ( core_job_cycle_time <= 0.0 ) {
          ostringstream errmsg;
-         errmsg << "Attribute::determine_cycle_ratio():" << __LINE__
-                << " ERROR: FOM Object Attribute '" << get_FOM_name()
+         errmsg << "FOM Object Attribute '" << get_FOM_name()
                 << "' with Trick name '" << get_trick_name()
                 << "'. The core job cycle time (" << core_job_cycle_time
                 << " seconds) for the send_cyclic_and_requested_data() job"
                 << " must be > 0. Please make sure your S_define and/or THLA.sm"
                 << " simulation module specifies a valid cycle time for the"
                 << " send_cyclic_and_requested_data() job.\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       }
 
       // Do a bounds check on the 'cycle_time' value.
       if ( this->cycle_time < core_job_cycle_time ) {
          ostringstream errmsg;
-         errmsg << "Attribute::determine_cycle_ratio():" << __LINE__
-                << " ERROR: FOM Object Attribute '" << get_FOM_name()
+         errmsg << "FOM Object Attribute '" << get_FOM_name()
                 << "' with Trick name '" << get_trick_name()
                 << "' has a 'cycle_time' value of " << this->cycle_time
                 << " seconds, which is not valid. The attribute 'cycle_time'"
@@ -350,7 +338,7 @@ void Attribute::determine_cycle_ratio(
                 << " send_cyclic_and_requested_data() job). Please check your"
                 << " input or modified-data files to make sure the value for"
                 << " the attribute 'cycle_time' is specified correctly.\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       }
 
       this->cycle_ratio = (int)lround( this->cycle_time / core_job_cycle_time );
@@ -361,8 +349,7 @@ void Attribute::determine_cycle_ratio(
       // The cycle-ratio must be an integer ratio so check for any fractional part.
       if ( fmod( this->cycle_time, core_job_cycle_time ) != 0.0 ) {
          ostringstream errmsg;
-         errmsg << "Attribute::determine_cycle_ratio():" << __LINE__
-                << " ERROR: FOM Object Attribute '" << get_FOM_name()
+         errmsg << "FOM Object Attribute '" << get_FOM_name()
                 << "' with Trick name '" << get_trick_name()
                 << "' has a 'cycle_time' value of " << this->cycle_time
                 << " seconds, which is not an integer multiple of the core job"
@@ -373,7 +360,7 @@ void Attribute::determine_cycle_ratio(
                 << "), which is not an integer. Please check your input or"
                 << " modified-data files to make sure the value for the attribute"
                 << " 'cycle_time' is specified correctly.\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {

@@ -117,14 +117,7 @@ void QuaternionEncoder::encode() // Return: -- Nothing.
    try {
       encoder.encode( encoded_data );
    } catch ( RTI1516_NAMESPACE::EncoderException &e ) {
-      ostringstream errmsg;
-      std::string   what_s;
-      StringUtilities::to_string( what_s, e.what() );
-      errmsg << "SpaceFOM::QuaternionEncoder::encode():" << __LINE__
-             << " Error: Encoder exception!\n";
-      errmsg << what_s;
-      // Print message and terminate.
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, e );
    }
 
    // Copy the encoded data into the outgoing buffer.
@@ -161,14 +154,7 @@ void QuaternionEncoder::decode() // Return: -- Nothing.
    try {
       encoder.decode( encoded_data );
    } catch ( RTI1516_NAMESPACE::EncoderException &e ) {
-      ostringstream errmsg;
-      std::string   what_s;
-      StringUtilities::to_string( what_s, e.what() );
-      errmsg << "SpaceFOM::QuaternionEncoder::decode():" << __LINE__
-             << " Error: Encoder exception!\n";
-      errmsg << what_s;
-      // Print message and terminate.
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, e );
    }
 
    return;

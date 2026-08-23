@@ -114,43 +114,40 @@ void Parameter::initialize(
    // Make sure we have a valid parameter FOM name.
    if ( FOM_name.empty() ) {
       ostringstream errmsg;
-      errmsg << "Parameter::initialize():" << __LINE__
-             << " ERROR: Interaction with FOM Name '"
+      errmsg << "Interaction with FOM Name '"
              << interaction_fom_name << "' has a missing FOM name for the"
              << " parameter. Make sure 'THLA.federate.interaction_service.interactions["
              << interaction_index << "].parameters[" << parameter_index
              << "].FOM_name' in either your input.py file or modified-data files"
              << " is correctly specified.\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    if ( rti_encoding != ENCODING_FIXED_RECORD ) {
       // Make sure we have a valid parameter Trick-Name.
       if ( trick_name.empty() ) {
          ostringstream errmsg;
-         errmsg << "Parameter::initialize():" << __LINE__
-                << " ERROR: FOM Interaction Parameter '"
+         errmsg << "FOM Interaction Parameter '"
                 << interaction_fom_name << "'->'" << get_FOM_name() << "' has a missing"
                 << " Trick name for the parameter. Make sure 'THLA.federate.interaction_service.interactions["
                 << interaction_index << "].parameters[" << parameter_index
                 << "].trick_name' in either your input.py file or modified-data files"
                 << " is correctly specified.\n";
-         DebugHandler::terminate( errmsg.str() );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       }
    }
 
    // Do a quick bounds check on the rti_encoding value.
    if ( ( rti_encoding < ENCODING_FIRST_VALUE ) || ( rti_encoding > ENCODING_LAST_VALUE ) ) {
       ostringstream errmsg;
-      errmsg << "Parameter::initialize():" << __LINE__
-             << " ERROR: FOM Interaction Parameter '"
+      errmsg << "FOM Interaction Parameter '"
              << interaction_fom_name << "'->'" << get_FOM_name() << "' with Trick name '"
              << get_trick_name() << "' has an 'rti_encoding' value of "
              << rti_encoding << " which is out of the valid range of "
              << ENCODING_FIRST_VALUE << " to " << ENCODING_LAST_VALUE
              << ". Please check your input or modified-data files to make sure"
              << " the value for the 'rti_encoding' is correctly specified.\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    // Initialize the element encoders including a fixed record encoder.
@@ -158,11 +155,10 @@ void Parameter::initialize(
 
    if ( this->encoder == nullptr ) {
       ostringstream errmsg;
-      errmsg << "Parameter::initialize():" << __LINE__
-             << " ERROR: Unexpected nullptr encoder for Trick variable '"
+      errmsg << "Unexpected nullptr encoder for Trick variable '"
              << get_trick_name() << "' with an 'rti_encoding' value of "
              << rti_encoding << ".\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    // Make a copy.
@@ -195,17 +191,15 @@ void Parameter::initialize(
 {
    if ( address == nullptr ) {
       ostringstream errmsg;
-      errmsg << "Parameter::initialize(char const *, void *, ATTRIBUTES *):" << __LINE__
-             << " ERROR: For FOM Interaction Parameter '" << interaction_fom_name
+      errmsg << "For FOM Interaction Parameter '" << interaction_fom_name
              << "'. Unexpected nullptr trick variable address.\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
    if ( attr == nullptr ) {
       ostringstream errmsg;
-      errmsg << "Parameter::initialize(char const *, void *, ATTRIBUTES *):" << __LINE__
-             << " ERROR: For FOM Interaction Parameter '" << interaction_fom_name
+      errmsg << "For FOM Interaction Parameter '" << interaction_fom_name
              << "'. Unexpected nullptr ATTRIBUTES pointer.\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    // Make a copy.
@@ -216,11 +210,10 @@ void Parameter::initialize(
 
    if ( this->encoder == nullptr ) {
       ostringstream errmsg;
-      errmsg << "Parameter::initialize():" << __LINE__
-             << " ERROR: Unexpected nullptr encoder for Trick variable '"
+      errmsg << "Unexpected nullptr encoder for Trick variable '"
              << attr->name << "' with an 'rti_encoding' value of "
              << rti_encoding << ".\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
@@ -250,11 +243,10 @@ VariableLengthData &Parameter::encode()
       string err_details;
       StringUtilities::to_string( err_details, e.what() );
       ostringstream errmsg;
-      errmsg << "Parameter::encode():" << __LINE__
-             << " ERROR: Unexpected error encoding HLA data for Trick variable '"
+      errmsg << "Unexpected error encoding HLA data for Trick variable '"
              << get_trick_name() << "' and FOM name '"
-             << get_FOM_name() << "' with error: " << err_details << "\n";
-      DebugHandler::terminate( errmsg.str() );
+             << get_FOM_name() << "' with " << err_details << "\n";
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    return encoder->data;
@@ -269,11 +261,10 @@ bool Parameter::decode(
       string err_details;
       StringUtilities::to_string( err_details, e.what() );
       ostringstream errmsg;
-      errmsg << "Parameter::decode():" << __LINE__
-             << " ERROR: Unexpected error decoding HLA data for Trick variable '"
+      errmsg << "Unexpected error decoding HLA data for Trick variable '"
              << get_trick_name() << "' and FOM name '"
-             << get_FOM_name() << "' with error: " << err_details << "\n";
-      DebugHandler::terminate( errmsg.str() );
+             << get_FOM_name() << "' with " << err_details << "\n";
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    update_after_decode();

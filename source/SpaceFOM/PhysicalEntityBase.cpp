@@ -165,10 +165,7 @@ void PhysicalEntityBase::base_config(
 
    // Set the entity name.
    if ( entity_fed_name.empty() ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::PhysicalEntityBase::base_config():" << __LINE__
-             << " ERROR: Unexpected empty federation instance frame name!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Unexpected empty federation instance frame name!\n" );
    } else {
       set_name( entity_fed_name );
    }
@@ -299,23 +296,15 @@ void PhysicalEntityBase::initialize()
 {
    // Must have federation instance name.
    if ( pe_packing_data.name.empty() ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
-             << " ERROR: Unexpected empty federation instance name!"
-             << "\n";
-      // Print message and terminate.
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Unexpected empty federation instance name!\n" );
    }
 
    // Must have federation instance parent_ref_frame.
    if ( pe_packing_data.parent_frame.empty() ) {
       ostringstream errmsg;
-      errmsg << "SpaceFOM::PhysicalEntityBase::initialize():" << __LINE__
-             << " ERROR: Unexpected nullptr entity parent_ref_frame!"
-             << " Setting parent_ref_frame to empty string."
-             << "\n";
-      // Print message and terminate.
-      DebugHandler::terminate( errmsg.str() );
+      errmsg << " Unexpected nullptr entity parent_ref_frame!"
+             << " Setting parent_ref_frame to empty string.\n";
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    // Mark this as initialized.
@@ -405,12 +394,12 @@ void PhysicalEntityBase::pack()
 {
    // Check for initialization.
    if ( !initialized ) {
+
+#if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "The initialize() function has not been called!\n" );
+#else
       ostringstream errmsg;
       errmsg << "PhysicalEntityBase::pack():" << __LINE__
-#if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
-             << " ERROR: The initialize() function has not been called!\n";
-      DebugHandler::terminate( errmsg.str() );
-#else
              << " WARNING: The initialize() function has not been called!\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
 #endif
@@ -446,12 +435,12 @@ void PhysicalEntityBase::unpack()
    // double dt; // Local vs. remote time difference.
 
    if ( !initialized ) {
+
+#if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "The initialize() function has not been called!\n" );
+#else
       ostringstream errmsg;
       errmsg << "PhysicalEntityBase::unpack():" << __LINE__
-#if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
-             << " ERROR: The initialize() function has not been called!\n";
-      DebugHandler::terminate( errmsg.str() );
-#else
              << " WARNING: The initialize() function has not been called!\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
 #endif

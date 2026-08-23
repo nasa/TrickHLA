@@ -141,10 +141,7 @@ void SineLagCompensation::initialize_callback(
 void SineLagCompensation::send_lag_compensation()
 {
    if ( !initialized ) {
-      ostringstream errmsg;
-      errmsg << "SineLagCompensation::send_lag_compensation():" << __LINE__
-             << " ERROR: The initialize() function has not been called!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "The initialize() function has not been called!\n" );
    }
 
    double const dt   = get_lookahead().get_time_in_seconds();
@@ -222,10 +219,7 @@ void SineLagCompensation::bypass_send_lag_compensation()
 void SineLagCompensation::receive_lag_compensation()
 {
    if ( !initialized ) {
-      ostringstream errmsg;
-      errmsg << "SineLagCompensation::receive_lag_compensation():" << __LINE__
-             << " ERROR: The initialize() function has not been called!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "The initialize() function has not been called!\n" );
    }
 
    double const time = get_scenario_time();

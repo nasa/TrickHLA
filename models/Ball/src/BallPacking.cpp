@@ -163,10 +163,7 @@ void BallPacking::base_config(
    if ( ball_name != nullptr ) {
       name = trick_MM->mm_strdup( ball_name );
    } else {
-      ostringstream errmsg;
-      errmsg << "Ball::BallPacking::base_config():" << __LINE__
-             << " ERROR: Unexpected nullptr federation instance Ball name!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr federation instance Ball name!\n" );
    }
 
    //---------------------------------------------------------
@@ -328,10 +325,7 @@ void BallPacking::set_name( char const *new_name )
 void BallPacking::pack()
 {
    if ( !initialized ) {
-      ostringstream errmsg;
-      errmsg << "BallPacking::pack():" << __LINE__
-             << " ERROR: The initialize() function has not been called!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "The initialize() function has not been called!\n" );
    }
 
    // Check for latency/lag compensation.
@@ -356,10 +350,7 @@ void BallPacking::pack()
 void BallPacking::unpack()
 {
    if ( !initialized ) {
-      ostringstream errmsg;
-      errmsg << "BallPacking::unpack():" << __LINE__
-             << " ERROR: The initialize() function has not been called!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "The initialize() function has not been called!\n" );
    }
 
    // Transfer the packing data into the working data.
@@ -410,12 +401,7 @@ void BallPacking::pack_from_working_data()
 
    } else {
       // This is bad scoobies so just punt.
-
-      ostringstream errmsg;
-      errmsg << "TrickHLAModel::Ball::pack_from_working_data():" << __LINE__
-             << " ERROR: Unexpected nullptr name for Ball!\n";
-      // Print message and terminate.
-      TrickHLA::DebugHandler::terminate( errmsg.str() );
+      TrickHLA::DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr name for Ball!\n" );
    }
 
    // Time tag for this state data.

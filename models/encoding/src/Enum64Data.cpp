@@ -74,10 +74,7 @@ Enum64Data::Enum64Data(
    ptr_enum64 = static_cast< TrickHLAModel::Int64Enum * >(
       TMM_declare_var_1d( "TrickHLAModel::Int64Enum", ptr_enum64_size ) );
    if ( ptr_enum64 == nullptr ) {
-      ostringstream errmsg;
-      errmsg << "Enum64Data::Enum64Data():" << __LINE__
-             << " ERROR: Failed to allocate memory for ptr_enum64!\n";
-      TrickHLA::DebugHandler::terminate( errmsg.str() );
+      TrickHLA::DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Failed to allocate memory for ptr_enum64!\n" );
       return;
    }
    for ( int i = 0; i < ptr_enum64_size; ++i ) {

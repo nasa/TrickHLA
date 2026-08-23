@@ -24,6 +24,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{CTETimelineBase.cpp}
 @trick_link_dependency{Timeline.cpp}
 @trick_link_dependency{TSyncCTETimeline.cpp}
+@trick_link_dependency{../DebugHandler.cpp}
 
 @revs_title
 @revs_begin
@@ -45,6 +46,7 @@ NASA, Johnson Space Center\n
 #   include "trick/message_type.h"
 
 // TrickHLA includes.
+#   include "TrickHLA/DebugHandler.hh"
 #   include "TrickHLA/time/CTETimelineBase.hh"
 #   include "TrickHLA/time/TSyncCTETimeline.hh"
 
@@ -67,8 +69,7 @@ using namespace TrickHLA;
  * @job_class{initialization}
  */
 TSyncCTETimeline::TSyncCTETimeline()
-   : CTETimelineBase( exec_get_time_tic_value(),
-                      "TrickHLA::TSyncCTETimeline - TSYNC" ),
+   : CTETimelineBase( exec_get_time_tic_value(), "TrickHLA::TSyncCTETimeline - TSYNC" ),
      full_device_name(),
      board_handle()
 {
@@ -120,9 +121,8 @@ double const TSyncCTETimeline::get_time()
 
    if ( err != TSYNC_SUCCESS ) {
       ostringstream errmsg;
-      errmsg << "TSyncCTETimeline::get_time():" << __LINE__
-             << " ERROR: '" << tsync_strerror( err ) << "'\n";
-      message_publish( MSG_ERROR, errmsg.str().c_str() );
+      errmsg << "'" << tsync_strerror( err ) << "'\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_ERROR );
       return 0;
    }
 
@@ -142,10 +142,9 @@ int TSyncCTETimeline::clock_init()
    TSYNC_ERROR err = TSYNC_open( &board_handle, full_device_name.c_str() );
    if ( err != TSYNC_SUCCESS ) {
       ostringstream errmsg;
-      errmsg << "TSyncCTETimeline::clock_init():" << __LINE__
-             << " ERROR: Could not open TSync CTE card '"
+      errmsg << "Could not open TSync CTE card '"
              << full_device_name << "' [" << tsync_strerror( err ) << "]\n";
-      message_publish( MSG_ERROR, errmsg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_ERROR );
       return 1;
    }
 
@@ -166,9 +165,8 @@ long long TSyncCTETimeline::wall_clock_time()
 
    if ( err != TSYNC_SUCCESS ) {
       ostringstream errmsg;
-      errmsg << "TSyncCTETimeline::wall_clock_time():" << __LINE__
-             << " ERROR: '" << tsync_strerror( err ) << "'\n";
-      message_publish( MSG_ERROR, errmsg.str().c_str() );
+      errmsg << "'" << tsync_strerror( err ) << "'\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_ERROR );
       return 0;
    }
 
@@ -185,10 +183,9 @@ int TSyncCTETimeline::clock_stop()
    int rc = TSYNC_close( board_handle );
    if ( rc != TSYNC_SUCCESS ) {
       ostringstream errmsg;
-      errmsg << "TSyncCTETimeline::clock_stop():" << __LINE__
-             << " ERROR: Could not close TSync CTE card '"
+      errmsg << "Could not close TSync CTE card '"
              << full_device_name << "' [" << rc << "]\n";
-      message_publish( MSG_ERROR, errmsg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_ERROR );
    }
    return 0;
 }

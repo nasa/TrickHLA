@@ -152,10 +152,9 @@ void FedAmb::connectionLost(
       string fault_msg;
       StringUtilities::to_string( fault_msg, faultDescription );
       ostringstream errmsg;
-      errmsg << "FedAmb::connectionLost():" << __LINE__
-             << " ERROR: Lost the connection to the RTI. Reason:'"
+      errmsg << "Lost the connection to the RTI. Reason:'"
              << fault_msg << "' Terminating the simulation!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       exit( -1 );
    }
 }
@@ -274,7 +273,7 @@ void FedAmb::federationSynchronized(
       }
       string label_str;
       StringUtilities::to_string( label_str, label );
-      message_publish( MSG_WARNING, "FedAmb::federationSynchronized():%d ERROR: These \
+      message_publish( MSG_WARNING, "FedAmb::federationSynchronized():%d These \
 federate handles failed to synchronize on sync-point '%s': %s\n",
                        __LINE__, label_str.c_str(), strIds.c_str() );
    }
@@ -1433,7 +1432,7 @@ void FedAmb::requestAttributeOwnershipAssumption(
 
                if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
                   message_publish( MSG_WARNING, "FedAmb::requestAttributeOwnershipAssumption():%d \
-Attribute Not Recognized ERROR: Object '%s' with FOM name '%s'!\n",
+Attribute Not Recognized Object '%s' with FOM name '%s'!\n",
                                    __LINE__, trickhla_obj->get_name().c_str(), trickhla_obj->get_FOM_name().c_str() );
                }
             } else if ( trick_hla_attr->is_locally_owned() ) {
@@ -1443,7 +1442,7 @@ Attribute Not Recognized ERROR: Object '%s' with FOM name '%s'!\n",
 
                if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
                   message_publish( MSG_WARNING, "FedAmb::requestAttributeOwnershipAssumption():%d \
-Attribute Already Owned ERROR: Object '%s' with attribute '%s'->'%s'!\n",
+Attribute Already Owned Object '%s' with attribute '%s'->'%s'!\n",
                                    __LINE__,
                                    trickhla_obj->get_name().c_str(),
                                    trickhla_obj->get_FOM_name().c_str(),
@@ -1456,7 +1455,7 @@ Attribute Already Owned ERROR: Object '%s' with attribute '%s'->'%s'!\n",
 
                if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
                   message_publish( MSG_WARNING, "FedAmb::requestAttributeOwnershipAssumption():%d \
-Attribute Not Published ERROR: Object '%s' with attribute '%s'->'%s'!\n",
+Attribute Not Published Object '%s' with attribute '%s'->'%s'!\n",
                                    __LINE__,
                                    trickhla_obj->get_name().c_str(),
                                    trickhla_obj->get_FOM_name().c_str(),
@@ -1554,7 +1553,7 @@ object instance (ID:%s), push request rejected.\n",
 
          if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
             message_publish( MSG_WARNING, "FedAmb::requestDivestitureConfirmation():%d \
-Attribute Not Recognized ERROR: Object '%s' with FOM name '%s'!\n",
+Attribute Not Recognized Object '%s' with FOM name '%s'!\n",
                              __LINE__, trickhla_obj->get_name().c_str(), trickhla_obj->get_FOM_name().c_str() );
          }
       } else if ( trick_hla_attr->is_remotely_owned() ) {
@@ -1564,7 +1563,7 @@ Attribute Not Recognized ERROR: Object '%s' with FOM name '%s'!\n",
 
          if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
             message_publish( MSG_WARNING, "FedAmb::requestDivestitureConfirmation():%d \
-Attribute Not Owned ERROR: Object '%s' with attribute '%s'->'%s'!\n",
+Attribute Not Owned Object '%s' with attribute '%s'->'%s'!\n",
                              __LINE__,
                              trickhla_obj->get_name().c_str(),
                              trickhla_obj->get_FOM_name().c_str(),
@@ -1647,7 +1646,7 @@ void FedAmb::attributeOwnershipAcquisitionNotification(
 
             if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
                message_publish( MSG_WARNING, "FedAmb::attributeOwnershipAcquisitionNotification():%d \
-Attribute Not Recognized ERROR: Object '%s' with FOM name '%s'!\n",
+Attribute Not Recognized Object '%s' with FOM name '%s'!\n",
                                 __LINE__, trickhla_obj->get_name().c_str(), trickhla_obj->get_FOM_name().c_str() );
             }
          } else if ( trick_hla_attr->is_locally_owned() ) {
@@ -1657,7 +1656,7 @@ Attribute Not Recognized ERROR: Object '%s' with FOM name '%s'!\n",
 
             if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
                message_publish( MSG_WARNING, "FedAmb::attributeOwnershipAcquisitionNotification():%d \
-Attribute Already Owned ERROR: Object '%s' with attribute '%s'->'%s'!\n",
+Attribute Already Owned Object '%s' with attribute '%s'->'%s'!\n",
                                 __LINE__,
                                 trickhla_obj->get_name().c_str(),
                                 trickhla_obj->get_FOM_name().c_str(),
@@ -1670,7 +1669,7 @@ Attribute Already Owned ERROR: Object '%s' with attribute '%s'->'%s'!\n",
 
             if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
                message_publish( MSG_WARNING, "FedAmb::attributeOwnershipAcquisitionNotification():%d \
-Attribute Not Published ERROR: Object '%s' with attribute '%s'->'%s'!\n",
+Attribute Not Published Object '%s' with attribute '%s'->'%s'!\n",
                                 __LINE__,
                                 trickhla_obj->get_name().c_str(),
                                 trickhla_obj->get_FOM_name().c_str(),
@@ -1779,7 +1778,7 @@ void FedAmb::requestAttributeOwnershipRelease(
 
             if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
                message_publish( MSG_WARNING, "FedAmb::requestAttributeOwnershipRelease():%d \
-Attribute Not Recognized ERROR: Object '%s' with FOM name '%s'!\n",
+Attribute Not Recognized Object '%s' with FOM name '%s'!\n",
                                 __LINE__, trickhla_obj->get_name().c_str(), trickhla_obj->get_FOM_name().c_str() );
             }
          } else if ( trick_hla_attr->is_remotely_owned() ) {
@@ -1789,7 +1788,7 @@ Attribute Not Recognized ERROR: Object '%s' with FOM name '%s'!\n",
 
             if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
                message_publish( MSG_WARNING, "FedAmb::requestAttributeOwnershipRelease():%d \
-Attribute Not Owned ERROR: Object '%s' with attribute '%s'->'%s'!\n",
+Attribute Not Owned Object '%s' with attribute '%s'->'%s'!\n",
                                 __LINE__,
                                 trickhla_obj->get_name().c_str(),
                                 trickhla_obj->get_FOM_name().c_str(),

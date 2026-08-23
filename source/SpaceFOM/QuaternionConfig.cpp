@@ -27,8 +27,6 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstring>
-#include <ostream>
-#include <sstream>
 #include <string>
 
 // Trick includes.
@@ -60,10 +58,7 @@ void QuaternionConfig::configure(
    bool const           locally_owned )
 {
    if ( attribute == nullptr ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::QuaternionConfig::configure():" << __LINE__
-             << " ERROR: Unexpected nullptr attribute specified!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr attribute specified!\n" );
       return;
    }
 
@@ -85,10 +80,7 @@ void QuaternionConfig::configure(
    string const  &trick_root_name )
 {
    if ( rec_element == nullptr ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::QuaternionConfig::configure():" << __LINE__
-             << " ERROR: Unexpected nullptr rec_element specified!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr rec_element specified!\n" );
       return;
    }
 

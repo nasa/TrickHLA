@@ -79,12 +79,9 @@ void RefFrameLagCompInteg::initialize()
 {
    if ( this->integ_dt < this->integ_tol ) {
       ostringstream errmsg;
-
-      errmsg << "SpaceFOM::RefFrameLagCompInteg::initialize():" << __LINE__ << "\n"
-             << " ERROR: Tolerance must be less that the dt!: dt = "
+      errmsg << "Tolerance must be less that the dt!: dt = "
              << this->integ_dt << "; tolerance = " << this->integ_tol << "\n";
-      // Print message and terminate.
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    // Call the base class initialize routine.
@@ -99,12 +96,12 @@ void RefFrameLagCompInteg::initialize()
 void RefFrameLagCompInteg::send_lag_compensation()
 {
    if ( !initialized ) {
+
+#if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "The initialize() function has not been called!\n" );
+#else
       ostringstream errmsg;
       errmsg << "RefFrameLagCompInteg::send_lag_compensation():" << __LINE__
-#if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
-             << " ERROR: The initialize() function has not been called!\n";
-      DebugHandler::terminate( errmsg.str() );
-#else
              << " WARNING: The initialize() function has not been called!\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
 #endif
@@ -162,12 +159,12 @@ void RefFrameLagCompInteg::send_lag_compensation()
 void RefFrameLagCompInteg::receive_lag_compensation()
 {
    if ( !initialized ) {
+
+#if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "The initialize() function has not been called!\n" );
+#else
       ostringstream errmsg;
       errmsg << "RefFrameLagCompInteg::receive_lag_compensation():" << __LINE__
-#if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
-             << " ERROR: The initialize() function has not been called!\n";
-      DebugHandler::terminate( errmsg.str() );
-#else
              << " WARNING: The initialize() function has not been called!\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
 #endif

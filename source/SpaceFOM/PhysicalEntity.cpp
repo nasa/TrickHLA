@@ -35,7 +35,6 @@ NASA, Johnson Space Center\n
 // System includes.
 #include <cstdlib>
 #include <cstring>
-#include <ostream>
 #include <sstream>
 
 // SpaceFOM includes.
@@ -87,10 +86,9 @@ void PhysicalEntity::set_data( PhysicalEntityData *physical_data_ptr )
    // Set the reference to the PhysicalEntity data.
    if ( physical_data_ptr == nullptr ) {
       ostringstream errmsg;
-      errmsg << "SpaceFOM::PhysicalEntity::set_data():" << __LINE__
-             << " ERROR: Unexpected nullptr PhysicalEntityData: "
+      errmsg << "Unexpected nullptr PhysicalEntityData: "
              << pe_packing_data.name << "\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       return;
    }
    this->physical_data = physical_data_ptr;
@@ -107,10 +105,9 @@ void PhysicalEntity::initialize()
    // Check to make sure the PhysicalEntity data is set.
    if ( physical_data == nullptr ) {
       ostringstream errmsg;
-      errmsg << "SpaceFOM::PhysicalEntity::initialize():" << __LINE__
-             << " ERROR: Unexpected nullptr PhysicalEntityData: "
+      errmsg << "Unexpected nullptr PhysicalEntityData: "
              << pe_packing_data.name << "\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       return;
    }
 

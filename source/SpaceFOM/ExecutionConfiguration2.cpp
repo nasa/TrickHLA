@@ -131,10 +131,7 @@ void ExecutionConfiguration2::configure_attributes()
 {
    // Check to make sure we have a reference to the TrickHLA::FedAmb.
    if ( S_define_name.empty() ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::ExecutionConfiguration2::configure_attributes():" << __LINE__
-             << " ERROR: Unexpected empty S_define_name.\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Unexpected empty S_define_name.\n" );
       return;
    }
 
@@ -159,10 +156,7 @@ void ExecutionConfiguration2::configure_attributes()
 
    // FIXME:
    if ( this->attributes == nullptr ) {
-      ostringstream msg;
-      msg << "SpaceFOM::ExecutionConfiguration2::configure_attributes():" << __LINE__
-          << " ERROR: Memory allocation failed.\n";
-      DebugHandler::terminate( msg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Memory allocation failed.\n" );
       return;
    }
 

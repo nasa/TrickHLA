@@ -135,10 +135,7 @@ void DynamicalEntityBase::base_config(
 
    // Set the entity name from the entity federation name.
    if ( entity_fed_name.empty() ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::DynamicalEntityBase::default_data():" << __LINE__
-             << " ERROR: Unexpected empty federation instance DynamicalEntity name!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Unexpected empty federation instance DynamicalEntity name!\n" );
    } else {
       set_name( entity_fed_name );
    }
@@ -348,12 +345,12 @@ void DynamicalEntityBase::pack()
 {
    // Check for initialization.
    if ( !initialized ) {
+
+#if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "The initialize() function has not been called!\n" );
+#else
       ostringstream errmsg;
       errmsg << "DynamicalEntityBase::pack():" << __LINE__
-#if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
-             << " ERROR: The initialize() function has not been called!\n";
-      DebugHandler::terminate( errmsg.str() );
-#else
              << " WARNING: The initialize() function has not been called!\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
 #endif
@@ -378,12 +375,12 @@ void DynamicalEntityBase::pack()
 void DynamicalEntityBase::unpack()
 {
    if ( !initialized ) {
+
+#if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "The initialize() function has not been called!\n" );
+#else
       ostringstream errmsg;
       errmsg << "DynamicalEntityBase::unpack():" << __LINE__
-#if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
-             << " ERROR: The initialize() function has not been called!\n";
-      DebugHandler::terminate( errmsg.str() );
-#else
              << " WARNING: The initialize() function has not been called!\n";
       message_publish( MSG_WARNING, errmsg.str().c_str() );
 #endif

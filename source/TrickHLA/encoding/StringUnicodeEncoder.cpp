@@ -30,7 +30,6 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
-#include <ostream>
 #include <sstream>
 #include <string>
 
@@ -72,22 +71,20 @@ StringUnicodeEncoder::StringUnicodeEncoder(
 {
    if ( this->type != TRICK_STRING ) {
       ostringstream errmsg;
-      errmsg << "StringUnicodeEncoder::StringUnicodeEncoder():" << __LINE__
-             << " ERROR: Trick type for the '" << data_name
+      errmsg << "Trick type for the '" << data_name
              << "' simulation variable (type:" << attr->type_name
              << ") is not the expected type '"
              << trickTypeCharString( TRICK_STRING, "UNSUPPORTED_TYPE" )
              << "'.\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       return;
    }
 
    if ( is_array() ) {
       ostringstream errmsg;
-      errmsg << "StringUnicodeEncoder::StringUnicodeEncoder():" << __LINE__
-             << " ERROR: Trick ref-attributes for '" << data_name
+      errmsg << "Trick ref-attributes for '" << data_name
              << "' the variable must be a 'std::string' and not an array!\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       return;
    }
 

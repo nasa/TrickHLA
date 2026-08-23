@@ -46,7 +46,6 @@ NASA, Johnson Space Center\n
 #include <cstddef>
 #include <map>
 #include <ostream>
-#include <sstream>
 #include <string>
 #include <utility>
 #include <vector>
@@ -147,19 +146,13 @@ bool LRTreeBase::build_tree()
 {
    // Start by allocating the paths matrix for the tree.
    if ( !allocate_paths() ) {
-      ostringstream errmsg;
-      errmsg << "LRTreeBase::build_tree():" << __LINE__
-             << " ERROR: Failed to allocate the tree paths matrix!\"\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Failed to allocate the tree paths matrix!\n" );
    }
 
    // Find the root node for this tree.
    LRTreeNodeBase const *root_node = find_root();
    if ( root_node == nullptr ) {
-      ostringstream errmsg;
-      errmsg << "LRTreeBase::build_tree():" << __LINE__
-             << " ERROR: Root node not found!\"\n";
-      DebugHandler::terminate( errmsg.str() );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Root node not found!\n" );
    }
 
    // Sweep through the nodes vector to populate the paths matrix.
@@ -442,7 +435,7 @@ void LRTreeBase::print_path(
 
    // Perform a few sanity checks.
    if ( ( start >= num_nodes ) || ( end >= num_nodes ) ) {
-      message_publish( MSG_NORMAL, "LRTreeBase::print_path():%d ERROR: node not found: start %d, end %d, bound %d!\n",
+      message_publish( MSG_NORMAL, "LRTreeBase::print_path():%d node not found: start %d, end %d, bound %d!\n",
                        __LINE__, start, end, num_nodes );
       return;
    }
@@ -703,7 +696,7 @@ bool LRTreeBase::is_cyclic( LRTreeNodeBase const *node )
 
    // Check for degenerate case.
    if ( node == nullptr ) {
-      message_publish( MSG_NORMAL, "LRTreeBase::is_cyclic():%d ERROR: nullptr node pointer!\n", __LINE__ );
+      message_publish( MSG_NORMAL, "LRTreeBase::is_cyclic():%d nullptr node pointer!\n", __LINE__ );
       return ( true );
    }
 
