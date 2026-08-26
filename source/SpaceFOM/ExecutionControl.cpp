@@ -258,11 +258,14 @@ void ExecutionControl::initialize()
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       if ( is_master() ) {
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n    THIS IS THE PRESET MASTER FEDERATE\n" );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      "\n    THIS IS THE PRESET MASTER FEDERATE\n" );
       } else if ( is_designated_late_joiner() ) {
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n    THIS IS A DESIGNATED LATE JOINER AND NOT THE PRESET MASTER FEDERATE\n" );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      "\n    THIS IS A DESIGNATED LATE JOINER AND NOT THE PRESET MASTER FEDERATE\n" );
       } else {
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n    THIS IS NOT THE PRESET MASTER FEDERATE\n" );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      "\n    THIS IS NOT THE PRESET MASTER FEDERATE\n" );
       }
    }
 }
