@@ -34,7 +34,6 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick includes.
-#include "trick/message_proto.h"
 #include "trick/message_type.h"
 #include "trick/vector_macros.h"
 
@@ -108,10 +107,11 @@ bool RelStateBase::set_frame(
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
-      ostringstream errmsg;
-      errmsg << "RelStateBase::set_frame() Warning: Reference frame "
-             << wrt_frame << " not found!\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   string( "Reference frame " )
+                                      .append( wrt_frame )
+                                      .append( " not found!\n" ),
+                                   MSG_WARNING );
    }
 
    return ( false );
@@ -132,10 +132,11 @@ bool RelStateBase::set_frame(
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
-      ostringstream errmsg;
-      errmsg << "RelStateBase::set_frame() Warning: Reference frame "
-             << wrt_frame << " not found!\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   string( "Reference frame " )
+                                      .append( wrt_frame )
+                                      .append( " not found!\n" ),
+                                   MSG_WARNING );
    }
 
    return ( false );
@@ -177,9 +178,7 @@ bool RelStateBase::compute_state(
    // Check for nullptr frame.
    if ( entity == nullptr ) {
       if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
-         ostringstream errmsg;
-         errmsg << "RelStateBase::compute_state() Warning: PhysicalEntityData nullptr!\n";
-         message_publish( MSG_WARNING, errmsg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "PhysicalEntityData nullptr!\n", MSG_WARNING );
       }
       return ( false );
    }
@@ -188,9 +187,11 @@ bool RelStateBase::compute_state(
    RefFrameBase const *entity_subject_frame = frame_tree->find_frame( entity->parent_frame );
    if ( entity_subject_frame == nullptr ) {
       if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
-         ostringstream errmsg;
-         errmsg << "RelStateBase::compute_state() Warning: Could not find subject frame: %s!\n";
-         message_publish( MSG_WARNING, entity->parent_frame.c_str(), errmsg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      string( "Could not find subject frame: " )
+                                         .append( entity->parent_frame )
+                                         .append( "!\n" ),
+                                      MSG_WARNING );
       }
       return ( false );
    }
@@ -207,7 +208,7 @@ bool RelStateBase::compute_state(
          msg << "SpaceFOM::RelStateBase::compute_state():" << __LINE__ << "\n";
          msg << "Path transformation for " << entity->name << "\n";
          path_transform.print_data( msg );
-         message_publish( MSG_NORMAL, msg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
 
       return ( true );
@@ -223,9 +224,13 @@ bool RelStateBase::compute_state(
    // subject reference frame with respect to the desired express (target) frame.
    if ( !frame_tree->build_transform( entity_subject_frame, express_frame, &path_transform ) ) {
       if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
-         ostringstream errmsg;
-         errmsg << "RelStateBase::compute_state() Warning: Could not build frame transformation: %s/%s!\n";
-         message_publish( MSG_WARNING, entity->parent_frame.c_str(), express_frame->name.c_str(), errmsg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      string( "Could not build frame transformation: " )
+                                         .append( entity->parent_frame )
+                                         .append( "/" )
+                                         .append( express_frame->name )
+                                         .append( "!\n" ),
+                                      MSG_WARNING );
       }
       return ( false );
    }
@@ -314,10 +319,9 @@ bool RelStateBase::compute_state(
    // Print out the path transformation if debug is set.
    if ( debug ) {
       ostringstream msg;
-      msg << "SpaceFOM::RelStateBase::compute_state():" << __LINE__ << "\n";
-      msg << "\tPath transform:\n";
+      msg << "\n\tPath transform:\n";
       path_transform.print_data( msg );
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    return ( true );
@@ -365,9 +369,7 @@ bool RelStateBase::compute_state(
    // Check for nullptr frame.
    if ( wrt_frame == nullptr ) {
       if ( DebugHandler::show( DEBUG_LEVEL_0_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
-         ostringstream errmsg;
-         errmsg << "RelStateBase::compute_state() Warning: Reference frame nullptr!\n";
-         message_publish( MSG_WARNING, errmsg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Reference frame nullptr!\n", MSG_WARNING );
       }
       return ( false );
    }

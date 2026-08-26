@@ -33,7 +33,6 @@ NASA, Johnson Space Center\n
 #   include <string>
 
 // Trick includes.
-#   include "trick/message_proto.h"
 #   include "trick/message_type.h"
 
 // TrickHLA includes.
@@ -180,11 +179,9 @@ void SpaceTimeCoordinateEncoder::encode()
 
       // Print message and terminate.
       ostringstream errmsg;
-      errmsg << "SpaceFOM::SpaceTimeCoordinateEncoder::encode():" << __LINE__
-             << " WARNING: Encoded data size does not match buffer!"
-             << "    Encoded size: " << encoded_data.size()
-             << " but Expected size: " << get_capacity();
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
+      errmsg << "Encoded data size does not match buffer! Encoded size: "
+             << encoded_data.size() << " but Expected size: " << get_capacity() << "\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
    }
 
    return;

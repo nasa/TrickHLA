@@ -37,7 +37,6 @@ NASA, Johnson Space Center\n
 #include <vector>
 
 // Trick includes.
-#include "trick/message_proto.h"
 #include "trick/message_type.h"
 
 // SpaceFOM includes.
@@ -86,7 +85,7 @@ bool RefFrameTree::add_frame( RefFrameBase *frame_ptr )
 void RefFrameTree::print_tree( std::ostream &stream ) const
 {
    if ( debug || DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
-      message_publish( MSG_NORMAL, "RefFrameTree::print_tree():%d\n", __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
       print_nodes( stream );
    }
    if ( debug || DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
@@ -153,8 +152,7 @@ bool RefFrameTree::build_transform(
 
    // Check for a nullptr allocation.
    if ( transform_data == nullptr ) {
-      message_publish( MSG_WARNING, "SpaceFOM::RefFrameTree::build_transform: %d ERROR nullptr transform data!\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "nullptr transform data!\n", MSG_WARNING );
       return ( false );
    }
 
@@ -222,18 +220,16 @@ bool RefFrameTree::build_transform(
 
          // Add transformation into the current frame's parent frame.
          if ( !in_frame_data.transform_to_parent( current_frame->packing_data, &out_frame_data ) ) {
-            // Print Error message
-            message_publish( MSG_WARNING, "SpaceFOM::RefFrameTree::build_transform: %d ERROR calling 'transform_to_parent'!\n",
-                             __LINE__ );
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Error calling 'transform_to_parent'!\n", MSG_WARNING );
+
             // Error return.
             return ( false );
          } else {
             if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-               ostringstream errmsg;
-               errmsg << "SpaceFOM::RefFrameTree::build_transform -> transform_to_parent:\n"
-                      << "\tfrom " << current_frame->get_name() << " to " << next_frame->get_name() << "\n";
-               out_frame_data.print_data( errmsg );
-               message_publish( MSG_NORMAL, errmsg.str().c_str() );
+               ostringstream msg;
+               msg << "\n\tFrom " << current_frame->get_name() << " to " << next_frame->get_name() << "\n";
+               out_frame_data.print_data( msg );
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
             }
          }
 
@@ -243,18 +239,15 @@ bool RefFrameTree::build_transform(
 
          // Use the reverse transformation to transform into the next frame.
          if ( !in_frame_data.transform_to_child( next_frame->packing_data, &out_frame_data ) ) {
-            // Print Error message
-            message_publish( MSG_WARNING, "SpaceFOM::RefFrameTree::build_transform: %d ERROR calling 'transform_to_child'!\n",
-                             __LINE__ );
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Error calling 'transform_to_child'!\n", MSG_WARNING );
             // Error return.
             return ( false );
          } else {
             if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-               ostringstream errmsg;
-               errmsg << "SpaceFOM::RefFrameTree::build_transform -> transform_to_child:\n"
-                      << "\tfrom " << current_frame->get_name() << " to " << next_frame->get_name() << "\n";
-               out_frame_data.print_data( errmsg );
-               message_publish( MSG_NORMAL, errmsg.str().c_str() );
+               ostringstream msg;
+               msg << "\n\tFrom " << current_frame->get_name() << " to " << next_frame->get_name() << "\n";
+               out_frame_data.print_data( msg );
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
             }
          }
       }

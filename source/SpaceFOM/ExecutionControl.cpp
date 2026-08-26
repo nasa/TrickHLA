@@ -206,10 +206,8 @@ void ExecutionControl::initialize()
 #endif
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      ostringstream msg;
-      msg << "SpaceFOM::ExecutionControl::initialize():" << __LINE__
-          << " Initialization-Scheme:'" << get_type() << "'\n";
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   string( "Initialization-Scheme:'" ).append( get_type() ).append( "'\n" ) );
    }
 
    // There are things that must me set for the SpaceFOM initialization.
@@ -240,11 +238,10 @@ void ExecutionControl::initialize()
    // Must use a preset master.
    if ( !is_master_preset() ) {
       ostringstream errmsg;
-      errmsg << "SpaceFOM::ExecutionControl::initialize():" << __LINE__
-             << " WARNING: Only a preset master is supported. Make sure to set"
+      errmsg << "Only a preset master is supported. Make sure to set"
              << " 'THLA.federate.use_preset_master = true' in your input.py file."
              << " Setting use_preset_master to true!\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
       this->use_preset_master = true;
    }
 
@@ -261,14 +258,11 @@ void ExecutionControl::initialize()
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       if ( is_master() ) {
-         message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::initialize():%d\n    THIS IS THE PRESET MASTER\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n    THIS IS THE PRESET MASTER FEDERATE\n" );
       } else if ( is_designated_late_joiner() ) {
-         message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::initialize():%d\n    THIS IS A DESIGNATED LATE JOINER AND NOT THE PRESET MASTER\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n    THIS IS A DESIGNATED LATE JOINER AND NOT THE PRESET MASTER FEDERATE\n" );
       } else {
-         message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::initialize():%d\n    THIS IS NOT THE PRESET MASTER\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n    THIS IS NOT THE PRESET MASTER FEDERATE\n" );
       }
    }
 }
