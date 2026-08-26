@@ -52,7 +52,6 @@ NASA, Johnson Space Center\n
 
 // Trick includes.
 #include "trick/exec_proto.h"
-#include "trick/message_proto.h"
 #include "trick/message_type.h"
 #include "trick/sim_mode.h"
 
@@ -148,8 +147,10 @@ void TimeManagementServices::initialize_thread_state(
    this->HLA_cycle_time_in_base_time = Int64BaseTime::to_base_time( this->HLA_cycle_time );
 
    if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_TIME_MGMT_SERVICES ) ) {
-      message_publish( MSG_NORMAL, "TimeManagementServices::initialize_thread_state():%d Trick main thread (id:0, data_cycle:%.3f).\n",
-                       __LINE__, this->HLA_cycle_time );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   string( "Trick main thread (id:0, data_cycle:" )
+                                      .append( std::to_string( this->HLA_cycle_time ) )
+                                      .append( ")\n" ) );
    }
 
    // Make sure the Trick thread coordinator is initialized. This will
@@ -175,8 +176,7 @@ void TimeManagementServices::initialize_thread_state(
 void TimeManagementServices::restart_initialization()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_TIME_MGMT_SERVICES ) ) {
-      message_publish( MSG_NORMAL, "TimeManagementServices::restart_initialization():%d\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
@@ -223,16 +223,22 @@ void TimeManagementServices::set_time_advance_granted(
       this->time_adv_state = TIME_ADVANCE_GRANTED;
 
       if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_TIME_MGMT_SERVICES ) ) {
-         message_publish( MSG_NORMAL, "TimeManagementServices::set_time_advance_granted():%d Granted-time:%f, Requested-time:%f.\n",
-                          __LINE__, this->HLA_time, requested_time.get_time_in_seconds() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      string( "Granted-time:" )
+                                         .append( std::to_string( this->HLA_time ) )
+                                         .append( ", Requested-time:" )
+                                         .append( std::to_string( requested_time.get_time_in_seconds() ) )
+                                         .append( "\n" ) );
       }
    } else {
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_TIME_MGMT_SERVICES ) ) {
-         message_publish( MSG_WARNING, "TimeManagementServices::set_time_advance_granted():%d WARNING: TimeManagementServices \"%s\" \
-IGNORING GRANTED TIME %.12G because it is less then requested time %.12G.\n",
-                          __LINE__, federate->get_federate_name().c_str(),
-                          int64_time.get_time_in_seconds(),
-                          requested_time.get_time_in_seconds() );
+         ostringstream errmsg;
+         errmsg << "'" << federate->get_federate_name()
+                << "': IGNORING GRANTED TIME " << setprecision( 18 )
+                << int64_time.get_time_in_seconds()
+                << " seconds because it is less than the requested time "
+                << requested_time.get_time_in_seconds() << " seconds\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
       }
    }
 }
@@ -383,8 +389,10 @@ void TimeManagementServices::scale_trick_tics_to_HLA_base_time_multiplier()
          exec_set_time_tic_value( (int)tic_value );
 
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_TIME_MGMT_SERVICES ) ) {
-            message_publish( MSG_INFO, "TimeManagementServices::scale_trick_tics_to_HLA_base_time_multiplier():%d New Trick time tics:%d.\n",
-                             __LINE__, tic_value );
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                         string( "New Trick time tics:" )
+                                            .append( std::to_string( tic_value ) )
+                                            .append( "\n" ) );
          }
       }
    } else {
@@ -493,8 +501,10 @@ void TimeManagementServices::time_advance_request_to_GALT()
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_TIME_MGMT_SERVICES ) ) {
-      message_publish( MSG_NORMAL, "TimeManagementServices::time_advance_request_to_GALT():%d Requested-Time:%lf\n",
-                       __LINE__, requested_time.get_time_in_seconds() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   string( "Requested-Time:" )
+                                      .append( std::to_string( requested_time.get_time_in_seconds() ) )
+                                      .append( " seconds\n" ) );
    }
 
    // Perform the time-advance request to go to the requested time.
@@ -550,8 +560,10 @@ void TimeManagementServices::time_advance_request_to_GALT_LCTS_multiple()
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_TIME_MGMT_SERVICES ) ) {
-      message_publish( MSG_NORMAL, "TimeManagementServices::time_advance_request_to_GALT_LCTS_multiple():%d Requested-Time:%lf\n",
-                       __LINE__, requested_time.get_time_in_seconds() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   string( "Requested-Time:" )
+                                      .append( std::to_string( requested_time.get_time_in_seconds() ) )
+                                      .append( " seconds\n" ) );
    }
 
    // Perform the time-advance request to go to the requested time.
@@ -564,11 +576,14 @@ void TimeManagementServices::time_advance_request_to_GALT_LCTS_multiple()
 void TimeManagementServices::setup_time_management()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_TIME_MGMT_SERVICES ) ) {
-      message_publish( MSG_NORMAL, "TimeManagementServices::setup_time_management():%d time_management:%s time_regulating:%s time_constrained:%s\n",
-                       __LINE__,
-                       ( this->time_management ? "Yes" : "No" ),
-                       ( this->time_regulating ? "Yes" : "No" ),
-                       ( this->time_constrained ? "Yes" : "No" ) );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   string( "time_management:" )
+                                      .append( this->time_management ? "Yes" : "No" )
+                                      .append( " time_regulating:" )
+                                      .append( this->time_regulating ? "Yes" : "No" )
+                                      .append( " time_constrained:" )
+                                      .append( this->time_constrained ? "Yes" : "No" )
+                                      .append( "\n" ) );
    }
 
    // Determine if HLA time management is enabled.
@@ -630,10 +645,11 @@ void TimeManagementServices::set_time_constrained_enabled(
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_TIME_MGMT_SERVICES ) ) {
-      message_publish( MSG_NORMAL, "TimeManagementServices::set_time_constrained_enabled():%d TimeManagementServices \
-\"%s\" Time granted to: %.12G\n",
-                       __LINE__, federate->get_federate_name().c_str(),
-                       get_granted_time().get_time_in_seconds() );
+      ostringstream msg;
+      msg << "'" << federate->get_federate_name()
+          << "': Time granted to: " << setprecision( 18 )
+          << get_granted_time().get_time_in_seconds() << " seconds\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 }
 
@@ -660,8 +676,10 @@ void TimeManagementServices::setup_time_constrained()
 
    try {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_TIME_MGMT_SERVICES ) ) {
-         message_publish( MSG_NORMAL, "TimeManagementServices::setup_time_constrained()%d \"%s\": ENABLING TIME CONSTRAINED\n",
-                          __LINE__, federate->get_federation_name().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      string( "'" )
+                                         .append( federate->get_federation_name() )
+                                         .append( "': ENABLING TIME CONSTRAINED\n" ) );
       }
 
       {
@@ -712,8 +730,10 @@ void TimeManagementServices::setup_time_constrained()
 
             if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
-               message_publish( MSG_NORMAL, "TimeManagementServices::setup_time_constrained()%d \"%s\": ENABLING TIME CONSTRAINED, waiting...\n",
-                                __LINE__, federate->get_federation_name().c_str() );
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                            string( "'" )
+                                               .append( federate->get_federation_name() )
+                                               .append( "': ENABLING TIME CONSTRAINED, waiting...\n" ) );
             }
          }
       }
@@ -761,10 +781,11 @@ void TimeManagementServices::set_time_regulation_enabled(
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_TIME_MGMT_SERVICES ) ) {
-      message_publish( MSG_NORMAL, "TimeManagementServices::set_time_regulation_enabled():%d TimeManagementServices \
-\"%s\" Time granted to: %.12G\n",
-                       __LINE__, federate->get_federate_name().c_str(),
-                       get_granted_time().get_time_in_seconds() );
+      ostringstream msg;
+      msg << "'" << federate->get_federate_name()
+          << "': Time granted to: " << setprecision( 18 )
+          << get_granted_time().get_time_in_seconds() << " seconds\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 }
 
@@ -790,9 +811,12 @@ void TimeManagementServices::setup_time_regulation()
 
    try {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_TIME_MGMT_SERVICES ) ) {
-         message_publish( MSG_NORMAL, "TimeManagementServices::setup_time_regulation():%d \"%s\": ENABLING TIME REGULATION WITH LOOKAHEAD = %G seconds.\n",
-                          __LINE__, federate->get_federation_name().c_str(),
-                          lookahead.get_time_in_seconds() );
+         ostringstream msg;
+         msg << "'" << federate->get_federation_name()
+             << "': ENABLING TIME REGULATION WITH LOOKAHEAD = "
+             << setprecision( 18 ) << lookahead.get_time_in_seconds()
+             << " seconds.\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
 
       // RTI_amb->enableTimeRegulation() is an implicit
@@ -848,8 +872,12 @@ void TimeManagementServices::setup_time_regulation()
 
             if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
-               message_publish( MSG_NORMAL, "TimeManagementServices::setup_time_regulation():%d \"%s\": ENABLING TIME REGULATION WITH LOOKAHEAD = %G seconds, waiting...\n",
-                                __LINE__, federate->get_federation_name().c_str(), lookahead.get_time_in_seconds() );
+               ostringstream msg;
+               msg << "'" << federate->get_federation_name()
+                   << "': ENABLING TIME REGULATION WITH LOOKAHEAD = "
+                   << setprecision( 18 ) << lookahead.get_time_in_seconds()
+                   << " seconds, waiting...\n";
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
             }
          }
       }
@@ -896,8 +924,8 @@ void TimeManagementServices::time_advance_request()
    // Do not ask for a time advance on an initialization pass.
    if ( exec_get_mode() == Initialization ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_TIME_MGMT_SERVICES ) ) {
-         message_publish( MSG_NORMAL, "TimeManagementServices::time_advance_request():%d exec_init_pass() == true so returning.\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      "exec_get_mode() == Initialization so returning.\n" );
       }
       return;
    }
@@ -942,13 +970,15 @@ void TimeManagementServices::perform_time_advance_request()
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_TIME_MGMT_SERVICES ) ) {
+      ostringstream msg;
       if ( is_zero_lookahead_time() ) {
-         message_publish( MSG_NORMAL, "TimeManagementServices::perform_time_advance_request():%d Time Advance Request Available (TARA) to %.12G seconds.\n",
-                          __LINE__, requested_time.get_time_in_seconds() );
+         msg << "Time Advance Request Available (TARA) to " << setprecision( 18 )
+             << requested_time.get_time_in_seconds() << " seconds.\n";
       } else {
-         message_publish( MSG_NORMAL, "TimeManagementServices::perform_time_advance_request():%d Time Advance Request (TAR) to %.12G seconds.\n",
-                          __LINE__, requested_time.get_time_in_seconds() );
+         msg << "Time Advance Request (TAR) to " << setprecision( 18 )
+             << requested_time.get_time_in_seconds() << " seconds.\n";
       }
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    // Macro to save the FPU Control Word register value.
@@ -960,8 +990,9 @@ void TimeManagementServices::perform_time_advance_request()
       MutexProtection const auto_unlock_mutex( &time_adv_state_mutex );
 
       if ( this->time_adv_state == TIME_ADVANCE_REQUESTED ) {
-         message_publish( MSG_WARNING, "TimeManagementServices::perform_time_advance_request():%d WARNING: Already in time requested state!\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      "Already in time requested state!\n",
+                                      MSG_WARNING );
       }
 
       // Clear the TAR flag before we make our request.
@@ -1032,8 +1063,9 @@ void TimeManagementServices::wait_for_zero_lookahead_TARA_TAG()
       MutexProtection const auto_unlock_mutex( &time_adv_state_mutex );
 
       if ( this->time_adv_state == TIME_ADVANCE_REQUESTED ) {
-         message_publish( MSG_WARNING, "TimeManagementServices::wait_for_zero_lookahead_TARA_TAG():%d WARNING: Already in time requested state!\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      "Already in time requested state!\n",
+                                      MSG_WARNING );
       } else {
 
          // Clear the TAR flag before we make our request.
@@ -1087,8 +1119,9 @@ void TimeManagementServices::wait_for_zero_lookahead_TARA_TAG()
          // We had an error if we are not in the time advance requested state.
          if ( this->time_adv_state != TIME_ADVANCE_REQUESTED ) {
             if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_TIME_MGMT_SERVICES ) ) {
-               message_publish( MSG_WARNING, "TimeManagementServices::wait_for_zero_lookahead_TARA_TAG():%d WARNING: No Time Advance Request Available call made!\n",
-                                __LINE__ );
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                            "No Time Advance Request Available call made!\n",
+                                            MSG_WARNING );
             }
             return;
          }
@@ -1143,8 +1176,7 @@ void TimeManagementServices::wait_for_zero_lookahead_TARA_TAG()
 
             if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
-               message_publish( MSG_NORMAL, "TimeManagementServices::wait_for_zero_lookahead_TARA_TAG():%d Waiting...\n",
-                                __LINE__ );
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Waiting...\n" );
             }
          }
       } while ( state != TIME_ADVANCE_GRANTED );
@@ -1215,8 +1247,7 @@ void TimeManagementServices::wait_for_time_advance_grant()
    // Do not ask for a time advance on an initialization pass.
    if ( exec_get_mode() == Initialization ) {
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_TIME_MGMT_SERVICES ) ) {
-         message_publish( MSG_NORMAL, "TimeManagementServices::wait_for_time_advance_grant():%d In Initialization mode so returning.\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "In Initialization mode so returning.\n" );
       }
       return;
    }
@@ -1231,8 +1262,8 @@ void TimeManagementServices::wait_for_time_advance_grant()
 
    if ( state == TIME_ADVANCE_RESET ) {
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_TIME_MGMT_SERVICES ) ) {
-         message_publish( MSG_WARNING, "TimeManagementServices::wait_for_time_advance_grant():%d WARNING: No Time Advance Requested!\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      "No Time Advance Requested!\n", MSG_WARNING );
       }
       return;
    }
@@ -1240,8 +1271,10 @@ void TimeManagementServices::wait_for_time_advance_grant()
    if ( state != TIME_ADVANCE_GRANTED ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_TIME_MGMT_SERVICES ) ) {
-         message_publish( MSG_NORMAL, "TimeManagementServices::wait_for_time_advance_grant():%d Waiting for Time Advance Grant (TAG) to %.12G seconds.\n",
-                          __LINE__, requested_time.get_time_in_seconds() );
+         ostringstream msg;
+         msg << "Waiting for Time Advance Grant (TAG) to " << setprecision( 18 )
+             << requested_time.get_time_in_seconds() << " seconds.\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
 
       SleepTimeout print_timer;
@@ -1281,8 +1314,7 @@ void TimeManagementServices::wait_for_time_advance_grant()
 
             if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
-               message_publish( MSG_NORMAL, "TimeManagementServices::wait_for_time_advance_grant():%d Waiting...\n",
-                                __LINE__ );
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Waiting...\n" );
             }
          }
       } while ( state != TIME_ADVANCE_GRANTED );
@@ -1295,8 +1327,10 @@ void TimeManagementServices::wait_for_time_advance_grant()
 
    // Add the line number for a higher trace level.
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_TIME_MGMT_SERVICES ) ) {
-      message_publish( MSG_NORMAL, "TimeManagementServices::wait_for_time_advance_grant():%d Time Advance Grant (TAG) to %.12G seconds.\n",
-                       __LINE__, granted_time.get_time_in_seconds() );
+      ostringstream msg;
+      msg << "Time Advance Grant (TAG) to " << setprecision( 18 )
+          << granted_time.get_time_in_seconds() << " seconds.\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 }
 
@@ -1318,8 +1352,7 @@ void TimeManagementServices::shutdown_time_constrained()
 {
    if ( !this->time_constrained_state ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_TIME_MGMT_SERVICES ) ) {
-         message_publish( MSG_NORMAL, "TimeManagementServices::shutdown_time_constrained():%d HLA Time Constrained Already Disabled.\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "HLA Time Constrained Already Disabled.\n" );
       }
    } else {
       // Macro to save the FPU Control Word register value.
@@ -1331,8 +1364,7 @@ void TimeManagementServices::shutdown_time_constrained()
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_TIME_MGMT_SERVICES ) ) {
-         message_publish( MSG_NORMAL, "TimeManagementServices::shutdown_time_constrained():%d Disabling HLA Time Constrained.\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Disabling HLA Time Constrained.\n" );
       }
 
       try {
@@ -1371,8 +1403,7 @@ void TimeManagementServices::shutdown_time_regulating()
 {
    if ( !this->time_regulating_state ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_TIME_MGMT_SERVICES ) ) {
-         message_publish( MSG_NORMAL, "TimeManagementServices::shutdown_time_regulating():%d HLA Time Regulation Already Disabled.\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "HLA Time Regulation Already Disabled.\n" );
       }
    } else {
       // Macro to save the FPU Control Word register value.
@@ -1384,8 +1415,7 @@ void TimeManagementServices::shutdown_time_regulating()
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_TIME_MGMT_SERVICES ) ) {
-         message_publish( MSG_NORMAL, "TimeManagementServices::shutdown_time_regulating():%d Disabling HLA Time Regulation.\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Disabling HLA Time Regulation.\n" );
       }
 
       try {

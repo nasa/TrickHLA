@@ -259,10 +259,10 @@ void TrickThreadCoordinator::initialize_thread_coordinator(
             thread_state[thread_id] = TrickHLA::THREAD_STATE_DISABLED;
 
             if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
-               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
-                                            string( "Disabled Trick child thread association (thread-id:" )
-                                               .append( std::to_string( thread_id ) )
-                                               .append( ").\n" ) );
+               ostringstream msg;
+               msg << "Disabled Trick child thread association (thread-id:"
+                   << thread_id << ")\n";
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
             }
          } else if ( thread_id == 0 ) {
             ostringstream errmsg;
@@ -337,7 +337,7 @@ void TrickThreadCoordinator::initialize_thread_coordinator(
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_THREAD_COORDINATOR ) ) {
       ostringstream msg;
       msg << "Trick main thread (id:0, data_cycle:"
-          << setprecision( 18 ) << main_thread_data_cycle_time << ").\n";
+          << setprecision( 18 ) << main_thread_data_cycle_time << ")\n";
       DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 

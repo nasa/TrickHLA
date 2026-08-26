@@ -47,7 +47,6 @@ NASA, Johnson Space Center\n
 #include <sstream>
 
 // Trick includes.
-#include "trick/message_proto.h"
 #include "trick/message_type.h"
 
 // TrickHLA includes.
@@ -200,11 +199,10 @@ void Attribute::initialize(
    if ( config == CONFIG_NONE ) {
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
          ostringstream errmsg;
-         errmsg << "Attribute::initialize():" << __LINE__
-                << " WARNING: FOM Object Attribute '"
+         errmsg << "FOM Object Attribute '"
                 << obj_FOM_name << "'->'" << get_FOM_name() << "' with Trick name '"
                 << get_trick_name() << "' has a 'config' value of CONFIG_TYPE_NONE.\n";
-         message_publish( MSG_WARNING, errmsg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
       }
    }
 
@@ -234,16 +232,14 @@ void Attribute::initialize(
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
-      ostringstream msg;
-      msg << "Attribute::initialize():" << __LINE__ << "\n";
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
       string attr_handle_string;
       StringUtilities::to_string( attr_handle_string, this->attr_handle );
       ostringstream msg;
-      msg << "Attribute::initialize():" << __LINE__ << "\n"
+      msg << "\n"
           << "========================================================\n"
           << "  FOM_name:'" << get_FOM_name() << "'\n"
           << "  trick_name:'" << get_trick_name() << "'\n"
@@ -253,7 +249,7 @@ void Attribute::initialize(
           << "  locally_owned:" << locally_owned << "\n"
           << "  rti_encoding:" << rti_encoding << "\n"
           << "  changed:" << ( is_changed() ? "Yes" : "No" ) << "\n";
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 }
@@ -295,8 +291,10 @@ bool Attribute::decode(
    update_after_decode();
 
    if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
-      message_publish( MSG_NORMAL, "Attribute::decode():%d Decoded '%s' (trick_name '%s') from attribute map.\n",
-                       __LINE__, get_FOM_name().c_str(), get_trick_name().c_str() );
+      ostringstream msg;
+      msg << "Decoded '" << get_FOM_name() << "' (trick_name '"
+          << get_trick_name() << "') from attribute map.\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    // Mark the attribute value as changed.
@@ -365,13 +363,13 @@ void Attribute::determine_cycle_ratio(
 
       if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
          ostringstream msg;
-         msg << "Attribute::determine_cycle_ratio():" << __LINE__ << "\n"
+         msg << "\n"
              << "  FOM_name:'" << get_FOM_name() << "'\n"
              << "  trick_name:'" << get_trick_name() << "'\n"
              << "  core_job_cycle_time:" << core_job_cycle_time << " seconds\n"
              << "  cyle_time:" << this->cycle_time << " seconds\n"
              << "  cycle_ratio:" << this->cycle_ratio << "\n";
-         message_publish( MSG_NORMAL, msg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
    }
 }

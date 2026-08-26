@@ -264,9 +264,8 @@ void ExecutionConfigurationBase::wait_for_registration()
 
          // Build the summary as an output string stream.
          ostringstream summary;
-         summary << "ExecutionConfigurationBase::wait_for_registration()"
-                 << __LINE__ << "\n"
-                 << "OBJECTS: " << total_obj_cnt;
+         summary << "ExecutionConfigurationBase::wait_for_registration()" << __LINE__
+                 << "\nOBJECTS: " << total_obj_cnt;
 
          // Execution-Configuration object
          summary << "\n"

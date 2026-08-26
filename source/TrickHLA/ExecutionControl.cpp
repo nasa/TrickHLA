@@ -194,10 +194,10 @@ void ExecutionControl::pre_multi_phase_init_processes()
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       if ( is_master() ) {
-         message_publish( MSG_NORMAL, "TrickHLA::ExecutionControl::pre_multi_phase_init_processes():%d\n    I AM THE MASTER\n",
+         message_publish( MSG_NORMAL, "TrickHLA::ExecutionControl::pre_multi_phase_init_processes():%d\n    This is the Master Federate.\n",
                           __LINE__ );
       } else {
-         message_publish( MSG_NORMAL, "TrickHLA::ExecutionControl::pre_multi_phase_init_processes():%d\n    I AM NOT THE MASTER\n",
+         message_publish( MSG_NORMAL, "TrickHLA::ExecutionControl::pre_multi_phase_init_processes():%d\n    This is Not the Master Federate.\n",
                           __LINE__ );
       }
    }

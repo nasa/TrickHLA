@@ -261,13 +261,13 @@ void ExecutionControl::initialize()
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       if ( is_master() ) {
-         message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::initialize():%d\n    I AM THE PRESET MASTER\n",
+         message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::initialize():%d\n    THIS IS THE PRESET MASTER\n",
                           __LINE__ );
       } else if ( is_designated_late_joiner() ) {
-         message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::initialize():%d\n    I AM A DESIGNATED LATE JOINER AND NOT THE PRESET MASTER\n",
+         message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::initialize():%d\n    THIS IS A DESIGNATED LATE JOINER AND NOT THE PRESET MASTER\n",
                           __LINE__ );
       } else {
-         message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::initialize():%d\n    I AM NOT THE PRESET MASTER\n",
+         message_publish( MSG_NORMAL, "SpaceFOM::ExecutionControl::initialize():%d\n    THIS IS NOT THE PRESET MASTER\n",
                           __LINE__ );
       }
    }

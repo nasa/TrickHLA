@@ -251,7 +251,7 @@ void ExecutionControl::initialize()
    this->use_preset_master = false;
 
    // FIXME: We won't know this until we try to create the federation execution.
-   // If this is the Master federate, then it must support Time
+   // If this is the Master Federate, then it must support Time
    // Management and be both Time Regulating and Time Constrained.
    if ( is_master() ) {
       TimeManagementServices *time_management_service = federate->get_time_management_service();
@@ -260,7 +260,7 @@ void ExecutionControl::initialize()
       time_management_service->time_constrained       = true;
 
       // The software frame is set from the Least Common Time Step.
-      // For the Master federate the Trick simulation software frame must
+      // For the Master Federate the Trick simulation software frame must
       // match the Least Common Time Step (LCTS).
       double const software_frame_time = Int64BaseTime::to_seconds( this->least_common_time_step );
       exec_set_software_frame( software_frame_time );
@@ -284,10 +284,10 @@ void ExecutionControl::initialize()
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          if ( is_master() ) {
-            message_publish( MSG_NORMAL, "IMSim::ExecutionControl::initialize():%d\n    I AM THE PRESET MASTER\n",
+            message_publish( MSG_NORMAL, "IMSim::ExecutionControl::initialize():%d\n    THIS IS THE PRESET MASTER FEDERATE\n",
                      __LINE__ );
          } else {
-            message_publish( MSG_NORMAL, "IMSim::ExecutionControl::initialize():%d\n    I AM NOT THE PRESET MASTER\n",
+            message_publish( MSG_NORMAL, "IMSim::ExecutionControl::initialize():%d\n    THIS IS NOT THE PRESET MASTER FEDERATE\n",
                      __LINE__ );
          }
       }
@@ -345,10 +345,10 @@ void ExecutionControl::pre_multi_phase_init_processes()
       execution_configuration->set_master( is_master() );
    }
 
-   // The Master federate must have a padding time set.
+   // The Master Federate must have a padding time set.
    if ( is_master() && ( get_time_padding() <= 0.0 ) ) {
       ostringstream errmsg;
-      errmsg << "For this Master federate, the time padding ("
+      errmsg << "For this Master Federate, the time padding ("
              << get_time_padding() << " seconds) must be greater than zero!\n";
       DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       return;
@@ -365,10 +365,10 @@ void ExecutionControl::pre_multi_phase_init_processes()
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       if ( is_master() ) {
-         message_publish( MSG_NORMAL, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d\n    I AM THE MASTER\n",
+         message_publish( MSG_NORMAL, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d\n    THIS IS THE MASTER FEDERATE\n",
                           __LINE__ );
       } else {
-         message_publish( MSG_NORMAL, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d\n    I AM NOT THE MASTER\n",
+         message_publish( MSG_NORMAL, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d\n    THIS IS NOT THE MASTER FEDERATE\n",
                           __LINE__ );
       }
    }
@@ -395,7 +395,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
             // make sure that we have a valid absolute path to the files.
             save_restore_service->check_HLA_save_directory();
 
-            // signal the MASTER federate to track all federates who join,
+            // signal the Master Federate to track all federates who join,
             // looking for anyone who is not required.
             save_restore_service->restore_set_state( THLARestoreProcessEnum::RESTORE_ACTIVATE );
 
@@ -405,7 +405,7 @@ void ExecutionControl::pre_multi_phase_init_processes()
 
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                message_publish( MSG_NORMAL, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d \
-You indicated that you want a restore => I AM THE MASTER <= \
+You indicated that you want a restore => Master Federate <= \
 Waiting for the required federates to join.\n",
                                 __LINE__ );
             }
@@ -419,7 +419,7 @@ Waiting for the required federates to join.\n",
                return;
             }
 
-            // Load the MASTER federate from the checkpoint file...
+            // Load the Master Federate from the checkpoint file...
             save_restore_service->restore_checkpoint( tRestoreName );
 
             //
@@ -444,7 +444,7 @@ Waiting for the required federates to join.\n",
 
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                message_publish( MSG_NORMAL, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d \
-You indicated that you want a restore => I AM THE MASTER <= \
+You indicated that you want a restore => THIS IS THE MASTER FEDERATE <= \
 initiating restore request for '%s' with the RTI.\n",
                                 __LINE__, tRestoreName );
             }
@@ -459,7 +459,7 @@ initiating restore request for '%s' with the RTI.\n",
             if ( save_restore_service->has_restore_request_failed() ) {
                ostringstream errmsg;
                errmsg << "You indicated that you wanted to restore a "
-                      << "checkpoint => I AM THE MASTER <= RTI rejected the "
+                      << "checkpoint => THIS IS THE MASTER FEDERATE <= RTI rejected the "
                       << "restore request!!!! Make sure that you are restoring "
                       << "the federates from an identical federation save set."
                       << "\n"
@@ -478,7 +478,7 @@ initiating restore request for '%s' with the RTI.\n",
             // begun before informing the RTI that we are done.
             save_restore_service->wait_until_federation_is_ready_to_restore();
 
-            // Signal RTI that the MASTER federate has already been loaded
+            // Signal RTI that the Master Federate has already been loaded
             // (above).
             save_restore_service->inform_RTI_of_restore_completion();
 
@@ -491,7 +491,7 @@ initiating restore request for '%s' with the RTI.\n",
 
                ostringstream errmsg;
                errmsg << "You indicated that you wanted to restore a "
-                      << "checkpoint => I AM THE MASTER <= "
+                      << "checkpoint => THIS IS THE MASTER FEDERATE <= "
                       << "wait_for_federation_restore_to_complete() failed!!!\n"
                       << "\n"
                       << tStr;
@@ -531,12 +531,12 @@ initiating restore request for '%s' with the RTI.\n",
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                if ( is_late_joiner() ) {
                   message_publish( MSG_NORMAL, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d\n\t\
-=> I AM THE MASTER ** originally a late joining federate ** <= Federation restore is complete\n    \
+=> THIS IS THE MASTER FEDERATE ** originally a late joining federate ** <= Federation restore is complete\n    \
 Simulation has started and is now running...\n",
                                    __LINE__ );
                } else {
                   message_publish( MSG_NORMAL, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d\n    \
-=> I AM THE MASTER <= Federation restore is complete\n\t\
+=> THIS IS THE MASTER FEDERATE <= Federation restore is complete\n\t\
 Simulation has started and is now running...\n",
                                    __LINE__ );
                }
@@ -549,7 +549,7 @@ Simulation has started and is now running...\n",
          } else {
             ostringstream errmsg;
             errmsg << "You indicated that you wanted to restore a checkpoint"
-                   << " => I AM THE MASTER <= but you failed to specify the"
+                   << " => THIS IS THE MASTER FEDERATE <= but you failed to specify the"
                    << " checkpoint FILE NAME!\n";
             DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
             return;
@@ -647,7 +647,7 @@ Simulation has started and is now running...\n",
 
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             message_publish( MSG_NORMAL, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d \
-You indicated that you want a restore => I AM NOT THE MASTER <= \
+You indicated that you want a restore => THIS IS NOT THE MASTER FEDERATE <= \
 loading of the federate from the checkpoint file '%s'.\n",
                              __LINE__, tRestoreName );
          }
@@ -693,7 +693,7 @@ loading of the federate from the checkpoint file '%s'.\n",
 
             ostringstream errmsg;
             errmsg << "You indicated that you wanted to restore a "
-                   << "checkpoint => I AM THE NOT MASTER <= "
+                   << "checkpoint => THIS IS NOT THE MASTER FEDERATE <= "
                    << "wait_for_federation_restore_to_complete() failed!!!"
                    << "\n\n"
                    << tStr;
@@ -717,12 +717,12 @@ loading of the federate from the checkpoint file '%s'.\n",
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             if ( is_late_joiner() ) {
                message_publish( MSG_NORMAL, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d\n\t\
-=> I AM NOT THE MASTER ** originally late joining federate ** <= Federation restore is complete\n    \
+=> THIS IS NOT THE MASTER FEDERATE ** originally late joining federate ** <= Federation restore is complete\n    \
 Simulation has started and is now running...\n",
                                 __LINE__ );
             } else {
                message_publish( MSG_NORMAL, "IMSim::ExecutionControl::pre_multi_phase_init_processes2():%d\n    \
-=> I AM NOT THE MASTER <= Federation restore is complete\n    \
+=> THIS IS NOT THE MASTER FEDERATE <= Federation restore is complete\n    \
 Simulation has started and is now running...\n",
                                 __LINE__ );
             }
@@ -732,7 +732,7 @@ Simulation has started and is now running...\n",
          current_execution_control_mode = EXECUTION_CONTROL_RUNNING;
          save_restore_service->check_HLA_save_directory();
 
-      } else { // non-MASTER federate; not restoring a checkpoint
+      } else { // non-Master Federate; not restoring a checkpoint
 
          // Setup all the RTI handles for the objects, attributes and interaction
          // parameters.
@@ -740,7 +740,7 @@ Simulation has started and is now running...\n",
          interaction_service->setup_interaction_RTI_handles();
 
          if ( !federate->is_late_joining_federate() ) {
-            //**** Non-Master federate that is Not late in joining the ****
+            //**** Non-Master Federate that is Not late in joining the ****
             //**** federation, so it can participate in the multiphase ****
             //**** initialization process                              ****
 
@@ -1230,9 +1230,9 @@ void ExecutionControl::sync_point_federation_synchronized(
 
 void ExecutionControl::publish()
 {
-   // Check to see if we are the Master federate.
+   // Check to see if we are the Master Federate.
    if ( is_master() ) {
-      // Publish the simulation configuration if we are the master federate.
+      // Publish the simulation configuration if we are the Master Federate.
       execution_configuration->publish_object_attributes();
 
       // Publish the freeze_interactions.
@@ -1245,7 +1245,7 @@ void ExecutionControl::publish()
 void ExecutionControl::unpublish()
 {
    if ( is_master() ) {
-      // Unpublish the execution configuration if we are the master federate.
+      // Unpublish the execution configuration if we are the Master Federate.
       execution_configuration->unpublish_all_object_attributes();
 
       // Unpublish all the freeze_interactions.
@@ -1275,10 +1275,10 @@ void ExecutionControl::unpublish()
 void ExecutionControl::subscribe()
 {
    if ( !is_master() ) {
-      // Subscribe to the execution configuration if we are not the master federate.
+      // Subscribe to the execution configuration if we are not the Master Federate.
       execution_configuration->subscribe_to_object_attributes();
 
-      // Subscribe to the Freeze interactions if this is not the Master federate.
+      // Subscribe to the Freeze interactions if this is not the Master Federate.
       for ( int n = 0; n < freeze_inter_count; ++n ) {
          freeze_interaction[n].subscribe_to_interaction();
       }
@@ -1288,7 +1288,7 @@ void ExecutionControl::subscribe()
 void ExecutionControl::unsubscribe()
 {
    if ( !is_master() ) {
-      // Unsubscribe from the execution configuration if we are NOT the Master federate.
+      // Unsubscribe from the execution configuration if we are NOT the Master Federate.
       execution_configuration->unsubscribe_all_object_attributes();
 
       // Unsubscribe from all the freeze_interactions.
@@ -1458,9 +1458,9 @@ void ExecutionControl::set_next_execution_control_mode(
    TrickHLA::ExecutionControlEnum exec_control )
 {
 
-   // This should only be called by the Master federate.
+   // This should only be called by the Master Federate.
    if ( !is_master() ) {
-      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "This should only be called by the Master federate!\n" );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "This should only be called by the Master Federate!\n" );
       return;
    }
 
@@ -1552,7 +1552,7 @@ bool ExecutionControl::check_mode_transition_request()
       return false;
    }
 
-   // Only the Master federate receives and processes Mode Transition Requests.
+   // Only the Master Federate receives and processes Mode Transition Requests.
    if ( !is_master() ) {
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionControl::check_mode_transition_request():"
@@ -1706,7 +1706,7 @@ bool ExecutionControl::process_execution_control_updates()
       return false;
    }
 
-   // The Master federate should never have to process ExCO updates.
+   // The Master Federate should never have to process ExCO updates.
    if ( is_master() ) {
       ostringstream errmsg;
       errmsg << "IMSim::ExecutionControl::process_execution_control_updates():"
@@ -2045,7 +2045,7 @@ bool ExecutionControl::run_mode_transition()
 
            double go_to_run_time;
 
-           // The Master federate updates the ExCO with the CTE got-to-run time.
+           // The Master Federate updates the ExCO with the CTE got-to-run time.
            if ( is_master() ) {
 
               go_to_run_time = this->next_mode_cte_time;
@@ -2130,7 +2130,7 @@ bool ExecutionControl::freeze_mode_transition()
 void ExecutionControl::shutdown_mode_announce()
 {
 
-   // Only the Master federate will ever announce a shutdown.
+   // Only the Master Federate will ever announce a shutdown.
    if ( !is_master() ) {
       return;
    }
@@ -2157,7 +2157,7 @@ void ExecutionControl::shutdown_mode_announce()
 void ExecutionControl::shutdown_mode_transition()
 {
 
-   // Only the Master federate has any IMSim tasks for shutdown.
+   // Only the Master Federate has any IMSim tasks for shutdown.
    if ( !is_master() ) {
       return;
    }
@@ -2340,7 +2340,7 @@ void ExecutionControl::trigger_freeze_interaction(
 
 /*!
  *  @details If found, clears the element, registers the FEDSAVE_v2 sync point
- *  with the RTI if we are the master federate and returns true. Otherwise,
+ *  with the RTI if we are the Master Federate and returns true. Otherwise,
  *  when a freeze interaction time was not found, false is returned.
  */
 bool ExecutionControl::check_freeze_time()

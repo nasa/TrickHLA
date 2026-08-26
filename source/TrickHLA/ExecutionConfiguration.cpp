@@ -50,8 +50,6 @@ NASA, Johnson Space Center\n
 // Trick includes.
 #include "trick/attributes.h"
 #include "trick/exec_proto.h"
-#include "trick/message_proto.h"
-#include "trick/message_type.h"
 
 // TrickHLA includes.
 #include "TrickHLA/Attribute.hh"
@@ -259,7 +257,7 @@ void ExecutionConfiguration::pack()
       StringUtilities::to_string( owner_str, owner );
       string required_feds_str;
       StringUtilities::to_string( required_feds_str, required_federates );
-      msg << "TrickHLA::ExecutionConfiguration::pack():" << __LINE__ << "\n"
+      msg << "\n"
           << "\tObject-Name:'" << object->get_name() << "'\n"
           << "\towner:'" << owner_str << "'\n"
           << "\trun_duration:" << run_duration << " seconds\n"
@@ -267,7 +265,7 @@ void ExecutionConfiguration::pack()
           << "\tnum_federates:" << num_federates << "\n"
           << "\trequired_federates:'" << required_feds_str << "'\n"
           << "===================================================\n";
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 }
 
@@ -300,7 +298,7 @@ void ExecutionConfiguration::unpack()
       StringUtilities::to_string( owner_str, owner );
       string required_feds_str;
       StringUtilities::to_string( required_feds_str, required_federates );
-      msg << "TrickHLA::ExecutionConfiguration::unpack():" << __LINE__ << "\n"
+      msg << "\n"
           << "\tObject-Name:'" << object->get_name() << "'\n"
           << "\towner:'" << owner_str << "'\n"
           << "\trun_duration:" << run_duration << " seconds\n"
@@ -308,7 +306,7 @@ void ExecutionConfiguration::unpack()
           << "\tnum_federates:" << num_federates << "\n"
           << "\trequired_federates:'" << required_feds_str << "'\n"
           << "===================================================\n";
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    // Mark that we have an ExCO update with pending changes.
@@ -345,6 +343,6 @@ void ExecutionConfiguration::print_execution_configuration() const
           << "\t required_federates:    '" << required_feds_str << "'\n"
           << "\t owner:                 '" << owner_str << "'\n"
           << "=============================================================\n";
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 }

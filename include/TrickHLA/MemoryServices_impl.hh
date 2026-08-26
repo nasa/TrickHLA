@@ -20,6 +20,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../source/TrickHLA/MemoryServices.cpp}
+@trick_link_dependency{../../source/TrickHLA/DebugHandler.cpp}
 
 @revs_title
 @revs_begin
@@ -80,10 +81,11 @@ T MemoryServices::declare_var(
    // If not, then return null.
    if ( !std::is_pointer< T >::value ) {
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_MEMORY_SERVICES ) ) {
-         std::ostringstream msg;
-         msg << "MemoryServices::declare_var():" << __LINE__
-             << " WARNING: Type is not a pointer: " << typeid( T ).name() << "\n";
-         message_publish( MSG_WARNING, msg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      std::string( "Type is not a pointer: " )
+                                         .append( typeid( T ).name() )
+                                         .append( "\n" ),
+                                      MSG_WARNING );
       }
       return ( nullptr );
    }
@@ -98,14 +100,17 @@ T MemoryServices::declare_var(
 
    // Check that there is a class_name with any STRUTURED Trick type.
    if ( trick_type == TRICK_STRUCTURED ) {
-      // Trick has to have a class name for structered types.
+      // Trick has to have a class name for structured types.
       if ( class_name.empty() ) {
          if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_MEMORY_SERVICES ) ) {
             std::ostringstream msg;
-            msg << "MemoryServices::declare_var():" << __LINE__
-                << " WARNING: Empty class_name for type allocation: "
+            msg << "Empty class_name for type allocation: "
                 << typeid( T ).name() << "\n";
-            message_publish( MSG_ERROR, msg.str().c_str() );
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                         std::string( "Empty class_name for type allocation: " )
+                                            .append( typeid( T ).name() )
+                                            .append( "\n" ),
+                                         MSG_ERROR );
          }
       }
    }
@@ -129,10 +134,11 @@ T MemoryServices::declare_var(
    // If not, then return null.
    if ( !std::is_pointer< T >::value ) {
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_MEMORY_SERVICES ) ) {
-         std::ostringstream msg;
-         msg << "MemoryServices::declare_var():" << __LINE__
-             << " WARNING: Type is not a pointer: " << typeid( T ).name() << "\n";
-         message_publish( MSG_WARNING, msg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      std::string( "Type is not a pointer: " )
+                                         .append( typeid( T ).name() )
+                                         .append( "\n" ),
+                                      MSG_WARNING );
       }
       return ( nullptr );
    }
@@ -148,14 +154,14 @@ T MemoryServices::declare_var(
    // If not, then return null.
    if ( !std::is_pointer< T >::value ) {
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_MEMORY_SERVICES ) ) {
-         std::ostringstream msg;
-         msg << "MemoryServices::declare_var():" << __LINE__
-             << " WARNING: Type is not a pointer: " << typeid( T ).name() << "\n";
-         message_publish( MSG_WARNING, msg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      std::string( "Type is not a pointer: " )
+                                         .append( typeid( T ).name() )
+                                         .append( "\n" ),
+                                      MSG_WARNING );
       }
       return ( nullptr );
    }
-
    return ( declare_var( type, get_class_name( type ), 0, "", 1, &n_elems ) );
 }
 
@@ -169,10 +175,11 @@ T MemoryServices::declare_var(
    // If not, then return null.
    if ( !std::is_pointer< T >::value ) {
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_MEMORY_SERVICES ) ) {
-         std::ostringstream msg;
-         msg << "MemoryServices::declare_var():" << __LINE__
-             << " WARNING: Type is not a pointer: " << typeid( T ).name() << "\n";
-         message_publish( MSG_WARNING, msg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      std::string( "Type is not a pointer: " )
+                                         .append( typeid( T ).name() )
+                                         .append( "\n" ),
+                                      MSG_WARNING );
       }
       return ( nullptr );
    }
@@ -188,10 +195,11 @@ T MemoryServices::declare_var(
    // If not, then return null.
    if ( !std::is_pointer< T >::value ) {
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_MEMORY_SERVICES ) ) {
-         std::ostringstream msg;
-         msg << "MemoryServices::declare_var():" << __LINE__
-             << " WARNING: Type is not a pointer: " << typeid( T ).name() << "\n";
-         message_publish( MSG_WARNING, msg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      std::string( "Type is not a pointer: " )
+                                         .append( typeid( T ).name() )
+                                         .append( "\n" ),
+                                      MSG_WARNING );
       }
       return ( nullptr );
    }
@@ -205,10 +213,11 @@ T MemoryServices::resize_array( T address, size_t n_elems )
    // If not, then return null.
    if ( !std::is_pointer< T >::value ) {
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_MEMORY_SERVICES ) ) {
-         std::ostringstream msg;
-         msg << "MemoryServices::declare_var():" << __LINE__
-             << " WARNING: Type is not a pointer: " << typeid( T ).name() << "\n";
-         message_publish( MSG_WARNING, msg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      std::string( "Type is not a pointer: " )
+                                         .append( typeid( T ).name() )
+                                         .append( "\n" ),
+                                      MSG_WARNING );
       }
       return ( nullptr );
    }
@@ -223,10 +232,11 @@ bool MemoryServices::delete_var( T addr )
    // If not, then return null.
    if ( !std::is_pointer< T >::value ) {
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_MEMORY_SERVICES ) ) {
-         std::ostringstream msg;
-         msg << "MemoryServices::delete_var():" << __LINE__
-             << " WARNING: Type is not a pointer: " << typeid( T ).name() << "\n";
-         message_publish( MSG_WARNING, msg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      std::string( "Type is not a pointer: " )
+                                         .append( typeid( T ).name() )
+                                         .append( "\n" ),
+                                      MSG_WARNING );
       }
       return ( false );
    }
@@ -236,9 +246,8 @@ bool MemoryServices::delete_var( T addr )
    if ( trick_MM->delete_var( static_cast< void * >( addr ) ) ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_MEMORY_SERVICES ) ) {
          std::ostringstream msg;
-         msg << "MemoryServices::delete_var():" << __LINE__
-             << " WARNING: Could not delete variable at address: " << addr << "\n";
-         message_publish( MSG_WARNING, msg.str().c_str() );
+         msg << "Could not delete variable at address: " << std::hex << addr << "\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
       }
       return ( false );
    }
@@ -253,19 +262,17 @@ bool MemoryServices::is_alloced( T addr )
    // If not, then return false.
    if ( !std::is_pointer< T >::value ) {
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_MEMORY_SERVICES ) ) {
-         std::ostringstream msg;
-         msg << "MemoryServices::is_alloced():" << __LINE__
-             << " WARNING: Type is not a pointer: " << typeid( T ).name() << "\n";
-         message_publish( MSG_WARNING, msg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      std::string( "Type is not a pointer: " )
+                                         .append( typeid( T ).name() )
+                                         .append( "\n" ),
+                                      MSG_WARNING );
       }
       return ( false );
    }
 
    // Call the Trick Memory Manager function.
-   if ( trick_MM->is_alloced( static_cast< void * >( addr ) ) ) {
-      return ( true );
-   }
-   return ( false );
+   return ( trick_MM->is_alloced( static_cast< void * >( addr ) ) );
 }
 
 template < typename T >
@@ -275,10 +282,11 @@ std::size_t MemoryServices::get_size( T addr )
    // If not, then return 0.
    if ( !std::is_pointer< T >::value ) {
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_MEMORY_SERVICES ) ) {
-         std::ostringstream msg;
-         msg << "MemoryServices::get_size():" << __LINE__
-             << " WARNING: Type is not a pointer: " << typeid( T ).name() << "\n";
-         message_publish( MSG_WARNING, msg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      std::string( "Type is not a pointer: " )
+                                         .append( typeid( T ).name() )
+                                         .append( "\n" ),
+                                      MSG_WARNING );
       }
       return ( 0 );
    }
@@ -330,10 +338,11 @@ std::string MemoryServices::get_class_name( T type )
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_MEMORY_SERVICES ) ) {
-      std::ostringstream msg;
-      msg << "MemoryServices::get_class_name():" << __LINE__
-          << " WARNING: Unrecognized TrickHLA type: " << typeid( T ).name() << "\n";
-      message_publish( MSG_WARNING, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   std::string( "Unrecognized TrickHLA type: " )
+                                      .append( typeid( T ).name() )
+                                      .append( "\n" ),
+                                   MSG_WARNING );
    }
 
    return ( std::string( "" ) );
