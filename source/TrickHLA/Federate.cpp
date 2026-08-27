@@ -256,7 +256,7 @@ void Federate::print_version()
           << "TrickHLA-release-date:'" << Utilities::get_release_date() << "'\n"
           << "             RTI-name:'" << Utilities::get_rti_name() << "'\n"
           << "          RTI-version:'" << Utilities::get_rti_version() << "'\n";
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 }
 
@@ -413,8 +413,7 @@ void Federate::initialize()
 void Federate::restart_initialization()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "Federate::restart_initialization():%d\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    time_management_service.restart_initialization();
@@ -557,8 +556,7 @@ void Federate::pre_multiphase_initialization()
 
    // Debug printout.
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "Federate::pre_multiphase_initialization():%d\n     Completed pre-multiphase initialization...\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n     Completed pre-multiphase initialization...\n" );
    }
 }
 
@@ -575,8 +573,7 @@ void Federate::post_multiphase_initialization()
 
    // Debug printout.
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "Federate::post_multiphase_initialization():%d\n     Simulation has started and is now running...\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n     Simulation has started and is now running...\n" );
    }
 }
 
@@ -622,9 +619,8 @@ void Federate::create_RTI_ambassador_and_connect()
 
    if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream msg;
-      msg << "Federate::create_RTI_ambassador_and_connect():" << __LINE__
-          << StringUtilities::to_string( rti_config ) << "\n";
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      msg << StringUtilities::to_string( rti_config ) << "\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 #else
    // For HLA-Evolved, the user can set a vendor specific local settings for
@@ -632,25 +628,20 @@ void Federate::create_RTI_ambassador_and_connect()
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       if ( local_settings.empty() ) {
          ostringstream msg;
-         msg << "Federate::create_RTI_ambassador_and_connect():" << __LINE__
-             << " WARNING: Local settings designator 'THLA.federate.local_settings'"
+         msg << "Local settings designator 'THLA.federate.local_settings'"
              << " for the RTI was not specified in the input.py file. Using"
              << " vendor defaults.\n";
-         message_publish( MSG_WARNING, msg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
       } else {
          ostringstream msg;
-         msg << "Federate::create_RTI_ambassador_and_connect():" << __LINE__
-             << " Local settings designator for RTI connection:"
-             << "'" << local_settings << "'\n";
-         message_publish( MSG_NORMAL, msg.str().c_str() );
+         msg << "Local settings designator for RTI connection:'" << local_settings << "'\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
 
       if ( !rti_address.empty() ) {
-         ostringstream msg;
-         msg << "Federate::create_RTI_ambassador_and_connect():" << __LINE__
-             << " WARNING: The 'THLA.federate.rti_address' setting is ignored"
-             << " when using IEEE 1516-2010.\n";
-         message_publish( MSG_WARNING, msg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      "The 'THLA.federate.rti_address' setting is ignored when using IEEE 1516-2010.\n",
+                                      MSG_WARNING );
       }
    }
 #endif // IEEE_1516_2025
@@ -669,9 +660,8 @@ void Federate::create_RTI_ambassador_and_connect()
 
       if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          ostringstream msg;
-         msg << "Federate::create_RTI_ambassador_and_connect():" << __LINE__
-             << StringUtilities::to_string( config_result ) << "\n";
-         message_publish( MSG_NORMAL, msg.str().c_str() );
+         msg << StringUtilities::to_string( config_result ) << "\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
 #else
       RTIambassadorFactory *rti_amb_factory = new RTIambassadorFactory();

@@ -43,8 +43,6 @@ NASA, Johnson Space Center\n
 
 // Trick includes.
 #include "trick/attributes.h"
-#include "trick/message_proto.h"
-#include "trick/message_type.h"
 
 // TrickHLA includes.
 #include "TrickHLA/DebugHandler.hh"
@@ -168,8 +166,7 @@ void Parameter::initialize(
       string param_handle_string;
       StringUtilities::to_string( param_handle_string, this->param_handle );
       ostringstream msg;
-      msg << "Parameter::initialize():" << __LINE__ << "\n"
-          << "========================================================\n"
+      msg << "\n========================================================\n"
           //        << "  Encoder:" << this->encoder->to_string() << "\n"
           << "  interaction_FOM_name:'" << interaction_FOM_name << "'\n"
           << "  FOM_name:'" << get_FOM_name() << "'\n"
@@ -177,7 +174,7 @@ void Parameter::initialize(
           << "  ParameterHandle:" << param_handle_string << "\n"
           << "  rti_encoding:" << rti_encoding << "\n"
           << "  received:" << ( is_received() ? "Yes" : "No" ) << "\n";
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 }
 
@@ -220,8 +217,7 @@ void Parameter::initialize(
       string param_handle_string;
       StringUtilities::to_string( param_handle_string, this->param_handle );
       ostringstream msg;
-      msg << "Parameter::initialize():" << __LINE__ << "\n"
-          << "========================================================\n"
+      msg << "\n========================================================\n"
           << "  Encoder:\n"
           << "  interaction_FOM_name:'" << interaction_FOM_name << "'\n"
           << "  FOM_name:'" << get_FOM_name() << "'\n"
@@ -229,7 +225,7 @@ void Parameter::initialize(
           << "  ParameterHandle:" << param_handle_string << "\n"
           << "  rti_encoding:" << rti_encoding << "\n"
           << "  received:" << ( is_received() ? "Yes" : "No" ) << "\n";
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 }
 
@@ -270,8 +266,12 @@ bool Parameter::decode(
    update_after_decode();
 
    if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
-      message_publish( MSG_NORMAL, "Parameter::decode():%d Decoded '%s' (trick_name '%s') from attribute map.\n",
-                       __LINE__, get_FOM_name().c_str(), get_trick_name().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   string( "Decoded '" )
+                                      .append( get_FOM_name() )
+                                      .append( "' (trick_name '" )
+                                      .append( get_trick_name() )
+                                      .append( "') from attribute map.\n" ) );
    }
 
    // Mark the attribute value as received and changed.

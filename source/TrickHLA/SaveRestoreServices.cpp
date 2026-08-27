@@ -47,7 +47,6 @@ NASA, Johnson Space Center\n
 #include "trick/CheckPointRestart.hh"
 #include "trick/command_line_protos.h"
 #include "trick/exec_proto.h"
-#include "trick/message_proto.h"
 #include "trick/message_type.h"
 
 // Global singleton pointer to the CheckPointRestart.
@@ -259,11 +258,11 @@ bool SaveRestoreServices::check_HLA_save_directory()
    if ( stat( this->HLA_save_directory.c_str(), &info ) != 0 ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
-         ostringstream msg;
-         msg << "SaveRestoreServices::check_HLA_save_directory():" << __LINE__
-             << " Save directory path \'" << this->HLA_save_directory
-             << "\' does NOT exist!";
-         message_publish( MSG_ERROR, "%s\n", msg.str().c_str() );
+         ostringstream errmsg;
+         errmsg << "SaveRestoreServices::check_HLA_save_directory():" << __LINE__
+                << " Save directory path '" << this->HLA_save_directory
+                << "' does NOT exist!\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_ERROR );
       }
 
       return ( false );
@@ -271,11 +270,11 @@ bool SaveRestoreServices::check_HLA_save_directory()
    } else if ( ( info.st_mode & S_IFDIR ) == 0 ) { // NOLINT(misc-include-cleaner)
 
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
-         ostringstream msg;
-         msg << "SaveRestoreServices::check_HLA_save_directory():" << __LINE__
-             << " Save directory path \'" << this->HLA_save_directory
-             << "\' exists but is NOT a directory!";
-         message_publish( MSG_ERROR, "%s\n", msg.str().c_str() );
+         ostringstream errmsg;
+         errmsg << "SaveRestoreServices::check_HLA_save_directory():" << __LINE__
+                << " Save directory path '" << this->HLA_save_directory
+                << "' exists but is NOT a directory!\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_ERROR );
       }
 
       return ( false );
@@ -298,9 +297,7 @@ bool SaveRestoreServices::save_set_state( THLASaveProcessEnum state )
         && ( state != THLASaveProcessEnum::SAVE_UNSUPPORTED ) ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
-         message_publish( MSG_WARNING,
-                          "SaveRestoreServices::save_set_label():%d: HLA SaveRestore NOT supported!\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "HLA SaveRestore NOT supported!\n", MSG_WARNING );
       }
 
       // Make sure that the service state reflects the unsupported state.
@@ -327,8 +324,11 @@ void SaveRestoreServices::save_set_time(
         && ( this->save_state != THLASaveProcessEnum::SAVE_UNSUPPORTED ) ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
-         message_publish( MSG_WARNING, "SaveRestoreServices::save_set_time():%d: Save already in progress: \'%s\'!\n",
-                          __LINE__, TrickHLA::to_string( save_state ).c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      string( "Save already in progress: '" )
+                                         .append( TrickHLA::to_string( save_state ) )
+                                         .append( "'!\n" ),
+                                      MSG_WARNING );
       }
       return;
    }
@@ -341,12 +341,10 @@ void SaveRestoreServices::save_set_time(
          std::string label_str;
          StringUtilities::to_string( label_str, save_label );
          ostringstream msg;
-         msg << "SaveRestoreServices::save_set_time():" << __LINE__
-             << " : WARNING: Save time for label \'" << label_str
-             << "\' in the past!";
-         msg << " Save time is " << time.get_base_time()
+         msg << "Save time for label '" << label_str << "' is in the past!"
+             << " Save time is " << time.get_base_time()
              << " but Granted time is " << granted_time.get_base_time() << "\n";
-         message_publish( MSG_WARNING, "%s\n", msg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
       }
 
       return;
@@ -370,8 +368,7 @@ void SaveRestoreServices::save_request(
    // If Federation SaveRestore is not supported then return without action.
    if ( save_state == THLASaveProcessEnum::SAVE_UNSUPPORTED ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
-         message_publish( MSG_WARNING, "SaveRestoreServices::save_request():%d: HLA SaveRestore NOT supported!\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "HLA SaveRestore NOT supported!\n", MSG_WARNING );
       }
       return;
    }
@@ -381,8 +378,11 @@ void SaveRestoreServices::save_request(
         && ( save_state != THLASaveProcessEnum::SAVE_UNSUPPORTED ) ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
-         message_publish( MSG_WARNING, "SaveRestoreServices::save_request():%d: Save already in progress: \'%s\'!\n",
-                          __LINE__, TrickHLA::to_string( save_state ).c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      string( "Save already in progress: '" )
+                                         .append( TrickHLA::to_string( save_state ) )
+                                         .append( "'!\n" ),
+                                      MSG_WARNING );
       }
       return;
    }
@@ -406,8 +406,8 @@ void SaveRestoreServices::save_request(
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
          string label_str;
          StringUtilities::to_string( label_str, this->save_label );
-         message_publish( MSG_NORMAL, "SaveRestoreServices::save_request():%d: save_label: \'%s\'\n",
-                          __LINE__, label_str.c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      string( "Save-label: '" ).append( label_str ).append( "'\n" ) );
       }
 
       // Make the requestFederationSave call to the RTI Ambassador.
@@ -447,8 +447,8 @@ void SaveRestoreServices::save( wstring const &label )
    // If Federation SaveRestore is not supported then return without action.
    if ( save_state == THLASaveProcessEnum::SAVE_UNSUPPORTED ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
-         message_publish( MSG_WARNING, "SaveRestoreServices::save():%d: HLA SaveRestore NOT supported!\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      "HLA SaveRestore NOT supported!\n", MSG_WARNING );
       }
       return;
    }
@@ -456,12 +456,11 @@ void SaveRestoreServices::save( wstring const &label )
    // Do a little sanity checking.
    if ( save_state != THLASaveProcessEnum::SAVE_REQUESTED ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
-         ostringstream errmsg;
-         errmsg << "SaveRestoreServices::save():" << __LINE__
-                << " WARNING: Save state mismatch: "
-                << TrickHLA::to_string( save_state ) << "!\n";
-         message_publish( MSG_WARNING, "%s\n",
-                          __LINE__, errmsg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      string( "Save state mismatch: " )
+                                         .append( TrickHLA::to_string( save_state ) )
+                                         .append( "!\n" ),
+                                      MSG_WARNING );
       }
       return;
    }
@@ -524,8 +523,7 @@ void SaveRestoreServices::save( wstring const &label )
       federate->get_RTI_ambassador()->federateSaveComplete();
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
-         message_publish( MSG_NORMAL, "SaveRestoreServices::save():%d: Federate Save Completed.\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Federate Save Completed.\n" );
       }
 
    } catch ( FederateHasNotBegunSave const &e ) {
@@ -558,8 +556,7 @@ bool SaveRestoreServices::save_in_progress_check()
    // If Federation SaveRestore is not supported then return without action.
    if ( save_state == THLASaveProcessEnum::SAVE_UNSUPPORTED ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
-         message_publish( MSG_WARNING, "SaveRestoreServices::save_in_progress_check():%d: HLA SaveRestore NOT supported!\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "HLA SaveRestore NOT supported!\n", MSG_WARNING );
       }
       return ( false );
    }
@@ -568,8 +565,11 @@ bool SaveRestoreServices::save_in_progress_check()
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
          std::string label_str;
          StringUtilities::to_string( label_str, save_label );
-         message_publish( MSG_WARNING, "SaveRestoreServices::save_in_progress_check():%d: HLA Save for label \'%s\' in progress!\n",
-                          __LINE__, label_str.c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      string( "HLA Save for label '" )
+                                         .append( label_str )
+                                         .append( "' in progress!\n" ),
+                                      MSG_WARNING );
       }
       return ( true );
    }
@@ -587,8 +587,7 @@ void SaveRestoreServices::save_succeded()
    // If Federation SaveRestore is not supported then return without action.
    if ( save_state == THLASaveProcessEnum::SAVE_UNSUPPORTED ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
-         message_publish( MSG_WARNING, "SaveRestoreServices::save_succeded():%d: HLA SaveRestore NOT supported!\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "HLA SaveRestore NOT supported!\n", MSG_WARNING );
       }
       return;
    }
@@ -621,8 +620,7 @@ void SaveRestoreServices::save_failed()
    // If Federation SaveRestore is not supported then return without action.
    if ( save_state == THLASaveProcessEnum::SAVE_UNSUPPORTED ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
-         message_publish( MSG_WARNING, "SaveRestoreServices::save_failed():%d: HLA SaveRestore NOT supported!\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "HLA SaveRestore NOT supported!\n", MSG_WARNING );
       }
       return;
    }
@@ -640,11 +638,9 @@ void SaveRestoreServices::save_failed()
 
    // Print out an error message.
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
-      ostringstream msg;
-      msg << "SaveRestoreServices::save_failed():" << __LINE__
-          << " : Save for label \'" << label_str
-          << "\' failed!\n";
-      message_publish( MSG_ERROR, msg.str().c_str() );
+      ostringstream errmsg;
+      errmsg << "Save for label '" << label_str << "' failed!\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_ERROR );
    }
 
    // Restore the base Save state.
@@ -707,12 +703,9 @@ bool SaveRestoreServices::write_joined_federates_to_file(
       file.close();
 
    } else {
-
       ostringstream errmsg;
-      errmsg << "SaveRestoreServices::write_joined_federates_file():" << __LINE__
-             << " Failed to open file '" << full_file_path << "' for writing!\n";
-      message_publish( MSG_ERROR, errmsg.str().c_str() );
-
+      errmsg << " Failed to open file '" << full_file_path << "' for writing!\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_ERROR );
       return ( false );
    }
 
@@ -725,32 +718,29 @@ bool SaveRestoreServices::write_joined_federates_to_file(
 void SaveRestoreServices::print_save_failure_reason(
    SaveFailureReason reason )
 {
-   // dump the contents...
-   ostringstream msg;
-
-   if ( reason == RTI_UNABLE_TO_SAVE ) {
-      msg << "SaveRestoreServices::print_save_failure_reason():" << __LINE__
-          << " failure reason=\"RTI_UNABLE_TO_SAVE\"\n";
+   switch ( reason ) {
+      case RTI_UNABLE_TO_SAVE:
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Failure reason: RTI_UNABLE_TO_SAVE\n" );
+         break;
+      case FEDERATE_REPORTED_FAILURE_DURING_SAVE:
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Failure reason: FEDERATE_REPORTED_FAILURE_DURING_SAVE\n" );
+         break;
+      case FEDERATE_RESIGNED_DURING_SAVE:
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Failure reason: FEDERATE_RESIGNED_DURING_SAVE\n" );
+         break;
+      case RTI_DETECTED_FAILURE_DURING_SAVE:
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Failure reason: RTI_DETECTED_FAILURE_DURING_SAVE\n" );
+         break;
+      case SAVE_TIME_CANNOT_BE_HONORED:
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Failure reason: SAVE_TIME_CANNOT_BE_HONORED\n" );
+         break;
+      case SAVE_ABORTED:
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Failure reason: SAVE_ABORTED\n" );
+         break;
+      default:
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Failure reason: UNKNOWN\n" );
+         break;
    }
-   if ( reason == FEDERATE_REPORTED_FAILURE_DURING_SAVE ) {
-      msg << "SaveRestoreServices::print_save_failure_reason():" << __LINE__
-          << " failure reason=\"FEDERATE_REPORTED_FAILURE_DURING_SAVE\"\n";
-   }
-   if ( reason == FEDERATE_RESIGNED_DURING_SAVE ) {
-      msg << "SaveRestoreServices::print_save_failure_reason():" << __LINE__
-          << " failure reason=\"FEDERATE_RESIGNED_DURING_SAVE\"\n";
-   }
-   if ( reason == RTI_DETECTED_FAILURE_DURING_SAVE ) {
-      msg << "SaveRestoreServices::print_save_failure_reason():" << __LINE__
-          << " failure reason=\"=RTI_DETECTED_FAILURE_DURING_SAVE\"\n";
-   }
-   if ( reason == SAVE_TIME_CANNOT_BE_HONORED ) {
-      msg << "SaveRestoreServices::print_save_failure_reason():" << __LINE__
-          << " failure reason=\"SAVE_TIME_CANNOT_BE_HONORED\"\n";
-   }
-   message_publish( MSG_NORMAL, msg.str().c_str() );
-
-   return;
 }
 
 /*!
@@ -759,8 +749,7 @@ void SaveRestoreServices::print_save_failure_reason(
 void SaveRestoreServices::request_federation_save_status() // cppcheck-suppress [functionStatic, unmatchedSuppression]
 {
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
-      message_publish( MSG_NORMAL, "SaveRestoreServices::request_federation_save_status():%d\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    // Macro to save the FPU Control Word register value.
@@ -835,9 +824,8 @@ bool SaveRestoreServices::read_known_federates_from_file(
    // Check if the file is open for reading.
    if ( !file.is_open() ) {
       ostringstream errmsg;
-      errmsg << "SaveRestoreServices::read_known_federates_from_file()" << __LINE__
-             << " Failed to open file '" << full_path << "'!\n";
-      message_publish( MSG_ERROR, "%s\n", errmsg.str().c_str() );
+      errmsg << "Failed to open file '" << full_path << "'!\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_ERROR );
       return ( false );
    }
 
@@ -856,15 +844,19 @@ bool SaveRestoreServices::read_known_federates_from_file(
       } catch ( std::invalid_argument const &e ) {
          std::wcerr << L"Invalid input: No conversion could be performed.\n";
          ostringstream errmsg;
-         errmsg << "SaveRestoreServices::read_known_federates_from_file()" << __LINE__
-                << " Reading number of known federates:'"
-                << " Invalid input: No conversion could be performed." << "'!\n";
-         message_publish( MSG_ERROR, "%s\n", errmsg.str().c_str() );
+         errmsg << "Reading number of known federates: "
+                << "'Invalid input: No conversion could be performed.'!\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_ERROR );
+
          file.close();
          return ( false );
       } catch ( std::out_of_range const &e ) {
          file.close();
          std::wcerr << L"Number is out of range for an int.\n";
+         ostringstream errmsg;
+         errmsg << "Reading number of known federates: "
+                << "'Number is out of range for an int.'!\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_ERROR );
          return ( false );
       }
    }
@@ -873,10 +865,9 @@ bool SaveRestoreServices::read_known_federates_from_file(
    if ( num_feds == 0 ) {
       file.close();
       ostringstream errmsg;
-      errmsg << "SaveRestoreServices::read_known_federates_from_file()" << __LINE__
-             << " There has to be at least 1 federate.  Read in "
+      errmsg << "There has to be at least 1 federate. Read in "
              << num_feds << " from '" << full_path << "'!\n";
-      message_publish( MSG_ERROR, "%s\n", errmsg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_ERROR );
       return ( false );
    }
 
@@ -907,11 +898,10 @@ bool SaveRestoreServices::read_known_federates_from_file(
 
          // Let the user know that something went wrong.
          ostringstream errmsg;
-         errmsg << "SaveRestoreServices::read_known_federates_from_file()" << __LINE__
-                << " Error reading the type for known federate '"
+         errmsg << "Error reading the type for known federate '"
                 << fed_name_str << "' at line " << line_num
                 << " from '" << full_path << "'!\n";
-         message_publish( MSG_ERROR, "%s\n", errmsg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_ERROR );
 
          // Break out of the read while loop.
          break;
@@ -935,16 +925,16 @@ bool SaveRestoreServices::read_known_federates_from_file(
 
             // Let the user know that something went wrong.
             ostringstream errmsg;
-            errmsg << "SaveRestoreServices::read_known_federates_from_file()" << __LINE__
-                   << " Error reading if known federate '"
+            errmsg << "Error reading if known federate '"
                    << fed_name_str << "' is required at line " << line_num
                    << " from '" << full_path << "'!\n";
-            message_publish( MSG_ERROR, "%s\n", errmsg.str().c_str() );
-
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_ERROR );
          } catch ( std::out_of_range const &e ) {
 
             // Let the user know that something went wrong.
             std::wcerr << L"Number is out of range for an int.\n";
+
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Number is out of range for an int.\n", MSG_ERROR );
          }
 
          // NOTE that a boolean conversion error is NOT a read error.
@@ -960,11 +950,10 @@ bool SaveRestoreServices::read_known_federates_from_file(
 
          // Let the user know that something went wrong.
          ostringstream errmsg;
-         errmsg << "SaveRestoreServices::read_known_federates_from_file()" << __LINE__
-                << " Error reading if known federate '"
+         errmsg << "Error reading if known federate '"
                 << fed_name_str << "' is required at line " << line_num
                 << " from '" << full_path << "'!\n";
-         message_publish( MSG_ERROR, "%s\n", errmsg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_ERROR );
 
          // Break out of the read while loop.
          break;
@@ -988,10 +977,8 @@ bool SaveRestoreServices::read_known_federates_from_file(
 
       // Let the user know that something went wrong.
       ostringstream errmsg;
-      errmsg << "SaveRestoreServices::read_known_federates_from_file()" << __LINE__
-             << " Error reading the known federates file '"
-             << full_path << "'!\n";
-      message_publish( MSG_ERROR, "%s\n", errmsg.str().c_str() );
+      errmsg << "Error reading the known federates file '" << full_path << "'!\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_ERROR );
 
       return ( false );
    }
@@ -1001,10 +988,9 @@ bool SaveRestoreServices::read_known_federates_from_file(
 
       // Let the user know that something went wrong.
       ostringstream errmsg;
-      errmsg << "SaveRestoreServices::read_known_federates_from_file()" << __LINE__
-             << " Federate file specified " << num_feds
-             << " but read in " << fed_count << "!\n";
-      message_publish( MSG_ERROR, "%s\n", errmsg.str().c_str() );
+      errmsg << "Federate file specified " << num_feds << " but read in "
+             << fed_count << "!\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_ERROR );
 
       // NOTE that we are NOT clearing the known federates file.  We are just
       // informing the user that there was a mismatch between the specified
@@ -1027,8 +1013,7 @@ bool SaveRestoreServices::restore_set_state( THLARestoreProcessEnum state )
         && ( state != THLARestoreProcessEnum::RESTORE_UNSUPPORTED ) ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
-         message_publish( MSG_WARNING, "SaveRestoreServices::restore_set_state():%d: HLA SaveRestore NOT supported!\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "HLA SaveRestore NOT supported!\n", MSG_WARNING );
       }
 
       // Make sure that the service state reflects the unsupported state.
@@ -1052,17 +1037,13 @@ void SaveRestoreServices::restore_request_status()
    // initialization scheme selected by the user.
    if ( !execution_control->is_save_and_restore_supported() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
-         ostringstream errmsg;
-         errmsg << "SaveRestoreServices::restore_request_status():" << __LINE__
-                << " WARNING: SaveRestore NOT supported!\n";
-         message_publish( MSG_WARNING, errmsg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "HLA SaveRestore NOT supported!\n", MSG_WARNING );
       }
       return;
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
-      message_publish( MSG_NORMAL, "SaveRestoreServices::restore_request_status():%d\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    // Macro to save the FPU Control Word register value.
@@ -1109,10 +1090,7 @@ void SaveRestoreServices::restore_waiting_for_request_status()
    // execution control scheme selected by the user.
    if ( !execution_control->is_save_and_restore_supported() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
-         ostringstream errmsg;
-         errmsg << "SaveRestoreServices::restore_waiting_for_request_status():" << __LINE__
-                << " WARNING: SaveRestore NOT supported!\n";
-         message_publish( MSG_WARNING, errmsg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "HLA SaveRestore NOT supported!\n", MSG_WARNING );
       }
       return;
    }
@@ -1129,9 +1107,7 @@ void SaveRestoreServices::restore_waiting_for_request_status()
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
          if ( execution_control->process_timer.timeout( execution_control->process_timer.time() ) ) {
             execution_control->process_timer.reset();
-            message_publish( MSG_NORMAL,
-                             "SaveRestoreServices::restore_waiting_for_request_status():%d: Waiting for Restore status response ...\n",
-                             __LINE__ );
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Waiting for Restore status response...\n" );
          }
       }
 
@@ -1166,10 +1142,9 @@ void SaveRestoreServices::restore_waiting_for_request_status()
       restore_state = THLARestoreProcessEnum::RESTORE_NONE;
 
       ostringstream errmsg;
-      errmsg << "SaveRestoreServices::restore_waiting_for_request_status():" << __LINE__
-             << " WARNING: Federation NOT in state to Restore:\n";
-      errmsg << to_string( restore_status_response ) << "\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
+      errmsg << "Federation NOT in state to Restore:\n"
+             << to_string( restore_status_response ) << "\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
 
    } else {
 
@@ -1177,10 +1152,7 @@ void SaveRestoreServices::restore_waiting_for_request_status()
       restore_state = THLARestoreProcessEnum::RESTORE_STATUS_COMPLETE;
 
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
-         ostringstream msg;
-         msg << "SaveRestoreServices::restore_waiting_for_request_status():" << __LINE__
-             << " Restore status response complete.\n";
-         message_publish( MSG_NORMAL, msg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Restore status response complete.\n" );
       }
    }
 
@@ -1199,10 +1171,9 @@ void SaveRestoreServices::restore_request( wstring const &label )
          string label_str;
          StringUtilities::to_string( label_str, label );
          ostringstream errmsg;
-         errmsg << "SaveRestoreServices::restore_request():" << __LINE__
-                << " WARNING: SaveRestore NOT supported!\n"
+         errmsg << "HLA SaveRestore NOT supported!\n"
                 << " Label:'" << label_str << "'\n";
-         message_publish( MSG_WARNING, errmsg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
       }
       return;
    }
@@ -1225,9 +1196,10 @@ void SaveRestoreServices::restore_request( wstring const &label )
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
       string name_str;
       StringUtilities::to_string( name_str, this->restore_label );
-      message_publish( MSG_NORMAL,
-                       "SaveRestoreServices::restore_request():%d: Requesting RTI to Restore Federation with label '%s'.\n",
-                       __LINE__, name_str.c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   string( "Requesting RTI to Restore Federation with label '" )
+                                      .append( name_str )
+                                      .append( "'.\n" ) );
    }
 
    // Macro to save the FPU Control Word register value.
@@ -1333,10 +1305,8 @@ void SaveRestoreServices::restore_waiting_for_request()
          string label_str;
          StringUtilities::to_string( label_str, restore_label );
          ostringstream errmsg;
-         errmsg << "SaveRestoreServices::restore_waiting_for_request():" << __LINE__
-                << " WARNING: SaveRestore NOT supported!\n"
-                << " Label:'" << label_str << "'\n";
-         message_publish( MSG_WARNING, errmsg.str().c_str() );
+         errmsg << "SaveRestore NOT supported!\n Label:'" << label_str << "'\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
       }
       return;
    }
@@ -1353,9 +1323,7 @@ void SaveRestoreServices::restore_waiting_for_request()
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
       if ( execution_control->process_timer.timeout( execution_control->process_timer.time() ) ) {
          execution_control->process_timer.reset();
-         message_publish( MSG_NORMAL,
-                          "SaveRestoreServices::restore_waiting_for_request():%d: Waiting for Restore request callback ...\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Waiting for Restore request callback...\n" );
       }
    }
 
@@ -1374,10 +1342,8 @@ void SaveRestoreServices::restore_waiting_for_begun()
          string label_str;
          StringUtilities::to_string( label_str, restore_label );
          ostringstream errmsg;
-         errmsg << "SaveRestoreServices::restore_waiting_for_begun():" << __LINE__
-                << " WARNING: SaveRestore NOT supported!\n"
-                << " Label:'" << label_str << "'\n";
-         message_publish( MSG_WARNING, errmsg.str().c_str() );
+         errmsg << "SaveRestore NOT supported!\n Label:'" << label_str << "'\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
       }
       return;
    }
@@ -1389,14 +1355,13 @@ void SaveRestoreServices::restore_waiting_for_begun()
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
       if ( execution_control->process_timer.timeout( execution_control->process_timer.time() ) ) {
-
          execution_control->process_timer.reset();
+
          string label_str;
          StringUtilities::to_string( label_str, restore_label );
-         ostringstream errmsg;
-         errmsg << "SaveRestoreServices::restore_waiting_for_begun():" << __LINE__
-                << " : Waiting for Restore to begin for Label: '" << label_str << "'!\n";
-         message_publish( MSG_NORMAL, errmsg.str().c_str() );
+         ostringstream msg;
+         msg << "Waiting for Restore to begin for Label: '" << label_str << "'\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
    }
 
@@ -1416,9 +1381,8 @@ void SaveRestoreServices::restore_request_failed()
    string label_str;
    StringUtilities::to_string( label_str, restore_label );
    ostringstream errmsg;
-   errmsg << "SaveRestoreServices::restore_request_failed():" << __LINE__
-          << " Restore failed for Label: '" << label_str << "'\n";
-   message_publish( MSG_ERROR, errmsg.str().c_str() );
+   errmsg << "Restore failed for Label: '" << label_str << "'\n";
+   DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_ERROR );
 
    return;
 }
@@ -1431,8 +1395,7 @@ void SaveRestoreServices::restore_begun()
    // If Federation SaveRestore is not supported then return without action.
    if ( this->restore_state == THLARestoreProcessEnum::RESTORE_UNSUPPORTED ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
-         message_publish( MSG_WARNING, "SaveRestoreServices::restore_begun():%d: HLA SaveRestore NOT supported!\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "HLA SaveRestore NOT supported!\n", MSG_WARNING );
       }
       return;
    }
@@ -1459,10 +1422,8 @@ void SaveRestoreServices::restore_waiting_for_initiated()
          string label_str;
          StringUtilities::to_string( label_str, restore_label );
          ostringstream errmsg;
-         errmsg << "SaveRestoreServices::restore_waiting_for_initiated():" << __LINE__
-                << " WARNING: SaveRestore NOT supported!\n"
-                << " Label:'" << label_str << "'\n";
-         message_publish( MSG_WARNING, errmsg.str().c_str() );
+         errmsg << "HLA SaveRestore NOT supported!\n Label:'" << label_str << "'\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
       }
       return;
    }
@@ -1476,9 +1437,7 @@ void SaveRestoreServices::restore_waiting_for_initiated()
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
       if ( execution_control->process_timer.timeout( execution_control->process_timer.time() ) ) {
          execution_control->process_timer.reset();
-         message_publish( MSG_NORMAL,
-                          "SaveRestoreServices::restore_waiting_for_initiated():%d: Waiting for Restore initiated callback ...\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Waiting for Restore initiated callback...\n" );
       }
    }
 
@@ -1508,10 +1467,8 @@ void SaveRestoreServices::restore_initiated(
          string fed_handle_str;
          StringUtilities::to_string( fed_handle_str, new_federate_handle );
          ostringstream errmsg;
-         errmsg << "SaveRestoreServices::restore_initiated():" << __LINE__
-                << " WARNING: SaveRestore NOT supported!\n"
-                << " Label:'" << label_str << "'\n";
-         message_publish( MSG_WARNING, errmsg.str().c_str() );
+         errmsg << "HLA SaveRestore NOT supported!\n Label:'" << label_str << "'\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
       }
       return;
    }
@@ -1520,11 +1477,10 @@ void SaveRestoreServices::restore_initiated(
    if ( restore_state != THLARestoreProcessEnum::RESTORE_INITIATED ) {
       ostringstream errmsg;
       StringUtilities::to_string( restore_label_str, restore_label );
-      errmsg << "SaveRestoreServices::restore_initiated():" << __LINE__
-             << " Unexpected Restore state for label: " << restore_label_str << "\n"
+      errmsg << "Unexpected Restore state for label: " << restore_label_str << "\n"
              << "   Expected state: RESTORE_INITIATED\n"
              << "   Current state : " << TrickHLA::to_string( restore_state ) << "\n";
-      message_publish( MSG_ERROR, errmsg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_ERROR );
       return;
    }
 
@@ -1541,14 +1497,18 @@ void SaveRestoreServices::restore_initiated(
       // Mark this Restore as failed.
       this->restore_state = THLARestoreProcessEnum::RESTORE_FAILED;
 
-      message_publish( MSG_ERROR,
-                       "SaveRestoreServices::restore_initiated():%d: Could not find checkpoint file: \'%s\'!\n",
-                       __LINE__, checkpoint_full_path.c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   string( "Could not find checkpoint file: '" )
+                                      .append( checkpoint_full_path )
+                                      .append( "'!\n" ),
+                                   MSG_ERROR );
 
       StringUtilities::to_string( restore_label_str, restore_label );
-      message_publish( MSG_ERROR,
-                       "SaveRestoreServices::restore_initiated():%d: Restore failed for label: \'%s\'!\n",
-                       __LINE__, restore_label_str.c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   string( "Restore failed for label: '" )
+                                      .append( restore_label_str )
+                                      .append( "'!\n" ),
+                                   MSG_ERROR );
 
       // Notify the Federation that we could not complete the Restore.
       restore_failed_notification();
@@ -1558,8 +1518,10 @@ void SaveRestoreServices::restore_initiated(
 
    // Report status to the user.
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
-      message_publish( MSG_NORMAL, "SaveRestoreServices::restore_initiated():%d: Restoring from checkpoint file %s\n",
-                       __LINE__, checkpoint_file_name.c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   string( "Restoring from checkpoint file: '" )
+                                      .append( checkpoint_file_name )
+                                      .append( "'\n" ) );
    }
 
    // Mark the Retore state as initiated.  We need to do this because the Trick checkpoint
@@ -1609,8 +1571,8 @@ void SaveRestoreServices::restore_waiting_for_checkpoint_load()
    // If Federation SaveRestore is not supported then return without action.
    if ( this->restore_state == THLARestoreProcessEnum::RESTORE_UNSUPPORTED ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
-         message_publish( MSG_WARNING, "SaveRestoreServices::restore_waiting_for_completion():%d: HLA SaveRestore NOT supported!\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      "HLA SaveRestore NOT supported!\n", MSG_WARNING );
       }
       return;
    }
@@ -1622,9 +1584,12 @@ void SaveRestoreServices::restore_waiting_for_checkpoint_load()
    if ( this->restore_state == THLARestoreProcessEnum::RESTORE_FAILED ) {
       string restore_label_str;
       StringUtilities::to_string( restore_label_str, restore_label );
-      message_publish( MSG_ERROR,
-                       "SaveRestoreServices::restore_waiting_for_checkpoint_load():%d: Restore failed for label: \'%s\'!\n",
-                       __LINE__, restore_label_str.c_str() );
+
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   string( "Restore failed for label: '" )
+                                      .append( restore_label_str )
+                                      .append( "'\n" ),
+                                   MSG_ERROR );
 
       // Notify the Federation that we could not complete the Restore.
       restore_failed_notification();
@@ -1641,20 +1606,20 @@ void SaveRestoreServices::restore_waiting_for_checkpoint_load()
             execution_control->process_timer.reset();
             string restore_label_str;
             StringUtilities::to_string( restore_label_str, restore_label );
-            message_publish( MSG_NORMAL,
-                             "SaveRestoreServices::restore_waiting_for_checkpoint_load():%d: HLA Restore label \'%s\'!\n",
-                             __LINE__, restore_label_str.c_str() );
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                         string( "HLA Restore label: '" )
+                                            .append( restore_label_str )
+                                            .append( "'\n" ) );
          }
       }
    } else {
       string restore_label_str;
       StringUtilities::to_string( restore_label_str, restore_label );
       ostringstream errmsg;
-      errmsg << "SaveRestoreServices::restore_waiting_for_checkpoint_load():" << __LINE__
-             << " Unexpected Restore state for label: " << restore_label_str << "\n"
+      errmsg << "Unexpected Restore state for label: " << restore_label_str << "\n"
              << "   Expected state: RESTORE_INITIATED\n"
-             << "   Current state : " << TrickHLA::to_string( restore_state ) << "\n";
-      message_publish( MSG_ERROR, errmsg.str().c_str() );
+             << "    Current state: " << TrickHLA::to_string( restore_state ) << "\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_ERROR );
    }
 
    // NOTE: The Restore state will transition from RESTORE_INITIATED to
@@ -1671,8 +1636,7 @@ void SaveRestoreServices::restore_after_checkpoint_load()
    // If Federation SaveRestore is not supported then return without action.
    if ( this->restore_state == THLARestoreProcessEnum::RESTORE_UNSUPPORTED ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
-         message_publish( MSG_WARNING, "SaveRestoreServices::restore_after_checkpoint_load():%d: HLA SaveRestore NOT supported!\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "HLA SaveRestore NOT supported!\n", MSG_WARNING );
       }
       return;
    }
@@ -1683,11 +1647,10 @@ void SaveRestoreServices::restore_after_checkpoint_load()
          string label_str;
          StringUtilities::to_string( label_str, restore_label );
          ostringstream errmsg;
-         errmsg << "SaveRestoreServices::restore_after_checkpoint_load():" << __LINE__
-                << " WARNING: Resetting Save state to THLASaveProcessEnum::SAVE_NONE!\n"
+         errmsg << "Resetting Save state to THLASaveProcessEnum::SAVE_NONE!\n"
                 << " Label: '" << label_str << "'\n"
                 << " State: '" << TrickHLA::to_string( save_state ) << "'\n";
-         message_publish( MSG_WARNING, errmsg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
       }
       save_state = THLASaveProcessEnum::SAVE_NONE;
    }
@@ -1699,18 +1662,16 @@ void SaveRestoreServices::restore_after_checkpoint_load()
       string restore_label_str;
       StringUtilities::to_string( restore_label_str, restore_label );
       ostringstream errmsg;
-      errmsg << "SaveRestoreServices::restore_after_checkpoint_load():" << __LINE__
-             << " WARNING: Unexpected Restore state for label: " << restore_label_str << "\n"
+      errmsg << "Unexpected Restore state for label: '" << restore_label_str << "'\n"
              << "   Expected state: RESTORE_CHECKPOINT\n"
-             << "   Current state:  " << TrickHLA::to_string( restore_state ) << "\n";
-      message_publish( MSG_ERROR, errmsg.str().c_str() );
+             << "    Current state: " << TrickHLA::to_string( restore_state ) << "\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_ERROR );
 
       return;
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
-      message_publish( MSG_NORMAL, "SaveRestoreServices::restore_after_checkpoint_load():%d: Rebuilding HLA Handles.\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Rebuilding HLA Handles.\n" );
    }
 
    // Restore the data constructs from loading the checkpoint file.
@@ -1735,8 +1696,7 @@ void SaveRestoreServices::restore_after_checkpoint_load()
    // reinstate_sync_pts();
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
-      message_publish( MSG_NORMAL, "SaveRestoreServices::restore_after_checkpoint_load():%d: Rebuilt HLA federate state.\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Rebuilt HLA federate state.\n" );
    }
 
    // Notify the Federation that we successfully completed the Restore.
@@ -1756,9 +1716,10 @@ void SaveRestoreServices::restore_success_notification()
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
       string restore_label_str;
       StringUtilities::to_string( restore_label_str, restore_label );
-      message_publish( MSG_NORMAL,
-                       "SaveRestoreServices::restore_success_notification():%d: Restore succeeded for label: \'%s\'!\n",
-                       __LINE__, restore_label_str.c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   string( "Restore succeeded for label: '" )
+                                      .append( restore_label_str )
+                                      .append( "'\n" ) );
    }
 
    // Macro to save the FPU Control Word register value.
@@ -1795,9 +1756,11 @@ void SaveRestoreServices::restore_failed_notification()
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
       string restore_label_str;
       StringUtilities::to_string( restore_label_str, restore_label );
-      message_publish( MSG_ERROR,
-                       "SaveRestoreServices::restore_failed_notification():%d: Restore failed for label: \'%s\'!\n",
-                       __LINE__, restore_label_str.c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   string( "Restore failed for label: '" )
+                                      .append( restore_label_str )
+                                      .append( "'\n" ),
+                                   MSG_ERROR );
    }
 
    // Macro to save the FPU Control Word register value.
@@ -1834,8 +1797,7 @@ bool SaveRestoreServices::restore_waiting_for_completion()
    // If Federation SaveRestore is not supported then return without action.
    if ( this->restore_state == THLARestoreProcessEnum::RESTORE_UNSUPPORTED ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
-         message_publish( MSG_WARNING, "SaveRestoreServices::restore_waiting_for_completion():%d: HLA SaveRestore NOT supported!\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "HLA SaveRestore NOT supported!\n", MSG_WARNING );
       }
       return ( false );
    }
@@ -1845,9 +1807,11 @@ bool SaveRestoreServices::restore_waiting_for_completion()
    if ( this->restore_state == THLARestoreProcessEnum::RESTORE_FAILED ) {
       string restore_label_str;
       StringUtilities::to_string( restore_label_str, restore_label );
-      message_publish( MSG_ERROR,
-                       "SaveRestoreServices::restore_waiting_for_completion():%d: Restore failed for label: \'%s\'!\n",
-                       __LINE__, restore_label_str.c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   string( "Restore failed for label: '" )
+                                      .append( restore_label_str )
+                                      .append( "'\n" ),
+                                   MSG_ERROR );
 
       // Notify the Federation that we could not complete the Restore.
       restore_failed_notification();
@@ -1862,11 +1826,10 @@ bool SaveRestoreServices::restore_waiting_for_completion()
       string restore_label_str;
       StringUtilities::to_string( restore_label_str, restore_label );
       ostringstream errmsg;
-      errmsg << "SaveRestoreServices::restore_waiting_for_completion():" << __LINE__
-             << " WARNING: Unexpected Restore state for label: " << restore_label_str << "\n"
+      errmsg << "Unexpected Restore state for label: '" << restore_label_str << "'\n"
              << "   Expected state: RESTORE_WAITING_COMPLETION\n"
-             << "   Current state:  " << TrickHLA::to_string( restore_state ) << "\n";
-      message_publish( MSG_ERROR, errmsg.str().c_str() );
+             << "    Current state: " << TrickHLA::to_string( restore_state ) << "\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_ERROR );
 
       return ( false );
    }
@@ -1876,9 +1839,10 @@ bool SaveRestoreServices::restore_waiting_for_completion()
          execution_control->process_timer.reset();
          string restore_label_str;
          StringUtilities::to_string( restore_label_str, restore_label );
-         message_publish( MSG_NORMAL,
-                          "SaveRestoreServices::restore_waiting_for_completion():%d: HLA Restore in progress for label \'%s\'!\n",
-                          __LINE__, restore_label_str.c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      string( "HLA Restore in progress for label: '" )
+                                         .append( restore_label_str )
+                                         .append( "'\n" ) );
       }
    }
 
@@ -1898,10 +1862,8 @@ void SaveRestoreServices::restore_succeded()
          string label_str;
          StringUtilities::to_string( label_str, restore_label );
          ostringstream errmsg;
-         errmsg << "SaveRestoreServices::restore_succeded():" << __LINE__
-                << " WARNING: SaveRestore NOT supported!\n"
-                << " Label:'" << label_str << "'\n";
-         message_publish( MSG_WARNING, errmsg.str().c_str() );
+         errmsg << "HLA SaveRestore NOT supported!\n Label:'" << label_str << "'\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
       }
       return;
    }
@@ -1964,21 +1926,19 @@ void SaveRestoreServices::restore_failed()
    // initialization scheme selected by the user.
    if ( !execution_control->is_save_and_restore_supported() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
-         errmsg << "SaveRestoreServices::restore_failed():" << __LINE__
-                << " WARNING: SaveRestore NOT supported!\n"
+         errmsg << "HLA SaveRestore NOT supported!\n"
                 << " Label:'" << restore_label_str << "'\n";
-         message_publish( MSG_WARNING, errmsg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
       }
       return;
    }
 
    // Just return if we are not in the proper restore state.
    if ( restore_state != THLARestoreProcessEnum::RESTORE_FAILED ) {
-      errmsg << "SaveRestoreServices::restore_failed():" << __LINE__
-             << " Unexpected Restore state for label: " << restore_label_str << "\n"
+      errmsg << "Unexpected Restore state for label: '" << restore_label_str << "'\n"
              << "   Expected state: RESTORE_FAILED\n"
-             << "   Current state : " << TrickHLA::to_string( restore_state ) << "\n";
-      message_publish( MSG_ERROR, errmsg.str().c_str() );
+             << "    Current state: " << TrickHLA::to_string( restore_state ) << "\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_ERROR );
       return;
    }
 
@@ -2008,28 +1968,26 @@ void SaveRestoreServices::restore_failed()
 void SaveRestoreServices::restore_failed_print_reason(
    RestoreFailureReason reason )
 {
-   // dump the contents...
-   ostringstream msg;
-
-   if ( reason == RTI_UNABLE_TO_RESTORE ) {
-      msg << "SaveRestoreServices::restore_failed_print_reason():" << __LINE__
-          << " failure reason=\"RTI_UNABLE_TO_RESTORE\"\n";
+   switch ( reason ) {
+      case RTI_UNABLE_TO_RESTORE:
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Failure reason: RTI_UNABLE_TO_RESTORE\n" );
+         break;
+      case FEDERATE_REPORTED_FAILURE_DURING_RESTORE:
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Failure reason: FEDERATE_REPORTED_FAILURE_DURING_RESTORE\n" );
+         break;
+      case FEDERATE_RESIGNED_DURING_RESTORE:
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Failure reason: FEDERATE_RESIGNED_DURING_RESTORE\n" );
+         break;
+      case RTI_DETECTED_FAILURE_DURING_RESTORE:
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Failure reason: RTI_DETECTED_FAILURE_DURING_RESTORE\n" );
+         break;
+      case RESTORE_ABORTED:
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Failure reason: RESTORE_ABORTED\n" );
+         break;
+      default:
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Failure reason: UNKNOWN\n" );
+         break;
    }
-   if ( reason == FEDERATE_REPORTED_FAILURE_DURING_RESTORE ) {
-      msg << "SaveRestoreServices::restore_failed_print_reason():" << __LINE__
-          << " failure reason=\"FEDERATE_REPORTED_FAILURE_DURING_RESTORE\"\n";
-   }
-   if ( reason == FEDERATE_RESIGNED_DURING_RESTORE ) {
-      msg << "SaveRestoreServices::restore_failed_print_reason():" << __LINE__
-          << " failure reason=\"FEDERATE_RESIGNED_DURING_RESTORE\"\n";
-   }
-   if ( reason == RTI_DETECTED_FAILURE_DURING_RESTORE ) {
-      msg << "SaveRestoreServices::restore_failed_print_reason():" << __LINE__
-          << " failure reason=\"RTI_DETECTED_FAILURE_DURING_RESTORE\"\n";
-   }
-   message_publish( MSG_NORMAL, msg.str().c_str() );
-
-   return;
 }
 
 //--------------------------------------------------------------------------
@@ -2045,8 +2003,10 @@ void SaveRestoreServices::restore_checkpoint(
    if ( trick_filename.compare( 0, federation_name_str.length(), federation_name_str ) != 0 ) {
       trick_filename = federation_name_str + "_" + file_name;
    }
-   message_publish( MSG_NORMAL, "SaveRestoreServices::restore_checkpoint():%d: Restoring checkpoint file %s\n",
-                    __LINE__, trick_filename.c_str() );
+   DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                string( "Restoring checkpoint file: '" )
+                                   .append( trick_filename )
+                                   .append( "'\n" ) );
 
    // Must init all data recording groups since we are restarting at init
    // time before Trick would normally do this. Prior to Trick 10.8, the only way
@@ -2072,8 +2032,7 @@ void SaveRestoreServices::restore_checkpoint(
       exec_set_freeze_command( false );
    }
 
-   message_publish( MSG_NORMAL, "SaveRestoreServices::restore_checkpoint():%d: Checkpoint file load complete.\n",
-                    __LINE__ );
+   DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Checkpoint file load complete.\n" );
 
    // indicate that the restore was completed successfully
    this->restore_state = THLARestoreProcessEnum::RESTORE_COMPLETE;
@@ -2093,8 +2052,7 @@ void SaveRestoreServices::restore_checkpoint(
 void SaveRestoreServices::restart_checkpoint()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
-      message_publish( MSG_NORMAL, "SaveRestoreServices::restart_checkpoint():%d\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    // Macro to save the FPU Control Word register value.

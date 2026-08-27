@@ -15,6 +15,7 @@ NASA, Johnson Space Center\n
 2101 NASA Parkway, Houston, TX  77058
 
 @tldh
+@trick_link_dependency{DebugHandler.cpp}
 @trick_link_dependency{Item.cpp}
 @trick_link_dependency{ParameterItem.cpp}
 
@@ -32,10 +33,10 @@ NASA, Johnson Space Center\n
 #include <cstring>
 
 // Trick includes.
-#include "trick/message_proto.h"
 #include "trick/message_type.h"
 
 // TrickHLA includes.
+#include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Item.hh"
 #include "TrickHLA/MemoryServices.hh"
@@ -109,7 +110,7 @@ void ParameterItem::clear()
    if ( data != nullptr ) {
       if ( MemoryServices::is_alloced( data )
            && !MemoryServices::delete_var( data ) ) {
-         message_publish( MSG_WARNING, "ParameterItem::clear():%d WARNING failed to delete Trick Memory for 'data'\n", __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Failed to delete Trick Memory for 'data'\n", MSG_WARNING );
       }
       data  = nullptr;
       size  = 0;
