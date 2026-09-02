@@ -235,14 +235,12 @@ federate so this call will be ignored.\n",
 
          } else {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
-               ostringstream msg;
-               msg << "ObjectServices::send_init_data():" << __LINE__
-                   << " '" << objects[n].name << "'"
-                   << " WARNING: This call will be ignored because the"
-                   << " Simulation Initialization Scheme (Type:'"
-                   << federate->execution_control->get_type()
-                   << "') does not support it.\n";
-               message_publish( MSG_WARNING, msg.str().c_str() );
+               ostringstream errmsg;
+               errmsg << "For object '" << objects[n].name << "' this call will be"
+                      << " ignored because the Simulation Initialization Scheme (Type:'"
+                      << federate->execution_control->get_type()
+                      << "') does not support it.\n";
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
             }
          }
       } else {
@@ -305,14 +303,12 @@ federate so the data will not be sent for '%s'.\n",
 
       } else {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
-            ostringstream msg;
-            msg << "ObjectServices::send_init_data():" << __LINE__
-                << " '" << instance_name << "'"
-                << " WARNING: This call will be ignored because the"
-                << " Simulation Initialization Scheme (Type:'"
-                << federate->execution_control->get_type()
-                << "') does not support it.\n";
-            message_publish( MSG_WARNING, msg.str().c_str() );
+            ostringstream errmsg;
+            errmsg << "For object '" << instance_name << "' this call will be ignored"
+                   << " because the Simulation Initialization Scheme (Type:'"
+                   << federate->execution_control->get_type()
+                   << "') does not support it.\n";
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
          }
       }
    } else {
@@ -688,8 +684,7 @@ void ObjectServices::add_object_to_map(
 void ObjectServices::setup_object_ref_attributes()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
-      message_publish( MSG_NORMAL, "ObjectServices::setup_object_ref_attributes():%d\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    // Create the map of object instance names to object array indexes.
@@ -703,15 +698,14 @@ void ObjectServices::setup_object_ref_attributes()
 
    if ( federate->is_execution_configuration_used() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
-         message_publish( MSG_NORMAL, "ObjectServices::setup_object_ref_attributes():%d Execution-Configuration\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Execution-Configuration\n" );
       }
       setup_object_ref_attributes( 1, federate->get_execution_configuration() );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
-      message_publish( MSG_NORMAL, "ObjectServices::setup_object_ref_attributes():%d Objects: %d\n",
-                       __LINE__, obj_count );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   string( "Objects: " ).append( std::to_string( obj_count ) ).append( "\n" ) );
    }
    setup_object_ref_attributes( obj_count, objects );
 }
@@ -724,8 +718,7 @@ void ObjectServices::setup_object_ref_attributes(
    Object   *data_objects )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
-      message_publish( MSG_NORMAL, "ObjectServices::setup_object_ref_attributes():%d\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    // Resolve all the Ref-Attributes for all the simulation initialization
@@ -741,8 +734,7 @@ void ObjectServices::setup_object_ref_attributes(
       Attribute *attrs      = data_objects[n].get_attributes();
 
       if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
-         msg << "ObjectServices::setup_object_ref_attributes()" << __LINE__ << "\n"
-             << "--------------- Trick REF-Attributes ---------------\n"
+         msg << "\n--------------- Trick REF-Attributes ---------------\n"
              << " Object:'" << data_objects[n].get_name() << "'"
              << " FOM-Name:'" << data_objects[n].get_FOM_name() << "'"
              << " Create HLA Instance:"
@@ -764,7 +756,7 @@ void ObjectServices::setup_object_ref_attributes(
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
-         message_publish( MSG_NORMAL, msg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
    }
 }
@@ -772,8 +764,7 @@ void ObjectServices::setup_object_ref_attributes(
 void ObjectServices::setup_object_RTI_handles()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
-      message_publish( MSG_NORMAL, "ObjectServices::setup_object_RTI_handles():%d\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    // Set up the object RTI handles for the ExecutionControl mechanisms.
@@ -805,8 +796,7 @@ void ObjectServices::setup_object_RTI_handles(
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
-      message_publish( MSG_NORMAL, "ObjectServices::setup_object_RTI_handles():%d\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    string obj_FOM_name  = "";
@@ -822,8 +812,7 @@ void ObjectServices::setup_object_RTI_handles(
          ostringstream msg;
 
          if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
-            msg << "ObjectServices::setup_object_RTI_handles():" << __LINE__ << "\n"
-                << "----------------- RTI Handles (Objects & Attributes) ---------------"
+            msg << "\n----------------- RTI Handles (Objects & Attributes) ---------------"
                 << "\n"
                 << "Getting RTI Object-Class-Handle for"
                 << " Object:'" << data_objects[n].get_name() << "'"
@@ -883,7 +872,7 @@ void ObjectServices::setup_object_RTI_handles(
          data_objects[n].build_attribute_map();
 
          if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
-            message_publish( MSG_NORMAL, msg.str().c_str() );
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
          }
       }
    } catch ( NameNotFound const &e ) {

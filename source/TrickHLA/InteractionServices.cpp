@@ -115,7 +115,7 @@ void InteractionServices::restart_initialization()
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTER_SERVICES ) ) {
-      message_publish( MSG_NORMAL, "InteractionServices::restart_initialization():%d\n", __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    // Verify the user specified object and interaction arrays and counts.
@@ -253,8 +253,7 @@ void InteractionServices::verify_interaction_arrays()
 void InteractionServices::setup_interaction_ref_attributes()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTER_SERVICES ) ) {
-      message_publish( MSG_NORMAL, "InteractionServices::setup_interaction_ref_attributes():%d\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    // Interactions.
@@ -262,8 +261,7 @@ void InteractionServices::setup_interaction_ref_attributes()
       ostringstream msg;
 
       if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_INTER_SERVICES ) ) {
-         msg << "InteractionServices::setup_interaction_ref_attributes():" << __LINE__ << "\n"
-             << "--------------- Trick REF-Attributes ---------------\n"
+         msg << "\n--------------- Trick REF-Attributes ---------------\n"
              << " FOM-Interaction:'" << interactions[n].get_FOM_name() << "'\n";
       }
 
@@ -287,7 +285,7 @@ void InteractionServices::setup_interaction_ref_attributes()
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_INTER_SERVICES ) ) {
-         message_publish( MSG_NORMAL, msg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
    }
 
@@ -302,8 +300,7 @@ void InteractionServices::setup_interaction_ref_attributes()
 void InteractionServices::setup_interaction_RTI_handles()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTER_SERVICES ) ) {
-      message_publish( MSG_NORMAL, "InteractionServices::setup_interaction_RTI_handles():%d\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    // Set up the object RTI handles for the ExecutionControl mechanisms.
@@ -335,8 +332,7 @@ void InteractionServices::setup_interaction_RTI_handles(
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTER_SERVICES ) ) {
-      message_publish( MSG_NORMAL, "InteractionServices::setup_interaction_RTI_handles():%d\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    string inter_FOM_name = "";
@@ -552,8 +548,7 @@ void InteractionServices::unsubscribe()
 void InteractionServices::setup_preferred_order_with_RTI()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTER_SERVICES ) ) {
-      message_publish( MSG_NORMAL, "InteractionServices::setup_preferred_order_with_RTI():%d\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    // Setup the preferred order for all the interactions.
@@ -576,7 +571,7 @@ void InteractionServices::process_interactions()
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTER_SERVICES ) ) {
-      message_publish( MSG_NORMAL, "InteractionServices::process_interactions():%d\n", __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    // Process all the interactions in the queue.
@@ -703,8 +698,8 @@ void InteractionServices::convert_data_before_checkpoint()
 
    if ( !interactions_queue.empty() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTER_SERVICES ) ) {
-         message_publish( MSG_NORMAL, "InteractionServices::convert_data_before_checkpoint():%d interactions_queue.size():%d\n",
-                          __LINE__, interactions_queue.size() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      string( "interactions_queue.size():" ).append( std::to_string( interactions_queue.size() ) ).append( "\n" ) );
       }
 
       // Get the count to use for the check.

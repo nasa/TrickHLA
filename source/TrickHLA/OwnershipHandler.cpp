@@ -40,12 +40,13 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstddef>
+#include <iomanip>
 #include <limits>
+#include <sstream>
 #include <string>
 #include <utility>
 
 // Trick includes.
-#include "trick/message_proto.h"
 #include "trick/message_type.h"
 
 // TrickHLA includes.
@@ -113,8 +114,8 @@ void OwnershipHandler::convert_data_before_checkpoint()
    // If there are any pull_request entries, encode them to get checkpointed.
    if ( pull_items_cnt > 0 ) {
       if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
-         message_publish( MSG_NORMAL, "OwnershipHandler::convert_data_before_checkpoint():%d Checkpointing %d pull_request elements.\n",
-                          __LINE__, pull_items_cnt );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      string( "Checkpointing " ).append( std::to_string( pull_items_cnt ) ).append( " pull_request elements.\n" ) );
       }
       pull_items = MemoryServices::declare_var( pull_items, pull_items_cnt );
       if ( pull_items == nullptr ) {
@@ -148,8 +149,8 @@ void OwnershipHandler::convert_data_before_checkpoint()
    // If there are any push_request entries, encode them to get checkpointed.
    if ( push_items_cnt > 0 ) {
       if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
-         message_publish( MSG_NORMAL, "OwnershipHandler::convert_data_before_checkpoint():%d Checkpointing %d push_request elements.\n",
-                          __LINE__, push_items_cnt );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      string( "Checkpointing " ).append( std::to_string( push_items_cnt ) ).append( " push_request elements.\n" ) );
       }
       push_items = MemoryServices::declare_var( push_items, push_items_cnt );
       if ( push_items == nullptr ) {
@@ -204,8 +205,8 @@ void OwnershipHandler::restore_data_after_checkpoint()
          attr_map->insert( make_pair( pull_items[count].FOM_name, attribute ) );
 
          if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
-            message_publish( MSG_NORMAL, "OwnershipHandler::restore_data_after_checkpoint():%d Restoring ownership pull item attribute \"%s\"\n",
-                             __LINE__, pull_items[count].FOM_name.c_str() );
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                         string( "Restoring ownership pull item attribute '" ).append( pull_items[count].FOM_name ).append( "'\n" ) );
          }
       }
    }
@@ -233,8 +234,8 @@ void OwnershipHandler::restore_data_after_checkpoint()
          attr_map->insert( make_pair( push_items[count].FOM_name, attribute ) );
 
          if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
-            message_publish( MSG_NORMAL, "OwnershipHandler::restore_data_after_checkpoint():%d Restoring ownership push item attribute \"%s\"\n",
-                             __LINE__, push_items[count].FOM_name.c_str() );
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                         string( "Restoring ownership push item attribute '" ).append( push_items[count].FOM_name ).append( "'\n" ) );
          }
       }
    }
@@ -248,8 +249,8 @@ void OwnershipHandler::free_converted_data_for_checkpoint()
          pull_items[i].clear();
       }
       if ( !MemoryServices::delete_var( pull_items ) ) {
-         message_publish( MSG_WARNING, "OwnershipHandler::free_converted_data_for_checkpoint():%d WARNING failed to delete Trick Memory for 'pull_items'\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      "Failed to delete Trick Memory for 'pull_items'\n", MSG_WARNING );
       }
       pull_items     = nullptr;
       pull_items_cnt = 0;
@@ -261,8 +262,8 @@ void OwnershipHandler::free_converted_data_for_checkpoint()
          push_items[i].clear();
       }
       if ( !MemoryServices::delete_var( push_items ) ) {
-         message_publish( MSG_WARNING, "OwnershipHandler::free_converted_data_for_checkpoint():%d WARNING failed to delete Trick Memory for 'push_items'\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      "Failed to delete Trick Memory for 'push_items'\n", MSG_WARNING );
       }
       push_items     = nullptr;
       push_items_cnt = 0;
@@ -342,10 +343,13 @@ void OwnershipHandler::pull_ownership(
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
-      message_publish( MSG_NORMAL, "OwnershipHandler::pull_ownership(time=%G):%d scenario-time=%G, granted_time=%G, lookahead=%G\n",
-                       time, __LINE__, get_scenario_time(),
-                       get_granted_time().get_time_in_seconds(),
-                       get_lookahead().get_time_in_seconds() );
+      ostringstream msg;
+      msg << "(Object:'" << object->get_name()
+          << "', Pull at time:" << setprecision( 18 ) << time
+          << ") scenario-time:" << setprecision( 18 ) << get_scenario_time()
+          << ", granted_time:" << setprecision( 18 ) << get_granted_time().get_time_in_seconds()
+          << ", lookahead:" << setprecision( 18 ) << get_lookahead().get_time_in_seconds() << "\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    THLAAttributeMap *attr_map;
@@ -400,10 +404,14 @@ void OwnershipHandler::pull_ownership(
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
-      message_publish( MSG_NORMAL, "OwnershipHandler::pull_ownership(%s, time=%G):%d scenario-time=%G, granted_time=%G, lookahead=%G\n",
-                       attribute_FOM_name.c_str(), time, __LINE__, get_scenario_time(),
-                       get_granted_time().get_time_in_seconds(),
-                       get_lookahead().get_time_in_seconds() );
+      ostringstream msg;
+      msg << "(Object:'" << ( ( object != nullptr ) ? object->get_name() : "NULL" )
+          << "', Attribute:'" << attribute_FOM_name
+          << "', Pull at time:" << setprecision( 18 ) << time
+          << ") scenario-time:" << setprecision( 18 ) << get_scenario_time()
+          << ", granted_time:" << setprecision( 18 ) << get_granted_time().get_time_in_seconds()
+          << ", lookahead:" << setprecision( 18 ) << get_lookahead().get_time_in_seconds() << "\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    THLAAttributeMap *attr_map;
@@ -445,10 +453,13 @@ void OwnershipHandler::push_ownership(
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
-      message_publish( MSG_NORMAL, "OwnershipHandler::push_ownership(time=%G):%d sim-time=%G, granted_time=%G, lookahead=%G\n",
-                       time, __LINE__, get_scenario_time(),
-                       get_granted_time().get_time_in_seconds(),
-                       get_lookahead().get_time_in_seconds() );
+      ostringstream msg;
+      msg << "(Object:'" << object->get_name()
+          << "', Push at time:" << setprecision( 18 ) << time
+          << ") scenario-time:" << setprecision( 18 ) << get_scenario_time()
+          << ", granted_time:" << setprecision( 18 ) << get_granted_time().get_time_in_seconds()
+          << ", lookahead:" << setprecision( 18 ) << get_lookahead().get_time_in_seconds() << "\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    THLAAttributeMap *attr_map;
@@ -503,10 +514,14 @@ void OwnershipHandler::push_ownership(
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OWNERSHIP ) ) {
-      message_publish( MSG_NORMAL, "OwnershipHandler::push_ownership(%s, time=%G):%d sim-time=%G, granted_time=%G, lookahead=%G\n",
-                       attribute_FOM_name.c_str(), time, __LINE__, get_scenario_time(),
-                       get_granted_time().get_time_in_seconds(),
-                       get_lookahead().get_time_in_seconds() );
+      ostringstream msg;
+      msg << "(Object:'" << ( ( object != nullptr ) ? object->get_name() : "NULL" )
+          << "', Attribute:'" << attribute_FOM_name
+          << "', Push at time:" << setprecision( 18 ) << time
+          << ") scenario-time:" << setprecision( 18 ) << get_scenario_time()
+          << ", granted_time:" << setprecision( 18 ) << get_granted_time().get_time_in_seconds()
+          << ", lookahead:" << setprecision( 18 ) << get_lookahead().get_time_in_seconds() << "\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    THLAAttributeMap *attr_map;

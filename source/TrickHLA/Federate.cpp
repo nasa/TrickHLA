@@ -334,12 +334,10 @@ the documented ENUM values.\n",
                        __LINE__, (int)this->debug_level );
       if ( this->debug_level < DEBUG_LEVEL_NO_TRACE ) {
          this->debug_level = DEBUG_LEVEL_NO_TRACE;
-         message_publish( MSG_WARNING, "Federate::initialize_debug():%d No TrickHLA debug messages will be emitted.\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "No TrickHLA debug messages will be emitted.\n", MSG_WARNING );
       } else {
          this->debug_level = DEBUG_LEVEL_FULL_TRACE;
-         message_publish( MSG_WARNING, "Federate::initialize_debug():%d All TrickHLA debug messages will be emitted.\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "All TrickHLA debug messages will be emitted.\n", MSG_WARNING );
       }
    }
 
@@ -383,8 +381,8 @@ void Federate::initialize()
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "Federate::initialize():%d Federate:\"%s\" Type:\"%s\"\n",
-                       __LINE__, name.c_str(), type.c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   string( "Federate:'" ).append( name ).append( "' Type:'" ).append( type ).append( "'\n" ) );
    }
 
    object_service.verify_object_arrays();
