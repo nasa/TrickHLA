@@ -96,12 +96,11 @@ void FixedRecPacking::pack()
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_PACKING ) ) {
       string        obj_name = ( this->object != nullptr ) ? object->get_name() : "";
       ostringstream msg;
-      msg << "FixedRecPacking::pack():" << __LINE__ << "\n"
-          << "Object-Name:'" << obj_name << "'\n"
+      msg << "\nObject-Name:'" << obj_name << "'\n"
           << "\t sim_data:" << sim_data->to_string()
           << "\t ----------\n"
           << "\t pack:" << to_string();
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 }
 
@@ -136,13 +135,12 @@ void FixedRecPacking::unpack()
       string obj_name = ( this->object != nullptr ) ? object->get_name() : "";
 
       ostringstream msg;
-      msg << "FixedRecPacking::unpack():" << __LINE__ << "\n"
-          << "Object-Name:'" << obj_name << "'\n"
+      msg << "\nObject-Name:'" << obj_name << "'\n"
           << "\t sim_data:" << sim_data->to_string()
           << "\t ----------\n"
           << "\t unpack:" << to_string();
 
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 }
 

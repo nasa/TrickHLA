@@ -48,8 +48,6 @@ execution.
 
 // Trick includes.
 #include "trick/attributes.h"
-#include "trick/message_proto.h"
-#include "trick/message_type.h"
 
 // TrickHLA includes.
 #include "TrickHLA/Attribute.hh"
@@ -220,8 +218,7 @@ void ExecutionConfigurationBase::set_master(
 void ExecutionConfigurationBase::wait_for_registration()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-      message_publish( MSG_NORMAL, "ExecutionConfigurationBase::wait_for_registration():%d\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    Federate *federate = get_federate();
@@ -264,8 +261,7 @@ void ExecutionConfigurationBase::wait_for_registration()
 
          // Build the summary as an output string stream.
          ostringstream summary;
-         summary << "ExecutionConfigurationBase::wait_for_registration()" << __LINE__
-                 << "\nOBJECTS: " << total_obj_cnt;
+         summary << "\nOBJECTS: " << total_obj_cnt;
 
          // Execution-Configuration object
          summary << "\n"
@@ -281,8 +277,7 @@ void ExecutionConfigurationBase::wait_for_registration()
                  << " and is "
                  << ( is_instance_handle_valid() ? "REGISTERED" : "Not Registered" )
                  << "\n";
-         // Display the summary.
-         message_publish( MSG_NORMAL, summary.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, summary.str() );
       }
 
       // Determine if we have any unregistered objects.
@@ -332,8 +327,7 @@ bool ExecutionConfigurationBase::wait_for_update() // RETURN: -- None.
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-      message_publish( MSG_NORMAL, "ExecutionConfigurationBase::wait_for_update():%d Waiting...\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Waiting...\n" );
    }
 
    // Make sure we have at least one piece of Execution Configuration data we can receive.
@@ -370,15 +364,13 @@ bool ExecutionConfigurationBase::wait_for_update() // RETURN: -- None.
 
             if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
-               message_publish( MSG_NORMAL, "ExecutionConfigurationBase::wait_for_update():%d Waiting...\n",
-                                __LINE__ );
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Waiting...\n" );
             }
          }
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-         message_publish( MSG_NORMAL, "ExecutionConfigurationBase::wait_for_update():%d Received data.\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Received data.\n" );
       }
 
       // Receive the Execution Configuration data from the master federate.

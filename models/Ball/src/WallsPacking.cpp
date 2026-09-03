@@ -42,7 +42,6 @@ NASA, Johnson Space Center\n
 #include "trick/MemoryManager.hh"
 #include "trick/exec_proto.hh"
 #include "trick/matrix_macros.h"
-#include "trick/message_proto.h"
 #include "trick/vector_macros.h"
 
 // TrickHLA include files.
@@ -240,9 +239,9 @@ void WallsPacking::pack()
    // Print out debug information if desired.
    if ( debug ) {
       ostringstream msg;
-      msg << "WallsPacking::pack():" << __LINE__ << "\n";
+      msg << "\n";
       debug_print( msg );
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    return;
@@ -263,9 +262,9 @@ void WallsPacking::unpack()
    // Print out debug information if desired.
    if ( debug ) {
       ostringstream msg;
-      msg << "WallsPacking::unpack():" << __LINE__ << "\n";
+      msg << "\n";
       debug_print( msg );
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    return;

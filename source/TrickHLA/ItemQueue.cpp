@@ -36,11 +36,8 @@ NASA, Johnson Space Center\n
 #include <sstream>
 #include <string>
 
-// Trick includes.
-#include "trick/message_proto.h"
-#include "trick/message_type.h"
-
 // TrickHLA includes.
+#include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Item.hh"
 #include "TrickHLA/ItemQueue.hh"
 #include "TrickHLA/utils/MutexProtection.hh"
@@ -178,11 +175,11 @@ void ItemQueue::dump_linked_list(
    MutexProtection const auto_unlock_mutex( &mutex );
 
    ostringstream msg;
-   msg << "ItemQueue::dump_linked_list(" << name << "):" << __LINE__ << " ";
+   msg << "List:'" << name << "' ";
    for ( Item const *item = head; item != nullptr; item = item->next ) {
       msg << item << "->";
    }
    msg << "nullptr\n";
 
-   message_publish( MSG_NORMAL, msg.str().c_str() );
+   DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
 }

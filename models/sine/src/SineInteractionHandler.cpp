@@ -42,7 +42,6 @@ NASA, Johnson Space Center\n
 
 // Trick includes.
 #include "trick/MemoryManager.hh"
-#include "trick/message_proto.h"
 #include "trick/message_type.h"
 
 // TrickHLA includes.
@@ -103,13 +102,12 @@ void SineInteractionHandler::send_sine_interaction(
        << "\" Send-count:" << ( send_cnt + 1 ) << "\n";
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    if ( message != nullptr ) {
       if ( trick_MM->delete_var( static_cast< void * >( message ) ) ) {
-         message_publish( MSG_WARNING, "TrickHLAModel::SineInteractionHandler::send_sine_interaction():%d WARNING failed to delete Trick Memory for 'message'\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Failed to delete Trick Memory for 'message'\n", MSG_WARNING );
       }
    }
    message = trick_MM->mm_strdup( msg.str().c_str() );
@@ -149,13 +147,12 @@ void SineInteractionHandler::send_sine_interaction(
          StringUtilities::to_string( user_supplied_tag_string, user_supplied_tag );
 
          ostringstream msg2;
-         msg2 << "++++SENDING++++ SineInteractionHandler::send_sine_interaction("
+         msg2 << "++++SENDING++++ "
 #if SINE_SEND_INTERACTION_TSO
-              << "Timestamp Order):"
+              << "Timestamp Order:\n"
 #else
-              << "Receive Order):"
+              << "Receive Order:\n"
 #endif
-              << __LINE__ << "\n"
               << "  name:'" << ( ( name != nullptr ) ? name : "nullptr" ) << "'" << "\n"
               << "  message:'" << ( ( message != nullptr ) ? message : "nullptr" ) << "'" << "\n"
               << "  message length:" << ( ( message != nullptr ) ? strlen( message ) : 0 ) << "\n" // flawfinder: ignore
@@ -172,7 +169,7 @@ void SineInteractionHandler::send_sine_interaction(
               << "  time:" << time << "\n"
               << "  year:" << year << "\n"
               << "  send_cnt:" << ( send_cnt + 1 ) << "\n";
-         message_publish( MSG_NORMAL, msg2.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg2.str() );
       }
 
       // Update the send count, which is just used for the message in this example.
@@ -183,10 +180,9 @@ void SineInteractionHandler::send_sine_interaction(
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
          // The interaction was Not sent.
          ostringstream msg2;
-         msg2 << "+-+-NOT SENT-+-+ SineInteractionHandler::send_sine_interaction():"
-              << __LINE__ << "\n"
-              << "  name:'" << ( ( name != nullptr ) ? name : "nullptr" ) << "'\n";
-         message_publish( MSG_NORMAL, msg2.str().c_str() );
+         msg2 << "+-+-NOT SENT-+-+\n  name:'"
+              << ( ( name != nullptr ) ? name : "nullptr" ) << "'\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg2.str() );
       }
    }
 }
@@ -204,8 +200,7 @@ void SineInteractionHandler::receive_interaction(
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
       ostringstream msg;
-      msg << "++++RECEIVING++++ SineInteractionHandler::receive_interaction():"
-          << __LINE__ << "\n"
+      msg << "++++RECEIVING++++\n"
           << "  name:'" << ( ( name != nullptr ) ? name : "nullptr" ) << "'" << "\n"
           << "  message:'" << ( ( message != nullptr ) ? message : "nullptr" ) << "'" << "\n"
           << "  message length:" << ( ( message != nullptr ) ? strlen( message ) : 0 ) << "\n" // flawfinder: ignore
@@ -215,6 +210,6 @@ void SineInteractionHandler::receive_interaction(
           << "  time:" << time << "\n"
           << "  year:" << year << "\n"
           << "  receive_cnt:" << receive_cnt << "\n";
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 }

@@ -35,7 +35,6 @@ NASA, Johnson Space Center\n
 #include <sstream>
 
 // Trick include files.
-#include "trick/message_proto.h"
 #include "trick/message_type.h"
 
 // TrickHLA include files.
@@ -72,8 +71,7 @@ void SineObjectDeleted::deleted()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
       ostringstream msg;
-      msg << "SineObjectDeleted::deleted():" << __LINE__
-          << " Object '" << object->get_name() << "' deleted from the federation.\n";
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      msg << "Object '" << object->get_name() << "' deleted from the federation.\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 }

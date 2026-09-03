@@ -43,7 +43,6 @@ NASA, Johnson Space Center\n
 // Trick includes.
 #include "trick/attributes.h"
 #include "trick/exec_proto.h"
-#include "trick/message_proto.h"
 #include "trick/message_type.h"
 
 #include "TrickHLA/DebugHandler.hh"
@@ -138,9 +137,8 @@ void ExecutionControl::initialize()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       ostringstream msg;
-      msg << "TrickHLA::ExecutionControl::initialize():" << __LINE__
-          << " Initialization-Scheme:'" << get_type() << "'\n";
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      msg << "Initialization-Scheme:'" << get_type() << "'\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    // Simple initialization does not support a Master.
@@ -161,7 +159,7 @@ void ExecutionControl::initialize()
 void ExecutionControl::pre_multi_phase_init_processes()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      message_publish( MSG_NORMAL, "TrickHLA::ExecutionControl::pre_multi_phase_init_processes():%d\n", __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    // Setup all the Trick Ref-Attributes for the user specified objects,
@@ -194,11 +192,9 @@ void ExecutionControl::pre_multi_phase_init_processes()
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       if ( is_master() ) {
-         message_publish( MSG_NORMAL, "TrickHLA::ExecutionControl::pre_multi_phase_init_processes():%d\n    This is the Master Federate.\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n    This is the Master Federate.\n" );
       } else {
-         message_publish( MSG_NORMAL, "TrickHLA::ExecutionControl::pre_multi_phase_init_processes():%d\n    This is Not the Master Federate.\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n    This is Not the Master Federate.\n" );
       }
    }
 
@@ -346,10 +342,9 @@ void ExecutionControl::add_multiphase_init_sync_points()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       ostringstream errmsg;
-      errmsg << "TrickHLA::ExecutionControl::add_multiphase_init_sync_points():" << __LINE__
-             << " This call will be ignored because this ExecutionControl does not"
+      errmsg << "This call will be ignored because this ExecutionControl does not"
              << " support multiphase initialization synchronization points.\n";
-      message_publish( MSG_NORMAL, errmsg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
    }
 }
 
@@ -360,10 +355,9 @@ void ExecutionControl::clear_multiphase_init_sync_points()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       ostringstream errmsg;
-      errmsg << "TrickHLA::ExecutionControl::clear_multiphase_init_sync_points():" << __LINE__
-             << " This call will be ignored because this ExecutionControl does not"
+      errmsg << "This call will be ignored because this ExecutionControl does not"
              << " support multiphase initialization synchronization points.\n";
-      message_publish( MSG_NORMAL, errmsg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
    }
 }
 

@@ -61,7 +61,6 @@ NASA, Johnson Space Center\n
 
 // Trick include files.
 #include "trick/memorymanager_c_intf.h"
-#include "trick/message_proto.h"
 #include "trick/message_type.h"
 
 // TrickHLA include files.
@@ -335,9 +334,7 @@ void EncodingTest::string_test(
 
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg2;
-      msg2 << "\n"
-           << "----------------------------------------\n"
-           << "EncodingTest::string_test():" << __LINE__ << "\n"
+      msg2 << "\n----------------------------------------\n"
            << "     data1_string_encoder: " << data1_string_encoder->to_string() << "\n"
            << "data1_vec3_string_encoder: " << data1_vec3_string_encoder->to_string() << "\n"
            << "data1_m3x3_string_encoder: " << data1_m3x3_string_encoder->to_string() << "\n"
@@ -418,17 +415,16 @@ void EncodingTest::string_test(
            << data2_ptr_string_encoder->to_string() << "\n"
            << "   data2_ptr_string_encoder->get_data_size():" << data2_ptr_string_size << "\n";
 
-      message_publish( MSG_DEBUG, msg3.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg3.str(), MSG_DEBUG );
    }
 
    if ( DebugHandler::show( TrickHLA::DEBUG_LEVEL_2_TRACE, TrickHLA::DEBUG_SOURCE_HLA_ENCODERS ) ) {
       ostringstream msg4;
-      msg4 << "EncodingTest::string_test():" << __LINE__ << "\n"
-           << "AFTER encode/decode:\n"
+      msg4 << "\nAFTER encode/decode:\n"
            << "Data1: " << data1.to_string()
            << "-----------------------------\n"
            << "Data2: " << data2.to_string();
-      message_publish( MSG_NORMAL, msg4.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg4.str() );
    }
 }
 

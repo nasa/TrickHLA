@@ -37,12 +37,12 @@ NASA, Johnson Space Center\n
 // System includes.
 #include <climits>
 #include <cstring>
+#include <iomanip>
 #include <ostream>
 #include <sstream>
 #include <string>
 
 // Trick includes.
-#include "trick/message_proto.h"
 #include "trick/message_type.h"
 
 // TrickHLA includes.
@@ -353,8 +353,7 @@ void InteractionServices::setup_interaction_RTI_handles(
          StringUtilities::to_wstring( ws_FOM_name, inter_FOM_name );
 
          if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_INTER_SERVICES ) ) {
-            msg << "InteractionServices::setup_interaction_RTI_handles():" << __LINE__ << "\n"
-                << "----------------- RTI Handles (Interactions & Parameters) ---------------\n"
+            msg << "\n----------------- RTI Handles (Interactions & Parameters) ---------------\n"
                 << "Getting RTI Interaction-Class-Handle for"
                 << " FOM-Name:'" << inter_FOM_name << "'\n";
          }
@@ -403,7 +402,7 @@ void InteractionServices::setup_interaction_RTI_handles(
          }
 
          if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_INTER_SERVICES ) ) {
-            message_publish( MSG_NORMAL, msg.str().c_str() );
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
          }
       }
    } catch ( NameNotFound const &e ) {
@@ -664,11 +663,14 @@ void InteractionServices::receive_interaction(
                if ( received_as_TSO ) {
                   Int64Time _time;
                   _time.set( theTime );
-                  message_publish( MSG_NORMAL, "InteractionServices::receive_interaction():%d ID:%s, HLA-time:%G\n",
-                                   __LINE__, handle.c_str(), _time.get_time_in_seconds() );
+                  ostringstream msg;
+                  msg << "ID:" << handle << ", HLA-time:"
+                      << setprecision( 18 ) << _time.get_time_in_seconds() << "\n";
+                  DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
                } else {
-                  message_publish( MSG_NORMAL, "InteractionServices::receive_interaction():%d ID:%s\n",
-                                   __LINE__, handle.c_str() );
+                  ostringstream msg;
+                  msg << "ID:" << handle << "\n";
+                  DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
                }
             }
 
@@ -728,9 +730,10 @@ void InteractionServices::convert_data_before_checkpoint()
             ++i, item = static_cast< InteractionItem * >( item->next ) ) {
 
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTER_SERVICES ) ) {
-            message_publish( MSG_NORMAL, "InteractionServices::convert_data_before_checkpoint():%d \
-   Checkpointing into check_interactions[%d] from interaction index %d.\n",
-                             __LINE__, i, item->index );
+            ostringstream msg;
+            msg << "Checkpointing into check_interactions[" << i
+                << "] from interaction index " << item->index << ".\n";
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
          }
          check_interactions[i].index            = item->index;
          check_interactions[i].interaction_type = item->interaction_type;
@@ -763,8 +766,9 @@ void InteractionServices::restore_data_after_checkpoint()
 {
    if ( check_interactions_count > 0 ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTER_SERVICES ) ) {
-         message_publish( MSG_NORMAL, "InteractionServices::restore_data_after_checkpoint():%d check_interactions_count=%d\n",
-                          __LINE__, check_interactions_count );
+         ostringstream msg;
+         msg << "check_interactions_count:" << check_interactions_count << "\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
 
       for ( int i = 0; i < inter_count; ++i ) {
@@ -779,10 +783,12 @@ void InteractionServices::restore_data_after_checkpoint()
          for ( size_t i = 0; i < check_interactions_count; ++i ) {
 
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTER_SERVICES ) ) {
-               message_publish( MSG_NORMAL, "InteractionServices::restore_data_after_checkpoint():%d \
-restoring check_interactions[%d] into interaction index %d, parm_count=%d\n",
-                                __LINE__, i, check_interactions[i].index,
-                                check_interactions[i].parm_items_count );
+               ostringstream msg;
+               msg << "Restoring check_interactions[" << i
+                   << "] into interaction index: " << check_interactions[i].index
+                   << ", parm_count: " << check_interactions[i].parm_items_count
+                   << "\n";
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
             }
 
             interactions_queue.push( new InteractionItem( check_interactions[i] ) );
@@ -802,8 +808,7 @@ void InteractionServices::free_converted_data_for_checkpoint()
          check_interactions[i].clear_parm_items();
       }
       if ( !MemoryServices::delete_var( check_interactions ) ) {
-         message_publish( MSG_WARNING, "InteractionServices::free_converted_data_for_checkpoint():%d WARNING failed to delete Trick Memory for 'check_interactions'\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Failed to delete Trick Memory for 'check_interactions'\n", MSG_WARNING );
       }
       check_interactions       = nullptr;
       check_interactions_count = 0;
@@ -814,8 +819,7 @@ void InteractionServices::print_converted_checkpoint()
 {
    if ( check_interactions_count > 0 ) {
       ostringstream msg;
-      msg << "InteractionServices::print_converted_checkpoint():" << __LINE__
-          << "check_interactions contains these "
+      msg << "check_interactions contains these "
           << check_interactions_count << " elements:\n";
       for ( size_t i = 0; i < check_interactions_count; ++i ) {
          msg << "check_interactions[" << i << "].index                  = "
@@ -837,6 +841,6 @@ void InteractionServices::print_converted_checkpoint()
              << "check_interactions[" << i << "].time                   = "
              << check_interactions[i].time.get_base_time() << "\n";
       }
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 }

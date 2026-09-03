@@ -39,10 +39,6 @@ NASA, Johnson Space Center\n
 #include <sstream>
 #include <string>
 
-// Trick includes.
-#include "trick/message_proto.h"
-#include "trick/message_type.h"
-
 // TrickHLA includes.
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
@@ -143,8 +139,7 @@ bool InteractionHandler::send_interaction(
 void InteractionHandler::receive_interaction(
    VariableLengthData const &the_user_supplied_tag )
 {
-   message_publish( MSG_NORMAL, "InteractionHandler::receive_interaction():%d\n",
-                    __LINE__ );
+   DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
 }
 #pragma GCC diagnostic pop
 

@@ -36,7 +36,6 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick include files.
-#include "trick/message_proto.h"
 #include "trick/message_type.h"
 
 // TrickHLA include files.
@@ -202,13 +201,14 @@ bool SineConditional::should_send(
       ostringstream errmsg;
       errmsg << "Could not find the data for the FOM attribute '"
              << attr->get_FOM_name() << "'!\n";
-      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Could not find the data for the specified FOM attribute!\n" );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_CONDITIONAL ) ) {
-      message_publish( MSG_NORMAL, "SineConditional::should_send('%s'):%d %s\n",
-                       attr->get_FOM_name().c_str(), __LINE__,
-                       ( send_attr ? "Yes" : "No" ) );
+      ostringstream msg;
+      msg << "FOM-name:'" << attr->get_FOM_name()
+          << "': " << ( send_attr ? "Yes" : "No" ) << "'\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    return send_attr;

@@ -44,7 +44,6 @@ NASA, Johnson Space Center\n
 
 // Trick includes.
 #include "trick/MemoryManager.hh"
-#include "trick/message_proto.h"
 #include "trick/message_type.h"
 
 // TrickHLA includes.
@@ -86,8 +85,7 @@ SinePacking::~SinePacking()
 {
    if ( buff != nullptr ) {
       if ( trick_MM->delete_var( static_cast< void * >( buff ) ) ) {
-         message_publish( MSG_WARNING, "TrickHLAModel::SinePacking::~SinePacking():%d WARNING failed to delete Trick Memory for 'buff'\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Failed to delete Trick Memory for 'buff'\n", MSG_WARNING );
       }
       buff      = nullptr;
       buff_size = 0;
@@ -166,8 +164,7 @@ void SinePacking::pack()
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_PACKING ) ) {
       string const  obj_name = ( this->object != nullptr ) ? object->get_name() : "";
       ostringstream msg;
-      msg << "SinePacking::pack():" << __LINE__ << "\n"
-          << "\t Object-Name:'" << obj_name << "'\n";
+      msg << "\n\t Object-Name:'" << obj_name << "'\n";
 
       if ( name_attr->is_publish() && name_attr->is_locally_owned() ) {
          msg << "\t sim_data->name:'" << sim_data->get_name()
@@ -225,7 +222,7 @@ void SinePacking::pack()
       } else {
          msg << "\t sim_data->tol, Send-HLA-Data:No\n";
       }
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    // Output more debug information for a higher debug-level.
@@ -235,20 +232,19 @@ void SinePacking::pack()
 
       if ( buff != nullptr ) {
 
-         msg << " SinePacking::pack():" << __LINE__ << " ADDITIONAL DEBUG:\n"
+         msg << "ADDITIONAL DEBUG:\n"
              << " buff_size: " << buff_size << "\n";
 
          unsigned char const c = pack_count % 10;
          for ( int i = 0; i < buff_size; ++i ) {
             buff[i] = c;
-            msg << " SinePacking::pack():" << __LINE__
-                << " buffer[" << i << "] = " << (int)buff[i] << "\n";
+            msg << "buffer[" << i << "] = " << (int)buff[i] << "\n";
          }
       }
 
       string const obj_name = ( this->object != nullptr ) ? object->get_name() : "";
 
-      msg << "SinePacking::pack():" << __LINE__ << " ADDITIONAL DEBUG:\n"
+      msg << "ADDITIONAL DEBUG:\n"
           << "\t Object-Name:'" << obj_name << "'\n";
 
       // This part of the example goes a little deeper into the details of
@@ -257,7 +253,7 @@ void SinePacking::pack()
 
       msg << "\t FOM-Attribute '" << name_attr_str << "'\n";
 
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 }
 
@@ -314,8 +310,7 @@ void SinePacking::unpack()
       string const obj_name = ( this->object != nullptr ) ? object->get_name() : "";
 
       ostringstream msg;
-      msg << "SinePacking::unpack():" << __LINE__ << "\n"
-          << "\t Object-Name:'" << obj_name << "'\n";
+      msg << "\n\t Object-Name:'" << obj_name << "'\n";
 
       if ( name_attr->is_received() ) {
          msg << "\t sim_data->name:'" << sim_data->get_name()
@@ -372,7 +367,7 @@ void SinePacking::unpack()
       } else {
          msg << "\t sim_data->tol, Received-HLA-Data:No\n";
       }
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    // Output more debug information for a higher debug-level.
@@ -381,17 +376,16 @@ void SinePacking::unpack()
       ostringstream msg;
 
       if ( buff != nullptr ) {
-         msg << " SinePacking::unpack():" << __LINE__ << " ADDITIONAL DEBUG:\n"
+         msg << "ADDITIONAL DEBUG:\n"
              << " buff_size: " << buff_size << "\n";
          for ( int i = 0; i < buff_size; ++i ) {
-            msg << " SinePacking::unpack():" << __LINE__
-                << " buffer[" << i << "] = " << (int)buff[i] << "\n";
+            msg << "buffer[" << i << "] = " << (int)buff[i] << "\n";
          }
       }
 
       string const obj_name = ( this->object != nullptr ) ? object->get_name() : "";
 
-      msg << "SinePacking::unpack():" << __LINE__ << " ADDITIONAL DEBUG:\n"
+      msg << "ADDITIONAL DEBUG:\n"
           << "\t Object-Name:'" << obj_name << "'\n";
 
       // This part of the example goes a little deeper into the details of
@@ -400,6 +394,6 @@ void SinePacking::unpack()
 
       msg << "\t FOM-Attribute '" << name_attr_str << "'\n";
 
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 }

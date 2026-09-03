@@ -38,7 +38,6 @@ NASA, Johnson Space Center\n
 #include <sstream>
 
 // Trick includes.
-#include "trick/message_proto.h"
 #include "trick/message_type.h"
 
 // TrickHLA includes.
@@ -75,8 +74,7 @@ OpaqueBuffer::~OpaqueBuffer() // RETURN: -- None.
 {
    if ( buffer != nullptr ) {
       if ( !MemoryServices::delete_var( buffer ) ) {
-         message_publish( MSG_WARNING, "OpaqueBuffer::~OpaqueBuffer():%d WARNING failed to delete Trick Memory for 'buffer'\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Failed to delete Trick Memory for 'buffer'\n", MSG_WARNING );
       }
       buffer   = nullptr;
       capacity = 0;
@@ -153,8 +151,7 @@ void OpaqueBuffer::push_to_buffer(
    EncodingEnum const encoding )
 {
    if ( size == 0 ) {
-      message_publish( MSG_WARNING, "OpaqueBuffer::push_to_buffer():%d WARNING: Unexpected zero number of bytes to push into buffer!\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Unexpected zero number of bytes to push into buffer!\n", MSG_WARNING );
       return;
    }
 
@@ -170,12 +167,11 @@ void OpaqueBuffer::push_to_buffer(
    // Determine if we are overflowing the capacity of the buffer.
    if ( ( push_pos + size ) > capacity ) {
       ostringstream errmsg;
-      errmsg << "OpaqueBuffer::push_to_buffer():" << __LINE__
-             << " WARNING: Trying to push " << size << " bytes into the buffer at"
-             << " position " << push_pos << ", which exceeds the buffer capacity"
-             << " by " << ( ( push_pos + size ) - capacity ) << " bytes! Resizing the"
-             << " buffer to accommodate the data.\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
+      errmsg << "Trying to push " << size << " bytes into the buffer at position "
+             << push_pos << ", which exceeds the buffer capacity by "
+             << ( ( push_pos + size ) - capacity )
+             << " bytes! Resizing the buffer to accommodate the data.\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
       ensure_buffer_capacity( push_pos + size );
    }
 
@@ -184,12 +180,11 @@ void OpaqueBuffer::push_to_buffer(
         && ( encoding != ENCODING_BIG_ENDIAN )
         && ( encoding != ENCODING_NONE ) ) {
       ostringstream errmsg;
-      errmsg << "OpaqueBuffer::push_to_buffer():" << __LINE__
-             << " WARNING: Unsupported 'encoding' " << encoding << ". It must be"
-             << " one of ENCODING_LITTLE_ENDIAN:" << ENCODING_LITTLE_ENDIAN
+      errmsg << "Unsupported 'encoding' " << encoding
+             << ". It must be one of ENCODING_LITTLE_ENDIAN:" << ENCODING_LITTLE_ENDIAN
              << ", ENCODING_BIG_ENDIAN:" << ENCODING_BIG_ENDIAN
              << ", or ENCODING_NONE:" << ENCODING_NONE << "\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
    }
 
    // Copy the source data into the buffer and do a byte-swap if needed.
@@ -209,8 +204,7 @@ void OpaqueBuffer::pull_from_buffer(
    EncodingEnum const encoding )
 {
    if ( size == 0 ) {
-      message_publish( MSG_WARNING, "OpaqueBuffer::pull_from_buffer():%d WARNING: Unexpected zero number of bytes to pull from buffer!\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Unexpected zero number of bytes to pull from buffer!\n", MSG_WARNING );
       return;
    }
 
@@ -235,12 +229,11 @@ void OpaqueBuffer::pull_from_buffer(
    // Display a warning if an unsupported encoding is used.
    if ( ( encoding != ENCODING_LITTLE_ENDIAN ) && ( encoding != ENCODING_BIG_ENDIAN ) && ( encoding != ENCODING_NONE ) ) {
       ostringstream errmsg;
-      errmsg << "OpaqueBuffer::pull_from_buffer():" << __LINE__
-             << " WARNING: Unsupported 'encoding' " << encoding << ". It must be"
-             << " one of ENCODING_LITTLE_ENDIAN:" << ENCODING_LITTLE_ENDIAN
+      errmsg << "Unsupported 'encoding' " << encoding
+             << ". It must be one of ENCODING_LITTLE_ENDIAN:" << ENCODING_LITTLE_ENDIAN
              << ", ENCODING_BIG_ENDIAN:" << ENCODING_BIG_ENDIAN
              << ", or ENCODING_NONE:" << ENCODING_NONE << "\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
    }
 
    // Copy the data from the buffer into the destination and do a byte-swap
@@ -261,12 +254,12 @@ void OpaqueBuffer::push_pad_to_buffer(
    // Determine if we are overflowing the capacity of the buffer.
    if ( ( push_pos + pad_size ) > capacity ) {
       ostringstream errmsg;
-      errmsg << "OpaqueBuffer::push_pad_to_buffer():" << __LINE__
-             << " WARNING: Trying to push " << pad_size << " pad bytes into the"
-             << " buffer at position " << push_pos << ", which exceeds the buffer"
-             << " capacity by " << ( ( push_pos + pad_size ) - capacity ) << " bytes!"
-             << " Resizing the buffer to accommodate the data.\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
+      errmsg << "Trying to push " << pad_size
+             << " pad bytes into the buffer at position " << push_pos
+             << ", which exceeds the buffer capacity by "
+             << ( ( push_pos + pad_size ) - capacity )
+             << " bytes! Resizing the buffer to accommodate the data.\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
       ensure_buffer_capacity( push_pos + pad_size );
    }
 

@@ -42,7 +42,6 @@ NASA, Johnson Space Center\n
 #include "trick/MemoryManager.hh"
 #include "trick/exec_proto.hh"
 #include "trick/matrix_macros.h"
-#include "trick/message_proto.h"
 #include "trick/vector_macros.h"
 
 // TrickHLA include files.
@@ -127,8 +126,7 @@ BallPacking::~BallPacking()
 {
    if ( this->name != nullptr ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
-         message_publish( MSG_WARNING, "Ball::BallPacking::~BallPacking():%d WARNING deleting Trick Memory for 'this->name'\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Failed to delete Trick Memory for 'this->name'\n", MSG_WARNING );
       }
       this->name = nullptr;
    }
@@ -245,11 +243,7 @@ void BallPacking::initialize()
 {
    // Must have federation instance name.
    if ( name == nullptr ) {
-      ostringstream errmsg;
-      errmsg << "Ball::BallPacking::initialize():" << __LINE__
-             << " WARNING: Unexpected nullptr entity name!"
-             << " Setting frame name to empty string.\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr entity name! Setting frame name to empty string.\n", MSG_WARNING );
       this->name = trick_MM->mm_strdup( "" );
    }
 
@@ -302,8 +296,7 @@ void BallPacking::set_name( char const *new_name )
    // Free the existing name.
    if ( this->name != nullptr ) {
       if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
-         message_publish( MSG_WARNING, "Ball::BallPacking::set_name():%d WARNING deleting Trick Memory for 'this->name'\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Failed to delete Trick Memory for 'this->name'\n", MSG_WARNING );
       }
       this->name = nullptr;
    }
@@ -336,9 +329,9 @@ void BallPacking::pack()
    // Print out debug information if desired.
    if ( debug ) {
       ostringstream msg;
-      msg << "BallPacking::pack():" << __LINE__ << "\n";
+      msg << "\n";
       debug_print( msg );
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    return;
@@ -359,9 +352,9 @@ void BallPacking::unpack()
    // Print out debug information if desired.
    if ( debug ) {
       ostringstream msg;
-      msg << "BallPacking::unpack():" << __LINE__ << "\n";
+      msg << "\n";
       debug_print( msg );
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    return;
@@ -387,8 +380,7 @@ void BallPacking::pack_from_working_data()
          // Compare names.
          if ( strcmp( ball_state->name, name ) ) {
             if ( trick_MM->delete_var( static_cast< void * >( name ) ) ) {
-               message_publish( MSG_WARNING, "Ball::pack_from_working_data():%d WARNING failed to delete Trick Memory for 'pe_packing_data.name'\n",
-                                __LINE__ );
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Failed to delete Trick Memory for 'pe_packing_data.name'\n", MSG_WARNING );
             }
             name = trick_MM->mm_strdup( ball_state->name );
          }
@@ -450,8 +442,7 @@ void BallPacking::unpack_into_working_data()
       if ( ball_state->name != nullptr ) {
          if ( !strcmp( ball_state->name, name ) ) {
             if ( trick_MM->delete_var( static_cast< void * >( ball_state->name ) ) ) {
-               message_publish( MSG_WARNING, "BallPacking::unpack_into_working_data():%d WARNING failed to delete Trick Memory for 'ball_state->name'\n",
-                                __LINE__ );
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Failed to delete Trick Memory for 'ball_state->name'\n", MSG_WARNING );
             }
             ball_state->name = trick_MM->mm_strdup( name );
          }

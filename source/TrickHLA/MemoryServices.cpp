@@ -37,14 +37,12 @@ NASA, Johnson Space Center\n
 #include <cstdlib>
 #include <cstring>
 #include <cwchar>
-#include <ostream>
 #include <sstream>
 #include <string>
 
 // Trick includes.
 #include "trick/MemoryManager.hh"
 #include "trick/attributes.h"
-#include "trick/message_proto.h"
 #include "trick/message_type.h"
 
 // TrickHLA includes.
@@ -80,10 +78,9 @@ bool MemoryServices::delete_var( std::string const &var_name )
    // NOTE: trick_MM->delete_var returns 0 on success and 1 on failure!
    if ( trick_MM->delete_var( const_cast< std::string & >( var_name ) ) ) {
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_MEMORY_SERVICES ) ) {
-         ostringstream msg;
-         msg << "MemoryServices::delete_var():" << __LINE__
-             << " WARNING: Could not delete variable: " << var_name << "\n";
-         message_publish( MSG_WARNING, msg.str().c_str() );
+         ostringstream errmsg;
+         errmsg << "Could not delete variable: '" << var_name << "'\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
       }
       return ( false );
    }

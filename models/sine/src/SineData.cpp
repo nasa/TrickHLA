@@ -32,11 +32,11 @@ NASA, Johnson Space Center\n
 #include <cmath>
 #include <cstdlib>
 #include <math.h>
+#include <sstream>
 
 // Trick include files.
 #include "trick/MemoryManager.hh"
 #include "trick/integrator_c_intf.h"
-#include "trick/message_proto.h"
 #include "trick/message_type.h"
 #include "trick/trick_math.h"
 
@@ -47,6 +47,7 @@ NASA, Johnson Space Center\n
 // Model include files.
 #include "sine/include/SineData.hh"
 
+using namespace std;
 using namespace TrickHLA;
 using namespace TrickHLAModel;
 
@@ -107,7 +108,7 @@ SineData::~SineData()
    // Make sure we free the memory used by the name.
    if ( name != nullptr ) {
       if ( trick_MM->delete_var( static_cast< void * >( name ) ) ) {
-         message_publish( MSG_WARNING, "TrickHLAModel::SineData::~SineData():%d WARNING failed to delete Trick Memory for 'name'\n", __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Failed to delete Trick Memory for 'name'\n", MSG_WARNING );
       }
       name = nullptr;
    }
@@ -122,15 +123,13 @@ void SineData::set_name( char const *new_name )
    if ( new_name != this->name ) {
       if ( this->name != nullptr ) {
          if ( trick_MM->delete_var( static_cast< void * >( this->name ) ) ) {
-            message_publish( MSG_ERROR, "TrickHLAModel::SineData::set_name():%d ERROR deleting Trick Memory for 'this->name'\n", __LINE__ );
-            exit( -1 );
+            DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Failed to delete Trick Memory for 'name'\n" );
          }
       }
       if ( new_name != nullptr ) {
          this->name = trick_MM->mm_strdup( new_name );
          if ( this->name == nullptr ) {
-            message_publish( MSG_ERROR, "TrickHLAModel::SineData::set_name():%d ERROR cannot allocate Trick Memory for 'this->name'\n", __LINE__ );
-            exit( -1 );
+            DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Could not allocate Trick Memory for 'name'\n" );
          }
       } else {
          this->name = nullptr;
@@ -141,8 +140,7 @@ void SineData::set_name( char const *new_name )
    if ( this->name == nullptr ) {
       this->name = trick_MM->mm_strdup( "" );
       if ( this->name == nullptr ) {
-         message_publish( MSG_ERROR, "TrickHLAModel::SineData::set_name():%d ERROR cannot allocate Trick Memory for 'this->name'\n", __LINE__ );
-         exit( -1 );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Could not allocate Trick Memory for 'name'\n" );
       }
    }
 }
@@ -235,8 +233,9 @@ void SineData::adjust_phase() // RETURN: -- None.
       phase -= fmod( ( freq * time ), ( 2.0 * M_PI ) );
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_ALL_MODULES ) ) {
-         message_publish( MSG_NORMAL, "SineData::adjust_phase():%d Adjusting phase, old=%f, new=%f\n",
-                          __LINE__, old_phase, phase );
+         ostringstream msg;
+         msg << "Adjusting phase, old:" << old_phase << ", new:" << phase << "\n";
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
    }
 }

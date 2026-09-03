@@ -43,7 +43,6 @@ NASA, Johnson Space Center\n
 // Trick include files.
 #include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
-#include "trick/message_proto.h"
 #include "trick/message_type.h"
 
 // TrickHLA include files.
@@ -81,16 +80,14 @@ SimpleSimConfig::~SimpleSimConfig()
 {
    if ( required_federates != nullptr ) {
       if ( trick_MM->delete_var( static_cast< void * >( required_federates ) ) ) {
-         message_publish( MSG_WARNING, "TrickHLAModel::SimpleSimConfig::~SimpleSimConfig():%d WARNING failed to delete Trick Memory for 'required_federates'\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Failed to delete Trick Memory for 'required_federates'\n", MSG_WARNING );
       }
       required_federates = nullptr;
    }
 
    if ( owner != nullptr ) {
       if ( trick_MM->delete_var( static_cast< void * >( owner ) ) ) {
-         message_publish( MSG_WARNING, "TrickHLAModel::SimpleSimConfig::~SimpleSimConfig():%d WARNING failed to delete Trick Memory for 'owner'\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Failed to delete Trick Memory for 'owner'\n", MSG_WARNING );
       }
       owner = nullptr;
    }
@@ -106,8 +103,7 @@ void SimpleSimConfig::configure(
    // Release the memory used by the required_federates c-string.
    if ( required_federates != nullptr ) {
       if ( trick_MM->delete_var( static_cast< void * >( required_federates ) ) ) {
-         message_publish( MSG_WARNING, "TrickHLAModel::SimpleSimConfig::initialize():%d WARNING failed to delete Trick Memory for 'required_federates'\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Failed to delete Trick Memory for 'required_federates'\n", MSG_WARNING );
       }
       required_federates = nullptr;
    }
@@ -194,8 +190,7 @@ void SimpleSimConfig::pack()
    this->run_duration_base_time = Int64BaseTime::to_base_time( this->run_duration );
 
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
-      msg << "SimpleSimConfig::pack():" << __LINE__ << "\n"
-          << "\t Object-Name:'" << object->get_name() << "'\n"
+      msg << "\n\t Object-Name:'" << object->get_name() << "'\n"
           << "\t owner:'" << ( owner != nullptr ? owner : "" ) << "'\n"
           << "\t run_duration:" << run_duration << " seconds\n"
           << "\t run_duration_base_time:" << run_duration_base_time << " "
@@ -203,7 +198,7 @@ void SimpleSimConfig::pack()
           << "\t num_federates:" << num_federates << "\n"
           << "\t required_federates:'" << ( required_federates != nullptr ? required_federates : "" ) << "'\n"
           << "===================================================\n";
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 }
 
@@ -233,8 +228,7 @@ void SimpleSimConfig::unpack()
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
-      msg << "SimpleSimConfig::unpack():" << __LINE__ << "\n"
-          << "\t Object-Name:'" << object->get_name() << "'\n"
+      msg << "\n\t Object-Name:'" << object->get_name() << "'\n"
           << "\t owner:'" << ( owner != nullptr ? owner : "" ) << "'\n"
           << "\t run_duration:" << run_duration << " seconds\n"
           << "\t run_duration_base_time:" << run_duration_base_time << " "
@@ -242,6 +236,6 @@ void SimpleSimConfig::unpack()
           << "\t num_federates:" << num_federates << "\n"
           << "\t required_federates:'" << ( required_federates != nullptr ? required_federates : "" ) << "'\n"
           << "===================================================\n";
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 }

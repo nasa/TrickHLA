@@ -32,7 +32,6 @@ NASA, Johnson Space Center\n
 #include <sstream>
 
 // Trick includes.
-#include "trick/message_proto.h"
 #include "trick/message_type.h"
 
 // SpaceFOM includes.
@@ -193,10 +192,9 @@ int PhysicalEntityLagCompSA::integrate(
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
       ostringstream msg;
-      msg << "**** PhysicalEntityLagCompSA::integrate(): "
-          << "Compensate: t_begin, t_end, dt_go: "
+      msg << "Compensate: t_begin, t_end, dt_go: "
           << t_begin << ", " << t_end << ", " << dt_go << '\n';
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    // Propagate the current PhysicalEntity state to the desired time.
@@ -211,11 +209,10 @@ int PhysicalEntityLagCompSA::integrate(
       // on and off from a setting in the input file.
       if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
          ostringstream msg;
-         msg << "****** PhysicalEntityLagCompSA::integrate(): "
-             << "Integ dt, tol, t, dt_go: "
+         msg << "Integ dt, tol, t, dt_go: "
              << this->integ_dt << ", " << this->integ_tol << ", "
              << integ_t << ", " << dt_go << '\n';
-         message_publish( MSG_NORMAL, msg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
 
       // Load the integration states and derivatives.

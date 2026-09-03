@@ -44,7 +44,6 @@ NASA, Johnson Space Center\n
 #include <time.h>
 
 // Trick includes.
-#include "trick/message_proto.h"
 #include "trick/message_type.h"
 
 // TrickHLA includes.
@@ -169,8 +168,7 @@ InteractionItem::~InteractionItem()
    if ( user_supplied_tag != nullptr ) {
       if ( MemoryServices::is_alloced( user_supplied_tag )
            && !MemoryServices::delete_var( user_supplied_tag ) ) {
-         message_publish( MSG_WARNING, "InteractionItem::~InteractionItem():%d WARNING failed to delete Trick Memory for 'user_supplied_tag'\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Failed to delete Trick Memory for 'user_supplied_tag'\n", MSG_WARNING );
       }
       user_supplied_tag      = nullptr;
       user_supplied_tag_size = 0;
@@ -215,8 +213,7 @@ void InteractionItem::initialize(
    if ( user_supplied_tag != nullptr ) {
       if ( MemoryServices::is_alloced( user_supplied_tag )
            && !MemoryServices::delete_var( user_supplied_tag ) ) {
-         message_publish( MSG_WARNING, "InteractionItem::initialize():%d WARNING failed to delete Trick Memory for 'user_supplied_tag'\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Failed to delete Trick Memory for 'user_supplied_tag'\n", MSG_WARNING );
       }
       user_supplied_tag = nullptr;
    }
@@ -276,8 +273,7 @@ void InteractionItem::clear_parm_items()
       }
       if ( MemoryServices::is_alloced( parm_items )
            && !MemoryServices::delete_var( parm_items ) ) {
-         message_publish( MSG_WARNING, "InteractionItem::clear_parm_items():%d WARNING failed to delete Trick Memory for 'parm_items'\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Failed to delete Trick Memory for 'parm_items'\n", MSG_WARNING );
       }
       parm_items       = nullptr;
       parm_items_count = 0;
