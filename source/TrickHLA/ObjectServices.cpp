@@ -50,6 +50,7 @@ NASA, Johnson Space Center\n
 #include <climits>
 #include <cstdint>
 #include <cstring>
+#include <iomanip>
 #include <map>
 #include <ostream>
 #include <sstream>
@@ -57,7 +58,6 @@ NASA, Johnson Space Center\n
 
 // Trick includes.
 #include "trick/exec_proto.h"
-#include "trick/message_proto.h"
 #include "trick/message_type.h"
 #include "trick/sim_mode.h"
 
@@ -211,9 +211,8 @@ void ObjectServices::send_init_data()
    // initialization process so just return.
    if ( federate->is_late_joining_federate() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
-         message_publish( MSG_NORMAL, "ObjectServices::send_init_data():%d Late joining \
-federate so this call will be ignored.\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      "Late joining federate so this call will be ignored.\n" );
       }
       return;
    }
@@ -226,8 +225,8 @@ federate so this call will be ignored.\n",
          if ( federate->execution_control->wait_for_init_data() ) {
 
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
-               message_publish( MSG_NORMAL, "ObjectServices::send_init_data():%d '%s'\n",
-                                __LINE__, objects[n].get_name().c_str() );
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                            string( "'" ).append( objects[n].get_name() ).append( "'\n" ) );
             }
 
             // Send the object init data to the other federates.
@@ -245,8 +244,8 @@ federate so this call will be ignored.\n",
          }
       } else {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
-            message_publish( MSG_NORMAL, "ObjectServices::send_init_data():%d Nothing to send for '%s'\n",
-                             __LINE__, objects[n].get_name().c_str() );
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                         string( "Nothing to send for '" ).append( objects[n].get_name() ).append( "'\n" ) );
          }
       }
    }
@@ -262,9 +261,10 @@ void ObjectServices::send_init_data(
    // initialization process so just return.
    if ( federate->is_late_joining_federate() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
-         message_publish( MSG_NORMAL, "ObjectServices::send_init_data():%d Late joining \
-federate so the data will not be sent for '%s'.\n",
-                          __LINE__, instance_name.c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      string( "Late joining federate so the data will not be sent for '" )
+                                         .append( instance_name )
+                                         .append( "'\n" ) );
       }
       return;
    }
@@ -294,8 +294,7 @@ federate so the data will not be sent for '%s'.\n",
 
       if ( federate->execution_control->wait_for_init_data() ) {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
-            message_publish( MSG_NORMAL, "ObjectServices::send_init_data():%d '%s'\n",
-                             __LINE__, instance_name.c_str() );
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, string( "'" ).append( instance_name ).append( "'\n" ) );
          }
 
          // Send the object init data to the other federates.
@@ -313,8 +312,8 @@ federate so the data will not be sent for '%s'.\n",
       }
    } else {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
-         message_publish( MSG_NORMAL, "ObjectServices::send_init_data():%d Nothing to send for '%s'\n",
-                          __LINE__, instance_name.c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      string( "Nothing to send for '" ).append( instance_name ).append( "'\n" ) );
       }
    }
 }
@@ -328,9 +327,8 @@ void ObjectServices::receive_init_data()
    // initialization process so just return.
    if ( federate->is_late_joining_federate() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
-         message_publish( MSG_NORMAL, "ObjectServices::receive_init_data():%d Late joining \
-federate so this call will be ignored.\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      "Late joining federate so this call will be ignored.\n" );
       }
       return;
    }
@@ -347,9 +345,10 @@ federate so this call will be ignored.\n",
 
          if ( obj_required ) {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
-               message_publish( MSG_NORMAL, "ObjectServices::receive_init_data():%d Waiting for '%s', and marked as %s.\n",
-                                __LINE__, objects[n].get_name().c_str(),
-                                ( objects[n].is_required() ? "REQUIRED" : "not required" ) );
+               ostringstream msg;
+               msg << "Waiting for '" << objects[n].get_name() << "', and marked as "
+                   << ( objects[n].is_required() ? "REQUIRED" : "not required" ) << ".\n";
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
             }
 
             SleepTimeout print_timer;
@@ -384,9 +383,10 @@ federate so this call will be ignored.\n",
 
                   if ( print_timer.timeout( wallclock_time ) ) {
                      print_timer.reset();
-                     message_publish( MSG_NORMAL, "ObjectServices::receive_init_data():%d Waiting for '%s', and marked as %s.\n",
-                                      __LINE__, objects[n].get_name().c_str(),
-                                      ( objects[n].is_required() ? "REQUIRED" : "not required" ) );
+                     ostringstream msg;
+                     msg << "Waiting for '" << objects[n].get_name() << "', and marked as "
+                         << ( objects[n].is_required() ? "REQUIRED" : "not required" ) << ".\n";
+                     DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
                   }
                }
             }
@@ -395,23 +395,26 @@ federate so this call will be ignored.\n",
          // Check for changed data which means we received something.
          if ( objects[n].is_changed() ) {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
-               message_publish( MSG_NORMAL, "ObjectServices::receive_init_data():%d Received '%s'\n",
-                                __LINE__, objects[n].get_name().c_str() );
+               ostringstream msg;
+               msg << "Received '" << objects[n].get_name() << "'\n";
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
             }
 
             // Receive the data from the publishing federate.
             objects[n].receive_init_data();
          } else {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
-               message_publish( MSG_NORMAL, "ObjectServices::receive_init_data():%d Received nothing for '%s', and marked as %s.\n",
-                                __LINE__, objects[n].get_name().c_str(),
-                                ( obj_required ? "REQUIRED" : "not required" ) );
+               ostringstream msg;
+               msg << "Received nothing for '" << objects[n].get_name() << "', and marked as "
+                   << ( objects[n].is_required() ? "REQUIRED" : "not required" ) << ".\n";
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
             }
          }
       } else {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
-            message_publish( MSG_NORMAL, "ObjectServices::receive_init_data():%d Nothing to receive for '%s'\n",
-                             __LINE__, objects[n].get_name().c_str() );
+            ostringstream msg;
+            msg << "Nothing to receive for '" << objects[n].get_name() << "'\n";
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
          }
       }
    }
@@ -427,8 +430,9 @@ void ObjectServices::receive_init_data(
    // initialization process so just return.
    if ( federate->is_late_joining_federate() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
-         message_publish( MSG_NORMAL, "ObjectServices::receive_init_data():%d Late joining federate so skipping data for '%s'\n",
-                          __LINE__, instance_name.c_str() );
+         ostringstream msg;
+         msg << "Late joining federate so skipping data for '" << instance_name << "'\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
       return;
    }
@@ -461,9 +465,10 @@ void ObjectServices::receive_init_data(
 
       if ( obj_required ) {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
-            message_publish( MSG_NORMAL, "ObjectServices::receive_init_data():%d Waiting for '%s', and marked as %s.\n",
-                             __LINE__, instance_name.c_str(),
-                             ( obj->is_required() ? "REQUIRED" : "not required" ) );
+            ostringstream msg;
+            msg << "Waiting for '" << instance_name << "', and marked as "
+                << ( obj->is_required() ? "REQUIRED" : "not required" ) << ".\n";
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
          }
 
          SleepTimeout print_timer;
@@ -498,9 +503,10 @@ void ObjectServices::receive_init_data(
 
                if ( print_timer.timeout( wallclock_time ) ) {
                   print_timer.reset();
-                  message_publish( MSG_NORMAL, "ObjectServices::receive_init_data():%d Waiting for '%s', and marked as %s.\n",
-                                   __LINE__, instance_name.c_str(),
-                                   ( obj->is_required() ? "REQUIRED" : "not required" ) );
+                  ostringstream msg;
+                  msg << "Waiting for '" << instance_name << "', and marked as "
+                      << ( obj->is_required() ? "REQUIRED" : "not required" ) << ".\n";
+                  DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
                }
             }
          }
@@ -509,24 +515,26 @@ void ObjectServices::receive_init_data(
       // Check for changed data which means we received something.
       if ( obj->is_changed() ) {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
-            message_publish( MSG_NORMAL,
-                             "ObjectServices::receive_init_data():%d Received '%s'\n",
-                             __LINE__, instance_name.c_str() );
+            ostringstream msg;
+            msg << "Received '" << instance_name << "'\n";
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
          }
 
          // Receive the data from the publishing federate.
          obj->receive_init_data();
       } else {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
-            message_publish( MSG_NORMAL, "ObjectServices::receive_init_data():%d Received nothing for '%s', and marked as %s.\n",
-                             __LINE__, instance_name.c_str(),
-                             ( obj_required ? "REQUIRED" : "not required" ) );
+            ostringstream msg;
+            msg << "Received nothing for '" << instance_name << "', and marked as "
+                << ( obj->is_required() ? "REQUIRED" : "not required" ) << ".\n";
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
          }
       }
    } else {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
-         message_publish( MSG_NORMAL, "ObjectServices::receive_init_data():%d Nothing to receive for '%s'\n",
-                          __LINE__, instance_name.c_str() );
+         ostringstream msg;
+         msg << "Nothing to receive for '" << instance_name << "'\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
    }
 }
@@ -540,8 +548,9 @@ void ObjectServices::request_data_update(
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
       string name_str;
       StringUtilities::to_string( name_str, instance_name );
-      message_publish( MSG_NORMAL, "ObjectServices::request_data_update():%d Object:'%s'\n",
-                       __LINE__, name_str.c_str() );
+      ostringstream msg;
+      msg << "Object:'" << name_str << "'\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    bool found = false;
@@ -594,9 +603,9 @@ void ObjectServices::object_instance_name_reservation_succeeded(
          trickhla_obj->set_name_registered();
 
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
-            message_publish( MSG_NORMAL, "ObjectServices::object_instance_name_reservation_succeeded():%d \
-RESERVED Object Instance Name '%s'\n",
-                             __LINE__, trickhla_obj->get_name().c_str() );
+            ostringstream msg;
+            msg << "RESERVED Object Instance Name '" << trickhla_obj->get_name() << "'\n";
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
          }
       }
    }
@@ -622,23 +631,23 @@ void ObjectServices::object_instance_name_reservation_failed(
    StringUtilities::to_string( name_str, obj_instance_name );
 
    // Anything beyond this point is fatal.
-   message_publish( MSG_WARNING, "ObjectServices::object_instance_name_reservation_failed():%d \
-Name:'%s' Please check your input or modified data files to make sure the \
-object instance name is unique, no duplicates, within the Federation. For \
-example, try using fed_name.object_FOM_name for the object instance name. \
-Also, an object should be owned by only one Federate so one common mistake is \
-to have the 'create_HLA_instance' flag for the same object being set to true \
-for more than one Federate.\n",
-                    __LINE__, name_str.c_str() );
+   ostringstream msg;
+   msg << "For Object '" << name_str << "', please check your input or modified data"
+       << " files to make sure the  object instance name is unique, no duplicates,"
+       << " within the Federation. For  example, try using fed_name.object_FOM_name"
+       << " for the object instance name.  Also, an object should be owned by only"
+       << " one Federate so one common mistake is  to have the 'create_HLA_instance'"
+       << " flag for the same object being set to true for more than one Federate.\n";
+   DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
 
    wstring obj_name;
    for ( int n = 0; n < obj_count; ++n ) {
       StringUtilities::to_wstring( obj_name, objects[n].get_name() );
       if ( obj_name == obj_instance_name ) {
          if ( objects[n].is_create_HLA_instance() ) {
-            message_publish( MSG_WARNING, "ObjectServices::object_instance_name_reservation_failed():%d\
-\n   ** You specified that this Federate can \
-rejoin the Federation but the original instance attributes could not be located \
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                         "\n   ** You specified that this Federate \
+can rejoin the Federation but the original instance attributes could not be located \
 in order to re-acquire ownership. They were either deleted, or are orphans in the \
 Federation with no possibility of regaining ownership. **\n   ** In order for \
 the rejoin to succeed, you must resign this Federate with the directive to divest \
@@ -649,7 +658,7 @@ be successful, make sure that there is at least one other Federate set up to \
 publish at least one of the attributes (by setting the 'publish' flag to true in \
 another Federate). This is necessary for the successful transfer of ownership \
 which keeps the instance attribute's object from becoming a Federation orphan. **\n",
-                             __LINE__ );
+                                         MSG_WARNING );
          }
       }
    }
@@ -1018,8 +1027,7 @@ void ObjectServices::unsubscribe()
 void ObjectServices::reserve_object_names_with_RTI()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
-      message_publish( MSG_NORMAL, "ObjectServices::reserve_object_names_with_RTI():%d\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    // For the locally owned objects, reserve the object instance name with
@@ -1037,8 +1045,7 @@ void ObjectServices::reserve_object_names_with_RTI()
 void ObjectServices::wait_for_reservation_of_object_names()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
-      message_publish( MSG_NORMAL, "ObjectServices::wait_for_reservation_of_object_names():%d\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    // Simulation object names.
@@ -1050,13 +1057,11 @@ void ObjectServices::wait_for_reservation_of_object_names()
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
-         message_publish( MSG_NORMAL, "ObjectServices::wait_for_reservation_of_object_names():%d All Object instance names reserved.\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "All Object instance names reserved.\n" );
       }
    } else {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
-         message_publish( MSG_NORMAL, "ObjectServices::wait_for_reservation_of_object_names():%d No Object instance names to reserve.\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "No Object instance names to reserve.\n" );
       }
    }
 }
@@ -1067,8 +1072,7 @@ void ObjectServices::wait_for_reservation_of_object_names()
 void ObjectServices::register_objects_with_RTI()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
-      message_publish( MSG_NORMAL, "ObjectServices::register_objects_with_RTI():%d\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    // Have the ExecutionControl register objects it needs with the RTI.
@@ -1094,8 +1098,7 @@ void ObjectServices::register_objects_with_RTI()
 void ObjectServices::setup_preferred_order_with_RTI()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
-      message_publish( MSG_NORMAL, "ObjectServices::setup_preferred_order_with_RTI():%d\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    if ( federate->is_execution_configuration_used() ) {
@@ -1117,8 +1120,7 @@ void ObjectServices::setup_preferred_order_with_RTI()
 void ObjectServices::wait_for_registration_of_required_objects()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
-      message_publish( MSG_NORMAL, "ObjectServices::wait_for_registration_of_required_objects():%d\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    int  current_registered_obj_cnt  = 0;
@@ -1217,8 +1219,7 @@ void ObjectServices::wait_for_registration_of_required_objects()
 
          // Build the summary as an output string stream.
          ostringstream summary;
-         summary << "ObjectServices::wait_for_registration_of_required_objects():"
-                 << __LINE__ << "\nREQUIRED-OBJECTS:" << total_required_obj_cnt
+         summary << "\nREQUIRED-OBJECTS:" << total_required_obj_cnt
                  << "  Total-Objects:" << total_obj_cnt;
 
          if ( print_only_unregistered_obj ) {
@@ -1276,7 +1277,7 @@ void ObjectServices::wait_for_registration_of_required_objects()
          summary << "\n";
 
          // Display the summary.
-         message_publish( MSG_NORMAL, summary.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, summary.str() );
 
          // Reset the flags for printing a summary.
          print_summary               = false;
@@ -1394,10 +1395,6 @@ void ObjectServices::set_object_instance_handles_by_name(
    }
 
    ostringstream summary;
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
-      summary << "ObjectServices::set_object_instance_handles_by_name():"
-              << __LINE__;
-   }
 
    try {
       wstring ws_instance_name = L"";
@@ -1459,7 +1456,7 @@ void ObjectServices::set_object_instance_handles_by_name(
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
       summary << "\n";
-      message_publish( MSG_NORMAL, summary.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, summary.str() );
    }
 }
 
@@ -1523,8 +1520,9 @@ void ObjectServices::send_cyclic_and_requested_data()
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
-      message_publish( MSG_NORMAL, "ObjectServices::send_cyclic_and_requested_data():%d HLA-time:%.12G seconds.\n",
-                       __LINE__, update_time.get_time_in_seconds() );
+      ostringstream msg;
+      msg << "HLA-time:" << setprecision( 18 ) << update_time.get_time_in_seconds() << " seconds.\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    // Send any ExecutionControl data requested.
@@ -1570,7 +1568,7 @@ void ObjectServices::send_cyclic_and_requested_data()
 void ObjectServices::receive_cyclic_data()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
-      message_publish( MSG_NORMAL, "ObjectServices::receive_cyclic_data():%d\n", __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    int64_t const sim_time_in_base_time = Int64BaseTime::to_base_time( exec_get_sim_time() );
@@ -1674,8 +1672,9 @@ bool ObjectServices::discover_object_instance(
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
          string id_str;
          StringUtilities::to_string( id_str, theObject );
-         message_publish( MSG_NORMAL, "ObjectServices::discover_object_instance():%d Data-Object '%s' Instance-ID:%s\n",
-                          __LINE__, trickhla_obj->get_name().c_str(), id_str.c_str() );
+         ostringstream msg;
+         msg << "Object '" << trickhla_obj->get_name() << "' Instance-ID:" << id_str << "\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
 
    } else if ( ( federate != nullptr ) && federate->is_MOM_HLAfederate_class( theObjectClass ) ) {
@@ -1689,8 +1688,11 @@ bool ObjectServices::discover_object_instance(
          StringUtilities::to_string( id_str, theObject );
          string name_str;
          StringUtilities::to_string( name_str, theObjectInstanceName );
-         message_publish( MSG_NORMAL, "ObjectServices::discover_object_instance():%d Discovered MOM HLA-Federate Object-Instance-ID:%s Name:'%s'\n",
-                          __LINE__, id_str.c_str(), name_str.c_str() );
+
+         ostringstream msg;
+         msg << "Discovered MOM HLA-Federate Object-Instance-ID:" << id_str
+             << " Name:'" << name_str << "'\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
 
    } else if ( ( federate != nullptr ) && federate->is_MOM_HLAfederation_class( theObjectClass ) ) {
@@ -1703,8 +1705,10 @@ bool ObjectServices::discover_object_instance(
          StringUtilities::to_string( id_str, theObject );
          string name_str;
          StringUtilities::to_string( name_str, theObjectInstanceName );
-         message_publish( MSG_NORMAL, "ObjectServices::discover_object_instance():%d MOM HLA-Federation '%s' Instance-ID:%s\n",
-                          __LINE__, name_str.c_str(), id_str.c_str() );
+
+         ostringstream msg;
+         msg << "MOM HLA-Federation '" << name_str << "' Instance-ID:" << id_str << "\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
    }
 
@@ -1804,9 +1808,11 @@ void ObjectServices::mark_object_as_deleted_from_federation(
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
             string id_str;
             StringUtilities::to_string( id_str, instance_id );
-            message_publish( MSG_NORMAL, "ObjectServices::mark_object_as_deleted_from_federation():%d Object '%s' Instance-ID:%s Valid-ID:%s\n",
-                             __LINE__, obj->get_name().c_str(), id_str.c_str(),
-                             ( instance_id.isValid() ? "Yes" : "No" ) );
+
+            ostringstream msg;
+            msg << "Object '" << obj->get_name() << "' Instance-ID:" << id_str
+                << " Valid-ID:" << ( instance_id.isValid() ? "Yes" : "No" ) << "\n";
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
          }
          obj->remove_object_instance();
       }
@@ -2047,8 +2053,7 @@ void ObjectServices::free_converted_data_for_checkpoint()
 void ObjectServices::wait_for_discovery_of_objects()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
-      message_publish( MSG_NORMAL, "ObjectServices::wait_for_discovery_of_object_instance():%d\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    // Do we have Simulation object(s) to interrogate?
@@ -2083,8 +2088,7 @@ void ObjectServices::wait_for_discovery_of_objects()
              ( discovery_count < required_count ) ) ) { // found the rejoining federate
 
          if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
-            message_publish( MSG_NORMAL, "ObjectServices::wait_for_discovery_of_object_instance():%d Waiting for object discovery callbacks to arrive.\n",
-                             __LINE__ );
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Waiting for object discovery callbacks to arrive.\n" );
          }
 
          int64_t      wallclock_time; // cppcheck-suppress [variableScope,unmatchedSuppression]
@@ -2120,8 +2124,7 @@ void ObjectServices::wait_for_discovery_of_objects()
 
             if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
-               message_publish( MSG_NORMAL, "ObjectServices::wait_for_discovery_of_object_instance():%d Waiting...\n",
-                                __LINE__ );
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Waiting...\n" );
             }
 
             // Check if any objects were discovered while we were sleeping.
@@ -2144,8 +2147,7 @@ void ObjectServices::wait_for_discovery_of_objects()
       }
    } else {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
-         message_publish( MSG_NORMAL, "ObjectServices::wait_for_discovery_of_object_instance():%d - No Objects to discover.\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "No Objects to discover.\n" );
       }
    }
 }

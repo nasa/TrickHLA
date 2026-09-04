@@ -46,6 +46,7 @@ NASA, Johnson Space Center\n
 // System includes.
 #include <cstdlib>
 #include <cstring>
+#include <iomanip>
 #include <iostream>
 #include <map>
 #include <ostream>
@@ -54,7 +55,6 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick includes.
-#include "trick/message_proto.h"
 #include "trick/message_type.h"
 
 // TrickHLA includes.
@@ -140,10 +140,8 @@ void FedAmb::connectionLost(
          string fault_msg;
          StringUtilities::to_string( fault_msg, faultDescription );
          ostringstream errmsg;
-         errmsg << "FedAmb::connectionLost():" << __LINE__
-                << " WARNING: Lost the connection to the RTI. Reason:'"
-                << fault_msg << "'\n";
-         message_publish( MSG_WARNING, errmsg.str().c_str() );
+         errmsg << "Lost the connection to the RTI. Reason:'" << fault_msg << "'\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
       }
 
       federate->set_connection_lost();
@@ -165,9 +163,10 @@ void FedAmb::reportFederationExecutions(
    throw( FederateInternalError )
 #endif // IEEE_1516_2010
 {
-   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
-FedAmb::reportFederationExecutions():%d\n",
-                    federate->get_federate_name().c_str(), __LINE__ );
+   ostringstream errmsg;
+   errmsg << "This federate '" << federate->get_federate_name()
+          << "' does not support this function!\n";
+   DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
 }
 
 #if defined( IEEE_1516_2025 )
@@ -175,25 +174,28 @@ void FedAmb::reportFederationExecutionMembers(
    wstring const                                    &federationName,
    FederationExecutionMemberInformationVector const &report )
 {
-   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
-FedAmb::reportFederationExecutionMembers():%d\n",
-                    federate->get_federate_name().c_str(), __LINE__ );
+   ostringstream errmsg;
+   errmsg << "This federate '" << federate->get_federate_name()
+          << "' does not support this function!\n";
+   DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
 }
 
 void FedAmb::reportFederationExecutionDoesNotExist(
    wstring const &federationName )
 {
-   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
-FedAmb::reportFederationExecutionDoesNotExist():%d\n",
-                    federate->get_federate_name().c_str(), __LINE__ );
+   ostringstream errmsg;
+   errmsg << "This federate '" << federate->get_federate_name()
+          << "' does not support this function!\n";
+   DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
 }
 
 void FedAmb::federateResigned(
    wstring const &reasonForResignDescription )
 {
-   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
-FedAmb::federateResigned():%d\n",
-                    federate->get_federate_name().c_str(), __LINE__ );
+   ostringstream errmsg;
+   errmsg << "This federate '" << federate->get_federate_name()
+          << "' does not support this function!\n";
+   DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
 }
 #endif // IEEE_1516_2025
 
@@ -206,8 +208,8 @@ void FedAmb::synchronizationPointRegistrationSucceeded(
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       string label_str;
       StringUtilities::to_string( label_str, label );
-      message_publish( MSG_NORMAL, "FedAmb::synchronizationPointRegistrationSucceeded():%d Label:'%s'\n",
-                       __LINE__, label_str.c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   string( "Label:'" ).append( label_str ).append( "'\n" ) );
    }
 
    federate->sync_point_registration_succeeded( label );
@@ -223,8 +225,8 @@ void FedAmb::synchronizationPointRegistrationFailed(
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       string label_str;
       StringUtilities::to_string( label_str, label );
-      message_publish( MSG_NORMAL, "FedAmb::synchronizationPointRegistrationFailed():%d Label:'%s'\n",
-                       __LINE__, label_str.c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   string( "Label:'" ).append( label_str ).append( "'\n" ) );
    }
    federate->sync_point_registration_failed( label, reason );
 }
@@ -239,8 +241,8 @@ void FedAmb::announceSynchronizationPoint(
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       string label_str;
       StringUtilities::to_string( label_str, label );
-      message_publish( MSG_NORMAL, "FedAmb::announceSynchronizationPoint():%d Label:'%s'\n",
-                       __LINE__, label_str.c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   string( "Label:'" ).append( label_str ).append( "'\n" ) );
    }
    federate->announce_sync_point( label, userSuppliedTag );
 }
@@ -255,27 +257,29 @@ void FedAmb::federationSynchronized(
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       string label_str;
       StringUtilities::to_string( label_str, label );
-      message_publish( MSG_NORMAL, "FedAmb::federationSynchronized():%d Label:'%s'\n",
-                       __LINE__, label_str.c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   string( "Label:'" ).append( label_str ).append( "'\n" ) );
    }
 
    federate->federation_synchronized( label );
 
    if ( !failedToSyncSet.empty() ) {
-      FederateHandleSet::const_iterator iter;
+      string label_str;
+      StringUtilities::to_string( label_str, label );
 
-      string strIds;
+      ostringstream errmsg;
+      errmsg << "These federate handles failed to synchronize for sync-point '"
+             << label_str << "': ";
+
+      FederateHandleSet::const_iterator iter;
       for ( iter = failedToSyncSet.begin(); iter != failedToSyncSet.end(); ++iter ) {
          string id;
          StringUtilities::to_string( id, *iter );
-         strIds += id;
-         strIds += " ";
+         errmsg << "'" << id << "' ";
       }
-      string label_str;
-      StringUtilities::to_string( label_str, label );
-      message_publish( MSG_WARNING, "FedAmb::federationSynchronized():%d These \
-federate handles failed to synchronize on sync-point '%s': %s\n",
-                       __LINE__, label_str.c_str(), strIds.c_str() );
+      errmsg << "\n";
+
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
    }
 }
 
@@ -301,8 +305,8 @@ void FedAmb::initiateFederateSave(
 
    // Status message.
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      message_publish( MSG_NORMAL, "FedAmb::initiateFederateSave():%d: Label: \'%s\'\n",
-                       __LINE__, save_label_str.c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   string( "Label:'" ).append( save_label_str ).append( "'\n" ) );
    }
 
    return;
@@ -331,8 +335,10 @@ void FedAmb::initiateFederateSave(
 
    // Status message.
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      message_publish( MSG_NORMAL, "FedAmb::initiateFederateSave():%d: Label: \'%s\', HLA-time:%.12G seconds.\n",
-                       __LINE__, save_label_str.c_str(), i64time.get_time_in_seconds() );
+      ostringstream msg;
+      msg << "Label: '" << save_label_str << "', HLA-time:"
+          << setprecision( 18 ) << i64time.get_time_in_seconds() << " seconds.\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    return;
@@ -344,8 +350,7 @@ void FedAmb::federationSaved()
 #endif // IEEE_1516_2010
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      message_publish( MSG_NORMAL, "FedAmb::federationSaved():%d\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    // Mark the Save process as completed.
@@ -361,8 +366,7 @@ void FedAmb::federationNotSaved(
 #endif // IEEE_1516_2010
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      message_publish( MSG_NORMAL, "FedAmb::federationNotSaved():%d\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    // Mark the Save process as failed.
@@ -379,8 +383,7 @@ void FedAmb::federationSaveStatusResponse(
 #endif // IEEE_1516_2010
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      message_publish( MSG_NORMAL, "FedAmb::federationSaveStatusResponse():%d\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    return;
@@ -393,8 +396,7 @@ void FedAmb::requestFederationRestoreSucceeded(
 #endif // IEEE_1516_2010
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      message_publish( MSG_NORMAL, "FedAmb::requestFederationRestoreSucceeded():%d\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
    save_restore_service->restore_set_state( THLARestoreProcessEnum::RESTORE_REQUEST_SUCCEEDED );
 
@@ -408,8 +410,7 @@ void FedAmb::requestFederationRestoreFailed(
 #endif // IEEE_1516_2010
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      message_publish( MSG_NORMAL, "FedAmb::requestFederationRestoreFailed():%d\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
    save_restore_service->restore_set_state( THLARestoreProcessEnum::RESTORE_REQUEST_FAILED );
 
@@ -425,10 +426,9 @@ void FedAmb::federationRestoreBegun()
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       string label_str;
       StringUtilities::to_string( label_str, save_restore_service->restore_get_label() );
-      ostringstream errmsg;
-      errmsg << "FedAmb::federationRestoreBegun():" << __LINE__
-             << " : Restore begun for Label '" << label_str << "'.\n";
-      message_publish( MSG_NORMAL, errmsg.str().c_str(), __LINE__ );
+      ostringstream msg;
+      msg << "Restore begun for Label '" << label_str << "'\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    // Tell ExecutionControl that the Restore has begun.
@@ -461,22 +461,20 @@ void FedAmb::initiateFederateRestore(
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       string label_str;
       StringUtilities::to_string( label_str, save_restore_service->restore_get_label() );
-      ostringstream errmsg;
-      errmsg << "FedAmb::initiateFederateRestore():" << __LINE__
-             << " : Restore initiated for Label '" << label_str << "'.\n";
-      message_publish( MSG_NORMAL, errmsg.str().c_str(), __LINE__ );
+      ostringstream msg;
+      msg << "Restore initiated for Label '" << label_str << "'\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    // Check for federate name change.
    if ( federate->name != new_federate_name_str ) {
       string label_str;
       StringUtilities::to_string( label_str, save_restore_service->restore_get_label() );
-      ostringstream errmsg;
-      errmsg << "FedAmb::initiateFederateRestore():" << __LINE__
-             << " : Federate name change for Restore Label '" << label_str << "'.\n";
-      errmsg << "\tOld name: " << federate->name << "\n"
-             << "\tNew name: " << new_federate_name_str << "\n";
-      message_publish( MSG_NORMAL, errmsg.str().c_str(), __LINE__ );
+      ostringstream msg;
+      msg << "Federate name change for Restore Label '" << label_str << "'\n"
+          << "\tOld name: " << federate->name << "\n"
+          << "\tNew name: " << new_federate_name_str << "\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    // Save off the restored federate handle.
@@ -494,8 +492,7 @@ void FedAmb::federationRestored()
 #endif // IEEE_1516_2010
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      message_publish( MSG_NORMAL, "FedAmb::federationRestored():%d\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    save_restore_service->restore_set_state( THLARestoreProcessEnum::RESTORE_COMPLETE );
@@ -510,8 +507,7 @@ void FedAmb::federationNotRestored(
 #endif // IEEE_1516_2010
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      message_publish( MSG_NORMAL, "FedAmb::federationNotRestored():%d\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
    save_restore_service->restore_set_state( THLARestoreProcessEnum::RESTORE_FAILED );
    save_restore_service->restore_failed_print_reason( reason );
@@ -526,8 +522,7 @@ void FedAmb::federationRestoreStatusResponse(
 #endif // IEEE_1516_2010
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      message_publish( MSG_NORMAL, "FedAmb::federationRestoreStatusResponse():%d\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    // Clear the existing response vector and copy response.
@@ -550,9 +545,10 @@ void FedAmb::startRegistrationForObjectClass(
    ObjectClassHandle objectClass ) throw( FederateInternalError )
 #endif // IEEE_1516_2025
 {
-   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
-FedAmb::startRegistrationForObjectClass():%d\n",
-                    federate->get_federate_name().c_str(), __LINE__ );
+   ostringstream errmsg;
+   errmsg << "This federate '" << federate->get_federate_name()
+          << "' does not support this function!\n";
+   DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
 }
 
 void FedAmb::stopRegistrationForObjectClass(
@@ -562,9 +558,10 @@ void FedAmb::stopRegistrationForObjectClass(
    ObjectClassHandle objectClass ) throw( FederateInternalError )
 #endif // IEEE_1516_2025
 {
-   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
-FedAmb::stopRegistrationForObjectClass():%d\n",
-                    federate->get_federate_name().c_str(), __LINE__ );
+   ostringstream errmsg;
+   errmsg << "This federate '" << federate->get_federate_name()
+          << "' does not support this function!\n";
+   DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
 }
 
 void FedAmb::turnInteractionsOn(
@@ -574,9 +571,10 @@ void FedAmb::turnInteractionsOn(
    InteractionClassHandle interactionClass ) throw( FederateInternalError )
 #endif // IEEE_1516_2025
 {
-   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
-FedAmb::turnInteractionsOn():%d\n",
-                    federate->get_federate_name().c_str(), __LINE__ );
+   ostringstream errmsg;
+   errmsg << "This federate '" << federate->get_federate_name()
+          << "' does not support this function!\n";
+   DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
 }
 
 void FedAmb::turnInteractionsOff(
@@ -586,9 +584,10 @@ void FedAmb::turnInteractionsOff(
    InteractionClassHandle interactionClass ) throw( FederateInternalError )
 #endif // IEEE_1516_2025
 {
-   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
-FedAmb::turnInteractionsOff():%d\n",
-                    federate->get_federate_name().c_str(), __LINE__ );
+   ostringstream errmsg;
+   errmsg << "This federate '" << federate->get_federate_name()
+          << "' does not support this function!\n";
+   DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
 }
 
 ////////////////////////////////
@@ -606,8 +605,8 @@ void FedAmb::objectInstanceNameReservationSucceeded(
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          string instance_name;
          StringUtilities::to_string( instance_name, objectInstanceName );
-         message_publish( MSG_NORMAL, "FedAmb::objectInstanceNameReservationSucceeded():%d '%s'\n",
-                          __LINE__, instance_name.c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      string( "'" ).append( instance_name ).append( "'\n" ) );
       }
 
       object_service->object_instance_name_reservation_succeeded( objectInstanceName );
@@ -625,8 +624,9 @@ void FedAmb::objectInstanceNameReservationFailed(
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          string instance_name;
          StringUtilities::to_string( instance_name, objectInstanceName );
-         message_publish( MSG_NORMAL, "FedAmb::objectInstanceNameReservationFailed():%d FAILED '%s'\n",
-                          __LINE__, instance_name.c_str() );
+         ostringstream msg;
+         msg << "FAILED '" << instance_name << "'\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
       }
 
       object_service->object_instance_name_reservation_failed( objectInstanceName );
@@ -648,8 +648,8 @@ void FedAmb::multipleObjectInstanceNameReservationSucceeded(
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
             string instance_name;
             StringUtilities::to_string( instance_name, *iter );
-            message_publish( MSG_NORMAL, "FedAmb::objectInstanceNameReservationSucceeded():%d '%s'\n",
-                             __LINE__, instance_name.c_str() );
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                         string( "'" ).append( instance_name ).append( "'" ) );
          }
 
          object_service->object_instance_name_reservation_succeeded( *iter );
@@ -671,8 +671,10 @@ void FedAmb::multipleObjectInstanceNameReservationFailed(
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
             string instance_name;
             StringUtilities::to_string( instance_name, *iter );
-            message_publish( MSG_NORMAL, "FedAmb::objectInstanceNameReservationFailed():%d FAILED '%s'\n",
-                             __LINE__, instance_name.c_str() );
+
+            ostringstream msg;
+            msg << "FAILED '" << instance_name << "'\n";
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
          }
 
          object_service->object_instance_name_reservation_failed( *iter );
@@ -691,8 +693,10 @@ void FedAmb::discoverObjectInstance(
       StringUtilities::to_string( id_str, objectInstance );
       string name_str;
       StringUtilities::to_string( name_str, objectInstanceName );
-      message_publish( MSG_NORMAL, "FedAmb::discoverObjectInstance():%d DISCOVERED '%s' Instance-ID:%s\n",
-                       __LINE__, name_str.c_str(), id_str.c_str() );
+
+      ostringstream msg;
+      msg << "DISCOVERED '" << name_str << "' Instance-ID:" << id_str << "\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    if ( object_service == nullptr ) {
@@ -701,9 +705,10 @@ void FedAmb::discoverObjectInstance(
          StringUtilities::to_string( id_str, objectInstance );
          string name_str;
          StringUtilities::to_string( name_str, objectInstanceName );
-         message_publish( MSG_NORMAL, "FedAmb::discoverObjectInstance():%d Unexpected \
-nullptr ObjectServices! Can't do anything with discovered object '%s' Instance-ID:%s\n",
-                          __LINE__, name_str.c_str(), id_str.c_str() );
+         ostringstream errmsg;
+         errmsg << "Unexpected nullptr ObjectServices! Can't do anything with discovered object '"
+                << name_str << "' Instance-ID:" << id_str << "\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
       }
    } else if ( !object_service->discover_object_instance( objectInstance, objectClass, objectInstanceName ) ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
@@ -711,8 +716,10 @@ nullptr ObjectServices! Can't do anything with discovered object '%s' Instance-I
          StringUtilities::to_string( id_str, objectInstance );
          string name_str;
          StringUtilities::to_string( name_str, objectInstanceName );
-         message_publish( MSG_WARNING, "FedAmb::discoverObjectInstance():%d Object '%s' with Instance-ID:%s is UNKNOWN to me!\n",
-                          __LINE__, name_str.c_str(), id_str.c_str() );
+         ostringstream errmsg;
+         errmsg << "Object '" << name_str
+                << "' with Instance-ID:" << id_str << " is UNKNOWN to me!\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
       }
    }
 }
@@ -734,9 +741,9 @@ void FedAmb::discoverObjectInstance(
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       string fed_id;
       StringUtilities::to_string( fed_id, producingFederate );
-      message_publish( MSG_NORMAL, "FedAmb::discoverObjectInstance(producing \
-federate '%s'):%d calling 'discoverObjectInstance' to finish the discovery.\n",
-                       fed_id.c_str(), __LINE__ );
+      ostringstream msg;
+      msg << "Producing Federate '" << fed_id << "' calling 'discoverObjectInstance' to finish the discovery.\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    if ( object_service == nullptr ) {
@@ -745,9 +752,10 @@ federate '%s'):%d calling 'discoverObjectInstance' to finish the discovery.\n",
          StringUtilities::to_string( id_str, objectInstance );
          string name_str;
          StringUtilities::to_string( name_str, objectInstanceName );
-         message_publish( MSG_NORMAL, "FedAmb::discoverObjectInstance():%d Unexpected \
-nullptr ObjectServices! Can't do anything with discovered object '%s' Instance-ID:%s\n",
-                          __LINE__, name_str.c_str(), id_str.c_str() );
+         ostringstream errmsg;
+         errmsg << "Unexpected nullptr ObjectServices! Can't do anything with discovered object '"
+                << name_str << "' Instance-ID:" << id_str << "\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
       }
    } else if ( !object_service->discover_object_instance( objectInstance, objectClass, objectInstanceName ) ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
@@ -755,8 +763,11 @@ nullptr ObjectServices! Can't do anything with discovered object '%s' Instance-I
          StringUtilities::to_string( id_str, objectInstance );
          string name_str;
          StringUtilities::to_string( name_str, objectInstanceName );
-         message_publish( MSG_WARNING, "FedAmb::discoverObjectInstance():%d Object '%s' with Instance-ID:%s is UNKNOWN to me!\n",
-                          __LINE__, name_str.c_str(), id_str.c_str() );
+
+         ostringstream errmsg;
+         errmsg << "Object '" << name_str << "' with Instance-ID:" << id_str
+                << " is UNKNOWN to me!\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
       }
    }
 }
@@ -786,8 +797,8 @@ void FedAmb::reflectAttributeValues(
    // object instance.  Queue the data and return.
    if ( trickhla_obj != nullptr ) {
       if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-         message_publish( MSG_NORMAL, "FedAmb:reflectAttributeValues():%d '%s'\n",
-                          __LINE__, trickhla_obj->get_name().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      string( "'" ).append( trickhla_obj->get_name() ).append( "'\n" ) );
       }
 
       trickhla_obj->enqueue_data( const_cast< AttributeHandleValueMap & >( attributeValues ) );
@@ -809,17 +820,18 @@ void FedAmb::reflectAttributeValues(
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
             string id_str;
             StringUtilities::to_string( id_str, objectInstance );
-            message_publish( MSG_NORMAL, "FedAmb::reflectAttributeValues(%d elements):%d Rebuilding federate handle for Federate ID:%s\n",
-                             (int)attributeValues.size(),
-                             __LINE__, id_str.c_str() );
+            ostringstream msg;
+            msg << "Rebuilding federate handle for Federate ID:" << id_str << "\n";
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
          }
          federate->rebuild_federate_handles( objectInstance, attributeValues );
       } else {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
             string id_str;
             StringUtilities::to_string( id_str, objectInstance );
-            message_publish( MSG_NORMAL, "FedAmb::reflectAttributeValues():%d Setting name for Federate ID:%s\n",
-                             __LINE__, id_str.c_str() );
+            ostringstream msg;
+            msg << "Setting name for Federate ID:" << id_str << "\n";
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
          }
          federate->set_MOM_HLAfederate_instance_attributes( objectInstance, attributeValues );
       }
@@ -835,8 +847,9 @@ void FedAmb::reflectAttributeValues(
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          string id_str;
          StringUtilities::to_string( id_str, objectInstance );
-         message_publish( MSG_NORMAL, "FedAmb::reflectAttributeValues():%d Setting MOM Federation Attributes for ID:%s\n",
-                          __LINE__, id_str.c_str() );
+         ostringstream msg;
+         msg << "Setting MOM Federation Attributes for ID:" << id_str << "\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
       federate->set_MOM_HLAfederation_instance_attributes( objectInstance, attributeValues );
 
@@ -850,8 +863,7 @@ void FedAmb::reflectAttributeValues(
       StringUtilities::to_string( handle_str, objectInstance );
 
       ostringstream summary;
-      summary << "FedAmb::reflectAttributeValues():" << __LINE__
-              << " Received update to Unknown Object Instance:"
+      summary << "Received update to Unknown Object Instance:"
               << handle_str << "\n";
 
       AttributeHandleValueMap::const_iterator attr_iter;
@@ -861,7 +873,7 @@ void FedAmb::reflectAttributeValues(
          StringUtilities::to_string( handle_str, attr_iter->first );
          summary << "   + Attribute-Handle:" << handle_str << "\n";
       }
-      message_publish( MSG_NORMAL, summary.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, summary.str() );
    }
 
    return;
@@ -886,8 +898,11 @@ void FedAmb::reflectAttributeValues(
       if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          Int64Time i64time;
          i64time.set( time );
-         message_publish( MSG_NORMAL, "FedAmb:reflectAttributeValues():%d '%s' HLA-time:%.12G seconds.\n",
-                          __LINE__, trickhla_obj->get_name().c_str(), i64time.get_time_in_seconds() );
+
+         ostringstream msg;
+         msg << "'" << trickhla_obj->get_name() << "' HLA-time:"
+             << setprecision( 18 ) << i64time.get_time_in_seconds() << " seconds\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
 
       trickhla_obj->enqueue_data( const_cast< AttributeHandleValueMap & >( attributeValues ) );
@@ -899,8 +914,10 @@ void FedAmb::reflectAttributeValues(
       if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          string id_str;
          StringUtilities::to_string( id_str, objectInstance );
-         message_publish( MSG_WARNING, "FedAmb::reflectAttributeValues():%d Received update to Unknown Object Instance, ID:%s\n",
-                          __LINE__, id_str.c_str() );
+
+         ostringstream msg;
+         msg << "Received update to Unknown Object Instance, ID:" << id_str << "\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
       }
    }
 }
@@ -938,8 +955,11 @@ void FedAmb::reflectAttributeValues(
       if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          Int64Time i64time;
          i64time.set( time );
-         message_publish( MSG_NORMAL, "FedAmb:reflectAttributeValues():%d '%s' HLA-time:%.12G seconds.\n",
-                          __LINE__, trickhla_obj->get_name().c_str(), i64time.get_time_in_seconds() );
+
+         ostringstream msg;
+         msg << "'" << trickhla_obj->get_name() << "' HLA-time:"
+             << setprecision( 18 ) << i64time.get_time_in_seconds() << " seconds\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
 
       trickhla_obj->enqueue_data( const_cast< AttributeHandleValueMap & >( attributeValues ) );
@@ -951,8 +971,10 @@ void FedAmb::reflectAttributeValues(
       if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          string id_str;
          StringUtilities::to_string( id_str, objectInstance );
-         message_publish( MSG_WARNING, "FedAmb::reflectAttributeValues():%d Received update to Unknown Object Instance, ID:%s\n",
-                          __LINE__, id_str.c_str() );
+
+         ostringstream msg;
+         msg << "Received update to Unknown Object Instance, ID:" << id_str << "\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
       }
    }
 }
@@ -975,14 +997,12 @@ void FedAmb::receiveInteraction(
 #endif // IEEE_1516_2025
 {
    if ( object_service == nullptr ) {
-      message_publish( MSG_WARNING, "FedAmb::receiveInteraction():%d nullptr ObjectServices!\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr ObjectServices!\n", MSG_WARNING );
    } else {
       Int64Time const dummyTime;
 
       if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-         message_publish( MSG_WARNING, "FedAmb::receiveInteraction():%d\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
       }
 
       // Process the interaction.
@@ -1006,15 +1026,17 @@ void FedAmb::receiveInteraction(
    SupplementalReceiveInfo        receiveInfo ) throw( FederateInternalError )
 {
    if ( object_service == nullptr ) {
-      message_publish( MSG_WARNING, "FedAmb::receiveInteraction():%d nullptr ObjectServices!\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Unexpetected nullptr ObjectServices!\n" );
    } else {
       // Process the interaction.
       if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          Int64Time i64time;
          i64time.set( time );
-         message_publish( MSG_WARNING, "FedAmb::receiveInteraction():%d HLA-time:%.12G seconds.\n",
-                          __LINE__, i64time.get_time_in_seconds() );
+
+         ostringstream msg;
+         msg << " HLA-time:" << setprecision( 18 )
+             << i64time.get_time_in_seconds() << " seconds\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
 
       interaction_service->receive_interaction( interactionClass,
@@ -1051,14 +1073,16 @@ void FedAmb::receiveInteraction(
 #endif // IEEE_1516_2025
 {
    if ( object_service == nullptr ) {
-      message_publish( MSG_WARNING, "FedAmb::receiveInteraction():%d nullptr ObjectServices!\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr ObjectServices!\n", MSG_WARNING );
    } else {
       if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          Int64Time i64time;
          i64time.set( time );
-         message_publish( MSG_WARNING, "FedAmb::receiveInteraction():%d HLA-time:%.12G seconds.\n",
-                          __LINE__, i64time.get_time_in_seconds() );
+
+         ostringstream msg;
+         msg << " HLA-time:" << setprecision( 18 )
+             << i64time.get_time_in_seconds() << " seconds\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
 
       // Process the interaction.
@@ -1079,9 +1103,10 @@ void FedAmb::receiveDirectedInteraction(
    TransportationTypeHandle const &transportationType,
    FederateHandle const           &producingFederate )
 {
-   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
-FedAmb::receiveDirectedInteraction():%d\n",
-                    federate->get_federate_name().c_str(), __LINE__ );
+   ostringstream errmsg;
+   errmsg << "This federate '" << federate->get_federate_name()
+          << "' does not support this function!\n";
+   DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
 }
 
 void FedAmb::receiveDirectedInteraction(
@@ -1096,9 +1121,10 @@ void FedAmb::receiveDirectedInteraction(
    OrderType                       receivedOrderType,
    MessageRetractionHandle const  *optionalRetraction )
 {
-   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
-FedAmb::receiveDirectedInteraction():%d\n",
-                    federate->get_federate_name().c_str(), __LINE__ );
+   ostringstream errmsg;
+   errmsg << "This federate '" << federate->get_federate_name()
+          << "' does not support this function!\n";
+   DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
 }
 #endif // IEEE_1516_2025
 
@@ -1119,14 +1145,14 @@ void FedAmb::removeObjectInstance(
       StringUtilities::to_string( id_str, objectInstance );
 
       if ( userSuppliedTag.size() > 0 ) {
-         char const *tag = static_cast< char const * >( userSuppliedTag.data() );
-         message_publish( MSG_NORMAL, "FedAmb::removeObjectInstance():%d User-Supplied-Tag='%s' Instance-ID:%s Valid-ID:%s\n",
-                          __LINE__, tag, id_str.c_str(),
-                          ( objectInstance.isValid() ? "Yes" : "No" ) );
+         string tag;
+         StringUtilities::to_printable_string( tag, userSuppliedTag );
+         ostringstream msg;
+         msg << "User-supplied-tag:'" << tag << "' Instance-ID:" << id_str << "\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       } else {
-         message_publish( MSG_NORMAL, "FedAmb::removeObjectInstance():%d Instance-ID:%s Valid-ID:%s\n",
-                          __LINE__, id_str.c_str(),
-                          ( objectInstance.isValid() ? "Yes" : "No" ) );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      string( "Instance-ID:" ).append( id_str ).append( "\n" ) );
       }
    }
 
@@ -1156,12 +1182,17 @@ void FedAmb::removeObjectInstance(
       i64time.set( time );
 
       if ( userSuppliedTag.size() > 0 ) {
-         char const *tag = static_cast< char const * >( userSuppliedTag.data() );
-         message_publish( MSG_NORMAL, "FedAmb::removeObjectInstance():%d tag='%s' Instance-ID:%s HLA-time:%.12G seconds.\n",
-                          __LINE__, tag, id_str.c_str(), i64time.get_time_in_seconds() );
+         string tag;
+         StringUtilities::to_printable_string( tag, userSuppliedTag );
+         ostringstream msg;
+         msg << "User-supplied-tag:'" << tag << "' Instance-ID:" << id_str << " HLA-time:"
+             << setprecision( 18 ) << i64time.get_time_in_seconds() << " seconds\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       } else {
-         message_publish( MSG_NORMAL, "FedAmb::removeObjectInstance():%d Instance-ID:%s HLA-time:%.12G seconds.\n",
-                          __LINE__, id_str.c_str(), i64time.get_time_in_seconds() );
+         ostringstream msg;
+         msg << "Instance-ID:" << id_str << " HLA-time:" << setprecision( 18 )
+             << i64time.get_time_in_seconds() << " seconds\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
    }
 
@@ -1200,12 +1231,17 @@ void FedAmb::removeObjectInstance(
       i64time.set( time );
 
       if ( userSuppliedTag.size() > 0 ) {
-         char const *tag = static_cast< char const * >( userSuppliedTag.data() );
-         message_publish( MSG_NORMAL, "FedAmb::removeObjectInstance():%d tag='%s' Instance-ID:%s HLA-time:%.12G seconds.\n",
-                          __LINE__, tag, id_str.c_str(), i64time.get_time_in_seconds() );
+         string tag;
+         StringUtilities::to_printable_string( tag, userSuppliedTag );
+         ostringstream msg;
+         msg << "User-supplied-tag:'" << tag << "' Instance-ID:" << id_str << " HLA-time:"
+             << setprecision( 18 ) << i64time.get_time_in_seconds() << " seconds\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       } else {
-         message_publish( MSG_NORMAL, "FedAmb::removeObjectInstance():%d Instance-ID:%s HLA-time:%.12G seconds.\n",
-                          __LINE__, id_str.c_str(), i64time.get_time_in_seconds() );
+         ostringstream msg;
+         msg << "Instance-ID:" << id_str << " HLA-time:" << setprecision( 18 )
+             << i64time.get_time_in_seconds() << " seconds\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
    }
 
@@ -1222,10 +1258,10 @@ void FedAmb::attributesInScope(
    AttributeHandleSet const &attributes ) throw( FederateInternalError )
 #endif // IEEE_1516_2025
 {
-   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
-FedAmb::attributesInScope():%d\n",
-                    federate->get_federate_name().c_str(),
-                    __LINE__ );
+   ostringstream errmsg;
+   errmsg << "This federate '" << federate->get_federate_name()
+          << "' does not support this function!\n";
+   DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
 }
 
 void FedAmb::attributesOutOfScope(
@@ -1237,10 +1273,10 @@ void FedAmb::attributesOutOfScope(
    AttributeHandleSet const &attributes ) throw( FederateInternalError )
 #endif // IEEE_1516_2025
 {
-   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
-FedAmb::attributesOutOfScope():%d\n",
-                    federate->get_federate_name().c_str(),
-                    __LINE__ );
+   ostringstream errmsg;
+   errmsg << "This federate '" << federate->get_federate_name()
+          << "' does not support this function!\n";
+   DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
 }
 
 void FedAmb::provideAttributeValueUpdate(
@@ -1269,9 +1305,10 @@ void FedAmb::turnUpdatesOnForObjectInstance(
    AttributeHandleSet const &attributes ) throw( FederateInternalError )
 #endif // IEEE_1516_2025
 {
-   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
-FedAmb::turnUpdatesOnForObjectInstance():%d\n",
-                    federate->get_federate_name().c_str(), __LINE__ );
+   ostringstream errmsg;
+   errmsg << "This federate '" << federate->get_federate_name()
+          << "' does not support this function!\n";
+   DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
 }
 
 void FedAmb::turnUpdatesOnForObjectInstance(
@@ -1285,9 +1322,10 @@ void FedAmb::turnUpdatesOnForObjectInstance(
    wstring const            &updateRateDesignator ) throw( FederateInternalError )
 #endif // IEEE_1516_2025
 {
-   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
-FedAmb::turnUpdatesOnForObjectInstance():%d\n",
-                    federate->get_federate_name().c_str(), __LINE__ );
+   ostringstream errmsg;
+   errmsg << "This federate '" << federate->get_federate_name()
+          << "' does not support this function!\n";
+   DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
 }
 
 void FedAmb::turnUpdatesOffForObjectInstance(
@@ -1299,9 +1337,10 @@ void FedAmb::turnUpdatesOffForObjectInstance(
    AttributeHandleSet const &attributes ) throw( FederateInternalError )
 #endif // IEEE_1516_2025
 {
-   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
-FedAmb::turnUpdatesOffForObjectInstance():%d\n",
-                    federate->get_federate_name().c_str(), __LINE__ );
+   ostringstream errmsg;
+   errmsg << "This federate '" << federate->get_federate_name()
+          << "' does not support this function!\n";
+   DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
 }
 
 void FedAmb::confirmAttributeTransportationTypeChange(
@@ -1315,9 +1354,10 @@ void FedAmb::confirmAttributeTransportationTypeChange(
    TransportationType   transportationType ) throw( FederateInternalError )
 #endif // IEEE_1516_2025
 {
-   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
-FedAmb::confirmAttributeTransportationTypeChange():%d\n",
-                    federate->get_federate_name().c_str(), __LINE__ );
+   ostringstream errmsg;
+   errmsg << "This federate '" << federate->get_federate_name()
+          << "' does not support this function!\n";
+   DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
 }
 
 void FedAmb::reportAttributeTransportationType(
@@ -1331,9 +1371,10 @@ void FedAmb::reportAttributeTransportationType(
    TransportationType   transportationType ) throw( FederateInternalError )
 #endif // IEEE_1516_2025
 {
-   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
-FedAmb::reportAttributeTransportationType():%d\n",
-                    federate->get_federate_name().c_str(), __LINE__ );
+   ostringstream errmsg;
+   errmsg << "This federate '" << federate->get_federate_name()
+          << "' does not support this function!\n";
+   DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
 }
 
 void FedAmb::confirmInteractionTransportationTypeChange(
@@ -1345,9 +1386,10 @@ void FedAmb::confirmInteractionTransportationTypeChange(
    TransportationType     transportationType ) throw( FederateInternalError )
 #endif // IEEE_1516_2025
 {
-   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
-FedAmb::confirmInteractionTransportationTypeChange():%d\n",
-                    federate->get_federate_name().c_str(), __LINE__ );
+   ostringstream errmsg;
+   errmsg << "This federate '" << federate->get_federate_name()
+          << "' does not support this function!\n";
+   DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
 }
 
 void FedAmb::reportInteractionTransportationType(
@@ -1361,9 +1403,10 @@ void FedAmb::reportInteractionTransportationType(
    TransportationType     transportationType ) throw( FederateInternalError )
 #endif // IEEE_1516_2025
 {
-   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
-FedAmb::reportInteractionTransportationType():%d\n",
-                    federate->get_federate_name().c_str(), __LINE__ );
+   ostringstream errmsg;
+   errmsg << "This federate '" << federate->get_federate_name()
+          << "' does not support this function!\n";
+   DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
 }
 
 ///////////////////////////////////
@@ -1381,10 +1424,12 @@ void FedAmb::requestAttributeOwnershipAssumption(
    VariableLengthData const &userSuppliedTag ) throw( FederateInternalError )
 #endif // IEEE_1516_2025
 {
-   char const *tag = static_cast< char const * >( userSuppliedTag.data() );
    if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      message_publish( MSG_NORMAL, "FedAmb::requestAttributeOwnershipAssumption():%d push request received, tag='%s'\n",
-                       __LINE__, tag );
+      string tag;
+      StringUtilities::to_printable_string( tag, userSuppliedTag );
+      ostringstream msg;
+      msg << "Push request received, User-supplied-tag:'" << tag << "'\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    Object *trickhla_obj = ( object_service != nullptr ) ? object_service->get_trickhla_object( objectInstance ) : nullptr;
@@ -1418,12 +1463,14 @@ void FedAmb::requestAttributeOwnershipAssumption(
                trick_hla_attr->set_push_requested( true );
 
                if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-                  message_publish( MSG_NORMAL, "FedAmb::requestAttributeOwnershipAssumption():%d\
-\n   Attribute '%s'->'%s' of object '%s'.\n",
-                                   __LINE__,
-                                   trickhla_obj->get_FOM_name().c_str(),
-                                   trick_hla_attr->get_FOM_name().c_str(),
-                                   trickhla_obj->get_name().c_str() );
+                  DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                               string( "\n   Attribute '" )
+                                                  .append( trickhla_obj->get_FOM_name() )
+                                                  .append( "'->'" )
+                                                  .append( trick_hla_attr->get_FOM_name() )
+                                                  .append( "' of object '" )
+                                                  .append( trickhla_obj->get_name() )
+                                                  .append( "'\n" ) );
                }
             } else if ( trick_hla_attr == nullptr ) {
 
@@ -1431,9 +1478,10 @@ void FedAmb::requestAttributeOwnershipAssumption(
                any_attribute_not_recognized = true;
 
                if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-                  message_publish( MSG_WARNING, "FedAmb::requestAttributeOwnershipAssumption():%d \
-Attribute Not Recognized Object '%s' with FOM name '%s'!\n",
-                                   __LINE__, trickhla_obj->get_name().c_str(), trickhla_obj->get_FOM_name().c_str() );
+                  ostringstream msg;
+                  msg << "Attribute Not Recognized for Object '" << trickhla_obj->get_name()
+                      << "' with FOM name '" << trickhla_obj->get_FOM_name() << "'\n";
+                  DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
                }
             } else if ( trick_hla_attr->is_locally_owned() ) {
 
@@ -1441,12 +1489,11 @@ Attribute Not Recognized Object '%s' with FOM name '%s'!\n",
                any_attribute_already_owned = true;
 
                if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-                  message_publish( MSG_WARNING, "FedAmb::requestAttributeOwnershipAssumption():%d \
-Attribute Already Owned Object '%s' with attribute '%s'->'%s'!\n",
-                                   __LINE__,
-                                   trickhla_obj->get_name().c_str(),
-                                   trickhla_obj->get_FOM_name().c_str(),
-                                   trick_hla_attr->get_FOM_name().c_str() );
+                  ostringstream msg;
+                  msg << "Attribute Already Owned for Object '" << trickhla_obj->get_name()
+                      << "' with attribute '" << trickhla_obj->get_FOM_name()
+                      << "'->'" << trick_hla_attr->get_FOM_name() << "'\n";
+                  DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
                }
             } else if ( !trick_hla_attr->is_publish() ) {
 
@@ -1454,12 +1501,11 @@ Attribute Already Owned Object '%s' with attribute '%s'->'%s'!\n",
                any_attribute_not_published = true;
 
                if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-                  message_publish( MSG_WARNING, "FedAmb::requestAttributeOwnershipAssumption():%d \
-Attribute Not Published Object '%s' with attribute '%s'->'%s'!\n",
-                                   __LINE__,
-                                   trickhla_obj->get_name().c_str(),
-                                   trickhla_obj->get_FOM_name().c_str(),
-                                   trick_hla_attr->get_FOM_name().c_str() );
+                  ostringstream msg;
+                  msg << "Attribute Not Published for Object '" << trickhla_obj->get_name()
+                      << "' with attribute '" << trickhla_obj->get_FOM_name()
+                      << "'->'" << trick_hla_attr->get_FOM_name() << "'\n";
+                  DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
                }
             }
          }
@@ -1487,9 +1533,12 @@ Attribute for Object is not published." );
    } else {
       string id_str;
       StringUtilities::to_string( id_str, objectInstance );
-      message_publish( MSG_NORMAL, "FedAmb::requestAttributeOwnershipAssumption():%d \
-Unknown object instance (ID:%s), push request rejected, tag='%s'\n",
-                       __LINE__, id_str.c_str(), tag );
+      string tag;
+      StringUtilities::to_printable_string( tag, userSuppliedTag );
+      ostringstream msg;
+      msg << "Unknown object instance (ID:" << id_str
+          << "), Push request rejected, User-supplied-tag:'" << tag << "'\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
 
       throw FederateInternalError( L"FedAmb::requestAttributeOwnershipAssumption() Unknown object instance" );
    }
@@ -1510,9 +1559,9 @@ void FedAmb::requestDivestitureConfirmation(
    if ( trickhla_obj == nullptr ) {
       string id_str;
       StringUtilities::to_string( id_str, objectInstance );
-      message_publish( MSG_NORMAL, "FedAmb::requestDivestitureConfirmation():%d Unknown \
-object instance (ID:%s), push request rejected.\n",
-                       __LINE__, id_str.c_str() );
+      ostringstream msg;
+      msg << "Unknown object instance (ID:" << id_str << "), push request rejected.\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
 
       throw FederateInternalError( L"FedAmb::requestDivestitureConfirmation() Unknown object instance." );
    }
@@ -1539,12 +1588,11 @@ object instance (ID:%s), push request rejected.\n",
          any_devist_requested = true;
 
          if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-            message_publish( MSG_NORMAL, "FedAmb::requestDivestitureConfirmation():%d\
-\n   Attribute '%s'->'%s' of object '%s'.\n",
-                             __LINE__,
-                             trickhla_obj->get_FOM_name().c_str(),
-                             trick_hla_attr->get_FOM_name().c_str(),
-                             trickhla_obj->get_name().c_str() );
+            ostringstream msg;
+            msg << "\n   Attribute '" << trickhla_obj->get_FOM_name()
+                << "'->'" << trick_hla_attr->get_FOM_name()
+                << "' for object '" << trickhla_obj->get_name() << "'\n";
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
          }
       } else if ( trick_hla_attr == nullptr ) {
 
@@ -1552,9 +1600,10 @@ object instance (ID:%s), push request rejected.\n",
          any_attribute_not_recognized = true;
 
          if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-            message_publish( MSG_WARNING, "FedAmb::requestDivestitureConfirmation():%d \
-Attribute Not Recognized Object '%s' with FOM name '%s'!\n",
-                             __LINE__, trickhla_obj->get_name().c_str(), trickhla_obj->get_FOM_name().c_str() );
+            ostringstream msg;
+            msg << "Attribute Not Recognized for Object '" << trickhla_obj->get_name()
+                << "' with FOM name '" << trickhla_obj->get_FOM_name() << "'\n";
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
          }
       } else if ( trick_hla_attr->is_remotely_owned() ) {
 
@@ -1562,12 +1611,11 @@ Attribute Not Recognized Object '%s' with FOM name '%s'!\n",
          any_attribute_not_owned = true;
 
          if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-            message_publish( MSG_WARNING, "FedAmb::requestDivestitureConfirmation():%d \
-Attribute Not Owned Object '%s' with attribute '%s'->'%s'!\n",
-                             __LINE__,
-                             trickhla_obj->get_name().c_str(),
-                             trickhla_obj->get_FOM_name().c_str(),
-                             trick_hla_attr->get_FOM_name().c_str() );
+            ostringstream msg;
+            msg << "Attribute Not Owned for Object '" << trickhla_obj->get_name()
+                << "' with attribute '" << trickhla_obj->get_FOM_name()
+                << "'->'" << trick_hla_attr->get_FOM_name() << "'\n";
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
          }
       }
    }
@@ -1603,8 +1651,7 @@ void FedAmb::attributeOwnershipAcquisitionNotification(
 #endif // IEEE_1516_2025
 {
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      message_publish( MSG_NORMAL, "FedAmb::attributeOwnershipAcquisitionNotification():%d\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    Object *trickhla_obj = ( object_service != nullptr ) ? object_service->get_trickhla_object( objectInstance ) : nullptr;
@@ -1632,12 +1679,11 @@ void FedAmb::attributeOwnershipAcquisitionNotification(
             any_attribute_acquired = true;
 
             if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-               message_publish( MSG_NORMAL, "FedAmb::attributeOwnershipAcquisitionNotification():%d\
-\n   ACQUIRED ownership of attribute '%s'->'%s' of object '%s'.\n",
-                                __LINE__,
-                                trickhla_obj->get_FOM_name().c_str(),
-                                trick_hla_attr->get_FOM_name().c_str(),
-                                trickhla_obj->get_name().c_str() );
+               ostringstream msg;
+               msg << "\n   ACQUIRED ownership of attribute '" << trickhla_obj->get_FOM_name()
+                   << "'->'" << trick_hla_attr->get_FOM_name()
+                   << "' of object '" << trickhla_obj->get_name() << "'\n";
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
             }
          } else if ( trick_hla_attr == nullptr ) {
 
@@ -1645,9 +1691,10 @@ void FedAmb::attributeOwnershipAcquisitionNotification(
             any_attribute_not_recognized = true;
 
             if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-               message_publish( MSG_WARNING, "FedAmb::attributeOwnershipAcquisitionNotification():%d \
-Attribute Not Recognized Object '%s' with FOM name '%s'!\n",
-                                __LINE__, trickhla_obj->get_name().c_str(), trickhla_obj->get_FOM_name().c_str() );
+               ostringstream msg;
+               msg << "Attribute Not Recognized for Object '" << trickhla_obj->get_name()
+                   << "' with FOM name '" << trickhla_obj->get_FOM_name() << "'\n";
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
             }
          } else if ( trick_hla_attr->is_locally_owned() ) {
 
@@ -1655,12 +1702,11 @@ Attribute Not Recognized Object '%s' with FOM name '%s'!\n",
             any_attribute_already_owned = true;
 
             if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-               message_publish( MSG_WARNING, "FedAmb::attributeOwnershipAcquisitionNotification():%d \
-Attribute Already Owned Object '%s' with attribute '%s'->'%s'!\n",
-                                __LINE__,
-                                trickhla_obj->get_name().c_str(),
-                                trickhla_obj->get_FOM_name().c_str(),
-                                trick_hla_attr->get_FOM_name().c_str() );
+               ostringstream msg;
+               msg << "Attribute Already Owned for Object '" << trickhla_obj->get_name()
+                   << "' with attribute '" << trickhla_obj->get_FOM_name()
+                   << "'->'" << trick_hla_attr->get_FOM_name() << "'\n";
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
             }
          } else if ( !trick_hla_attr->is_publish() ) {
 
@@ -1668,12 +1714,11 @@ Attribute Already Owned Object '%s' with attribute '%s'->'%s'!\n",
             any_attribute_not_published = true;
 
             if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-               message_publish( MSG_WARNING, "FedAmb::attributeOwnershipAcquisitionNotification():%d \
-Attribute Not Published Object '%s' with attribute '%s'->'%s'!\n",
-                                __LINE__,
-                                trickhla_obj->get_name().c_str(),
-                                trickhla_obj->get_FOM_name().c_str(),
-                                trick_hla_attr->get_FOM_name().c_str() );
+               ostringstream msg;
+               msg << "Attribute Not Published for Object '" << trickhla_obj->get_name()
+                   << "' with attribute '" << trickhla_obj->get_FOM_name()
+                   << "'->'" << trick_hla_attr->get_FOM_name() << "'\n";
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
             }
          }
       }
@@ -1699,9 +1744,8 @@ Attribute for Object is not published." );
       }
 
    } else {
-      message_publish( MSG_WARNING, "FedAmb::attributeOwnershipAcquisitionNotification():%d \
-Ownership acquisition rejected (object not found)\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   "Ownership acquisition rejected (object not found)\n", MSG_WARNING );
 
       throw FederateInternalError( L"FedAmb::attributeOwnershipAcquisitionNotification() Unknown object instance" );
    }
@@ -1717,9 +1761,10 @@ void FedAmb::attributeOwnershipUnavailable(
    AttributeHandleSet const &releasedAttributes ) throw( FederateInternalError )
 #endif // IEEE_1516_2025
 {
-   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
-FedAmb::attributeOwnershipUnavailable():%d\n",
-                    federate->get_federate_name().c_str(), __LINE__ );
+   ostringstream errmsg;
+   errmsg << "This federate '" << federate->get_federate_name()
+          << "' does not support this function!\n";
+   DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
 }
 
 void FedAmb::requestAttributeOwnershipRelease(
@@ -1733,10 +1778,12 @@ void FedAmb::requestAttributeOwnershipRelease(
    VariableLengthData const &userSuppliedTag ) throw( FederateInternalError )
 #endif // IEEE_1516_2025
 {
-   char const *tag = static_cast< char const * >( userSuppliedTag.data() );
    if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      message_publish( MSG_NORMAL, "FedAmb::requestAttributeOwnershipRelease():%d pull request received, tag='%s'\n",
-                       __LINE__, tag );
+      string tag;
+      StringUtilities::to_printable_string( tag, userSuppliedTag );
+      ostringstream msg;
+      msg << "pull request received, User-supplied-tag:'" << tag << "\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
    Object *trickhla_obj = ( object_service != nullptr ) ? object_service->get_trickhla_object( objectInstance ) : nullptr;
 
@@ -1764,12 +1811,11 @@ void FedAmb::requestAttributeOwnershipRelease(
             any_pull_requested = true;
 
             if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-               message_publish( MSG_NORMAL, "FedAmb::requestAttributeOwnershipRelease():%d\
-\n   Attribute '%s'->'%s' of object '%s'.\n",
-                                __LINE__,
-                                trickhla_obj->get_FOM_name().c_str(),
-                                trick_hla_attr->get_FOM_name().c_str(),
-                                trickhla_obj->get_name().c_str() );
+               ostringstream msg;
+               msg << "\n   Attribute '" << trickhla_obj->get_FOM_name()
+                   << "'->''" << trick_hla_attr->get_FOM_name()
+                   << "' of object '" << trickhla_obj->get_name() << "'\n";
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
             }
          } else if ( trick_hla_attr == nullptr ) {
 
@@ -1777,9 +1823,10 @@ void FedAmb::requestAttributeOwnershipRelease(
             any_attribute_not_recognized = true;
 
             if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-               message_publish( MSG_WARNING, "FedAmb::requestAttributeOwnershipRelease():%d \
-Attribute Not Recognized Object '%s' with FOM name '%s'!\n",
-                                __LINE__, trickhla_obj->get_name().c_str(), trickhla_obj->get_FOM_name().c_str() );
+               ostringstream errmsg;
+               errmsg << "Attribute Not Recognized for Object '" << trickhla_obj->get_name()
+                      << "' with FOM name '" << trickhla_obj->get_FOM_name() << "'!\n";
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
             }
          } else if ( trick_hla_attr->is_remotely_owned() ) {
 
@@ -1787,12 +1834,11 @@ Attribute Not Recognized Object '%s' with FOM name '%s'!\n",
             any_attribute_not_owned = true;
 
             if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-               message_publish( MSG_WARNING, "FedAmb::requestAttributeOwnershipRelease():%d \
-Attribute Not Owned Object '%s' with attribute '%s'->'%s'!\n",
-                                __LINE__,
-                                trickhla_obj->get_name().c_str(),
-                                trickhla_obj->get_FOM_name().c_str(),
-                                trick_hla_attr->get_FOM_name().c_str() );
+               ostringstream errmsg;
+               errmsg << "Attribute Not Owned for Object '" << trickhla_obj->get_name()
+                      << "' with attribute '" << trickhla_obj->get_FOM_name()
+                      << "'->'" << trick_hla_attr->get_FOM_name() << "'!\n";
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
             }
          }
       }
@@ -1815,9 +1861,12 @@ Attribute for Object Not Owned." );
       }
 
    } else {
-      message_publish( MSG_WARNING, "FedAmb::requestAttributeOwnershipRelease():%d pull rejected (not found), tag='%s'\n",
-                       __LINE__, tag );
-      throw FederateInternalError( L"FedAmb::requestAttributeOwnershipRelease() Unknown object instance" );
+      string tag;
+      StringUtilities::to_printable_string( tag, userSuppliedTag );
+      ostringstream errmsg;
+      errmsg << "Pull rejected (not found), User-supplide-tag:'" << tag << "'\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+      throw FederateInternalError( L"FedAmb::requestAttributeOwnershipRelease() Unknown object instance." );
    }
 }
 
@@ -1830,9 +1879,10 @@ void FedAmb::confirmAttributeOwnershipAcquisitionCancellation(
    AttributeHandleSet const &releasedAttributes ) throw( FederateInternalError )
 #endif // IEEE_1516_2025
 {
-   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
-FedAmb::confirmAttributeOwnershipAcquisitionCancellation():%d\n",
-                    federate->get_federate_name().c_str(), __LINE__ );
+   ostringstream errmsg;
+   errmsg << "This federate '" << federate->get_federate_name()
+          << "' does not support this function!\n";
+   DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
 }
 
 void FedAmb::informAttributeOwnership(
@@ -1846,9 +1896,10 @@ void FedAmb::informAttributeOwnership(
    FederateHandle       owner ) throw( FederateInternalError )
 #endif // IEEE_1516_2025
 {
-   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
-FedAmb::informAttributeOwnership():%d\n",
-                    federate->get_federate_name().c_str(), __LINE__ );
+   ostringstream errmsg;
+   errmsg << "This federate '" << federate->get_federate_name()
+          << "' does not support this function!\n";
+   DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
 }
 
 void FedAmb::attributeIsNotOwned(
@@ -1860,9 +1911,10 @@ void FedAmb::attributeIsNotOwned(
    AttributeHandle      attribute ) throw( FederateInternalError )
 #endif // IEEE_1516_2025
 {
-   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
-FedAmb::attributeIsNotOwned():%d\n",
-                    federate->get_federate_name().c_str(), __LINE__ );
+   ostringstream errmsg;
+   errmsg << "This federate '" << federate->get_federate_name()
+          << "' does not support this function!\n";
+   DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
 }
 
 void FedAmb::attributeIsOwnedByRTI(
@@ -1874,9 +1926,10 @@ void FedAmb::attributeIsOwnedByRTI(
    AttributeHandle      attribute ) throw( FederateInternalError )
 #endif // IEEE_1516_2025
 {
-   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
-FedAmb::attributeIsOwnedByRTI():%d\n",
-                    federate->get_federate_name().c_str(), __LINE__ );
+   ostringstream errmsg;
+   errmsg << "This federate '" << federate->get_federate_name()
+          << "' does not support this function!\n";
+   DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
 }
 
 //////////////////////////////
@@ -1890,8 +1943,8 @@ void FedAmb::timeRegulationEnabled(
 #endif // IEEE_1516_2010
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      message_publish( MSG_NORMAL, "FedAmb::timeRegulationEnabled():%d Federate \"%s\"\n",
-                       __LINE__, federate->get_federate_name().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   string( "Federate '" ).append( federate->get_federate_name() ).append( "'\n" ) );
    }
    federate->time_management_service.set_time_regulation_enabled( time );
 }
@@ -1903,9 +1956,12 @@ void FedAmb::timeConstrainedEnabled(
 #endif // IEEE_1516_2010
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      message_publish( MSG_NORMAL, "FedAmb::timeConstrainedEnabled():%d Federate \"%s\" Time granted to: %.12G\n",
-                       __LINE__, federate->get_federate_name().c_str(),
-                       federate->time_management_service.get_granted_time().get_time_in_seconds() );
+      ostringstream msg;
+      msg << "Federate '" << federate->get_federate_name()
+          << "' time granted to " << setprecision( 18 )
+          << federate->time_management_service.get_granted_time().get_time_in_seconds()
+          << " seconds\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
    federate->time_management_service.set_time_constrained_enabled( time );
 }
@@ -1915,9 +1971,10 @@ void FedAmb::flushQueueGrant(
    LogicalTime const &time,
    LogicalTime const &optimisticTime )
 {
-   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
-FedAmb::flushQueueGrant():%d\n",
-                    federate->get_federate_name().c_str(), __LINE__ );
+   ostringstream errmsg;
+   errmsg << "This federate '" << federate->get_federate_name()
+          << "' does not support this function!\n";
+   DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
 }
 #endif // IEEE_1516_2025
 
@@ -1937,9 +1994,10 @@ void FedAmb::requestRetraction(
    MessageRetractionHandle retraction ) throw( FederateInternalError )
 #endif // IEEE_1516_2025
 {
-   message_publish( MSG_WARNING, "This federate '%s' does not support this function: \
-FedAmb::requestRetraction():%d\n",
-                    federate->get_federate_name().c_str(), __LINE__ );
+   ostringstream errmsg;
+   errmsg << "This federate '" << federate->get_federate_name()
+          << "' does not support this function!\n";
+   DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
 }
 
 // Pop off the stack the GCC arguments specific to this file.

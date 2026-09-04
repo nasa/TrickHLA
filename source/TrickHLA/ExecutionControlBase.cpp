@@ -53,7 +53,6 @@ NASA, Johnson Space Center\n
 #include "trick/Clock.hh"
 #include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
-#include "trick/message_proto.h"
 #include "trick/message_type.h"
 #include "trick/sim_mode.h"
 
@@ -284,10 +283,9 @@ void ExecutionControlBase::initialize()
 
    if ( !does_scenario_timeline_exist() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         message_publish( MSG_WARNING, "ExecutionControlBase::initialize():%d WARNING: \
-ExecutionControl 'scenario_timeline' not specified in the input.py file. Using the \
-Trick simulation time as the default scenario-timeline.\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      "ExecutionControl 'scenario_timeline' not specified in the input.py file. Using the Trick simulation time as the default scenario-timeline.\n",
+                                      MSG_WARNING );
       }
 
       // Use the simulation timeline as the default scenario timeline.
@@ -340,8 +338,7 @@ void ExecutionControlBase::join_federation_process()
    // a running federation execution that is shutting down. This is an
    // unlikely but possible race condition.
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      message_publish( MSG_NORMAL, "ExecutionControl::join_federation_process():%d Checking for shutdown\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Checking for shutdown\n" );
    }
    fed->check_for_shutdown_with_termination();
 }
@@ -375,8 +372,9 @@ bool ExecutionControlBase::object_instance_name_reservation_succeeded(
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             string name_str;
             StringUtilities::to_string( name_str, obj_instance_name );
-            message_publish( MSG_NORMAL, "ExecutionControlBase::object_instance_name_reservation_succeeded():%d Name:'%s'\n",
-                             __LINE__, name_str.c_str() );
+            ostringstream msg;
+            msg << "Name:'" << name_str << "'\n";
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
          }
 
          return true;
@@ -423,8 +421,9 @@ bool ExecutionControlBase::object_instance_name_reservation_failed(
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          string name_str;
          StringUtilities::to_string( name_str, obj_instance_name );
-         message_publish( MSG_NORMAL, "ExecutionControlBase::object_instance_name_reservation_failed():%d Name:'%s'\n",
-                          __LINE__, name_str.c_str() );
+         ostringstream msg;
+         msg << "Name:'" << name_str << "'\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
 
       // We found a match to return 'true'.
@@ -440,8 +439,7 @@ bool ExecutionControlBase::object_instance_name_reservation_failed(
 void ExecutionControlBase::register_objects_with_RTI()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      message_publish( MSG_NORMAL, "ExecutionControlBase::register_objects_with_RTI():%d\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    // Register any ExecutionConfiguration objects.
@@ -514,16 +512,13 @@ void ExecutionControlBase::clear_multiphase_init_sync_points()
    // initialization process so just return.
    if ( federate->is_late_joining_federate() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         message_publish( MSG_NORMAL, "ExecutionControlBase::clear_multiphase_init_sync_points():%d Late \
-joining federate so this call will be ignored.\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Late joining federate so this call will be ignored.\n" );
       }
       return;
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      message_publish( MSG_NORMAL, "ExecutionControlBase::clear_multiphase_init_sync_points():%d\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    // Achieve all the multiphase initialization synchronization points except.
@@ -565,9 +560,8 @@ void ExecutionControlBase::send_execution_configuration()
 {
    if ( execution_configuration == nullptr ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         message_publish( MSG_NORMAL, "ExecutionControlBase::send_execution_configuration():%d This call \
-will be ignored because the Simulation Initialization Scheme does not support it.\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      "his call will be ignored because the Simulation Initialization Scheme does not support it.\n" );
       }
       return;
    }
@@ -578,7 +572,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      message_publish( MSG_NORMAL, "ExecutionControlBase::send_ssend_execution_configurationim_config():%d\n", __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    // Make sure we have at least one piece of ExecutionConfiguration data we can send.
@@ -605,9 +599,8 @@ void ExecutionControlBase::receive_execution_configuration()
 {
    if ( execution_configuration == nullptr ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         message_publish( MSG_NORMAL, "ExecutionControlBase::receive_execution_configuration():%d This call \
-will be ignored because the Simulation Initialization Scheme does not support it.\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      "This call will be ignored because the Simulation Initialization Scheme does not support it.\n" );
       }
       return;
    }
@@ -618,8 +611,7 @@ will be ignored because the Simulation Initialization Scheme does not support it
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      message_publish( MSG_NORMAL, "ExecutionControlBase::receive_execution_configuration():%d Waiting...\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Waiting...\n" );
    }
 
    // Make sure we have at least one piece of ExecutionConfiguration data we can receive.
@@ -656,15 +648,13 @@ will be ignored because the Simulation Initialization Scheme does not support it
 
             if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
-               message_publish( MSG_NORMAL, "ExecutionControlBase::receive_execution_configuration():%d Waiting...\n",
-                                __LINE__ );
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Waiting...\n" );
             }
          }
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         message_publish( MSG_NORMAL, "ExecutionControlBase::receive_execution_configuration():%d Received data.\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Received data.\n" );
       }
 
       // Receive the ExecutionConfiguration data from the master federate.
@@ -824,9 +814,11 @@ bool ExecutionControlBase::mark_object_as_deleted_from_federation(
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          string id_str;
          StringUtilities::to_string( id_str, instance_id );
-         message_publish( MSG_NORMAL, "ExecutionControlBase::mark_object_as_deleted_from_federation():%d Object '%s' Instance-ID:%s Valid-ID:%s\n",
-                          __LINE__, execution_configuration->get_name().c_str(), id_str.c_str(),
-                          ( instance_id.isValid() ? "Yes" : "No" ) );
+         ostringstream msg;
+         msg << "Object '" << execution_configuration->get_name()
+             << "' Instance-ID:" << id_str
+             << " Valid-ID:" << ( instance_id.isValid() ? "Yes" : "No" ) << "\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
       execution_configuration->remove_object_instance();
       return true;
@@ -855,11 +847,10 @@ double ExecutionControlBase::get_sim_time() const
 
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       ostringstream errmsg;
-      errmsg << "ExecutionControlBase::get_sim_time():" << __LINE__
-             << " WARNING: The simulation timeline has not been set!"
+      errmsg << "The simulation timeline has not been set!"
              << " Please make sure you specify a sim-timeline in your input"
              << " file. Returning Trick simulation time instead!\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
    }
    return exec_get_sim_time();
 }
@@ -872,11 +863,10 @@ double ExecutionControlBase::get_scenario_time() const
 
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       ostringstream errmsg;
-      errmsg << "ExecutionControlBase::get_scenario_time():" << __LINE__
-             << " WARNING: The scenario timeline has not been set!"
+      errmsg << "The scenario timeline has not been set!"
              << " Please make sure you specify a scenario timeline in your input"
              << " file. Returning simulation elapsed time instead!\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
    }
    return get_sim_time();
 }
@@ -927,9 +917,10 @@ void ExecutionControlBase::enter_freeze()
 {
    // The default is to do nothing.
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      message_publish( MSG_NORMAL, "ExecutionControlBase::enter_freeze():%d Freeze Announced:%s, Freeze Pending:%s\n",
-                       __LINE__, ( is_freeze_announced() ? "Yes" : "No" ),
-                       ( is_freeze_pending() ? "Yes" : "No" ) );
+      ostringstream msg;
+      msg << "Freeze Announced:" << ( is_freeze_announced() ? "Yes" : "No" )
+          << ", Freeze Pending:" << ( is_freeze_pending() ? "Yes" : "No" ) << "\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 }
 
@@ -1068,8 +1059,9 @@ void ExecutionControlBase::save_process()
 
             // The Save failed.
             if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-               message_publish( MSG_ERROR, "ExecutionControlBase::save_process():%d Save: \'%s\' failed!\n",
-                                __LINE__, save_label_str.c_str() );
+               ostringstream errmsg;
+               errmsg << "Save failed for label '" << save_label_str << "'\n";
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_ERROR );
             }
             // Save actions when Save failed.
             save_restore_service->save_state = THLASaveProcessEnum::SAVE_FAILED;
@@ -1087,8 +1079,9 @@ void ExecutionControlBase::save_process()
       case THLASaveProcessEnum::SAVE_COMPLETE:
          // The Save was successfully completed.
          if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-            message_publish( MSG_NORMAL, "ExecutionControlBase::save_process():%d Save: \'%s\' completed!\n",
-                             __LINE__, save_label_str.c_str() );
+            ostringstream msg;
+            msg << "Save completed for '" << save_label_str << "'\n";
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
          }
          // Save actions when Save completed successfully.
          save_restore_service->save_succeded();
@@ -1100,8 +1093,9 @@ void ExecutionControlBase::save_process()
       case THLASaveProcessEnum::SAVE_FAILED:
          // The Save failed.
          if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-            message_publish( MSG_ERROR, "ExecutionControlBase::save_process():%d Save: \'%s\' failed!\n",
-                             __LINE__, save_label_str.c_str() );
+            ostringstream errmsg;
+            errmsg << "Save failed for label '" << save_label_str << "'\n";
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_ERROR );
          }
          // Save actions when Save failed.
          save_restore_service->save_failed();
@@ -1114,8 +1108,8 @@ void ExecutionControlBase::save_process()
       default:
          // Unknown Save state.  This is bad, so exit with error.
          ostringstream errmsg;
-         errmsg << "Unknown Save state = "
-                << static_cast< int >( save_restore_service->save_state ) << "\n";
+         errmsg << "Unknown Save state ("
+                << static_cast< int >( save_restore_service->save_state ) << ")\n";
          DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
          break;
    }
@@ -1138,8 +1132,7 @@ bool ExecutionControlBase::save( wstring const &label )
    if ( current_save_state == THLASaveProcessEnum::SAVE_UNSUPPORTED ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_WARNING, "ExecutionControlBase::save():%d HLA SaveRetore NOT supported!\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "HLA SaveRetore NOT supported!\n", MSG_WARNING );
       }
 
       return ( false );
@@ -1153,8 +1146,9 @@ bool ExecutionControlBase::save( wstring const &label )
         && ( current_save_state != THLASaveProcessEnum::SAVE_REQUESTED ) ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_WARNING, "ExecutionControlBase::save():%d : Save already in progress: \'%s\'!\n",
-                          __LINE__, current_save_state_str.c_str() );
+         ostringstream msg;
+         msg << "Save already in progress for '" << current_save_state_str << "'\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
       }
 
       return ( false );
@@ -1164,8 +1158,9 @@ bool ExecutionControlBase::save( wstring const &label )
    if ( current_save_state == THLASaveProcessEnum::SAVE_NONE ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "ExecutionControlBase::save():%d : Initiating Save: \'%s\'!\n",
-                          __LINE__, current_save_state_str.c_str() );
+         ostringstream msg;
+         msg << "Initiating Save for '" << current_save_state_str << "'\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
 
       // We are initiating the Save.
@@ -1174,8 +1169,9 @@ bool ExecutionControlBase::save( wstring const &label )
    } else if ( current_save_state == THLASaveProcessEnum::SAVE_REQUESTED ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "ExecutionControlBase::save():%d : Save Requested: \'%s\'!\n",
-                          __LINE__, current_save_state_str.c_str() );
+         ostringstream msg;
+         msg << "Save Requested for '" << current_save_state_str << "'\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
 
       // We have been requested to Save.
@@ -1198,11 +1194,10 @@ void ExecutionControlBase::save_at_SET(
          string label_str;
          StringUtilities::to_string( label_str, label );
          ostringstream errmsg;
-         errmsg << "ExecutionControlBase::save_at_SET():" << __LINE__
-                << " SaveRetore NOT supported!\n"
+         errmsg << "SaveRetore NOT supported!\n"
                 << " Label:'" << label_str << "'\n"
                 << " sim_time:" << sim_time << "\n";
-         message_publish( MSG_WARNING, errmsg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
       }
       return;
    }
@@ -1225,11 +1220,10 @@ void ExecutionControlBase::save_at_SST(
          string label_str;
          StringUtilities::to_string( label_str, label );
          ostringstream errmsg;
-         errmsg << "ExecutionControlBase::save_at_SST():" << __LINE__
-                << " SaveRetore NOT supported!\n"
+         errmsg << "SaveRetore NOT supported!\n"
                 << " Label:'" << label_str << "'\n"
                 << " scenario_time:" << scenario_time << "\n";
-         message_publish( MSG_WARNING, errmsg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
       }
       return;
    }
@@ -1254,11 +1248,10 @@ void ExecutionControlBase::save_at_HLT(
          string time_str;
          StringUtilities::to_string( time_str, time.toString() );
          ostringstream errmsg;
-         errmsg << "ExecutionControlBase::save_at_HLT():" << __LINE__
-                << " SaveRetore NOT supported!\n"
+         errmsg << "SaveRetore NOT supported!\n"
                 << " Label:'" << label_str << "'\n"
                 << " time:" << time_str << "\n";
-         message_publish( MSG_WARNING, errmsg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
       }
       return;
    }
@@ -1351,8 +1344,9 @@ void ExecutionControlBase::restore_process()
       case THLARestoreProcessEnum::RESTORE_COMPLETE:
          // The Federation wide Restore was successfully completed.
          if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-            message_publish( MSG_NORMAL, "ExecutionControlBase::restore_process():%d Restore: \'%s\' completed!\n",
-                             __LINE__, restore_label_str.c_str() );
+            ostringstream msg;
+            msg << "Restore completed for '" << restore_label_str << "'\n";
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
          }
          // Restore actions when Restore completed successfully.
          this->restore_succeded();
@@ -1364,8 +1358,9 @@ void ExecutionControlBase::restore_process()
       case THLARestoreProcessEnum::RESTORE_FAILED:
          // The Restore failed.
          if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-            message_publish( MSG_ERROR, "ExecutionControlBase::restore_process():%d Restore: \'%s\' failed!\n",
-                             __LINE__, restore_label_str.c_str() );
+            ostringstream errmsg;
+            errmsg << "Restore failed for label '" << restore_label_str << "'\n";
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_ERROR );
          }
          // Restore actions when Restore failed.
          this->restore_failed();
@@ -1530,10 +1525,9 @@ bool ExecutionControlBase::restore( wstring const &label )
          string label_str;
          StringUtilities::to_string( label_str, label );
          ostringstream errmsg;
-         errmsg << "ExecutionControlBase::restore():" << __LINE__
-                << " SaveRetore NOT supported!\n"
+         errmsg << "SaveRetore NOT supported!\n"
                 << " Label:'" << label_str << "'\n";
-         message_publish( MSG_WARNING, errmsg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
       }
       return ( false );
    }
@@ -1548,8 +1542,9 @@ bool ExecutionControlBase::restore( wstring const &label )
    if ( current_restore_state != THLARestoreProcessEnum::RESTORE_NONE ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_WARNING, "ExecutionControlBase::restore():%d : Restore already in progress: \'%s\'!\n",
-                          __LINE__, current_restore_state_str.c_str() );
+         ostringstream msg;
+         msg << "Restore already in progress for '" << current_restore_state_str << "'\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
       }
 
       return ( false );
@@ -1596,10 +1591,7 @@ std::string const ExecutionControlBase::map_label_to_checkpoint_file_name(
 void ExecutionControlBase::convert_data_before_checkpoint()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      ostringstream msg;
-      msg << "ExecutionControlBase::convert_data_before_checkpoint():"
-          << __LINE__ << " Converting data for checkpointing.\n";
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Converting data for checkpointing.\n" );
    }
 
    // Make sure to free resources before doing the data conversions to avoid
@@ -1628,10 +1620,7 @@ void ExecutionControlBase::convert_data_before_checkpoint()
 void ExecutionControlBase::restore_data_after_checkpoint()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      ostringstream msg;
-      msg << "ExecutionControlBase::restore_data_after_checkpoint():"
-          << __LINE__ << " Restoring data after checkpoint loading.\n";
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Restoring data after checkpoint loading.\n" );
    }
 
    // TODO: Do the Timelines need to be restored.
@@ -1656,10 +1645,7 @@ void ExecutionControlBase::restore_data_after_checkpoint()
 void ExecutionControlBase::free_converted_data_for_checkpoint()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      ostringstream msg;
-      msg << "ExecutionControlBase::free_converted_data_for_checkpoint():"
-          << __LINE__ << " Freeing data allocated for checkpointing.\n";
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Freeing data allocated for checkpointing.\n" );
    }
 
    // TODO: Do the Timelines converted data need to be free.
@@ -1692,10 +1678,7 @@ void ExecutionControlBase::checkpoint_before()
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      ostringstream msg;
-      msg << "ExecutionControlBase::checkpoint_before():"
-          << __LINE__ << " Preparing for a checkpoint.\n";
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Preparing for a checkpoint.\n" );
    }
 
    // Convert data using the top level Federate interface.
@@ -1710,10 +1693,7 @@ void ExecutionControlBase::checkpoint_before()
 void ExecutionControlBase::checkpoint_after()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      ostringstream msg;
-      msg << "ExecutionControlBase::checkpoint_after():"
-          << __LINE__ << " Cleaning up after a checkpoint.\n";
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Cleaning up after a checkpoint.\n" );
    }
 
    // Normally there's nothing to do after dropping a checkpoint.
@@ -1731,19 +1711,15 @@ void ExecutionControlBase::checkpoint_preload()
       string restore_label_str;
       StringUtilities::to_string( restore_label_str, save_restore_service->restore_label );
       ostringstream errmsg;
-      errmsg << "ExecutionControlBase::checkpoint_preload():" << __LINE__
-             << " Unexpected Restore state for label: " << restore_label_str << "\n"
+      errmsg << "Unexpected Restore state for label: " << restore_label_str << "\n"
              << "   Expected state: RESTORE_INITIATED\n"
              << "   Current state : " << TrickHLA::to_string( save_restore_service->restore_state ) << "\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
       return;
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      ostringstream msg;
-      msg << "ExecutionControlBase::checkpoint_preload():"
-          << __LINE__ << " Preparing to load a checkpoint.\n";
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Preparing to load a checkpoint.\n" );
    }
 
    // Free any resources allocated for a previous checkpoint.  We do this
@@ -1770,11 +1746,10 @@ void ExecutionControlBase::checkpoint_restart()
          string label_str;
          StringUtilities::to_string( label_str, save_restore_service->restore_label );
          ostringstream errmsg;
-         errmsg << "ExecutionControlBase::checkpoint_restart():" << __LINE__
-                << " WARNING: Resetting Save state to THLASaveProcessEnum::SAVE_NONE!\n"
+         errmsg << "Resetting Save state to THLASaveProcessEnum::SAVE_NONE!\n"
                 << " Label: '" << label_str << "'\n"
                 << " State: '" << TrickHLA::to_string( save_restore_service->save_state ) << "'\n";
-         message_publish( MSG_WARNING, errmsg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
       }
       save_restore_service->save_state = THLASaveProcessEnum::SAVE_NONE;
    }
@@ -1789,9 +1764,8 @@ void ExecutionControlBase::checkpoint_restart()
       string restore_label_str;
       StringUtilities::to_string( restore_label_str, save_restore_service->restore_label );
       ostringstream errmsg;
-      errmsg << "ExecutionControlBase::checkpoint_restart():" << __LINE__
-             << " Restore failed for label: " << restore_label_str << "\n";
-      message_publish( MSG_ERROR, errmsg.str().c_str() );
+      errmsg << "Restore failed for label '" << restore_label_str << "'\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_ERROR );
 
       // Return and let the restore_process handle the failure.
       return;
@@ -1803,19 +1777,15 @@ void ExecutionControlBase::checkpoint_restart()
       string restore_label_str;
       StringUtilities::to_string( restore_label_str, save_restore_service->restore_label );
       ostringstream errmsg;
-      errmsg << "ExecutionControlBase::checkpoint_restart():" << __LINE__
-             << " Unexpected Restore state for label: " << restore_label_str << "\n"
+      errmsg << "Unexpected Restore state for label: " << restore_label_str << "\n"
              << "   Expected state: RESTORE_INITIATED\n"
              << "   Current state : " << TrickHLA::to_string( save_restore_service->restore_state ) << "\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
       return;
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      ostringstream msg;
-      msg << "ExecutionControlBase::checkpoint_restart():"
-          << __LINE__ << " Restarting after loading a checkpoint.\n";
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Restarting after loading a checkpoint.\n" );
    }
 
    // Call the SyncpointManagerBase function.

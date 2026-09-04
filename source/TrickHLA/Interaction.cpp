@@ -128,7 +128,7 @@ Interaction::~Interaction()
 
    if ( user_supplied_tag != nullptr ) {
       if ( !MemoryServices::delete_var( user_supplied_tag ) ) {
-         message_publish( MSG_WARNING, "Interaction::~Interaction():%d WARNING failed to delete Trick Memory for 'user_supplied_tag'\n",
+         message_publish( MSG_WARNING, "Interaction::~Interaction():%d WARNING Failed to delete Trick Memory for 'user_supplied_tag'\n",
                           __LINE__ );
       }
       user_supplied_tag      = nullptr;
