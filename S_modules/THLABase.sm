@@ -53,11 +53,16 @@
 ##include "TrickHLA/Interaction.hh"
 ##include "TrickHLA/InteractionHandler.hh"
 ##include "TrickHLA/InteractionItem.hh"
+##include "TrickHLA/InteractionServices.hh"
 ##include "TrickHLA/LagCompensation.hh"
+##include "TrickHLA/MemoryServices.hh"
 ##include "TrickHLA/ObjectDeletedHandler.hh"
+##include "TrickHLA/ObjectServices.hh"
 ##include "TrickHLA/OwnershipHandler.hh"
 ##include "TrickHLA/Parameter.hh"
 ##include "TrickHLA/ParameterItem.hh"
+##include "TrickHLA/SaveRestoreServices.hh"
+##include "TrickHLA/time/TimeManagementServices.hh"
 
 //=========================================================================
 // SIM_OBJECT: THLABaseSimObject - Generalized TrickHLA interface routines.

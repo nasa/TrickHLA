@@ -5,6 +5,9 @@
 
 ##include "TrickHLA/CompileConfig.hh"
 ##include "TrickHLA/Federate.hh"
+##include "TrickHLA/LagCompensation.hh"
+##include "TrickHLA/ObjectDeletedHandler.hh"
+##include "TrickHLA/OwnershipHandler.hh"
 ##include "TrickHLA/encoding/EncoderFactory.hh"
 ##include "TrickHLA/encoding/EncoderBase.hh"
 
