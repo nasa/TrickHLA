@@ -237,8 +237,7 @@ void ObjectServices::send_init_data()
                ostringstream errmsg;
                errmsg << "For object '" << objects[n].name << "' this call will be"
                       << " ignored because the Simulation Initialization Scheme (Type:'"
-                      << federate->execution_control->get_type()
-                      << "') does not support it.\n";
+                      << federate->execution_control->get_type() << "') does not support it.\n";
                DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
             }
          }

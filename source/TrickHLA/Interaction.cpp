@@ -40,13 +40,13 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstring>
+#include <iomanip>
 #include <map>
 #include <ostream>
 #include <sstream>
 #include <string>
 
 // Trick includes.
-#include "trick/message_proto.h"
 #include "trick/message_type.h"
 
 // TrickHLA includes.
@@ -128,8 +128,8 @@ Interaction::~Interaction()
 
    if ( user_supplied_tag != nullptr ) {
       if ( !MemoryServices::delete_var( user_supplied_tag ) ) {
-         message_publish( MSG_WARNING, "Interaction::~Interaction():%d WARNING Failed to delete Trick Memory for 'user_supplied_tag'\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      "Failed to delete Trick Memory for 'user_supplied_tag'\n", MSG_WARNING );
       }
       user_supplied_tag      = nullptr;
       user_supplied_tag_size = 0;
@@ -166,8 +166,8 @@ void Interaction::initialize(
    // Do a quick bounds check on the 'preferred_order' value.
    if ( ( preferred_order < TRANSPORT_FIRST_VALUE ) || ( preferred_order > TRANSPORT_LAST_VALUE ) ) {
       ostringstream errmsg;
-      errmsg << "For Interaction '"
-             << get_FOM_name() << "', the 'preferred_order' is not valid and must be one"
+      errmsg << "For Interaction '" << get_FOM_name()
+             << "', the 'preferred_order' is not valid and must be one"
              << " of TRANSPORT_SPECIFIED_IN_FOM, TRANSPORT_TIMESTAMP_ORDER or"
              << " TRANSPORT_RECEIVE_ORDER. Please check your input or modified-data"
              << " files to make sure the 'preferred_order' is correctly specified.\n";
@@ -177,8 +177,8 @@ void Interaction::initialize(
    // If we have an parameter count but no parameters then let the user know.
    if ( ( param_count > 0 ) && ( parameters == nullptr ) ) {
       ostringstream errmsg;
-      errmsg << "For Interaction '"
-             << get_FOM_name() << "', the 'param_count' is " << param_count
+      errmsg << "For Interaction '" << get_FOM_name()
+             << "', the 'param_count' is " << param_count
              << " but no 'parameters' are specified. Please check your input or"
              << " modified-data files to make sure the Interaction Parameters are"
              << " correctly specified.\n";
@@ -189,8 +189,8 @@ void Interaction::initialize(
    // the user know.
    if ( ( param_count <= 0 ) && ( parameters != nullptr ) ) {
       ostringstream errmsg;
-      errmsg << "For Interaction '"
-             << get_FOM_name() << "', the 'param_count' is " << param_count
+      errmsg << "For Interaction '" << get_FOM_name()
+             << "', the 'param_count' is " << param_count
              << " but 'parameters' have been specified. Please check your input"
              << " or modified-data files to make sure the Interaction Parameters"
              << " are correctly specified.\n";
@@ -317,8 +317,9 @@ void Interaction::remove() // RETURN: -- None.
             // Un-publish the Interaction.
             try {
                if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
-                  message_publish( MSG_NORMAL, "Interaction::remove():%d Unpublish Interaction '%s'.\n",
-                                   __LINE__, get_FOM_name().c_str() );
+                  ostringstream msg;
+                  msg << "Unpublish Interaction '" << get_FOM_name() << "'\n";
+                  DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
                }
 
                rti_amb->unpublishInteractionClass( get_class_handle() );
@@ -348,16 +349,16 @@ void Interaction::setup_preferred_order_with_RTI()
 
    RTIambassador *rti_amb = federate->get_RTI_ambassador();
    if ( rti_amb == nullptr ) {
-      message_publish( MSG_WARNING, "Interaction::setup_preferred_order_with_RTI():%d Unexpected nullptr RTIambassador.\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr RTIambassador.\n", MSG_WARNING );
       return;
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
-      message_publish( MSG_NORMAL, "Interaction::setup_preferred_order_with_RTI():%d \
-Published Interaction '%s' Preferred-Order:%s\n",
-                       __LINE__, get_FOM_name().c_str(),
-                       ( preferred_order == TRANSPORT_TIMESTAMP_ORDER ? "TIMESTAMP" : "RECEIVE" ) );
+      ostringstream msg;
+      msg << "Published Interaction '" << get_FOM_name() << "' Preferred-Order:"
+          << ( preferred_order == TRANSPORT_TIMESTAMP_ORDER ? "TIMESTAMP" : "RECEIVE" )
+          << "\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    // Macro to save the FPU Control Word register value.
@@ -412,14 +413,14 @@ void Interaction::publish_interaction()
 
    RTIambassador *rti_amb = federate->get_RTI_ambassador();
    if ( rti_amb == nullptr ) {
-      message_publish( MSG_WARNING, "Interaction::publish_interaction():%d Unexpected nullptr RTIambassador.\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr RTIambassador.\n", MSG_WARNING );
       return;
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
-      message_publish( MSG_NORMAL, "Interaction::publish_interaction():%d Interaction '%s'.\n",
-                       __LINE__, get_FOM_name().c_str() );
+      ostringstream msg;
+      msg << "Interaction '" << get_FOM_name() << "'\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    // Macro to save the FPU Control Word register value.
@@ -455,8 +456,7 @@ void Interaction::unpublish_interaction()
 {
    RTIambassador *rti_amb = federate->get_RTI_ambassador();
    if ( rti_amb == nullptr ) {
-      message_publish( MSG_WARNING, "Interaction::unpublish_interaction():%d Unexpected nullptr RTIambassador.\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr RTIambassador.\n", MSG_WARNING );
       return;
    }
 
@@ -464,8 +464,9 @@ void Interaction::unpublish_interaction()
    if ( is_publish() ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
-         message_publish( MSG_NORMAL, "Interaction::unpublish_interaction():%d Interaction '%s'\n",
-                          __LINE__, get_FOM_name().c_str() );
+         ostringstream msg;
+         msg << "Interaction '" << get_FOM_name() << "'\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
 
       // Macro to save the FPU Control Word register value.
@@ -502,8 +503,7 @@ void Interaction::subscribe_to_interaction()
    // Get the RTI-Ambassador.
    RTIambassador *rti_amb = federate->get_RTI_ambassador();
    if ( rti_amb == nullptr ) {
-      message_publish( MSG_WARNING, "Interaction::subscribe_to_interaction():%d Unexpected nullptr RTIambassador.\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr RTIambassador.\n", MSG_WARNING );
       return;
    }
 
@@ -511,8 +511,9 @@ void Interaction::subscribe_to_interaction()
    if ( is_subscribe() ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
-         message_publish( MSG_NORMAL, "Interaction::subscribe_to_interaction():%d Interaction '%s'\n",
-                          __LINE__, get_FOM_name().c_str() );
+         ostringstream msg;
+         msg << "Interaction '" << get_FOM_name() << "'\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
 
       // Macro to save the FPU Control Word register value.
@@ -552,8 +553,7 @@ void Interaction::unsubscribe_from_interaction()
    RTIambassador *rti_amb = federate->get_RTI_ambassador();
 
    if ( rti_amb == nullptr ) {
-      message_publish( MSG_WARNING, "Interaction::unsubscribe_from_interaction():%d Unexpected nullptr RTIambassador.\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr RTIambassador.\n", MSG_WARNING );
       return;
    }
 
@@ -561,8 +561,9 @@ void Interaction::unsubscribe_from_interaction()
    if ( is_subscribe() ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
-         message_publish( MSG_NORMAL, "Interaction::unsubscribe_from_interaction():%d Interaction '%s'\n",
-                          __LINE__, get_FOM_name().c_str() );
+         ostringstream msg;
+         msg << "Interaction '" << get_FOM_name() << "'\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
 
       // Macro to save the FPU Control Word register value.
@@ -608,8 +609,7 @@ bool Interaction::send(
    // Get the RTI-Ambassador.
    RTIambassador *rti_amb = federate->get_RTI_ambassador();
    if ( rti_amb == nullptr ) {
-      message_publish( MSG_WARNING, "Interaction::send():%d As Receive-Order: Unexpected nullptr RTIambassador.\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr RTIambassador.\n", MSG_WARNING );
       return ( false );
    }
 
@@ -631,8 +631,9 @@ bool Interaction::send(
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
-      message_publish( MSG_NORMAL, "Interaction::send():%d As Receive-Order: Interaction '%s'\n",
-                       __LINE__, get_FOM_name().c_str() );
+      ostringstream msg;
+      msg << "As Reeive-Order Interaction '" << get_FOM_name() << "'\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    bool successfuly_sent = false;
@@ -677,8 +678,7 @@ bool Interaction::send(
 
    RTIambassador *rti_amb = federate->get_RTI_ambassador();
    if ( rti_amb == nullptr ) {
-      message_publish( MSG_WARNING, "Interaction::send():%d Unexpected nullptr RTIambassador.\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr RTIambassador.\n", MSG_WARNING );
       return ( false );
    }
 
@@ -694,8 +694,9 @@ bool Interaction::send(
       // Add all the parameter values to the map.
       for ( int i = 0; i < param_count; ++i ) {
          if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
-            message_publish( MSG_NORMAL, "Interaction::send():%d Adding '%s' to parameter map.\n",
-                             __LINE__, parameters[i].get_FOM_name().c_str() );
+            ostringstream msg;
+            msg << "Adding '" << parameters[i].get_FOM_name() << "' to parameter map.\n";
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
          }
          param_values_map[parameters[i].get_parameter_handle()] = parameters[i].encode();
       }
@@ -723,8 +724,10 @@ bool Interaction::send(
          if ( send_with_timestamp ) {
 
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
-               message_publish( MSG_NORMAL, "Interaction::send():%d As Timestamp-Order: Interaction '%s' sent for time %lf seconds.\n",
-                                __LINE__, get_FOM_name().c_str(), time.get_time_in_seconds() );
+               ostringstream msg;
+               msg << "Sending as Timestamp-Order, Interaction '" << get_FOM_name() << "' sent for time "
+                   << setprecision( 18 ) << time.get_time_in_seconds() << " seconds.\n";
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
             }
 
             // This call returns an event retraction handle but we
@@ -738,11 +741,12 @@ bool Interaction::send(
 
          } else {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
-               message_publish( MSG_NORMAL, "Interaction::send():%d As Receive-Order: \
-Interaction '%s' is time-regulating:%s, preferred-order:%s.\n",
-                                __LINE__, get_FOM_name().c_str(),
-                                ( federate->time_management_service.in_time_regulating_state() ? "Yes" : "No" ),
-                                ( ( preferred_order == TRANSPORT_RECEIVE_ORDER ) ? "receive" : "timestamp" ) );
+               ostringstream msg;
+               msg << "Sending as Receive-Order, Interaction '" << get_FOM_name()
+                   << "' is time-regulating:" << ( federate->time_management_service.in_time_regulating_state() ? "Yes" : "No" )
+                   << " with preferred-order:" << ( ( preferred_order == TRANSPORT_RECEIVE_ORDER ) ? "Receive" : "Timestamp" )
+                   << "\n";
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
             }
 
             // Send in Receive Order (i.e. with no timestamp).
@@ -759,22 +763,20 @@ Interaction '%s' is time-regulating:%s, preferred-order:%s.\n",
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
       ostringstream errmsg;
-      errmsg << "Interaction::send():" << __LINE__ << " As "
-             << ( send_with_timestamp ? "Timestamp Order" : "Receive Order" )
+      errmsg << " As " << ( send_with_timestamp ? "Timestamp Order" : "Receive Order" )
              << ", InvalidLogicalTime exception for " << get_FOM_name()
-             << "  time=" << time.get_time_in_seconds() << " ("
+             << "  time:" << setprecision( 18 ) << time.get_time_in_seconds() << " ("
              << time.get_base_time() << " " << Int64BaseTime::get_base_unit()
              << " error message:'" << rti_err_msg << "'\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
    } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       string rti_err_msg;
       StringUtilities::to_string( rti_err_msg, e.what() );
       ostringstream errmsg;
-      errmsg << "Interaction::send():" << __LINE__ << " As "
-             << ( send_with_timestamp ? "Timestamp Order" : "Receive Order" )
+      errmsg << " As " << ( send_with_timestamp ? "Timestamp Order" : "Receive Order" )
              << ", Interaction '" << get_FOM_name() << "' with exception '"
              << rti_err_msg << "'\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
    }
 
    // Macro to restore the saved FPU Control Word register value.
@@ -809,14 +811,15 @@ void Interaction::process_interaction()
       if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
          string handle_str;
          StringUtilities::to_string( handle_str, class_handle );
+         ostringstream msg;
+         msg << "Handle-ID:" << handle_str << ", FOM_name:'" << get_FOM_name();
          if ( received_as_TSO ) {
-            message_publish( MSG_NORMAL, "Interaction::process_interaction():%d ID:%s, FOM_name:'%s', HLA time:%G, Timestamp-Order\n",
-                             __LINE__, handle_str.c_str(), get_FOM_name().c_str(),
-                             time.get_time_in_seconds() );
+            msg << "', HLA time:" << setprecision( 18 ) << time.get_time_in_seconds()
+                << " seconds, Timestamp-Order\n";
          } else {
-            message_publish( MSG_NORMAL, "Interaction::process_interaction():%d ID:%s, FOM_name:'%s', Receive-Order\n",
-                             __LINE__, handle_str.c_str(), get_FOM_name().c_str() );
+            msg << "', Receive-Order\n";
          }
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
 
       // Unlock the mutex as the auto_unlock_mutex goes out of scope.
@@ -847,8 +850,9 @@ bool Interaction::decode(
    if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
       string handle_str;
       StringUtilities::to_string( handle_str, class_handle );
-      message_publish( MSG_NORMAL, "Interaction::decode():%d ID:%s, FOM_name:'%s'\n",
-                       __LINE__, handle_str.c_str(), get_FOM_name().c_str() );
+      ostringstream msg;
+      msg << "Handle-ID:" << handle_str << ", FOM_name:'" << get_FOM_name() << "'\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    // For thread safety, lock here to avoid corrupting the parameters.
@@ -887,8 +891,10 @@ bool Interaction::decode(
       if ( ( param_item != nullptr ) && ( param_item->index < (size_t)param_count ) ) {
 
          if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
-            message_publish( MSG_NORMAL, "Interaction::decode():%d Decoding '%s' from parameter map.\n",
-                             __LINE__, parameters[param_item->index].get_FOM_name().c_str() );
+            ostringstream msg;
+            msg << "Decoding '" << parameters[param_item->index].get_FOM_name()
+                << "' from parameter map.\n";
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
          }
          if ( parameters[param_item->index].decode( VariableLengthData( param_item->data, param_item->size ) ) ) {
             any_param_received = true;

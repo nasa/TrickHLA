@@ -246,7 +246,7 @@ bool MemoryServices::delete_var( T addr )
    if ( trick_MM->delete_var( static_cast< void * >( addr ) ) ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_MEMORY_SERVICES ) ) {
          std::ostringstream msg;
-         msg << "Could not delete variable at address: " << std::hex << addr << "\n";
+         msg << "Could not delete variable at address: 0x" << std::hex << addr << "\n";
          DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
       }
       return ( false );

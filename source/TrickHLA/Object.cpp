@@ -47,6 +47,7 @@ NASA, Johnson Space Center\n
 #include <cstdint>
 #include <cstdlib>
 #include <cstring>
+#include <iomanip>
 #include <ostream>
 #include <pthread.h>
 #include <set>
@@ -56,7 +57,6 @@ NASA, Johnson Space Center\n
 
 // Trick includes.
 #include "trick/exec_proto.h"
-#include "trick/message_proto.h"
 #include "trick/message_type.h"
 
 // TrickHLA includes.
@@ -274,7 +274,7 @@ void Object::initialize(
    // Do a bounds check on the 'lag_comp_type' value.
    if ( ( lag_comp_type < LAG_COMPENSATION_FIRST_VALUE ) || ( lag_comp_type > LAG_COMPENSATION_LAST_VALUE ) ) {
       ostringstream errmsg;
-      errmsg << "For object '" << name << "', the Lag-Compensation Type"
+      errmsg << "Object '" << name << "', the Lag-Compensation Type"
              << " setting 'lag_comp_type' has a value that is out of the valid"
              << " range of " << LAG_COMPENSATION_FIRST_VALUE << " to "
              << LAG_COMPENSATION_LAST_VALUE << ". Please check your input"
@@ -286,7 +286,7 @@ void Object::initialize(
    // Make sure we have a lag compensation object if lag-compensation is specified.
    if ( ( lag_comp_type != LAG_COMPENSATION_NONE ) && ( lag_comp == nullptr ) ) {
       ostringstream errmsg;
-      errmsg << "For object '" << name << "', Lag-Compensation 'lag_comp_type'"
+      errmsg << "Object '" << name << "', Lag-Compensation 'lag_comp_type'"
              << " is specified, but 'lag_comp' is nullptr! Please check your input"
              << " or modified-data files to make sure the Lag-Compensation type"
              << " and object are correctly specified.\n";
@@ -296,7 +296,7 @@ void Object::initialize(
    // If we have an attribute count but no attributes then let the user know.
    if ( ( attr_count > 0 ) && ( attributes == nullptr ) ) {
       ostringstream errmsg;
-      errmsg << "For object '" << name << "', the 'attr_count' is "
+      errmsg << "Object '" << name << "', the 'attr_count' is "
              << attr_count << " but no 'attributes' are"
              << " specified. Please check your input or modified-data files to"
              << " make sure the attributes are correctly specified.\n";
@@ -307,7 +307,7 @@ void Object::initialize(
    // the user know.
    if ( ( attr_count <= 0 ) && ( attributes != nullptr ) ) {
       ostringstream errmsg;
-      errmsg << "For object '" << name << "', the 'attr_count' is "
+      errmsg << "Object '" << name << "', the 'attr_count' is "
              << attr_count << " but 'attributes' have been"
              << " specified. Please check your input or modified-data files to"
              << " make sure the attributes are correctly specified.\n";
@@ -318,7 +318,7 @@ void Object::initialize(
    // Packing virtual class.
    if ( ( packing != nullptr ) && ( dynamic_cast< Packing * >( packing ) == nullptr ) ) {
       ostringstream errmsg;
-      errmsg << "For object '" << name << "',"
+      errmsg << "Object '" << name << "',"
              << " the 'packing' setting does not point to a class that"
              << " extends the Packing class. Please check your input"
              << " or modified-data files to make sure the attributes are"
@@ -330,7 +330,7 @@ void Object::initialize(
    // the OwnershipHandler virtual class.
    if ( ( ownership != nullptr ) && ( dynamic_cast< OwnershipHandler * >( ownership ) == nullptr ) ) {
       ostringstream errmsg;
-      errmsg << "For object '" << name << "',"
+      errmsg << "Object '" << name << "',"
              << " the 'ownership' setting does not point to a class that"
              << " extends the OwnershipHandler class. Please check"
              << " your input or modified-data files to make sure the"
@@ -342,7 +342,7 @@ void Object::initialize(
    // it extends the ObjectDeletedHandler virtual class.
    if ( ( deleted != nullptr ) && ( dynamic_cast< ObjectDeletedHandler * >( deleted ) == nullptr ) ) {
       ostringstream errmsg;
-      errmsg << "For object '" << name << "', the 'deleted' setting does not"
+      errmsg << "Object '" << name << "', the 'deleted' setting does not"
              << " point to a class that extends the ObjectDeletedHandler"
              << " class. Please check your input or modified-data files to make"
              << " sure the attributes are correctly specified.\n";
@@ -372,7 +372,7 @@ void Object::initialize(
       }
       if ( any_cyclic_attr && any_zero_lookahead_attr ) {
          ostringstream errmsg;
-         errmsg << "For object '" << name << "', detected Attributes"
+         errmsg << "Object '" << name << "', detected Attributes"
                 << " with a mix of CONFIG_CYCLIC and CONFIG_ZERO_LOOKAHEAD for"
                 << " the 'config' setting, which can lead to deadlock. Please"
                 << " configure all the Attributes of this object to use one of"
@@ -382,7 +382,7 @@ void Object::initialize(
       }
       if ( any_cyclic_attr && any_blocking_io_attr ) {
          ostringstream errmsg;
-         errmsg << "For object '" << name << "', detected Attributes"
+         errmsg << "Object '" << name << "', detected Attributes"
                 << " with a mix of CONFIG_CYCLIC and CONFIG_BLOCKING_IO for"
                 << " the 'config' setting, which can lead to deadlock. Please"
                 << " configure all the Attributes of this object to use one of"
@@ -392,7 +392,7 @@ void Object::initialize(
       }
       if ( any_zero_lookahead_attr && any_blocking_io_attr ) {
          ostringstream errmsg;
-         errmsg << "For object '" << name << "', detected Attributes"
+         errmsg << "Object '" << name << "', detected Attributes"
                 << " with a mix of CONFIG_ZERO_LOOKAHEAD and CONFIG_BLOCKING_IO for"
                 << " the 'config' setting, which can lead to deadlock. Please"
                 << " configure all the Attributes of this object to use one of"
@@ -407,7 +407,7 @@ void Object::initialize(
    // transfer (i.e. intra-frame).
    if ( any_zero_lookahead_attr && ( lag_comp != nullptr ) && ( lag_comp_type != LAG_COMPENSATION_NONE ) ) {
       ostringstream errmsg;
-      errmsg << "For object '" << name << "', detected Attributes"
+      errmsg << "Object '" << name << "', detected Attributes"
              << " with a 'config' setting of CONFIG_ZERO_LOOKAHEAD but a"
              << " Lag-Compensation 'lag_comp' callback has also been specified"
              << " with a 'lag_comp_type' setting that is not LAG_COMPENSATION_NONE!"
@@ -423,7 +423,7 @@ void Object::initialize(
    // transfer (i.e. intra-frame).
    if ( any_blocking_io_attr && ( lag_comp != nullptr ) && ( lag_comp_type != LAG_COMPENSATION_NONE ) ) {
       ostringstream errmsg;
-      errmsg << "For object '" << name << "', detected Attributes"
+      errmsg << "Object '" << name << "', detected Attributes"
              << " with a 'config' setting of CONFIG_BLOCKING_IO but a"
              << " Lag-Compensation 'lag_comp' callback has also been specified"
              << " with a 'lag_comp_type' setting that is not LAG_COMPENSATION_NONE!"
@@ -438,7 +438,7 @@ void Object::initialize(
    // also be configured for a lookahead time of zero.
    if ( any_zero_lookahead_attr && !federate->get_time_management_service()->is_zero_lookahead_time() ) {
       ostringstream errmsg;
-      errmsg << "For object '" << name << "', detected Attributes"
+      errmsg << "Object '" << name << "', detected Attributes"
              << " with a 'config' setting of CONFIG_ZERO_LOOKAHEAD but the"
              << " federate has been configured with a non-zero lookahead time of "
              << federate->get_lookahead().get_time_in_seconds() << " seconds ("
@@ -508,7 +508,7 @@ void Object::initialize(
    // LagCompensation virtual class.
    if ( ( lag_comp != nullptr ) && ( dynamic_cast< LagCompensation * >( lag_comp ) == nullptr ) ) {
       ostringstream errmsg;
-      errmsg << "For object '" << name << "', the 'lag_comp' setting does not"
+      errmsg << "Object '" << name << "', the 'lag_comp' setting does not"
              << " point to a class that extends the LagCompensation"
              << " class. Please check your input or modified-data files to make"
              << " sure the attributes are correctly specified.\n";
@@ -645,9 +645,10 @@ void Object::remove_object_instance()
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
-      message_publish( MSG_NORMAL, "Object::remove_object_instance():%d Object '%s' Instance-ID:%s Valid-ID:%s\n",
-                       __LINE__, get_name().c_str(),
-                       id_str.c_str(), ( is_instance_handle_valid() ? "Yes" : "No" ) );
+      ostringstream msg;
+      msg << "Object '" << get_name() << "' Instance-Handle:" << id_str
+          << " Valid-Handle:" << ( is_instance_handle_valid() ? "Yes" : "No" ) << "\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 }
 
@@ -662,9 +663,10 @@ void Object::process_deleted_object()
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          string id_str;
          StringUtilities::to_string( id_str, instance_handle );
-         message_publish( MSG_NORMAL, "Object::process_deleted_object():%d Object '%s' Instance-ID:%s Valid-ID:%s\n",
-                          __LINE__, get_name().c_str(),
-                          id_str.c_str(), ( is_instance_handle_valid() ? "Yes" : "No" ) );
+         ostringstream msg;
+         msg << "Object '" << get_name() << "' Instance-Handle:" << id_str
+             << " Valid-Handle:" << ( is_instance_handle_valid() ? "Yes" : "No" ) << "\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
 
       // If the callback class has been defined, call it...
@@ -734,8 +736,9 @@ void Object::publish_object_attributes()
    }
 
    if ( ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) && any_attribute_published() ) {
-      message_publish( MSG_NORMAL, "Object::publish_object_attributes():%d For object '%s'.\n",
-                       __LINE__, get_name().c_str() );
+      ostringstream msg;
+      msg << "Object '" << get_name() << "'\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    try {
@@ -798,8 +801,9 @@ void Object::unpublish_all_object_attributes()
 
    if ( any_attribute_published() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-         message_publish( MSG_NORMAL, "Object::unpublish_all_object_attributes():%d For object '%s'.\n",
-                          __LINE__, get_name().c_str() );
+         ostringstream msg;
+         msg << "Object '" << get_name() << "'\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
 
       try {
@@ -851,8 +855,9 @@ void Object::subscribe_to_object_attributes()
    }
 
    if ( ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) && any_attribute_subscribed() ) {
-      message_publish( MSG_NORMAL, "Object::subscribe_to_object_attributes():%d For object '%s'.\n",
-                       __LINE__, get_name().c_str() );
+      ostringstream msg;
+      msg << "Object '" << get_name() << "'\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    try {
@@ -923,8 +928,9 @@ void Object::unsubscribe_all_object_attributes()
    if ( any_attribute_subscribed() ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-         message_publish( MSG_NORMAL, "Object::unsubscribe_all_object_attributes():%d For object '%s'.\n",
-                          __LINE__, get_name().c_str() );
+         ostringstream msg;
+         msg << "Object '" << get_name() << "'\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
 
       try {
@@ -989,15 +995,17 @@ void Object::reserve_object_name_with_RTI()
    // was successful or failed.
    if ( is_instance_handle_valid() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-         message_publish( MSG_WARNING, "Object::reserve_object_name_with_RTI():%d \
-WARNING: Object instance already exists so we will not reserve the instance name '%s' for it!\n",
-                          __LINE__, get_name().c_str() );
+         ostringstream msg;
+         msg << "Object instance already exists, so the instance name '"
+             << get_name() << "' will not be reserved!\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
       }
    } else {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-         message_publish( MSG_NORMAL, "Object::reserve_object_name_with_RTI():%d \
-Requesting reservation of Object instance name '%s'.\n",
-                          __LINE__, get_name().c_str() );
+         ostringstream msg;
+         msg << "Requesting reservation of Object instance name '"
+             << get_name() << "'\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
 
       // Create the wide-string version of the object instance name.
@@ -1055,9 +1063,9 @@ void Object::wait_for_object_name_reservation()
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-      message_publish( MSG_NORMAL, "Object::wait_for_object_name_reservation():%d \
-Waiting on reservation of Object Instance Name '%s'.\n",
-                       __LINE__, get_name().c_str() );
+      ostringstream msg;
+      msg << "Waiting on reservation of Object Instance Name '" << get_name() << "'\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    SleepTimeout print_timer;
@@ -1090,17 +1098,17 @@ Waiting on reservation of Object Instance Name '%s'.\n",
 
          if ( print_timer.timeout( wallclock_time ) ) {
             print_timer.reset();
-            message_publish( MSG_NORMAL, "Object::wait_for_object_name_reservation():%d \
-Waiting on reservation of Object Instance Name '%s'.\n",
-                             __LINE__, get_name().c_str() );
+            ostringstream msg;
+            msg << "Waiting on reservation of Object Instance Name '" << get_name() << "'\n";
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
          }
       }
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-      message_publish( MSG_NORMAL, "Object::wait_for_object_name_reservation():%d \
-Object instance name '%s' is reserved.\n",
-                       __LINE__, get_name().c_str() );
+      ostringstream msg;
+      msg << "Reserved Object Instance Name '" << get_name() << "'\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 }
 
@@ -1135,9 +1143,10 @@ void Object::register_object_with_RTI()
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          string id_str;
          StringUtilities::to_string( id_str, instance_handle );
-         message_publish( MSG_WARNING, "Object::register_object_with_RTI():%d WARNING: \
-Detected object already registered '%s' Instance-ID:%s\n",
-                          __LINE__, get_name().c_str(), id_str.c_str() );
+         ostringstream msg;
+         msg << "Detected object already registered '" << get_name()
+             << "' Instance-Handle:" << id_str << "\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
       }
    } else {
       try {
@@ -1210,8 +1219,9 @@ Detected object already registered '%s' Instance-ID:%s\n",
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          string id_str;
          StringUtilities::to_string( id_str, instance_handle );
-         message_publish( MSG_NORMAL, "Object::register_object_with_RTI():%d Registered '%s' Instance-ID:%s\n",
-                          __LINE__, get_name().c_str(), id_str.c_str() );
+         ostringstream msg;
+         msg << "Registered '" << get_name() << "' Instance-Handle:" << id_str << "\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
    }
 }
@@ -1223,8 +1233,10 @@ Detected object already registered '%s' Instance-ID:%s\n",
 void Object::wait_for_object_registration()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-      message_publish( MSG_NORMAL, "Object::wait_for_object_registration():%d Waiting on registration of '%s' for object '%s'.\n",
-                       __LINE__, get_FOM_name().c_str(), get_name().c_str() );
+      ostringstream msg;
+      msg << "Waiting on registration of object instance '" << get_name()
+          << "' Object class '" << get_FOM_name() << "'\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    SleepTimeout print_timer;
@@ -1246,8 +1258,8 @@ void Object::wait_for_object_registration()
             sleep_timer.reset();
             if ( !federate->is_execution_member() ) {
                ostringstream errmsg;
-               errmsg << "Unexpectedly the Federate is no longer an execution member."
-                      << " This means we are either not connected to the"
+               errmsg << "Unexpectedly the Federate is no longer an execution"
+                      << " member. This means we are either not connected to the"
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
                       << " the Central RTI Component (CRC) level!\n";
@@ -1257,17 +1269,19 @@ void Object::wait_for_object_registration()
 
          if ( print_timer.timeout( wallclock_time ) ) {
             print_timer.reset();
-            message_publish( MSG_NORMAL, "Object::wait_for_object_registration():%d Waiting on registration of '%s' for object '%s'.\n",
-                             __LINE__, get_FOM_name().c_str(), get_name().c_str() );
+            ostringstream msg;
+            msg << "Waiting on registration of object instance '" << get_name()
+                << "' Object class '" << get_FOM_name() << "'\n";
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
          }
       }
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-      message_publish( MSG_NORMAL, "Object::wait_for_object_registration():%d Object \
-instance '%s' for object '%s' is registered.\n",
-                       __LINE__, get_FOM_name().c_str(),
-                       get_name().c_str() );
+      ostringstream msg;
+      msg << "Registered object instance '" << get_name()
+          << "' Object class '" << get_FOM_name() << "'\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 }
 
@@ -1463,8 +1477,9 @@ void Object::provide_attribute_update(
    // attribute we need to provide an update for.
    if ( any_attr_requested ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-         message_publish( MSG_NORMAL, "Object::provide_attribute_update():%d Object '%s'\n",
-                          __LINE__, get_name().c_str() );
+         ostringstream msg;
+         msg << "Object '" << get_name() << "'\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
 
       this->attr_update_requested = true;
@@ -1506,8 +1521,9 @@ void Object::send_requested_data(
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-      message_publish( MSG_NORMAL, "Object::send_requested_data():%d Object '%s'\n",
-                       __LINE__, get_name().c_str() );
+      ostringstream msg;
+      msg << "Object '" << get_name() << "'\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    // Macro to save the FPU Control Word register value.
@@ -1572,9 +1588,12 @@ void Object::send_requested_data(
 
          if ( send_with_timestamp ) {
             if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-               message_publish( MSG_NORMAL, "Object::send_requested_data():%d \
-Object '%s', Timestamp Order (TSO) Attribute update, HLA Logical Time:%f seconds.\n",
-                                __LINE__, get_name().c_str(), update_time.get_time_in_seconds() );
+               ostringstream msg;
+               msg << "Object '" << get_name()
+                   << "', Timestamp Order (TSO) Attribute update, HLA Logical Time:"
+                   << setprecision( 18 ) << update_time.get_time_in_seconds()
+                   << " seconds.\n";
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
             }
             // Send as Timestamp Order
             rti_amb->updateAttributeValues( this->instance_handle,
@@ -1583,8 +1602,9 @@ Object '%s', Timestamp Order (TSO) Attribute update, HLA Logical Time:%f seconds
                                             update_time.get() );
          } else {
             if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-               message_publish( MSG_NORMAL, "Object::send_requested_data():%d Object '%s', Receive Order (RO) Attribute update.\n",
-                                __LINE__, get_name().c_str() );
+               ostringstream msg;
+               msg << "Object '" << get_name() << "', Receive Order (RO) Attribute update.\n";
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
             }
 
             // Send as Receive Order
@@ -1599,138 +1619,40 @@ Object '%s', Timestamp Order (TSO) Attribute update, HLA Logical Time:%f seconds
    } catch ( InvalidLogicalTime const &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
-      string rti_err_msg;
-      StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "Object::send_requested_data():%d invalid logical time \
-exception for '%s' with error message '%s'.\n",
-                       __LINE__, get_name().c_str(), rti_err_msg.c_str() );
       ostringstream errmsg;
       errmsg << "Exception: InvalidLogicalTime\n"
-             << "  instance_id=" << id_str << "\n"
-             << "      granted=" << time_service->get_granted_time().get_time_in_seconds() << " ("
+             << "       object:'" << get_name() << "'\n"
+             << "  instance_id:" << id_str << "\n"
+             << "      granted:" << time_service->get_granted_time().get_time_in_seconds() << " ("
              << time_service->get_granted_time().get_base_time() << " " << Int64BaseTime::get_base_unit()
              << ")\n"
-             << "    lookahead=" << time_service->get_lookahead().get_time_in_seconds() << " ("
+             << "    lookahead:" << time_service->get_lookahead().get_time_in_seconds() << " ("
              << time_service->get_lookahead().get_base_time() << " " << Int64BaseTime::get_base_unit()
              << ")\n"
-             << "  update_time=" << update_time.get_time_in_seconds() << " ("
+             << "  update_time:" << update_time.get_time_in_seconds() << " ("
              << update_time.get_base_time() << " " << Int64BaseTime::get_base_unit()
              << ")\n";
-      ;
       DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+      DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
    } catch ( AttributeNotOwned const &e ) {
-      string id_str;
-      StringUtilities::to_string( id_str, instance_handle );
-      message_publish( MSG_WARNING,
-                       "Object::send_requested_data():%d detected remote ownership for '%s'\n",
-                       __LINE__, get_name().c_str() );
-      ostringstream errmsg;
-      errmsg << "Exception: AttributeNotOwned\n"
-             << "  instance_id=" << id_str << "\n"
-             << "      granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
-             << "    lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
-             << "  update_time=" << update_time.get_time_in_seconds() << "\n";
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+      DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
    } catch ( ObjectInstanceNotKnown const &e ) {
-      string id_str;
-      StringUtilities::to_string( id_str, instance_handle );
-      message_publish( MSG_WARNING,
-                       "Object::send_requested_data():%d object instance not known for '%s'\n",
-                       __LINE__, get_name().c_str() );
-      ostringstream errmsg;
-      errmsg << "Exception: ObjectInstanceNotKnown\n"
-             << "  instance_id=" << id_str << "\n"
-             << "      granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
-             << "    lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
-             << "  update_time=" << update_time.get_time_in_seconds() << "\n";
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+      DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
    } catch ( AttributeNotDefined const &e ) {
-      string id_str;
-      StringUtilities::to_string( id_str, instance_handle );
-      message_publish( MSG_WARNING, "Object::send_requested_data():%d attribute not defined for '%s'\n",
-                       __LINE__, get_name().c_str() );
-      ostringstream errmsg;
-      errmsg << "Exception: AttributeNotDefined\n"
-             << "  instance_id=" << id_str << "\n"
-             << "      granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
-             << "    lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
-             << "  update_time=" << update_time.get_time_in_seconds() << "\n";
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+      DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
    } catch ( FederateNotExecutionMember const &e ) {
-      string id_str;
-      StringUtilities::to_string( id_str, instance_handle );
-      message_publish( MSG_WARNING, "Object::send_requested_data():%d federation not execution member for '%s'\n",
-                       __LINE__, get_name().c_str() );
-      ostringstream errmsg;
-      errmsg << "Exception:FederateNotExecutionMember\n"
-             << "  instance_id=" << id_str << "\n"
-             << "      granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
-             << "    lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
-             << "  update_time=" << update_time.get_time_in_seconds() << "\n";
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+      DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
    } catch ( SaveInProgress const &e ) {
-      string id_str;
-      StringUtilities::to_string( id_str, instance_handle );
-      message_publish( MSG_WARNING, "Object::send_requested_data():%d save in progress for '%s'\n",
-                       __LINE__, get_name().c_str() );
-      ostringstream errmsg;
-      errmsg << "Exception: SaveInProgress\n"
-             << "  instance_id=" << id_str << "\n"
-             << "      granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
-             << "    lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
-             << "  update_time=" << update_time.get_time_in_seconds() << "\n";
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+      DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
    } catch ( RestoreInProgress const &e ) {
-      string id_str;
-      StringUtilities::to_string( id_str, instance_handle );
-      message_publish( MSG_WARNING, "Object::send_requested_data():%d restore in progress for '%s'",
-                       __LINE__, get_name().c_str() );
-      ostringstream errmsg;
-      errmsg << "Exception: RestoreInProgress\n"
-             << "  instance_id=" << id_str << "\n"
-             << "      granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
-             << "    lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
-             << "  update_time=" << update_time.get_time_in_seconds() << "\n";
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+      DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
    } catch ( NotConnected const &e ) {
-      string id_str;
-      StringUtilities::to_string( id_str, instance_handle );
-      message_publish( MSG_WARNING, "Object::send_requested_data():%d not connected error for '%s'\n",
-                       __LINE__, get_name().c_str() );
-      ostringstream errmsg;
-      errmsg << "Exception: NotConnected\n"
-             << "  instance_id=" << id_str << "\n"
-             << "      granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
-             << "    lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
-             << "  update_time=" << update_time.get_time_in_seconds() << "\n";
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+      DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
       federate->set_connection_lost();
    } catch ( RTIinternalError const &e ) {
-      string id_str;
-      StringUtilities::to_string( id_str, instance_handle );
-      message_publish( MSG_WARNING, "Object::send_requested_data():%d RTI internal error for '%s'\n",
-                       __LINE__, get_name().c_str() );
-      ostringstream errmsg;
-      errmsg << "Exception: RTIinternalError\n"
-             << "  instance_id=" << id_str << "\n"
-             << "      granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
-             << "    lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
-             << "  update_time=" << update_time.get_time_in_seconds() << "\n";
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+      DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
    } catch ( RTI1516_NAMESPACE::Exception const &e ) {
-      string id_str;
-      StringUtilities::to_string( id_str, instance_handle );
-      string rti_err_msg;
-      StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "Object.send_requested_data():%d Exception: '%s'\n",
-                       __LINE__, rti_err_msg.c_str() );
-      ostringstream errmsg;
-      errmsg << "Exception\n"
-             << "  instance_id=" << id_str << "\n"
-             << "      granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
-             << "    lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
-             << "  update_time=" << update_time.get_time_in_seconds() << "\n";
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+      DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
    }
 
    // Macro to restore the saved FPU Control Word register value.
@@ -1815,9 +1737,12 @@ void Object::send_cyclic_and_requested_data(
             if ( send_with_timestamp ) {
 
                if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-                  message_publish( MSG_NORMAL, "Object::send_cyclic_and_requested_data():%d \
-Object '%s', Timestamp Order (TSO) Attribute update, HLA Logical Time:%f seconds.\n",
-                                   __LINE__, get_name().c_str(), update_time.get_time_in_seconds() );
+                  ostringstream msg;
+                  msg << "Object '" << get_name()
+                      << "', Timestamp Order (TSO) Attribute update, HLA Logical Time:"
+                      << setprecision( 18 ) << update_time.get_time_in_seconds()
+                      << " seconds.\n";
+                  DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
                }
 
                // Send as Timestamp Order
@@ -1827,8 +1752,9 @@ Object '%s', Timestamp Order (TSO) Attribute update, HLA Logical Time:%f seconds
                                                update_time.get() );
             } else {
                if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-                  message_publish( MSG_NORMAL, "Object::send_cyclic_and_requested_data():%d Object '%s', Receive Order (RO) Attribute update.\n",
-                                   __LINE__, get_name().c_str() );
+                  ostringstream msg;
+                  msg << "Object '" << get_name() << "', Receive Order (RO) Attribute update.\n";
+                  DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
                }
 
                // Send as Receive Order (i.e. with no timestamp).
@@ -1843,136 +1769,40 @@ Object '%s', Timestamp Order (TSO) Attribute update, HLA Logical Time:%f seconds
       } catch ( InvalidLogicalTime const &e ) {
          string id_str;
          StringUtilities::to_string( id_str, instance_handle );
-         string rti_err_msg;
-         StringUtilities::to_string( rti_err_msg, e.what() );
-         message_publish( MSG_WARNING, "Object::send_cyclic_and_requested_data():%d invalid logical time \
-exception for '%s' with error message '%s'.\n",
-                          __LINE__, get_name().c_str(), rti_err_msg.c_str() );
-
          ostringstream errmsg;
          errmsg << "Exception: InvalidLogicalTime\n"
-                << "  instance_id=" << id_str << "\n"
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << " ("
+                << "       object:'" << get_name() << "'\n"
+                << "  instance_id:" << id_str << "\n"
+                << "      granted:" << time_service->get_granted_time().get_time_in_seconds() << " ("
                 << time_service->get_granted_time().get_base_time() << " " << Int64BaseTime::get_base_unit()
                 << ")\n"
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << " ("
+                << "    lookahead:" << time_service->get_lookahead().get_time_in_seconds() << " ("
                 << time_service->get_lookahead().get_base_time() << " " << Int64BaseTime::get_base_unit()
                 << ")\n"
-                << "  update_time=" << update_time.get_time_in_seconds() << " ("
+                << "  update_time:" << update_time.get_time_in_seconds() << " ("
                 << update_time.get_base_time() << " " << Int64BaseTime::get_base_unit()
                 << ")\n";
          DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+         DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
       } catch ( AttributeNotOwned const &e ) {
-         string id_str;
-         StringUtilities::to_string( id_str, instance_handle );
-         message_publish( MSG_WARNING, "Object::send_cyclic_and_requested_data():%d detected remote ownership for '%s'\n",
-                          __LINE__, get_name().c_str() );
-         ostringstream errmsg;
-         errmsg << "Exception: AttributeNotOwned\n"
-                << "  instance_id=" << id_str << "\n"
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
-                << "  update_time=" << update_time.get_time_in_seconds() << "\n";
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+         DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
       } catch ( ObjectInstanceNotKnown const &e ) {
-         string id_str;
-         StringUtilities::to_string( id_str, instance_handle );
-         message_publish( MSG_WARNING, "Object::send_cyclic_and_requested_data():%d object instance not known for '%s'\n",
-                          __LINE__, get_name().c_str() );
-         ostringstream errmsg;
-         errmsg << "Exception: ObjectInstanceNotKnown\n"
-                << "  instance_id=" << id_str << "\n"
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
-                << "  update_time=" << update_time.get_time_in_seconds() << "\n";
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+         DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
       } catch ( AttributeNotDefined const &e ) {
-         string id_str;
-         StringUtilities::to_string( id_str, instance_handle );
-         message_publish( MSG_WARNING, "Object::send_cyclic_and_requested_data():%d attribute not defined for '%s'\n",
-                          __LINE__, get_name().c_str() );
-         ostringstream errmsg;
-         errmsg << "Exception: AttributeNotDefined\n"
-                << "  instance_id=" << id_str << "\n"
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
-                << "  update_time=" << update_time.get_time_in_seconds() << "\n";
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+         DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
       } catch ( FederateNotExecutionMember const &e ) {
-         string id_str;
-         StringUtilities::to_string( id_str, instance_handle );
-         message_publish( MSG_WARNING, "Object::send_cyclic_and_requested_data():%d federation not execution member for '%s'\n",
-                          __LINE__, get_name().c_str() );
-         ostringstream errmsg;
-         errmsg << "Exception: FederateNotExecutionMember\n"
-                << "  instance_id=" << id_str << "\n"
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
-                << "  update_time=" << update_time.get_time_in_seconds() << "\n";
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+         DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
       } catch ( SaveInProgress const &e ) {
-         string id_str;
-         StringUtilities::to_string( id_str, instance_handle );
-         message_publish( MSG_WARNING, "Object::send_cyclic_and_requested_data():%d save in progress for '%s'\n",
-                          __LINE__, get_name().c_str() );
-         ostringstream errmsg;
-         errmsg << "Exception: SaveInProgress\n"
-                << "  instance_id=" << id_str << "\n"
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
-                << "  update_time=" << update_time.get_time_in_seconds() << "\n";
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+         DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
       } catch ( RestoreInProgress const &e ) {
-         string id_str;
-         StringUtilities::to_string( id_str, instance_handle );
-         message_publish( MSG_WARNING, "Object::send_cyclic_and_requested_data():%d restore in progress for '%s'\n",
-                          __LINE__, get_name().c_str() );
-         ostringstream errmsg;
-         errmsg << "Exception: RestoreInProgress\n"
-                << "  instance_id=" << id_str << "\n"
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
-                << "  update_time=" << update_time.get_time_in_seconds() << "\n";
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+         DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
       } catch ( NotConnected const &e ) {
-         string id_str;
-         StringUtilities::to_string( id_str, instance_handle );
-         message_publish( MSG_WARNING, "Object::send_cyclic_and_requested_data():%d not connected for '%s'\n",
-                          __LINE__, get_name().c_str() );
-         ostringstream errmsg;
-         errmsg << "Exception: NotConnected\n"
-                << "  instance_id=" << id_str << "\n"
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
-                << "  update_time=" << update_time.get_time_in_seconds() << "\n";
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+         DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
          federate->set_connection_lost();
       } catch ( RTIinternalError const &e ) {
-         string id_str;
-         StringUtilities::to_string( id_str, instance_handle );
-         message_publish( MSG_WARNING, "Object::send_cyclic_and_requested_data():%d RTI internal error for '%s'\n",
-                          __LINE__, get_name().c_str() );
-         ostringstream errmsg;
-         errmsg << "Exception: RTIinternalError\n"
-                << "  instance_id=" << id_str << "\n"
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
-                << "  update_time=" << update_time.get_time_in_seconds() << "\n";
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+         DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
       } catch ( RTI1516_NAMESPACE::Exception const &e ) {
-         string id_str;
-         StringUtilities::to_string( id_str, instance_handle );
-         string rti_err_msg;
-         StringUtilities::to_string( rti_err_msg, e.what() );
-         message_publish( MSG_WARNING, "Object.send_cyclic_and_requested_data():%d Exception: '%s'\n",
-                          __LINE__, rti_err_msg.c_str() );
-         ostringstream errmsg;
-         errmsg << "Exception\n"
-                << "  instance_id=" << id_str << "\n"
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
-                << "  update_time=" << update_time.get_time_in_seconds() << "\n";
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+         DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
       }
    }
    // Macro to restore the saved FPU Control Word register value.
@@ -2015,7 +1845,7 @@ void Object::send_zero_lookahead_and_requested_data(
          case LAG_COMPENSATION_RECEIVE_SIDE:
          default: {
             ostringstream errmsg;
-            errmsg << "For object '" << this->name << "', detected a"
+            errmsg << "Object '" << this->name << "', detected a"
                    << " Lag-Compensation 'lag_comp' callback has also been"
                    << " specified with a 'lag_comp_type' setting that is not"
                    << " LAG_COMPENSATION_NONE! Please check your input or"
@@ -2042,7 +1872,7 @@ void Object::send_zero_lookahead_and_requested_data(
    if ( attribute_values_map->empty() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          ostringstream errmsg;
-         errmsg << "For object '" << this->name << "', detected that there"
+         errmsg << "Object '" << this->name << "', detected that there"
                 << " are no attributes to send an update for, which can lead to"
                 << " deadlock for another federate waiting to receive zero-lookahead"
                 << " data. Please check your input or modified-data files to make"
@@ -2073,9 +1903,12 @@ void Object::send_zero_lookahead_and_requested_data(
             if ( send_with_timestamp ) {
 
                if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-                  message_publish( MSG_NORMAL, "Object::send_zero_lookahead_and_requested_data():%d \
-Object '%s', Timestamp Order (TSO) Attribute update, HLA Logical Time:%f seconds.\n",
-                                   __LINE__, get_name().c_str(), update_time.get_time_in_seconds() );
+                  ostringstream msg;
+                  msg << "Object '" << get_name()
+                      << "', Timestamp Order (TSO) Attribute update, HLA Logical Time:"
+                      << setprecision( 18 ) << update_time.get_time_in_seconds()
+                      << " seconds.\n";
+                  DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
                }
 
                // Send as Timestamp Order
@@ -2085,9 +1918,9 @@ Object '%s', Timestamp Order (TSO) Attribute update, HLA Logical Time:%f seconds
                                                update_time.get() );
             } else {
                if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-                  message_publish( MSG_NORMAL, "Object::send_zero_lookahead_and_requested_data():%d \
-Object '%s', Receive Order (RO) Attribute update.\n",
-                                   __LINE__, get_name().c_str() );
+                  ostringstream msg;
+                  msg << "Object '" << get_name() << "', Receive Order (RO) Attribute update.\n";
+                  DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
                }
 
                // Send as Receive Order (i.e. with no timestamp).
@@ -2102,137 +1935,41 @@ Object '%s', Receive Order (RO) Attribute update.\n",
       } catch ( InvalidLogicalTime const &e ) {
          string id_str;
          StringUtilities::to_string( id_str, instance_handle );
-         string rti_err_msg;
-         StringUtilities::to_string( rti_err_msg, e.what() );
-         message_publish( MSG_WARNING, "Object::send_zero_lookahead_and_requested_data():%d Exception: \
-Invalid logical time exception for '%s' with error message '%s'.\n",
-                          __LINE__, get_name().c_str(), rti_err_msg.c_str() );
-
          ostringstream errmsg;
          errmsg << "Exception: InvalidLogicalTime\n"
-                << "  instance_id=" << id_str << "\n"
-                << "  send-with-timestamp=" << ( send_with_timestamp ? "True" : "False" ) << "\n"
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << " ("
+                << "       object:'" << get_name() << "'\n"
+                << "  instance_id:" << id_str << "\n"
+                << "send-with-timestamp:" << ( send_with_timestamp ? "True" : "False" ) << "\n"
+                << "      granted:" << time_service->get_granted_time().get_time_in_seconds() << " ("
                 << time_service->get_granted_time().get_base_time() << " " << Int64BaseTime::get_base_unit()
                 << ")\n"
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << " ("
+                << "    lookahead:" << time_service->get_lookahead().get_time_in_seconds() << " ("
                 << time_service->get_lookahead().get_base_time() << " " << Int64BaseTime::get_base_unit()
                 << ")\n"
-                << "  update_time=" << update_time.get_time_in_seconds() << " ("
+                << "  update_time:" << update_time.get_time_in_seconds() << " ("
                 << update_time.get_base_time() << " " << Int64BaseTime::get_base_unit()
                 << ")\n";
          DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+         DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
       } catch ( AttributeNotOwned const &e ) {
-         string id_str;
-         StringUtilities::to_string( id_str, instance_handle );
-         message_publish( MSG_WARNING, "Object::send_zero_lookahead_and_requested_data():%d detected remote ownership for '%s'\n",
-                          __LINE__, get_name().c_str() );
-         ostringstream errmsg;
-         errmsg << "Exception: AttributeNotOwned\n"
-                << "  instance_id=" << id_str << "\n"
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
-                << "  update_time=" << update_time.get_time_in_seconds() << "\n";
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+         DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
       } catch ( ObjectInstanceNotKnown const &e ) {
-         string id_str;
-         StringUtilities::to_string( id_str, instance_handle );
-         message_publish( MSG_WARNING, "Object::send_zero_lookahead_and_requested_data():%d object instance not known for '%s'\n",
-                          __LINE__, get_name().c_str() );
-         ostringstream errmsg;
-         errmsg << "Exception: ObjectInstanceNotKnown\n"
-                << "  instance_id=" << id_str << "\n"
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
-                << "  update_time=" << update_time.get_time_in_seconds() << "\n";
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+         DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
       } catch ( AttributeNotDefined const &e ) {
-         string id_str;
-         StringUtilities::to_string( id_str, instance_handle );
-         message_publish( MSG_WARNING, "Object::send_zero_lookahead_and_requested_data():%d attribute not defined for '%s'\n",
-                          __LINE__, get_name().c_str() );
-         ostringstream errmsg;
-         errmsg << "Exception: AttributeNotDefined\n"
-                << "  instance_id=" << id_str << "\n"
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
-                << "  update_time=" << update_time.get_time_in_seconds() << "\n";
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+         DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
       } catch ( FederateNotExecutionMember const &e ) {
-         string id_str;
-         StringUtilities::to_string( id_str, instance_handle );
-         message_publish( MSG_WARNING, "Object::send_zero_lookahead_and_requested_data():%d federation not execution member for '%s'\n",
-                          __LINE__, get_name().c_str() );
-         ostringstream errmsg;
-         errmsg << "Exception: FederateNotExecutionMember\n"
-                << "  instance_id=" << id_str << "\n"
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
-                << "  update_time=" << update_time.get_time_in_seconds() << "\n";
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+         DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
       } catch ( SaveInProgress const &e ) {
-         string id_str;
-         StringUtilities::to_string( id_str, instance_handle );
-         message_publish( MSG_WARNING, "Object::send_zero_lookahead_and_requested_data():%d save in progress for '%s'\n",
-                          __LINE__, get_name().c_str() );
-         ostringstream errmsg;
-         errmsg << "Exception: SaveInProgress\n"
-                << "  instance_id=" << id_str << "\n"
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
-                << "  update_time=" << update_time.get_time_in_seconds() << "\n";
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+         DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
       } catch ( RestoreInProgress const &e ) {
-         string id_str;
-         StringUtilities::to_string( id_str, instance_handle );
-         message_publish( MSG_WARNING, "Object::send_zero_lookahead_and_requested_data():%d restore in progress for '%s'\n",
-                          __LINE__, get_name().c_str() );
-         ostringstream errmsg;
-         errmsg << "Exception: RestoreInProgress\n"
-                << "  instance_id=" << id_str << "\n"
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
-                << "  update_time=" << update_time.get_time_in_seconds() << "\n";
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+         DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
       } catch ( NotConnected const &e ) {
-         string id_str;
-         StringUtilities::to_string( id_str, instance_handle );
-         message_publish( MSG_WARNING, "Object::send_zero_lookahead_and_requested_data():%d not connected for '%s'\n",
-                          __LINE__, get_name().c_str() );
-         ostringstream errmsg;
-         errmsg << "Exception: NotConnected\n"
-                << "  instance_id=" << id_str << "\n"
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
-                << "  update_time=" << update_time.get_time_in_seconds() << "\n";
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+         DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
          federate->set_connection_lost();
       } catch ( RTIinternalError const &e ) {
-         string id_str;
-         StringUtilities::to_string( id_str, instance_handle );
-         message_publish( MSG_WARNING, "Object::send_zero_lookahead_and_requested_data():%d RTI internal error for '%s'\n",
-                          __LINE__, get_name().c_str() );
-         ostringstream errmsg;
-         errmsg << "Exception: RTIinternalError\n"
-                << "  instance_id=" << id_str << "\n"
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
-                << "  update_time=" << update_time.get_time_in_seconds() << "\n";
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+         DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
       } catch ( RTI1516_NAMESPACE::Exception const &e ) {
-         string id_str;
-         StringUtilities::to_string( id_str, instance_handle );
-         string rti_err_msg;
-         StringUtilities::to_string( rti_err_msg, e.what() );
-         message_publish( MSG_WARNING, "Object.send_zero_lookahead_and_requested_data():%d Exception: '%s'\n",
-                          __LINE__, rti_err_msg.c_str() );
-         ostringstream errmsg;
-         errmsg << "Exception\n"
-                << "  instance_id=" << id_str << "\n"
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n"
-                << "  update_time=" << update_time.get_time_in_seconds() << "\n";
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+         DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
       }
    }
    // Macro to restore the saved FPU Control Word register value.
@@ -2274,7 +2011,7 @@ void Object::send_blocking_io_data()
          case LAG_COMPENSATION_RECEIVE_SIDE:
          default: {
             ostringstream errmsg;
-            errmsg << "For object '" << name << "', detected a"
+            errmsg << "Object '" << name << "', detected a"
                    << " Lag-Compensation 'lag_comp' callback has also been"
                    << " specified with a 'lag_comp_type' setting that is not"
                    << " LAG_COMPENSATION_NONE! Please check your input or"
@@ -2300,7 +2037,7 @@ void Object::send_blocking_io_data()
    if ( attribute_values_map->empty() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          ostringstream errmsg;
-         errmsg << "For object '" << this->name << "', detected that there"
+         errmsg << "Object '" << this->name << "', detected that there"
                 << " are no attributes to send an update for, which can lead to"
                 << " deadlock for another federate waiting to receive blocking I/O"
                 << " data. Please check your input or modified-data files to make"
@@ -2321,9 +2058,9 @@ void Object::send_blocking_io_data()
             RTIambassador *rti_amb = federate->get_RTI_ambassador();
 
             if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-               message_publish( MSG_NORMAL, "Object::send_blocking_io_data():%d \
-Object '%s', Receive Order (RO) Attribute update.\n",
-                                __LINE__, get_name().c_str() );
+               ostringstream msg;
+               msg << "Object '" << get_name() << "', Receive Order (RO) Attribute update.\n";
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
             }
 
             // Send as Receive Order (i.e. with no timestamp).
@@ -2338,125 +2075,37 @@ Object '%s', Receive Order (RO) Attribute update.\n",
       } catch ( InvalidLogicalTime const &e ) {
          string id_str;
          StringUtilities::to_string( id_str, instance_handle );
-         string rti_err_msg;
-         StringUtilities::to_string( rti_err_msg, e.what() );
-         message_publish( MSG_WARNING, "Object::send_blocking_io_data():%d invalid logical time \
-exception for '%s' with error message '%s'.\n",
-                          __LINE__, get_name().c_str(), rti_err_msg.c_str() );
-
          ostringstream errmsg;
          errmsg << "Exception: InvalidLogicalTime\n"
-                << "  instance_id=" << id_str << "\n"
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << " ("
+                << "       object:'" << get_name() << "'\n"
+                << "  instance_id:" << id_str << "\n"
+                << "      granted:" << time_service->get_granted_time().get_time_in_seconds() << " ("
                 << time_service->get_granted_time().get_base_time() << " " << Int64BaseTime::get_base_unit()
                 << ")\n"
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << " ("
+                << "    lookahead:" << time_service->get_lookahead().get_time_in_seconds() << " ("
                 << time_service->get_lookahead().get_base_time() << " " << Int64BaseTime::get_base_unit()
                 << ")\n";
-         ;
          DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+         DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
       } catch ( AttributeNotOwned const &e ) {
-         string id_str;
-         StringUtilities::to_string( id_str, instance_handle );
-         message_publish( MSG_WARNING, "Object::send_blocking_io_data():%d detected remote ownership for '%s'\n",
-                          __LINE__, get_name().c_str() );
-         ostringstream errmsg;
-         errmsg << "Exception: AttributeNotOwned\n"
-                << "  instance_id=" << id_str << "\n"
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n";
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+         DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
       } catch ( ObjectInstanceNotKnown const &e ) {
-         string id_str;
-         StringUtilities::to_string( id_str, instance_handle );
-         message_publish( MSG_WARNING, "Object::send_blocking_io_data():%d object instance not known for '%s'\n",
-                          __LINE__, get_name().c_str() );
-         ostringstream errmsg;
-         errmsg << "Exception: ObjectInstanceNotKnown\n"
-                << "  instance_id=" << id_str << "\n"
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n";
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+         DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
       } catch ( AttributeNotDefined const &e ) {
-         string id_str;
-         StringUtilities::to_string( id_str, instance_handle );
-         message_publish( MSG_WARNING, "Object::send_blocking_io_data():%d attribute not defined for '%s'\n",
-                          __LINE__, get_name().c_str() );
-         ostringstream errmsg;
-         errmsg << "Exception: AttributeNotDefined\n"
-                << "  instance_id=" << id_str << "\n"
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n";
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+         DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
       } catch ( FederateNotExecutionMember const &e ) {
-         string id_str;
-         StringUtilities::to_string( id_str, instance_handle );
-         message_publish( MSG_WARNING, "Object::send_blocking_io_data():%d federation not execution member for '%s'\n",
-                          __LINE__, get_name().c_str() );
-         ostringstream errmsg;
-         errmsg << "Exception: FederateNotExecutionMember\n"
-                << "  instance_id=" << id_str << "\n"
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n";
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+         DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
       } catch ( SaveInProgress const &e ) {
-         string id_str;
-         StringUtilities::to_string( id_str, instance_handle );
-         message_publish( MSG_WARNING, "Object::send_blocking_io_data():%d save in progress for '%s'\n",
-                          __LINE__, get_name().c_str() );
-         ostringstream errmsg;
-         errmsg << "Exception: SaveInProgress\n"
-                << "  instance_id=" << id_str << "\n"
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n";
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+         DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
       } catch ( RestoreInProgress const &e ) {
-         string id_str;
-         StringUtilities::to_string( id_str, instance_handle );
-         message_publish( MSG_WARNING, "Object::send_blocking_io_data():%d restore in progress for '%s'\n",
-                          __LINE__, get_name().c_str() );
-         ostringstream errmsg;
-         errmsg << "Exception: RestoreInProgress\n"
-                << "  instance_id=" << id_str << "\n"
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n";
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+         DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
       } catch ( NotConnected const &e ) {
-         string id_str;
-         StringUtilities::to_string( id_str, instance_handle );
-         message_publish( MSG_WARNING, "Object::send_blocking_io_data():%d not connected for '%s'\n",
-                          __LINE__, get_name().c_str() );
-         ostringstream errmsg;
-         errmsg << "Exception: NotConnected\n"
-                << "  instance_id=" << id_str << "\n"
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n";
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+         DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
          federate->set_connection_lost();
       } catch ( RTIinternalError const &e ) {
-         string id_str;
-         StringUtilities::to_string( id_str, instance_handle );
-         message_publish( MSG_WARNING, "Object::send_blocking_io_data():%d RTI internal error for '%s'\n",
-                          __LINE__, get_name().c_str() );
-         ostringstream errmsg;
-         errmsg << "Exception: RTIinternalError\n"
-                << "  instance_id=" << id_str << "\n"
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n";
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+         DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
       } catch ( RTI1516_NAMESPACE::Exception const &e ) {
-         string id_str;
-         StringUtilities::to_string( id_str, instance_handle );
-         string rti_err_msg;
-         StringUtilities::to_string( rti_err_msg, e.what() );
-         message_publish( MSG_WARNING, "Object.send_blocking_io_data():%d Exception: '%s'\n",
-                          __LINE__, rti_err_msg.c_str() );
-         ostringstream errmsg;
-         errmsg << "Exception\n"
-                << "  instance_id=" << id_str << "\n"
-                << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
-                << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n";
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+         DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
       }
    }
    // Macro to restore the saved FPU Control Word register value.
@@ -2529,11 +2178,17 @@ void Object::receive_cyclic_data()
          // Display a warning message if we timed out.
          if ( sleep_timer.timeout() ) {
             if ( is_changed() ) {
-               message_publish( MSG_WARNING, "Object::receive_cyclic_data():%d Received data at a timeout boundary at simulation-time %f.\n",
-                                __LINE__, exec_get_sim_time() );
+               ostringstream msg;
+               msg << "Object '" << get_name()
+                   << "', Received data at a timeout boundary at simulation-time "
+                   << setprecision( 18 ) << exec_get_sim_time() << ".\n";
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
             } else {
-               message_publish( MSG_WARNING, "Object::receive_cyclic_data():%d Timed out waiting for data at simulation-time %f.\n",
-                                __LINE__, exec_get_sim_time() );
+               ostringstream msg;
+               msg << "Object '" << get_name()
+                   << "', Timed out waiting for data at simulation-time "
+                   << setprecision( 18 ) << exec_get_sim_time() << ".\n";
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
             }
          }
       }
@@ -2548,8 +2203,11 @@ void Object::receive_cyclic_data()
 
       do {
 #if THLA_OBJ_DEBUG_RECEIVE
-         message_publish( MSG_NORMAL, "Object::receive_cyclic_data():%d for '%s' at HLA-logical-time=%G\n",
-                          __LINE__, get_name().c_str(), federate->get_time_management_service()->get_granted_time().get_time_in_seconds() );
+         ostringstream msg;
+         msg << "Object '" << get_name() << "', at HLA-logical-time:" << setprecision( 18 )
+             << federate->get_time_management_service()->get_granted_time().get_time_in_seconds()
+             << " seconds.\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
 #endif
 
          // Unpack the data for the object if we have a packing object.
@@ -2589,14 +2247,20 @@ void Object::receive_cyclic_data()
    }
 #if THLA_OBJ_DEBUG_VALID_OBJECT_RECEIVE
    else if ( is_instance_handle_valid() && ( exec_get_sim_time() > 0.0 ) ) {
-      message_publish( MSG_NORMAL, "Object::receive_cyclic_data():%d NO new data for valid object '%s' at HLA-logical-time=%G\n",
-                       __LINE__, get_name().c_str(), federate->get_time_management_service()->get_granted_time().get_time_in_seconds() );
+      ostringstream msg;
+      msg << "Object '" << get_name() << "', NO new data at HLA-logical-time:"
+          << setprecision( 18 ) << federate->get_time_management_service()->get_granted_time().get_time_in_seconds()
+          << " seconds.\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 #endif
 #if THLA_OBJ_DEBUG_RECEIVE
    else {
-      message_publish( MSG_NORMAL, "Object::receive_cyclic_data():%d NO new data for '%s' at HLA-logical-time=%G\n",
-                       __LINE__, get_name().c_str(), federate->get_time_management_service()->get_granted_time().get_time_in_seconds() );
+      ostringstream msg;
+      msg << "Object '" << get_name() << "', NO new data at HLA-logical-time:"
+          << setprecision( 18 ) << federate->get_time_management_service()->get_granted_time().get_time_in_seconds()
+          << " seconds.\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 #endif
 }
@@ -2623,8 +2287,11 @@ void Object::receive_zero_lookahead_data()
    if ( is_changed() ) {
 
 #if THLA_OBJ_DEBUG_RECEIVE
-      message_publish( MSG_NORMAL, "Object::receive_zero_lookahead_data():%d for '%s' at HLA-logical-time=%G\n",
-                       __LINE__, get_name().c_str(), federate->get_time_management_service()->get_granted_time().get_time_in_seconds() );
+      ostringstream msg;
+      msg << "Object '" << get_name() << "' at HLA-logical-time:"
+          << setprecision( 18 ) << federate->get_time_management_service()->get_granted_time().get_time_in_seconds()
+          << " seconds.\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
 #endif
 
       // Unpack the data for the object if we have a packing object.
@@ -2644,7 +2311,7 @@ void Object::receive_zero_lookahead_data()
             case LAG_COMPENSATION_RECEIVE_SIDE:
             default: {
                ostringstream errmsg;
-               errmsg << "For object '" << name << "', detected a"
+               errmsg << "Object '" << name << "', detected a"
                       << " Lag-Compensation 'lag_comp' callback has also been"
                       << " specified with a 'lag_comp_type' setting that is not"
                       << " LAG_COMPENSATION_NONE! Please check your input or"
@@ -2663,14 +2330,20 @@ void Object::receive_zero_lookahead_data()
    }
 #if THLA_OBJ_DEBUG_VALID_OBJECT_RECEIVE
    else if ( is_instance_handle_valid() && ( exec_get_sim_time() > 0.0 ) ) {
-      message_publish( MSG_NORMAL, "Object::receive_zero_lookahead_data():%d NO new data for valid object '%s' at HLA-logical-time=%G\n",
-                       __LINE__, get_name().c_str(), federate->get_time_management_service()->get_granted_time().get_time_in_seconds() );
+      ostringstream msg;
+      msg << "Object '" << get_name() << "', NO new data at HLA-logical-time:"
+          << setprecision( 18 ) << federate->get_time_management_service()->get_granted_time().get_time_in_seconds()
+          << " seconds.\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 #endif
 #if THLA_OBJ_DEBUG_RECEIVE
    else {
-      message_publish( MSG_NORMAL, "Object::receive_zero_lookahead_data():%d NO new data for '%s' at HLA-logical-time=%G\n",
-                       __LINE__, get_name().c_str(), federate->get_time_management_service()->get_granted_time().get_time_in_seconds() );
+      ostringstream msg;
+      msg << "Object '" << get_name() << "', NO new data at HLA-logical-time:"
+          << setprecision( 18 ) << federate->get_time_management_service()->get_granted_time().get_time_in_seconds()
+          << " seconds.\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 #endif
 }
@@ -2697,8 +2370,11 @@ void Object::receive_blocking_io_data()
    if ( is_changed() ) {
 
 #if THLA_OBJ_DEBUG_RECEIVE
-      message_publish( MSG_NORMAL, "Object::receive_blocking_io_data():%d for '%s' at HLA-logical-time=%G\n",
-                       __LINE__, get_name().c_str(), federate->get_time_management_service()->get_granted_time().get_time_in_seconds() );
+      ostringstream msg;
+      msg << "Object '" << get_name() << "' at HLA-logical-time:"
+          << setprecision( 18 ) << federate->get_time_management_service()->get_granted_time().get_time_in_seconds()
+          << " seconds.\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
 #endif
 
       // Unpack the data for the object if we have a packing object.
@@ -2718,7 +2394,7 @@ void Object::receive_blocking_io_data()
             case LAG_COMPENSATION_RECEIVE_SIDE:
             default: {
                ostringstream errmsg;
-               errmsg << "For object '" << name << "', detected a"
+               errmsg << "Object '" << name << "', detected a"
                       << " Lag-Compensation 'lag_comp' callback has also been"
                       << " specified with a 'lag_comp_type' setting that is not"
                       << " LAG_COMPENSATION_NONE! Please check your input or"
@@ -2737,14 +2413,20 @@ void Object::receive_blocking_io_data()
    }
 #if THLA_OBJ_DEBUG_VALID_OBJECT_RECEIVE
    else if ( is_instance_handle_valid() && ( exec_get_sim_time() > 0.0 ) ) {
-      message_publish( MSG_NORMAL, "Object::receive_blocking_io_data():%d NO new data for valid object '%s' at HLA-logical-time=%G\n",
-                       __LINE__, get_name().c_str(), federate->get_time_management_service()->get_granted_time().get_time_in_seconds() );
+      ostringstream msg;
+      msg << "Object '" << get_name() << "' NO new data at HLA-logical-time:"
+          << setprecision( 18 ) << federate->get_time_management_service()->get_granted_time().get_time_in_seconds()
+          << " seconds.\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 #endif
 #if THLA_OBJ_DEBUG_RECEIVE
    else {
-      message_publish( MSG_NORMAL, "Object::receive_blocking_io_data():%d NO new data for '%s' at HLA-logical-time=%G\n",
-                       __LINE__, get_name().c_str(), federate->get_time_management_service()->get_granted_time().get_time_in_seconds() );
+      ostringstream msg;
+      msg << "Object '" << get_name() << "' NO new data at HLA-logical-time:"
+          << setprecision( 18 ) << federate->get_time_management_service()->get_granted_time().get_time_in_seconds()
+          << " seconds.\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 #endif
 }
@@ -2792,8 +2474,9 @@ void Object::send_init_data()
       if ( federate->should_publish_data() ) {
 
          if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-            message_publish( MSG_NORMAL, "Object::send_init_data():%d For object '%s', updating attribute values as Receive Order.\n",
-                             __LINE__, get_name().c_str() );
+            ostringstream msg;
+            msg << "Updating object '" << get_name() << "' attribute values as Receive Order.\n";
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
          }
 
          // Send the Attributes to the federation. This call returns an
@@ -2809,123 +2492,35 @@ void Object::send_init_data()
    } catch ( InvalidLogicalTime const &e ) {
       string id_str;
       StringUtilities::to_string( id_str, instance_handle );
-      string rti_err_msg;
-      StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "Object::send_init_data():%d invalid logical time exception for '%s' with error message '%s'.\n",
-                       __LINE__, get_name().c_str(), rti_err_msg.c_str() );
-
       ostringstream errmsg;
       errmsg << "Exception: InvalidLogicalTime\n"
-             << "  instance_id=" << id_str << "\n"
-             << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << " ("
+             << "       object:'" << get_name() << "'\n"
+             << "  instance_id:" << id_str << "\n"
+             << "      granted:" << time_service->get_granted_time().get_time_in_seconds() << " ("
              << time_service->get_granted_time().get_base_time() << " " << Int64BaseTime::get_base_unit()
              << ")\n"
-             << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << " ("
+             << "    lookahead:" << time_service->get_lookahead().get_time_in_seconds() << " ("
              << time_service->get_lookahead().get_base_time() << " " << Int64BaseTime::get_base_unit()
              << ")\n";
       DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+      DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
    } catch ( AttributeNotOwned const &e ) {
-      string id_str;
-      StringUtilities::to_string( id_str, instance_handle );
-      message_publish( MSG_WARNING, "Object::send_init_data():%d detected remote ownership for '%s'\n",
-                       __LINE__, get_name().c_str() );
-      ostringstream errmsg;
-      errmsg << "Exception: AttributeNotOwned\n"
-             << "  instance_id=" << id_str << "\n"
-             << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
-             << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n";
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+      DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
    } catch ( ObjectInstanceNotKnown const &e ) {
-      string id_str;
-      StringUtilities::to_string( id_str, instance_handle );
-      message_publish( MSG_WARNING, "Object::send_init_data():%d object instance not known for '%s'\n",
-                       __LINE__, get_name().c_str() );
-      ostringstream errmsg;
-      errmsg << "Exception: ObjectInstanceNotKnown\n"
-             << "  instance_id=" << id_str << "\n"
-             << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
-             << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n";
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+      DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
    } catch ( AttributeNotDefined const &e ) {
-      string id_str;
-      StringUtilities::to_string( id_str, instance_handle );
-      message_publish( MSG_WARNING, "Object::send_init_data():%d attribute not defined for '%s'\n",
-                       __LINE__, get_name().c_str() );
-      ostringstream errmsg;
-      errmsg << "Exception: AttributeNotDefined\n"
-             << "  instance_id=" << id_str << "\n"
-             << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
-             << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n";
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
-   } catch ( FederateNotExecutionMember const &e ) {
-      string id_str;
-      StringUtilities::to_string( id_str, instance_handle );
-      message_publish( MSG_WARNING, "Object::send_init_data():%d federation not execution member for '%s'\n",
-                       __LINE__, get_name().c_str() );
-      ostringstream errmsg;
-      errmsg << "Exception: FederateNotExecutionMember\n"
-             << "  instance_id=" << id_str << "\n"
-             << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
-             << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n";
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+      DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
    } catch ( SaveInProgress const &e ) {
-      string id_str;
-      StringUtilities::to_string( id_str, instance_handle );
-      message_publish( MSG_WARNING, "Object::send_init_data():%d save in progress for '%s'\n",
-                       __LINE__, get_name().c_str() );
-      ostringstream errmsg;
-      errmsg << "Exception: SaveInProgress\n"
-             << "  instance_id=" << id_str << "\n"
-             << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
-             << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n";
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+      DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
    } catch ( RestoreInProgress const &e ) {
-      string id_str;
-      StringUtilities::to_string( id_str, instance_handle );
-      message_publish( MSG_WARNING, "Object::send_init_data():%d restore in progress for '%s'\n",
-                       __LINE__, get_name().c_str() );
-      ostringstream errmsg;
-      errmsg << "Exception: RestoreInProgress\n"
-             << "  instance_id=" << id_str << "\n"
-             << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
-             << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n";
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+      DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
    } catch ( NotConnected const &e ) {
-      string id_str;
-      StringUtilities::to_string( id_str, instance_handle );
-      message_publish( MSG_WARNING, "Object::send_init_data():%d not connected error for '%s'\n",
-                       __LINE__, get_name().c_str() );
-      ostringstream errmsg;
-      errmsg << "Exception: NotConnected\n"
-             << "  instance_id=" << id_str << "\n"
-             << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
-             << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n";
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+      DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
       federate->set_connection_lost();
    } catch ( RTIinternalError const &e ) {
-      string id_str;
-      StringUtilities::to_string( id_str, instance_handle );
-      message_publish( MSG_WARNING, "Object::send_init_data():%d RTI internal error for '%s'\n",
-                       __LINE__, get_name().c_str() );
-      ostringstream errmsg;
-      errmsg << "Exception: RTIinternalError\n"
-             << "  instance_id=" << id_str << "\n"
-             << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
-             << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n";
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+      DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
    } catch ( RTI1516_NAMESPACE::Exception const &e ) {
-      string id_str;
-      StringUtilities::to_string( id_str, instance_handle );
-      string rti_err_msg;
-      StringUtilities::to_string( rti_err_msg, e.what() );
-      message_publish( MSG_WARNING, "Object.send_init_data():%d Exception: '%s'\n",
-                       __LINE__, rti_err_msg.c_str() );
-      ostringstream errmsg;
-      errmsg << "Exception:\n"
-             << "  instance_id=" << id_str << "\n"
-             << "  granted=" << time_service->get_granted_time().get_time_in_seconds() << "\n"
-             << "  lookahead=" << time_service->get_lookahead().get_time_in_seconds() << "\n";
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+      DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
    }
 
    // Macro to restore the saved FPU Control Word register value.
@@ -2954,8 +2549,9 @@ void Object::receive_init_data()
    if ( is_changed() ) {
 
 #if THLA_OBJ_DEBUG_RECEIVE
-      message_publish( MSG_NORMAL, "Object::receive_init_data():%d for '%s'\n",
-                       __LINE__, get_name().c_str() );
+      ostringstream msg;
+      msg << "Object '" << get_name() << "'\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
 #endif
 
       // Unpack the data for the object if we have a packing object.
@@ -2974,8 +2570,9 @@ void Object::receive_init_data()
    }
 #if THLA_OBJ_DEBUG_RECEIVE
    else {
-      message_publish( MSG_NORMAL, "Object::receive_init_data():%d NO initialization data for '%s'\n",
-                       __LINE__, get_name().c_str() );
+      ostringstream msg;
+      msg << "Object '" << get_name() << "', NO initialization data.\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 #endif
 }
@@ -3002,8 +2599,10 @@ void Object::create_requested_attribute_set()
          attributes[i].set_update_requested( false );
 
          if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-            message_publish( MSG_NORMAL, "Object::create_requested_attribute_set():%d Adding '%s' to attribute map.\n",
-                             __LINE__, attributes[i].get_FOM_name().c_str() );
+            ostringstream msg;
+            msg << "Object '" << get_name() << "', adding '"
+                << attributes[i].get_FOM_name() << "' to attribute map.\n";
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
          }
 
          ( *attribute_values_map )[attributes[i].get_attribute_handle()] = attributes[i].encode();
@@ -3052,8 +2651,10 @@ void Object::create_attribute_set(
                attributes[i].set_update_requested( false );
 
                if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-                  message_publish( MSG_NORMAL, "Object::create_attribute_set():%d For cyclic object '%s', adding '%s' to attribute map.\n",
-                                   __LINE__, get_name().c_str(), attributes[i].get_FOM_name().c_str() );
+                  ostringstream msg;
+                  msg << "For cyclic Object '" << get_name() << "', adding '"
+                      << attributes[i].get_FOM_name() << "' to attribute map.\n";
+                  DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
                }
                ( *attribute_values_map )[attributes[i].get_attribute_handle()] = attributes[i].encode();
             }
@@ -3083,8 +2684,10 @@ void Object::create_attribute_set(
                attributes[i].set_update_requested( false );
 
                if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-                  message_publish( MSG_NORMAL, "Object::create_attribute_set():%d For object '%s', adding '%s' to attribute map.\n",
-                                   __LINE__, get_name().c_str(), attributes[i].get_FOM_name().c_str() );
+                  ostringstream msg;
+                  msg << "Object '" << get_name() << "', adding '"
+                      << attributes[i].get_FOM_name() << "' to attribute map.\n";
+                  DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
                }
                ( *attribute_values_map )[attributes[i].get_attribute_handle()] = attributes[i].encode();
             }
@@ -3105,8 +2708,10 @@ void Object::create_attribute_set(
             attributes[i].set_update_requested( false );
 
             if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-               message_publish( MSG_NORMAL, "Object::create_attribute_set():%d For object '%s', adding '%s' to attribute map.\n",
-                                __LINE__, get_name().c_str(), attributes[i].get_FOM_name().c_str() );
+               ostringstream msg;
+               msg << "Object '" << get_name() << "', adding '"
+                   << attributes[i].get_FOM_name() << "' to attribute map.\n";
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
             }
             ( *attribute_values_map )[attributes[i].get_attribute_handle()] = attributes[i].encode();
          }
@@ -3141,8 +2746,9 @@ bool Object::decode(
    // getValue().
 
    if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
-      message_publish( MSG_NORMAL, "Object::decode():%d '%s' FOM-name:'%s'.\n",
-                       __LINE__, get_name().c_str(), get_FOM_name().c_str() );
+      ostringstream msg;
+      msg << "Object '" << get_name() << "', FOM-name '" << get_FOM_name() << "'\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    bool any_attr_received = false;
@@ -3165,11 +2771,12 @@ bool Object::decode(
          if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
             string id_str;
             StringUtilities::to_string( id_str, iter->first );
-            message_publish( MSG_WARNING, "Object::decode():%d WARNING: For \
-Object '%s' with FOM name '%s', data was received for Attribute-ID:%s, which \
-has not been configured for this object instance in the input.py file. Ignoring \
-this attribute.\n",
-                             __LINE__, get_name().c_str(), get_FOM_name().c_str(), id_str.c_str() );
+            ostringstream msg;
+            msg << "Object '" << get_name() << "', with FOM name '"
+                << get_FOM_name() << "', data was received for Attribute-Handle:"
+                << id_str << ", which has not been configured for this object"
+                << " instance in the input.py file. Ignoring this attribute!\n";
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
          }
       }
    }
@@ -3197,8 +2804,9 @@ void Object::release_ownership()
 
    // Make sure we have an Instance ID for the object, if we don't then return.
    if ( !is_instance_handle_valid() ) {
-      message_publish( MSG_WARNING, "Object::release_ownership():%d Object-Instance-Handle not set for '%s'.\n",
-                       __LINE__, get_name().c_str() );
+      ostringstream msg;
+      msg << "Object '" << get_name() << "', the Object-Instance-Handle is not set!\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
       return;
    }
 
@@ -3232,8 +2840,10 @@ void Object::release_ownership()
 
       if ( ownership != nullptr ) {
          if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-            message_publish( MSG_NORMAL, "Object::release_ownership():%d Telling ownership handler to clear checkpoint.\n",
-                             __LINE__ );
+            ostringstream msg;
+            msg << "Object '" << get_name()
+                << "', telling ownership handler to clear checkpoint.\n";
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
          }
          ownership->free_converted_data_for_checkpoint();
       }
@@ -3265,8 +2875,9 @@ void Object::release_ownership()
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-      message_publish( MSG_NORMAL, "Object::release_ownership():%d Attributes of Object '%s'.\n",
-                       __LINE__, get_name().c_str() );
+      ostringstream msg;
+      msg << "For attributes of Object '" << get_name() << "'\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    try {
@@ -3290,12 +2901,11 @@ void Object::release_ownership()
             trick_hla_attr->mark_remotely_owned();
 
             if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-               message_publish( MSG_NORMAL, "Object::release_ownership():%d\
-\n   DIVESTED Ownership of attribute '%s'->'%s' of object '%s'.\n",
-                                __LINE__,
-                                get_FOM_name().c_str(),
-                                trick_hla_attr->get_FOM_name().c_str(),
-                                get_name().c_str() );
+               ostringstream msg;
+               msg << "Object '" << get_name()
+                   << "', DIVESTED Ownership of attribute '" << get_FOM_name()
+                   << "'->'" << trick_hla_attr->get_FOM_name() << "'\n";
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
             }
          }
       }
@@ -3343,8 +2953,9 @@ void Object::pull_ownership()
 
    // Make sure we have an Instance ID for the object, otherwise just return.
    if ( !is_instance_handle_valid() ) {
-      message_publish( MSG_WARNING, "Object::pull_ownership():%d Object-Instance-Handle not set for '%s'.\n",
-                       __LINE__, get_name().c_str() );
+      ostringstream msg;
+      msg << "Object '" << get_name() << "', the Object-Instance-Handle is not set.\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       return;
    }
 
@@ -3398,25 +3009,30 @@ void Object::pull_ownership()
                      attr_hdl_set.insert( attr->get_attribute_handle() );
 
                      if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-                        message_publish( MSG_NORMAL, "Object::pull_ownership():%d\n   Attribute '%s'->'%s' of object '%s'.\n",
-                                         __LINE__, get_FOM_name().c_str(),
-                                         attr->get_FOM_name().c_str(), get_name().c_str() );
+                        ostringstream msg;
+                        msg << "Object '" << get_name() << "', Attribute '" << get_FOM_name()
+                            << "'->'" << attr->get_FOM_name() << "'\n";
+                        DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
                      }
                   } else {
                      if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-                        message_publish( MSG_NORMAL, "Object::pull_ownership():%d Can \
-not pull ownership of Attribute '%s'->'%s' of object '%s' for time %G because it is not \
-configured to be published.\n",
-                                         __LINE__, get_FOM_name().c_str(),
-                                         attr->get_FOM_name().c_str(), get_name().c_str(), pull_time );
+                        ostringstream msg;
+                        msg << "Object '" << get_name()
+                            << "', can not pull ownership of Attribute '" << get_FOM_name()
+                            << "'->'" << attr->get_FOM_name() << "' for time "
+                            << setprecision( 18 ) << pull_time
+                            << " because it is not configured to be published.\n";
+                        DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
                      }
                   }
                } else {
                   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-                     message_publish( MSG_NORMAL, "Object::pull_ownership():%d Can not pull \
-ownership of Attribute '%s'->'%s' of object '%s' for time %G because it is already owned.\n",
-                                      __LINE__, get_FOM_name().c_str(),
-                                      attr->get_FOM_name().c_str(), get_name().c_str(), pull_time );
+                     ostringstream msg;
+                     msg << "Object '" << get_name()
+                         << "', can not pull ownership of Attribute '" << get_FOM_name()
+                         << "'->'" << attr->get_FOM_name() << "' for time "
+                         << setprecision( 18 ) << pull_time << " because it is already owned.\n";
+                     DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
                   }
                }
             }
@@ -3442,16 +3058,17 @@ ownership of Attribute '%s'->'%s' of object '%s' for time %G because it is alrea
    // Make the request only if we have attributes to pull ownership of.
    if ( attr_hdl_set.empty() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-         message_publish( MSG_NORMAL, "Object::pull_ownership():%d No active requests, \
-%d scheduled request(s) pending for object '%s'.\n",
-                          __LINE__, (int)ownership->pull_requests.size(),
-                          get_name().c_str() );
+         ostringstream msg;
+         msg << "Object '" << get_name()
+             << "', No active Pull requests, " << ownership->pull_requests.size()
+             << " scheduled request(s) pending.\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
    } else {
       if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-         message_publish( MSG_NORMAL, "Object::pull_ownership():%d Pulling ownership \
-for Attributes of object '%s'.\n",
-                          __LINE__, get_name().c_str() );
+         ostringstream msg;
+         msg << "Object '" << get_name() << "', Pulling ownership for Attributes.\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
 
       // Macro to save the FPU Control Word register value.
@@ -3482,8 +3099,9 @@ void Object::pull_ownership_at_init(
 {
    // Make sure we have an Instance ID for the object.
    if ( !is_instance_handle_valid() ) {
-      message_publish( MSG_WARNING, "Object::pull_ownership_at_init():%d Object-Instance-Handle not set for '%s'.\n",
-                       __LINE__, get_name().c_str() );
+      ostringstream msg;
+      msg << "Object '" << get_name() << "', the Object-Instance-Handle is not set!\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
       return;
    }
 
@@ -3501,7 +3119,7 @@ void Object::pull_ownership_at_init(
 
    if ( attr_name_vector.empty() ) {
       ostringstream errmsg;
-      errmsg << "No attributes found to pull ownership for object '"
+      errmsg << "No attributes found to pull ownership Object '"
              << get_name() << "'!\n";
       DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       return;
@@ -3523,7 +3141,7 @@ void Object::pull_ownership_at_init(
 
          if ( attr == nullptr ) {
             ostringstream errmsg;
-            errmsg << "For object '" << get_name()
+            errmsg << "Object '" << get_name()
                    << "', no TrickHLA-Attribute found for attribute FOM name '"
                    << attr_name_vector[i] << "'!\n";
             DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
@@ -3538,22 +3156,27 @@ void Object::pull_ownership_at_init(
                attr_hdl_set.insert( attr->get_attribute_handle() );
 
                if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-                  message_publish( MSG_NORMAL, "Object::pull_ownership_at_init():%d\n   Attribute '%s'->'%s' of object '%s'.\n",
-                                   __LINE__, get_FOM_name().c_str(),
-                                   attr->get_FOM_name().c_str(), get_name().c_str() );
+                  ostringstream msg;
+                  msg << "Object '" << get_name() << "', Attribute '"
+                      << get_FOM_name() << "'->'" << attr->get_FOM_name() << "\n";
+                  DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
                }
             } else {
                if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-                  message_publish( MSG_NORMAL, "Object::pull_ownership_at_init():%d Can not \
-pull ownership of Attribute '%s'->'%s' of object '%s' because it is not configured to be published.\n",
-                                   __LINE__, get_FOM_name().c_str(), attr->get_FOM_name().c_str(), get_name().c_str() );
+                  ostringstream msg;
+                  msg << "Object '" << get_name()
+                      << "', can not pull ownership of Attribute '" << get_FOM_name()
+                      << "'->'" << attr->get_FOM_name() << "' because it is not configured to be published.\n";
+                  DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
                }
             }
          } else {
             if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-               message_publish( MSG_NORMAL, "Object::pull_ownership_at_init():%d Can not \
-pull ownership of Attribute '%s'->'%s' of object '%s' because it is already owned.\n",
-                                __LINE__, get_FOM_name().c_str(), attr->get_FOM_name().c_str(), get_name().c_str() );
+               ostringstream msg;
+               msg << "Object '" << get_name()
+                   << "', can not pull ownership of Attribute '" << get_FOM_name()
+                   << "'->'" << attr->get_FOM_name() << "' because it is already owned.\n";
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
             }
          }
       }
@@ -3562,13 +3185,15 @@ pull ownership of Attribute '%s'->'%s' of object '%s' because it is already owne
    // Determine if we have any attributes to pull ownership of.
    if ( attr_hdl_set.empty() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-         message_publish( MSG_NORMAL, "Object::pull_ownership_at_init():%d No locally owned attributes to pull ownership for object '%s'.\n",
-                          __LINE__, get_name().c_str() );
+         ostringstream msg;
+         msg << "Object '" << get_name() << "', No locally owned attributes to pull ownership.\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
       }
    } else {
       if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-         message_publish( MSG_NORMAL, "Object::pull_ownership_at_init():%d Pulling ownership for Attributes of object '%s'.\n",
-                          __LINE__, get_name().c_str() );
+         ostringstream msg;
+         msg << "Object '" << get_name() << "', Pulling ownership for Attributes.\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
 
       // Macro to save the FPU Control Word register value.
@@ -3643,8 +3268,9 @@ pull ownership of Attribute '%s'->'%s' of object '%s' because it is already owne
 
             if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
-               message_publish( MSG_NORMAL, "Object::pull_ownership_at_init()%d \"%s\": Waiting for Ownership Acquisition Notification callback...\n",
-                                __LINE__, federate->get_federation_name().c_str() );
+               ostringstream msg;
+               msg << "Object '" << get_name() << "', Waiting for Ownership Acquisition Notification callback...\n";
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
             }
          }
       }
@@ -3665,8 +3291,9 @@ void Object::handle_pulled_ownership_at_init()
 {
    // Make sure we have an Instance ID for the object.
    if ( !is_instance_handle_valid() ) {
-      message_publish( MSG_WARNING, "Object::handle_pulled_ownership_at_init():%d Object-Instance-Handle not set for '%s'.\n",
-                       __LINE__, get_name().c_str() );
+      ostringstream msg;
+      msg << "Object '" << get_name() << "', the Object-Instance-Handle is not set.\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
       return;
    }
 
@@ -3714,8 +3341,9 @@ void Object::handle_pulled_ownership_at_init()
 
          if ( print_timer.timeout( wallclock_time ) ) {
             print_timer.reset();
-            message_publish( MSG_NORMAL, "Object::handle_pulled_ownership_at_init()%d \"%s\": Waiting for Pull Requested notification...\n",
-                             __LINE__, federate->get_federation_name().c_str() );
+            ostringstream msg;
+            msg << "Object '" << get_name() << "', Waiting for Pull Requested notification...\n";
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
          }
       }
    }
@@ -3734,8 +3362,9 @@ void Object::grant_pull_request()
 
    // Make sure we have an Instance ID for the object, otherwise just return.
    if ( !is_instance_handle_valid() ) {
-      message_publish( MSG_WARNING, "Object::grant_pull_request():%d Object-Instance-Handle not set for '%s'\n",
-                       __LINE__, get_name().c_str() );
+      ostringstream msg;
+      msg << "Object '" << get_name() << "', the Object-Instance-Handle is not set!\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
       return;
    }
 
@@ -3774,8 +3403,9 @@ void Object::grant_pull_request()
 
    if ( attrs_to_divest.empty() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-         message_publish( MSG_NORMAL, "Object::grant_pull_request():%d No requested attributes to divest ownership of for object '%s'.\n",
-                          __LINE__, get_name().c_str() );
+         ostringstream msg;
+         msg << "Object '" << get_name() << "', No requested attributes to divest ownership.\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
    } else {
 
@@ -3798,9 +3428,9 @@ void Object::grant_pull_request()
          // Divest ownership only if we have attributes we need to do this for.
          if ( divested_attrs->empty() ) {
             if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-               message_publish( MSG_NORMAL, "Object::grant_pull_request():%d \
-No attributes Divested since no federate wanted them for object '%s'.\n",
-                                __LINE__, get_name().c_str() );
+               ostringstream msg;
+               msg << "Object '" << get_name() << "', No attributes Divested since no Federate wanted them.\n";
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
             }
          } else {
             MutexProtection const auto_unlock_mutex( &ownership_mutex );
@@ -3820,11 +3450,11 @@ No attributes Divested since no federate wanted them for object '%s'.\n",
                   trick_hla_attr->mark_remotely_owned();
 
                   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-                     message_publish( MSG_NORMAL, "Object::grant_pull_request():%d\
-\n   DIVESTED Ownership for attribute '%s'->'%s' of object '%s'.\n",
-                                      __LINE__,
-                                      get_FOM_name().c_str(), trick_hla_attr->get_FOM_name().c_str(),
-                                      get_name().c_str() );
+                     ostringstream msg;
+                     msg << "Object '" << get_name()
+                         << "', DIVESTED Ownership for Attribute '" << get_FOM_name()
+                         << "'->'" << trick_hla_attr->get_FOM_name() << "'\n";
+                     DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
                   }
                }
             }
@@ -3877,8 +3507,9 @@ void Object::grant_push_request_pthread()
    int const ret = pthread_create( &push, nullptr, grant_push_pthread_function, this );
 
    if ( ret ) {
-      message_publish( MSG_NORMAL, "Object::grant_push_request_pthread():%d Failed to create a thread!\n",
-                       __LINE__ );
+      ostringstream msg;
+      msg << "Object '" << get_name() << "', Failed to create thread!\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_ERROR );
       exit( 0 );
    }
 }
@@ -3890,8 +3521,9 @@ void Object::grant_push_request()
 {
    // Make sure we have an Instance ID for the object, otherwise just return.
    if ( !is_instance_handle_valid() ) {
-      message_publish( MSG_WARNING, "Object::grant_push_request():%d Object-Instance-Handle not set for '%s'.\n",
-                       __LINE__, get_name().c_str() );
+      ostringstream msg;
+      msg << "Object '" << get_name() << "', the Object-Instance-Handle is not set!\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
       return;
    }
 
@@ -3910,8 +3542,9 @@ void Object::grant_push_request()
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-      message_publish( MSG_NORMAL, "Object::grant_push_request():%d Granting push request for '%s'.\n",
-                       __LINE__, get_name().c_str() );
+      ostringstream msg;
+      msg << "Object '" << get_name() << "', Granting push request.\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    AttributeHandleSet attrs;
@@ -3956,9 +3589,9 @@ void Object::grant_push_request()
       }
    } else {
       if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-         message_publish( MSG_NORMAL, "Object::grant_push_request():%d No attributes \
-available to acquire ownership for object '%s'.\n",
-                          __LINE__, get_name().c_str() );
+         ostringstream msg;
+         msg << "Object '" << get_name() << "', No attributes available to acquire ownership.\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
    }
 
@@ -4082,8 +3715,9 @@ void Object::push_ownership()
 
    // Make sure we have an Instance ID for the object.
    if ( !is_instance_handle_valid() ) {
-      message_publish( MSG_WARNING, "Object::push_ownership():%d Object-Instance-Handle not set for '%s'.\n",
-                       __LINE__, get_name().c_str() );
+      ostringstream msg;
+      msg << "Object '" << get_name() << "', the Object-Instance-Handle is not set!\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
       return;
    }
 
@@ -4145,16 +3779,19 @@ void Object::push_ownership()
                   attr_hdl_set->insert( attr->get_attribute_handle() );
 
                   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-                     message_publish( MSG_NORMAL, "Object::push_ownership():%d\n   Attribute '%s'->'%s' of object '%s'.\n",
-                                      __LINE__, get_FOM_name().c_str(),
-                                      attr->get_FOM_name().c_str(), get_name().c_str() );
+                     ostringstream msg;
+                     msg << "Object '" << get_name() << "', Attribute '"
+                         << get_FOM_name() << "'->'" << attr->get_FOM_name() << "'\n";
+                     DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
                   }
                } else {
                   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-                     message_publish( MSG_NORMAL, "Object::push_ownership():%d Can not \
-push Attribute '%s'->'%s' of object '%s' for time %G because it is already remotely owned.\n",
-                                      __LINE__, get_FOM_name().c_str(),
-                                      attr->get_FOM_name().c_str(), get_name().c_str(), push_time );
+                     ostringstream msg;
+                     msg << "Object '" << get_name() << "', Can not push Attribute '"
+                         << get_FOM_name() << "'->'" << attr->get_FOM_name()
+                         << "' for time " << setprecision( 18 ) << push_time
+                         << " because it is already owned.\n";
+                     DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
                   }
                }
             }
@@ -4184,16 +3821,16 @@ push Attribute '%s'->'%s' of object '%s' for time %G because it is already remot
       delete attr_hdl_set;
 
       if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-         message_publish( MSG_NORMAL, "Object::push_ownership():%d No active requests, \
-%d scheduled request(s) pending for object '%s'.\n",
-                          __LINE__,
-                          (int)ownership->push_requests.size(), get_name().c_str() );
+         ostringstream msg;
+         msg << "Object '" << get_name() << "', No active Push requests, "
+             << ownership->push_requests.size() << " scheduled request(s) pending.\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
    } else {
       if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-         message_publish( MSG_NORMAL, "Object::push_ownership():%d Pushing ownership \
-for Attributes of object '%s'.\n",
-                          __LINE__, get_name().c_str() );
+         ostringstream msg;
+         msg << "Object '" << get_name() << "', Pushing ownership for Attributes.\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
 
       // Create and populate the structure the thread will use for processing
@@ -4228,8 +3865,9 @@ void Object::push_ownership_at_init(
 {
    // Make sure we have an Instance ID for the object.
    if ( !is_instance_handle_valid() ) {
-      message_publish( MSG_WARNING, "Object::push_ownership_at_init():%d Object-Instance-Handle not set for '%s'.\n",
-                       __LINE__, get_name().c_str() );
+      ostringstream msg;
+      msg << "Object '" << get_name() << "', the Object-Instance-Handle is not set!\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
       return;
    }
 
@@ -4247,7 +3885,7 @@ void Object::push_ownership_at_init(
 
    if ( attr_name_vector.empty() ) {
       ostringstream errmsg;
-      errmsg << "No attributes found to push ownership for object '"
+      errmsg << "No attributes found to push ownership Object '"
              << get_name() << "'!\n";
       DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       return;
@@ -4272,7 +3910,7 @@ void Object::push_ownership_at_init(
             delete attr_hdl_set;
 
             ostringstream errmsg;
-            errmsg << "For object '" << get_name()
+            errmsg << "Object '" << get_name()
                    << "', no TrickHLA-Attribute found for attribute FOM name '"
                    << attr_name_vector[i] << "'!\n";
             DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
@@ -4286,15 +3924,18 @@ void Object::push_ownership_at_init(
             attr_hdl_set->insert( attr->get_attribute_handle() );
 
             if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-               message_publish( MSG_NORMAL, "Object::push_ownership_at_init():%d\n   Attribute '%s'->'%s' of object '%s'.\n",
-                                __LINE__, get_FOM_name().c_str(),
-                                attr->get_FOM_name().c_str(), get_name().c_str() );
+               ostringstream msg;
+               msg << "Object '" << get_name() << "', Attribute '"
+                   << get_FOM_name() << "'->'" << attr->get_FOM_name() << "'\n";
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
             }
          } else {
             if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-               message_publish( MSG_NORMAL, "Object::push_ownership_at_init():%d Can not \
-push Attribute '%s'->'%s' of object '%s' because it is already remotely owned.\n",
-                                __LINE__, get_FOM_name().c_str(), attr->get_FOM_name().c_str(), get_name().c_str() );
+               ostringstream msg;
+               msg << "Object '" << get_name() << "', Can not push Attribute '"
+                   << get_FOM_name() << "'->'" << attr->get_FOM_name()
+                   << "' because it is already remotely owned.\n";
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
             }
          }
       }
@@ -4307,13 +3948,17 @@ push Attribute '%s'->'%s' of object '%s' because it is already remotely owned.\n
       delete attr_hdl_set;
 
       if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-         message_publish( MSG_NORMAL, "Object::push_ownership_at_init():%d No locally owned attributes to push ownership for object '%s'.\n",
-                          __LINE__, get_name().c_str() );
+         ostringstream msg;
+         msg << "Object '" << get_name()
+             << "', can not pull ownership of Attribute '" << get_FOM_name()
+             << "', No locally owned attributes to push ownership.\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
       }
    } else {
       if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-         message_publish( MSG_NORMAL, "Object::push_ownership_at_init():%d Pushing ownership for Attributes of object '%s'.\n",
-                          __LINE__, get_name().c_str() );
+         ostringstream msg;
+         msg << "Object '" << get_name() << "', Pushing ownership for Attributes.\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
 
       // Create and populate the structure the thread will use for processing
@@ -4381,8 +4026,9 @@ push Attribute '%s'->'%s' of object '%s' because it is already remotely owned.\n
 
             if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
-               message_publish( MSG_NORMAL, "Object::push_ownership_at_init()%d \"%s\": Waiting for Divestiture Confirmation callback...\n",
-                                __LINE__, federate->get_federation_name().c_str() );
+               ostringstream msg;
+               msg << "Object '" << get_name() << "', Waiting for Divestiture Confirmation callback...\n";
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
             }
          }
       }
@@ -4400,14 +4046,16 @@ void Object::handle_pushed_ownership_at_init()
 {
    // Make sure we have an Instance ID for the object.
    if ( !is_instance_handle_valid() ) {
-      message_publish( MSG_WARNING, "Object::handle_pushed_ownership_at_init():%d Object-Instance-Handle not set for '%s'.\n",
-                       __LINE__, get_name().c_str() );
+      ostringstream msg;
+      msg << "Object '" << get_name() << "', the Object-Instance-Handle is not set!\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
       return;
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-      message_publish( MSG_NORMAL, "Object::handle_pushed_ownership_at_init():%d Object: '%s'.\n",
-                       __LINE__, get_name().c_str() );
+      ostringstream msg;
+      msg << "Object: '" << get_name() << "'\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    SleepTimeout print_timer;
@@ -4452,8 +4100,10 @@ void Object::handle_pushed_ownership_at_init()
 
          if ( print_timer.timeout( wallclock_time ) ) {
             print_timer.reset();
-            message_publish( MSG_NORMAL, "Object::handle_pushed_ownership_at_init()%d \"%s\": Waiting for Ownership Acquisition Notification callback...\n",
-                             __LINE__, federate->get_federation_name().c_str() );
+            ostringstream msg;
+            msg << "Object '" << get_name()
+                << "', waiting for Ownership Acquisition Notification callback...\n";
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
          }
       }
    }
@@ -4467,8 +4117,9 @@ void Object::handle_pushed_ownership_at_init()
 void Object::convert_data_before_checkpoint()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-      message_publish( MSG_NORMAL, "Object::convert_data_before_checkpoint():%d Object: %s.\n",
-                       __LINE__, get_name().c_str() );
+      ostringstream msg;
+      msg << "Object '" << get_name() << "'\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    // Any object with a valid instance handle must be marked as required
@@ -4503,8 +4154,9 @@ void Object::convert_data_before_checkpoint()
 void Object::restore_data_after_checkpoint()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-      message_publish( MSG_NORMAL, "Object::restore_data_after_checkpoint():%d Object: %s.\n",
-                       __LINE__, get_name().c_str() );
+      ostringstream msg;
+      msg << "Object '" << get_name() << "'\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    // TODO: Restore other data structures from checkpoint form such as
@@ -4532,8 +4184,9 @@ void Object::restore_data_after_checkpoint()
 void Object::free_converted_data_for_checkpoint()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-      message_publish( MSG_NORMAL, "Object::free_converted_data_for_checkpoint():%d Object: %s.\n",
-                       __LINE__, get_name().c_str() );
+      ostringstream msg;
+      msg << "Object '" << get_name() << "'\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    // TODO: Free other data structures in checkpoint form such as
@@ -4811,8 +4464,9 @@ void Object::pull_ownership_upon_rejoin()
 {
    // Make sure we have an Instance ID for the object, otherwise just return.
    if ( !is_instance_handle_valid() ) {
-      message_publish( MSG_WARNING, "Object::pull_ownership_upon_rejoin():%d Object-Instance-Handle not set for '%s'.\n",
-                       __LINE__, get_name().c_str() );
+      ostringstream msg;
+      msg << "Object '" << get_name() << "', the Object-Instance-Handle is not set!\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
       return;
    }
 
@@ -4858,10 +4512,11 @@ void Object::pull_ownership_upon_rejoin()
             attributes[i].unmark_locally_owned();
 
             if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-               message_publish( MSG_NORMAL, "Object::pull_ownership_upon_rejoin():%d \
-Ownership check of Attribute '%s'->'%s' from object '%s' => RTI informed us that we DO NOT own it.\n",
-                                __LINE__, get_FOM_name().c_str(), attributes[i].get_FOM_name().c_str(),
-                                get_name().c_str() );
+               ostringstream msg;
+               msg << "Object '" << get_name() << "', Ownership check of Attribute '"
+                   << get_FOM_name() << "'->'" << attributes[i].get_FOM_name()
+                   << "', RTI informed us that we do not own it.\n";
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
             }
          }
       } catch ( ObjectInstanceNotKnown const &e ) {
@@ -4886,15 +4541,15 @@ Ownership check of Attribute '%s'->'%s' from object '%s' => RTI informed us that
    // Make the request only if we do have any attributes for which we need to pull ownership.
    if ( attr_hdl_set.empty() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-         message_publish( MSG_NORMAL, "Object::pull_ownership_upon_rejoin():%d No ownership \
-requests were added for object '%s'.\n",
-                          __LINE__, get_name().c_str() );
+         ostringstream msg;
+         msg << "Object '" << get_name() << "', No ownership requests were added.\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
    } else {
       if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-         message_publish( MSG_NORMAL, "Object::pull_ownership_upon_rejoin():%d Pulling ownership \
-for Attributes of object '%s'.\n",
-                          __LINE__, get_name().c_str() );
+         ostringstream msg;
+         msg << "Object '" << get_name() << "', Pulling ownership for Attributes.\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
 
       try {
@@ -4968,9 +4623,9 @@ for Attributes of object '%s'.\n",
 
             if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
-               message_publish( MSG_NORMAL, "Object::pull_ownership_upon_rejoin():%d Pulling ownership \
-for Attributes of object '%s', waiting...\n",
-                                __LINE__, get_name().c_str() );
+               ostringstream msg;
+               msg << "Object '" << get_name() << "', Pulling ownership for Attributes.\n";
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
             }
          }
       } // end of 'while' loop
@@ -4988,8 +4643,9 @@ void Object::initialize_thread_ID_array()
    if ( thread_ids.empty() ) {
       if ( this->thread_ids_array != nullptr ) {
          if ( !MemoryServices::delete_var( this->thread_ids_array ) ) {
-            message_publish( MSG_WARNING, "Object::initialize_thread_ID_array():%d WARNING failed to delete Trick Memory for 'this->thread_ids_array'\n",
-                             __LINE__ );
+            ostringstream msg;
+            msg << "Object '" << get_name() << "', Failed to delete Trick Memory for 'this->thread_ids_array'.\n";
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
          }
          this->thread_ids_array       = nullptr;
          this->thread_ids_array_count = 0;
@@ -5012,8 +4668,7 @@ void Object::initialize_thread_ID_array()
    if ( this->thread_ids_array == nullptr ) {
       ostringstream errmsg;
       errmsg << "Could not allocate memory for 'thread_ids_array'"
-             << " for requested size " << this->thread_ids_array_count
-             << "!\n";
+             << " for requested size " << this->thread_ids_array_count << "!\n";
       DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
    for ( unsigned int id = 0; id < this->thread_ids_array_count; ++id ) {
@@ -5045,13 +4700,12 @@ void Object::initialize_thread_ID_array()
             this->thread_ids_array[id] = true;
          } else {
             ostringstream errmsg;
-            errmsg << "For object '" << get_name()
+            errmsg << "Object '" << get_name()
                    << "', the Trick child thread-ID '" << thread_id_vec[k]
                    << "' specified in the input file is not valid because this"
                    << " Trick child thread does not exist in the S_define file!"
                    << " Valid Trick thread-ID range is 0 to "
-                   << ( this->thread_ids_array_count - 1 )
-                   << "!\n";
+                   << ( this->thread_ids_array_count - 1 ) << "!\n";
             DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
          }
       }

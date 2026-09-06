@@ -59,7 +59,6 @@ NASA, Johnson Space Center\n
 
 // Trick includes.
 #include "trick/exec_proto.h"
-#include "trick/message_proto.h"
 #include "trick/message_type.h"
 #include "trick/sim_mode.h"
 
@@ -251,7 +250,7 @@ void Federate::print_version()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream msg;
-      msg << "Federate::print_version():" << __LINE__ << "\n"
+      msg << "\n"
           << "     TrickHLA-version:'" << Utilities::get_version() << "'\n"
           << "TrickHLA-release-date:'" << Utilities::get_release_date() << "'\n"
           << "             RTI-name:'" << Utilities::get_rti_name() << "'\n"
@@ -327,11 +326,13 @@ void Federate::initialize_debug()
    // Verify the debug level is correct just in case the user specifies it in
    // the input.py file as an integer instead of using the ENUM values...
    if ( ( this->debug_level < DEBUG_LEVEL_NO_TRACE ) || ( this->debug_level > DEBUG_LEVEL_FULL_TRACE ) ) {
-      message_publish( MSG_WARNING, "Federate::initialize_debug():%d You specified an \
-invalid debug level '%d' in the input.py file using an integer value instead of \
-an ENUM. Please double check the value you specified in the input.py file against \
-the documented ENUM values.\n",
-                       __LINE__, (int)this->debug_level );
+      ostringstream errmsg;
+      errmsg << "You specified an invalid debug level '" << (int)this->debug_level
+             << "' in the input.py file using an integer value instead of an ENUM."
+             << " Please double check the value you specified in the input.py file"
+             << " against the documented ENUM values.\n";
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+
       if ( this->debug_level < DEBUG_LEVEL_NO_TRACE ) {
          this->debug_level = DEBUG_LEVEL_NO_TRACE;
          DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "No TrickHLA debug messages will be emitted.\n", MSG_WARNING );
@@ -800,8 +801,10 @@ bool Federate::is_RTI_ready(
 
    bool rti_valid = true;
    if ( get_RTI_ambassador() == nullptr ) {
-      message_publish( MSG_WARNING, "Federate::%s:%d Unexpected nullptr RTIambassador!\n",
-                       method_name.c_str(), __LINE__ );
+      ostringstream msg;
+      msg << "From calling function '" << method_name << "', unexpected nullptr RTIambassador!\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
+
       rti_valid = false;
    }
 
@@ -827,16 +830,15 @@ void Federate::add_joined_federate(
       joined_federates_map[instance_hndl]   = known_federate;
 
       if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         string handle_str;
-         StringUtilities::to_string( handle_str, instance_hndl );
+         string instance_str;
+         StringUtilities::to_string( instance_str, instance_hndl );
          string name_str;
          StringUtilities::to_string( name_str, instance_name );
 
          ostringstream summary;
-         summary << "Federate::add_joined_federate():" << __LINE__
-                 << " Object '" << name_str << "', with Instance Handle:"
-                 << handle_str << "\n";
-         message_publish( MSG_NORMAL, summary.str().c_str() );
+         summary << "Federate: '" << name_str
+                 << "', with Object-Instance-Handle:" << instance_str << "\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, summary.str() );
       }
    }
 
@@ -866,13 +868,12 @@ void Federate::remove_joined_federate(
          joined_federates_map.erase( iter );
 
          if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-            string handle_str;
-            StringUtilities::to_string( handle_str, instance_hndl );
+            string instance_str;
+            StringUtilities::to_string( instance_str, instance_hndl );
 
             ostringstream summary;
-            summary << "Federate::remove_joined_federate():" << __LINE__
-                    << " Object Instance:" << handle_str << "\n";
-            message_publish( MSG_NORMAL, summary.str().c_str() );
+            summary << "Federate Object-Instance-Handle:" << instance_str << "\n";
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, summary.str() );
          }
       }
    }
@@ -963,8 +964,9 @@ FederateHandle Federate::decode_federate_handle(
    if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       string fed_id;
       StringUtilities::to_string( fed_id, fed_handle );
-      message_publish( MSG_NORMAL, "Federate::decode_federate_handle():%d Federate-Handle:%s\n",
-                       __LINE__, fed_id.c_str() );
+      ostringstream msg;
+      msg << "Federate-Handle:" << fed_id << "\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    return fed_handle;
@@ -1009,7 +1011,7 @@ wstring Federate::get_federate_MOM_name( KnownFederate const &federate )
       StringUtilities::to_string( rti_err_msg, e.what() );
       ostringstream errmsg;
       errmsg << "Exception getting MOM instance name for '"
-             << fed_name_str << "' ID:" << id_str
+             << fed_name_str << "' Handle:" << id_str
              << " '" << rti_err_msg << "'.\n";
       DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
@@ -1022,7 +1024,7 @@ wstring Federate::get_federate_MOM_name( KnownFederate const &federate )
 }
 
 void Federate::set_MOM_HLAfederate_instance_attributes(
-   ObjectInstanceHandle const    &handle,
+   ObjectInstanceHandle const    &instance_hndl,
    AttributeHandleValueMap const &values )
 {
 
@@ -1034,12 +1036,12 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
    MutexProtection const auto_unlock_mutex( &joined_federate_mutex );
 
    // Add the federate handle if we don't know about it already.
-   if ( !is_joined_federate_by_object_handle( handle ) ) {
-      add_joined_federate( handle );
+   if ( !is_joined_federate_by_object_handle( instance_hndl ) ) {
+      add_joined_federate( instance_hndl );
    }
 
    // Get the associate joined federate reference.
-   KnownFederate &joined_federate = joined_federates_map[handle];
+   KnownFederate &joined_federate = joined_federates_map[instance_hndl];
 
    //
    // Let's get the federate name information.
@@ -1060,13 +1062,14 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
       joined_federate.name = wstring( fed_name_unicode );
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         string handle_str;
-         StringUtilities::to_string( handle_str, handle );
+         string instance_str;
+         StringUtilities::to_string( instance_str, instance_hndl );
          string name_str;
          StringUtilities::to_string( name_str, joined_federate.name );
-         message_publish( MSG_NORMAL, "Federate::set_MOM_HLAfederate_instance_attributes():%d Federate-OID:%s Name:'%s' size:%d\n",
-                          __LINE__, handle_str.c_str(), name_str.c_str(),
-                          (int)joined_federate.name.size() );
+         ostringstream msg;
+         msg << "Federate-Handle:" << instance_str << " Name:'" << name_str
+             << "' size:" << joined_federate.name.size() << "\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
    }
 
@@ -1098,13 +1101,14 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
       joined_federate.type = wstring( fed_type_unicode );
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         string handle_str;
-         StringUtilities::to_string( handle_str, handle );
+         string instance_str;
+         StringUtilities::to_string( instance_str, instance_hndl );
          string type_str;
          StringUtilities::to_string( type_str, joined_federate.type );
-         message_publish( MSG_NORMAL, "Federate::set_MOM_HLAfederate_instance_attributes():%d Federate-OID:%s Type'%s' size:%d\n",
-                          __LINE__, handle_str.c_str(), type_str.c_str(),
-                          (int)joined_federate.type.size() );
+         ostringstream msg;
+         msg << "Federate Object-Instance-Handle:" << instance_str << " Type:'" << type_str
+             << "' size:" << joined_federate.type.size() << "\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
    }
 
@@ -1119,10 +1123,12 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
    if ( attr_iter == values.end() ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         string handle_str;
-         StringUtilities::to_string( handle_str, handle );
-         message_publish( MSG_NORMAL, "Federate::set_MOM_HLAfederate_instance_attributes():%d FederateHandle Not found for Federate-OID:%s\n",
-                          __LINE__, handle_str.c_str() );
+         string instance_str;
+         StringUtilities::to_string( instance_str, instance_hndl );
+         ostringstream msg;
+         msg << "FederateHandle Not found for Federate Object-Instance-Handle:"
+             << instance_str << "\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
 
    } else { // We have a federate handle so decode it.
@@ -1130,16 +1136,16 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
       joined_federate.federate_handle = decode_federate_handle( attr_iter->second );
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         string handle_str;
-         StringUtilities::to_string( handle_str, handle );
+         string instance_str;
+         StringUtilities::to_string( instance_str, instance_hndl );
          string fed_handle;
          StringUtilities::to_string( fed_handle, joined_federate.federate_handle );
-         message_publish( MSG_NORMAL, "Federate::set_MOM_HLAfederate_instance_attributes():%d Federate-OID:%s Federate-ID:%s\n",
-                          __LINE__, handle_str.c_str(), fed_handle.c_str() );
+         ostringstream msg;
+         msg << "Federate Object-Instance-Handle:" << instance_str
+             << " Joined Federate-Handle:" << fed_handle << "\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
    }
-
-   return;
 }
 
 void Federate::set_all_federate_MOM_instance_handles_by_name()
@@ -1166,9 +1172,6 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
    wstring fed_mom_instance_name_ws = L"";
 
    ostringstream summary;
-   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      summary << "Federate::set_all_federate_MOM_instance_handles_by_name():" << __LINE__;
-   }
 
    // Macro to save the FPU Control Word register value.
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
@@ -1203,7 +1206,7 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
                        << "    Federate:'" << name_str
                        << "' Type:'" << type_str
                        << "' MOM-Name: '" << mom_str
-                       << "' MOM-Object-ID:" << id_str;
+                       << "' MOM-Object-Handle:" << id_str;
             }
          }
       }
@@ -1214,7 +1217,7 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          summary << "\n";
-         message_publish( MSG_NORMAL, summary.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, summary.str() );
       }
 
       string fed_mom_instance_name;
@@ -1230,7 +1233,7 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          summary << "\n";
-         message_publish( MSG_NORMAL, summary.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, summary.str() );
       }
       DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, e );
    } catch ( NotConnected const &e ) {
@@ -1239,7 +1242,7 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          summary << "\n";
-         message_publish( MSG_NORMAL, summary.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, summary.str() );
       }
       DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, e );
       set_connection_lost();
@@ -1250,7 +1253,7 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          summary << "\n";
-         message_publish( MSG_NORMAL, summary.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, summary.str() );
       }
       DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, e );
    } catch ( RTI1516_NAMESPACE::Exception const &e ) {
@@ -1260,7 +1263,7 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          summary << "\n";
-         message_publish( MSG_NORMAL, summary.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, summary.str() );
       }
       DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, e );
    }
@@ -1270,7 +1273,7 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       summary << "\n";
-      message_publish( MSG_NORMAL, summary.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, summary.str() );
    }
 }
 
@@ -1312,7 +1315,7 @@ bool Federate::is_required_federate(
 }
 
 bool Federate::is_joined_federate_by_federate_handle(
-   FederateHandle const &handle )
+   FederateHandle const &fed_handle )
 {
    // Loop thru all joined_federate_map entries.
    KnownFederateMap::const_iterator map_iter;
@@ -1324,7 +1327,7 @@ bool Federate::is_joined_federate_by_federate_handle(
       KnownFederate const &joined_federate = static_cast< KnownFederate const & >( map_iter->second );
 
       // Compare the federate handles.
-      if ( handle == joined_federate.federate_handle ) {
+      if ( fed_handle == joined_federate.federate_handle ) {
          return true;
       }
    }
@@ -1332,9 +1335,9 @@ bool Federate::is_joined_federate_by_federate_handle(
 }
 
 bool Federate::is_joined_federate_by_object_handle(
-   ObjectInstanceHandle const &handle )
+   ObjectInstanceHandle const &instance_hndl )
 {
-   return ( joined_federates_map.find( handle ) != joined_federates_map.end() );
+   return ( joined_federates_map.find( instance_hndl ) != joined_federates_map.end() );
 }
 
 bool Federate::is_joined_federate_by_MOM_name(
@@ -1489,13 +1492,14 @@ bool Federate::verify_joined_federates()
       // Initial check is that the number of federates is the same.
       if ( federate_handles.size() != joined_federates_map.size() ) {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+            string joined_feds_str;
+            StringUtilities::to_string( joined_feds_str, list_joined_federates() );
             ostringstream errmsg;
-            errmsg << "Federate::verify_joined_federates():" << __LINE__
-                   << " There are " << joined_federates_map.size()
-                   << " joined federates but expected "
-                   << federate_handles.size() << ".\n";
-            message_publish( MSG_WARNING, errmsg.str().c_str() );
-            std::wcout << list_joined_federates() << "\n";
+            errmsg << "There are " << joined_federates_map.size()
+                   << " joined federates in the list but expected " << federate_handles.size()
+                   << ". List of joined federates:\n"
+                   << joined_feds_str << "\n";
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
          }
          return ( false );
       }
@@ -1543,11 +1547,13 @@ bool Federate::verify_joined_federates()
    // Print out an error message if check failed.
    if ( !success ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         string joined_feds_str;
+         StringUtilities::to_string( joined_feds_str, list_joined_federates() );
          ostringstream errmsg;
-         errmsg << "Federate::verify_joined_federates():" << __LINE__
-                << " Could not match joined federates with federates in Federation:\n";
-         message_publish( MSG_WARNING, errmsg.str().c_str() );
-         std::wcout << list_joined_federates() << "\n";
+         errmsg << "Could not match joined federates with federates in Federation."
+                << " List of joined federates:\n"
+                << joined_feds_str << "\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
       }
    }
 
@@ -1621,12 +1627,10 @@ void Federate::update_joined_federates()
       // federates we have already discovered.
       if ( joined_federates_map.size() > federate_handles.size() ) {
          ostringstream errmsg;
-         errmsg << "Federate::update_joined_federates():" << __LINE__
-                << " There are " << joined_federates_map.size()
+         errmsg << "There are " << joined_federates_map.size()
                 << " but only " << federate_handles.size()
-                << " federate in the federatesInFederation list!"
-                << "\n";
-         message_publish( MSG_ERROR, errmsg.str().c_str() );
+                << " federates in the federatesInFederation list!\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_ERROR );
 
          // Mark the update process as failed.
          federate_update_state = THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_FAILED;
@@ -1647,11 +1651,8 @@ void Federate::update_joined_federates()
       }
 
       // Something went wrong.
-      ostringstream errmsg;
-      errmsg << "Federate::update_joined_federates():" << __LINE__
-             << " The federatesInFederation list is not consistent with the joined federates list!"
-             << "\n";
-      message_publish( MSG_ERROR, errmsg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   "The federatesInFederation list is not consistent with the joined federates list!\n", MSG_ERROR );
 
       // Mark the update process as failed.
       federate_update_state = THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_FAILED;
@@ -1677,12 +1678,11 @@ void Federate::update_joined_federates()
       else if ( federate_handles.size() < joined_federates_map.size() ) {
 
          ostringstream errmsg;
-         errmsg << "Federate::update_joined_federates():" << __LINE__
-                << " Found " << federate_handles.size()
+         errmsg << "Found " << federate_handles.size()
                 << " in the federatesInFederation list but there are "
                 << joined_federates_map.size()
                 << " in the joined federates map!\n";
-         message_publish( MSG_ERROR, errmsg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_ERROR );
 
          // Mark the update process as failed.
          federate_update_state = THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_FAILED;
@@ -1715,11 +1715,12 @@ void Federate::update_joined_federates()
    if ( federate_update_state == THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_COMPLETE ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         ostringstream errmsg;
-         errmsg << "Federate::update_joined_federates():" << __LINE__
-                << " Federate Name, Type, Required:\n";
-         message_publish( MSG_NORMAL, errmsg.str().c_str() );
-         std::wcout << list_joined_federates() << "\n";
+         string joined_feds_str;
+         StringUtilities::to_string( joined_feds_str, list_joined_federates() );
+         ostringstream msg;
+         msg << "List of joined Federates:\n"
+             << joined_feds_str << "\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
 
       // Unsubscribe from all attributes for the MOM HLAfederate class.
@@ -1760,10 +1761,9 @@ void Federate::wait_for_joined_federates_update()
       // Only print out debug information when the state changes.
       if ( prev_state != federate_update_state ) {
          if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-            ostringstream errmsg;
-            errmsg << "Federate::wait_for_joined_federates_update(): State "
-                   << to_string( federate_update_state ) << "\n";
-            message_publish( MSG_NORMAL, errmsg.str().c_str() );
+            ostringstream msg;
+            msg << "State " << to_string( federate_update_state ) << "\n";
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
             prev_state = federate_update_state;
          }
       }
@@ -1773,10 +1773,12 @@ void Federate::wait_for_joined_federates_update()
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      string joined_feds_str;
+      StringUtilities::to_string( joined_feds_str, list_joined_federates() );
       ostringstream msg;
-      msg << "Federate::wait_for_joined_federates_update(): Joined federates: \n";
-      message_publish( MSG_NORMAL, msg.str().c_str() );
-      std::wcout << list_joined_federates() << "\n";
+      msg << "List of joined Federates:\n"
+          << joined_feds_str << "\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    return;
@@ -1787,7 +1789,8 @@ void Federate::wait_for_joined_federates_update()
  */
 wstring Federate::list_joined_federates()
 {
-   wstringstream federates_summary;
+   wstringstream summary;
+   summary << "Federate Name, Type, Required\n";
 
    // Iterate through the joined federates map.
    KnownFederateMap::iterator map_iter;
@@ -1799,17 +1802,17 @@ wstring Federate::list_joined_federates()
 
       // No end of line at the beginning.
       if ( map_iter != joined_federates_map.begin() ) {
-         federates_summary << "\n";
+         summary << "\n";
       }
 
       // List out the federate information.
-      federates_summary << joined_federate.name;
-      federates_summary << ", " << joined_federate.type;
-      federates_summary << ", " << ( joined_federate.required ? "True" : "False" );
+      summary << joined_federate.name;
+      summary << ", " << joined_federate.type;
+      summary << ", " << ( joined_federate.required ? "True" : "False" );
    }
 
    // Return the joined federate list as a wide string.
-   return ( federates_summary.str() );
+   return ( summary.str() );
 }
 
 /*!
@@ -1823,8 +1826,7 @@ string Federate::wait_for_required_federates_to_join()
    // If the known Federates list is disabled then just return.
    if ( !enable_known_feds ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "Federate::wait_for_required_federates_to_join():%d Check for required Federates DISABLED.\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Check for required Federates DISABLED.\n" );
       }
       return status_string;
    }
@@ -1851,19 +1853,18 @@ string Federate::wait_for_required_federates_to_join()
    // If we don't have any required Federates then return.
    if ( num_required_feds == 0 ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "Federate::wait_for_required_federates_to_join():%d NO REQUIRED FEDERATES!!!\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "NO REQUIRED FEDERATES!\n" );
       }
       return status_string;
    }
 
    // Create a summary of the required federates.
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      ostringstream required_fed_summary;
-      required_fed_summary << "Federate::wait_for_required_federates_to_join():"
-                           << __LINE__ << "\n"
-                           << "WAITING FOR " << num_required_feds
-                           << " REQUIRED FEDERATES:";
+      ostringstream summary;
+      summary << "Federate::wait_for_required_federates_to_join():"
+              << __LINE__ << "\n"
+              << "WAITING FOR " << num_required_feds
+              << " REQUIRED FEDERATES:";
 
       // Display the initial summary of the required federates we are waiting for.
       int cnt = 0;
@@ -1873,21 +1874,20 @@ string Federate::wait_for_required_federates_to_join()
             ++cnt;
             std::string name_str;
             StringUtilities::to_string( name_str, known_federates[i].name );
-            required_fed_summary << "\n"
-                                 << "    " << cnt
-                                 << ": Waiting for required federate '"
-                                 << name_str << "'";
+            summary << "\n"
+                    << "    " << cnt
+                    << ": Waiting for required federate '"
+                    << name_str << "'";
          }
       }
 
-      required_fed_summary << "\n";
+      summary << "\n";
 
       // Display a summary of the required federate by name.
-      message_publish( MSG_NORMAL, required_fed_summary.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, summary.str() );
 
       // Display a message that we are requesting the federate names.
-      message_publish( MSG_NORMAL, "Federate::wait_for_required_federates_to_join():%d Requesting list of joined federates from CRC.\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Requesting list of joined federates from CRC.\n" );
    }
 
    // Subscribe to Federate names using MOM interface and request an update.
@@ -1983,8 +1983,9 @@ string Federate::wait_for_required_federates_to_join()
                      StringUtilities::to_string( fedname, joined_federate.name );
                      if ( save_restore_service.restore_state == THLARestoreProcessEnum::RESTORE_ACTIVATE ) {
                         if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-                           message_publish( MSG_NORMAL, "Federate::wait_for_required_federates_to_join():%d Found an UNREQUIRED federate %s!\n",
-                                            __LINE__, fedname.c_str() );
+                           ostringstream msg;
+                           msg << "Found an UNREQUIRED Federate '" << fedname << "'!\n";
+                           DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
                         }
                         unrequired_federates_list.insert( fedname );
                      }
@@ -2007,9 +2008,7 @@ string Federate::wait_for_required_federates_to_join()
 
             // Build the federate summary as an output string stream.
             ostringstream summary;
-            summary << "Federate::wait_for_required_federates_to_join():"
-                    << __LINE__ << "\n"
-                    << "WAITING FOR " << num_required_feds
+            summary << "\nWAITING FOR " << num_required_feds
                     << " REQUIRED FEDERATES:";
 
             // Summarize the required federates first.
@@ -2022,13 +2021,11 @@ string Federate::wait_for_required_federates_to_join()
                   if ( is_joined_federate_by_name( known_fed.name ) ) {
                      summary << "\n"
                              << "    " << cnt
-                             << ": Found joined required federate '"
-                             << know_fed_str << "'";
+                             << ": Found joined required federate '" << know_fed_str << "'";
                   } else {
                      summary << "\n"
                              << "    " << cnt
-                             << ": Waiting for required federate '"
-                             << know_fed_str << "'";
+                             << ": Waiting for required federate '" << know_fed_str << "'";
                   }
                }
             }
@@ -2057,7 +2054,7 @@ string Federate::wait_for_required_federates_to_join()
             summary << "\n";
 
             // Display the federate summary.
-            message_publish( MSG_NORMAL, summary.str().c_str() );
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, summary.str() );
          }
 
       } // Mutex protection goes out of scope here
@@ -2151,8 +2148,7 @@ string Federate::wait_for_required_federates_to_join()
    determine_federate_MOM_object_instance_names();
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "Federate::wait_for_required_federates_to_join():%d FOUND ALL REQUIRED FEDERATES!!!\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "FOUND ALL REQUIRED FEDERATES!\n" );
    }
 
    return status_string;
@@ -2165,8 +2161,7 @@ string Federate::wait_for_required_federates_to_join()
 void Federate::update_and_print_joined_federates()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
-      message_publish( MSG_NORMAL, "Federate::update_and_print_joined_federates():%d started.\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Started\n" );
    }
 
    // Check the state of the joined federates update process.
@@ -2227,35 +2222,22 @@ void Federate::update_and_print_joined_federates()
 
          // Let's print out some useful status information.
          if ( federate_update_state == THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_ACTIVATE ) {
-            message_publish( MSG_NORMAL,
-                             "Federate::update_and_print_joined_federates():%d: Active.\n",
-                             __LINE__ );
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Active.\n" );
          } else if ( federate_update_state == THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_INITIATED ) {
-            message_publish( MSG_NORMAL,
-                             "Federate::update_and_print_joined_federates():%d: \
-Waiting for the federatesInFederation update.\n",
-                             __LINE__ );
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Waiting for the federatesInFederation update.\n" );
          } else if ( federate_update_state == THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_RECEIVED ) {
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
-               message_publish( MSG_NORMAL, "Federate::update_and_print_joined_federates():%d: \
-MOM just informed us that there are %d federates currently joined to the federation.\n",
-                                __LINE__, federate_handles.size() );
+               ostringstream msg;
+               msg << "MOM just informed us that there are " << federate_handles.size()
+                   << " federates currently joined to the federation.\n";
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
             }
          } else if ( federate_update_state == THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_IN_PROGRESS ) {
-            message_publish( MSG_NORMAL,
-                             "Federate::update_and_print_joined_federates():%d: \
-Waiting for the identified federates to join.\n",
-                             __LINE__ );
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Waiting for the identified federates to join.\n" );
          } else if ( federate_update_state == THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_COMPLETE ) {
-            message_publish( MSG_NORMAL,
-                             "Federate::update_and_print_joined_federates():%d: \
-Successfully updated the joined federates.\n",
-                             __LINE__ );
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Successfully updated the joined federates.\n" );
          } else if ( federate_update_state == THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_FAILED ) {
-            message_publish( MSG_ERROR,
-                             "Federate::update_and_print_joined_federates():%d: \
-Something went wrong while updating the joined federates.\n",
-                             __LINE__ );
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Something went wrong while updating the joined federates.\n" );
          }
       }
 
@@ -2268,9 +2250,7 @@ Something went wrong while updating the joined federates.\n",
       ostringstream summary;
       unsigned int  cnt = 0;
 
-      summary << "Federate::update_and_print_joined_federates():"
-              << __LINE__ << "\n"
-              << "There are " << joined_federates_map.size() << " federates:";
+      summary << "\nThere are " << joined_federates_map.size() << " federates:";
 
       // Iterate through the joined federates map.
       KnownFederateMap::iterator map_iter;
@@ -2284,20 +2264,16 @@ Something went wrong while updating the joined federates.\n",
          std::string name_str;
          StringUtilities::to_string( name_str, joined_federate.name );
          summary << "\n"
-                 << "    " << cnt
-                 << ": Found running federate '"
-                 << name_str << "'";
+                 << "    " << cnt << ": Found running federate '" << name_str << "'";
       }
       summary << "\n";
 
       // Display the federate summary.
-      message_publish( MSG_NORMAL, summary.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, summary.str() );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
-      message_publish( MSG_NORMAL,
-                       "Federate::update_and_print_joined_federates():%d Done.\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Done.\n" );
    }
 
    return;
@@ -2341,8 +2317,7 @@ void Federate::initialize_MOM_handles()
    TRICKHLA_SAVE_FPU_CONTROL_WORD;
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "Federate::initialize_MOM_handles():%d\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    bool error_flag = false;
@@ -2599,8 +2574,7 @@ void Federate::unsubscribe()
 void Federate::publish_and_subscribe()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "Federate::publish_and_subscribe():%d\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
    subscribe();
    publish();
@@ -2612,12 +2586,12 @@ void Federate::subscribe_attributes(
 {
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream summary;
-      summary << "Federate::subscribe_attributes():" << __LINE__ << "\n";
+      summary << "\n";
 
       if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         string handle_str;
-         StringUtilities::to_string( handle_str, class_handle );
-         summary << "  Class-Handle:" << handle_str << " with "
+         string class_hndl_str;
+         StringUtilities::to_string( class_hndl_str, class_handle );
+         summary << "  Class-Handle:" << class_hndl_str << " with "
                  << attribute_list.size() << " Attributes\n";
 
          AttributeHandleSet::const_iterator attr_iter;
@@ -2625,11 +2599,11 @@ void Federate::subscribe_attributes(
                attr_iter != attribute_list.end();
                ++attr_iter ) {
 
-            StringUtilities::to_string( handle_str, *attr_iter );
-            summary << "   + Attribute-Handle:" << handle_str << "\n";
+            StringUtilities::to_string( class_hndl_str, *attr_iter );
+            summary << "   + Attribute-Handle:" << class_hndl_str << "\n";
          }
       }
-      message_publish( MSG_NORMAL, summary.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, summary.str() );
    }
 
    // Macro to save the FPU Control Word register value.
@@ -2681,23 +2655,23 @@ void Federate::unsubscribe_attributes(
 {
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream summary;
-      summary << "Federate::unsubscribe_attributes():" << __LINE__ << "\n";
+      summary << "\n";
 
       if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         string handle_str;
-         StringUtilities::to_string( handle_str, class_handle );
-         summary << "  Class-Handle:" << handle_str << " with "
+         string class_hndl_str;
+         StringUtilities::to_string( class_hndl_str, class_handle );
+         summary << "  Class-Handle:" << class_hndl_str << " with "
                  << attribute_list.size() << " Attributes\n";
 
          AttributeHandleSet::const_iterator attr_iter;
          for ( attr_iter = attribute_list.begin();
                attr_iter != attribute_list.end();
                ++attr_iter ) {
-            StringUtilities::to_string( handle_str, *attr_iter );
-            summary << "   + Attribute-Handle:" << handle_str << "\n";
+            StringUtilities::to_string( class_hndl_str, *attr_iter );
+            summary << "   + Attribute-Handle:" << class_hndl_str << "\n";
          }
       }
-      message_publish( MSG_NORMAL, summary.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, summary.str() );
    }
 
    // Macro to save the FPU Control Word register value.
@@ -2746,23 +2720,23 @@ void Federate::request_attribute_update(
 {
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream summary;
-      summary << "Federate::request_attribute_update():" << __LINE__ << "\n";
+      summary << "\n";
 
       if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         string handle_str;
-         StringUtilities::to_string( handle_str, class_handle );
-         summary << "  Class-Handle:" << handle_str << " with "
+         string class_hndl_str;
+         StringUtilities::to_string( class_hndl_str, class_handle );
+         summary << "  Class-Handle:" << class_hndl_str << " with "
                  << attribute_list.size() << " Attributes\n";
 
          AttributeHandleSet::const_iterator attr_iter;
          for ( attr_iter = attribute_list.begin();
                attr_iter != attribute_list.end();
                ++attr_iter ) {
-            StringUtilities::to_string( handle_str, *attr_iter );
-            summary << "   + Attribute-Handle:" << handle_str << "\n";
+            StringUtilities::to_string( class_hndl_str, *attr_iter );
+            summary << "   + Attribute-Handle:" << class_hndl_str << "\n";
          }
       }
-      message_publish( MSG_NORMAL, summary.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, summary.str() );
    }
 
    // Macro to save the FPU Control Word register value.
@@ -2811,8 +2785,7 @@ void Federate::request_attribute_update(
 void Federate::ask_MOM_for_federate_info()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "Federate::ask_MOM_for_federate_names():%d\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    // Make sure the MOM handles get initialized before we try to use them.
@@ -2843,8 +2816,7 @@ void Federate::ask_MOM_for_federate_info()
 void Federate::ask_MOM_for_federation_info()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "Federate::ask_MOM_for_federation_info():%d\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    // Concurrency critical code section because joined-federate state is changed
@@ -2906,15 +2878,14 @@ void Federate::unsubscribe_all_HLAfederate_class_attributes_from_MOM()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream summary;
-      summary << "Federate::unsubscribe_all_HLAfederate_class_attributes_from_MOM():"
-              << __LINE__ << "\n";
+      summary << "\n";
 
       if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         string handle_str;
-         StringUtilities::to_string( handle_str, MOM_HLAfederate_class_handle );
-         summary << "  Class-Handle:" << handle_str << "\n";
+         string class_hndl_str;
+         StringUtilities::to_string( class_hndl_str, MOM_HLAfederate_class_handle );
+         summary << "  Class-Handle:" << class_hndl_str << "\n";
       }
-      message_publish( MSG_NORMAL, summary.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, summary.str() );
    }
 
    // Macro to save the FPU Control Word register value.
@@ -2947,8 +2918,7 @@ void Federate::unsubscribe_all_HLAfederate_class_attributes_from_MOM()
 void Federate::unsubscribe_all_HLAfederation_class_attributes_from_MOM()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "Federate::unsubscribe_all_HLAfederation_class_attributes_from_MOM():%d\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    // Macro to save the FPU Control Word register value.
@@ -2981,8 +2951,7 @@ void Federate::publish_interaction_class( // cppcheck-suppress [functionStatic, 
    RTI1516_NAMESPACE::InteractionClassHandle const &class_handle )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "Federate::publish_interaction_class():%d\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    // Macro to save the FPU Control Word register value.
@@ -3014,8 +2983,7 @@ void Federate::unpublish_interaction_class( // cppcheck-suppress [functionStatic
    RTI1516_NAMESPACE::InteractionClassHandle const &class_handle )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "Federate::unpublish_interaction_class():%d\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    // Macro to save the FPU Control Word register value.
@@ -3129,12 +3097,10 @@ void Federate::wait_for_init_sync_point(
    if ( !execution_control->is_wait_for_init_sync_point_supported() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          ostringstream errmsg;
-         errmsg << "Federate::wait_for_init_sync_point():" << __LINE__
-                << " WARNING: This call will be ignored because the"
+         errmsg << "This call will be ignored because the"
                 << " Simulation Initialization Scheme (Type:'"
-                << execution_control->get_type()
-                << "') does not support it.\n";
-         message_publish( MSG_WARNING, errmsg.str().c_str() );
+                << execution_control->get_type() << "') does not support it.\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
       }
       return;
    }
@@ -3143,10 +3109,7 @@ void Federate::wait_for_init_sync_point(
    // initialization process so just return.
    if ( is_late_joining_federate() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         ostringstream errmsg;
-         errmsg << "Federate::wait_for_init_sync_point():" << __LINE__
-                << " Late joining federate so this call will be ignored.\n";
-         message_publish( MSG_NORMAL, errmsg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Late joining federate so this call will be ignored.\n" );
       }
       return;
    }
@@ -3203,7 +3166,7 @@ void Federate::enter_freeze()
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "Federate::enter_freeze():%d\n", __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    // Dispatch to the ExecutionControl method.
@@ -3235,8 +3198,7 @@ void Federate::freeze_check_mode()
    SIM_MODE const exec_mode = exec_get_mode();
    if ( exec_mode == Initialization ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "Federate::check_freeze():%d Pass first Time.\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Pass first time.\n" );
       }
       return;
    }
@@ -3244,8 +3206,7 @@ void Federate::freeze_check_mode()
    // in Freeze mode then return to avoid running the code below more than once.
    if ( exec_mode != Freeze ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "Federate::check_freeze():%d not in Freeze mode so returning.\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Not in Freeze mode so returning.\n" );
       }
       return;
    }
@@ -3287,9 +3248,10 @@ void Federate::freeze_restore()
 void Federate::freeze_exit()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "Federate::exit_freeze():%d announce_freeze:%s, freeze_federation:%s\n",
-                       __LINE__, ( execution_control->is_freeze_announced() ? "Yes" : "No" ),
-                       ( execution_control->is_freeze_pending() ? "Yes" : "No" ) );
+      ostringstream msg;
+      msg << "announce_freeze:" << ( execution_control->is_freeze_announced() ? "Yes" : "No" )
+          << ", freeze_federation:" << ( execution_control->is_freeze_pending() ? "Yes" : "No" ) << "\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    // Dispatch to the ExecutionControl method.
@@ -3332,13 +3294,11 @@ void Federate::save( wstring const &label )
 
    // Sanity checks.
    if ( execution_control == nullptr ) {
-      ostringstream msg;
-      string        label_str;
+      string label_str;
       StringUtilities::to_string( label_str, label );
-      msg << "Federate::save():" << __LINE__
-          << " No ExecutionControl for Saving \'"
-          << label_str << "\'!";
-      message_publish( MSG_ERROR, "%s\n", msg.str().c_str() );
+      ostringstream msg;
+      msg << "No ExecutionControl for Saving '" << label_str << "'!\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_ERROR );
       return;
    }
 
@@ -3431,20 +3391,16 @@ void Federate::restore( wstring const &label )
 
    // Sanity checks.
    if ( execution_control == nullptr ) {
-      ostringstream msg;
-      string        label_str;
+      string label_str;
       StringUtilities::to_string( label_str, label );
-      msg << "Federate::save():" << __LINE__
-          << " No ExecutionControl for Saving \'"
-          << label_str << "\'!";
-      message_publish( MSG_ERROR, "%s\n", msg.str().c_str() );
+      ostringstream msg;
+      msg << "No ExecutionControl for Saving '" << label_str << "'!\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_ERROR );
       return;
    }
 
    // Call the execution control Save method.
    execution_control->restore( label );
-
-   return;
 }
 
 //-------------------------------------------------------------------------
@@ -3459,10 +3415,7 @@ void Federate::convert_data_before_checkpoint()
 {
 
    if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      ostringstream msg;
-      msg << "Federate::convert_data_before_checkpoint():"
-          << __LINE__ << " Converting the federate data for checkpointing.\n";
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Converting the federate data for checkpointing.\n" );
    }
 
    // Delegate to the Execution Control specific implementation.
@@ -3482,10 +3435,7 @@ void Federate::convert_data_before_checkpoint()
 void Federate::restore_data_after_checkpoint()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      ostringstream msg;
-      msg << "Federate::restore_data_after_checkpoint():"
-          << __LINE__ << " Restoring the federate data after loading a checkpoint.\n";
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Restoring the federate data after loading a checkpoint.\n" );
    }
 
    // Delegate to the Execution Control specific implementation.
@@ -3505,10 +3455,7 @@ void Federate::restore_data_after_checkpoint()
 void Federate::free_converted_data_for_checkpoint()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      ostringstream msg;
-      msg << "Federate::free_converted_data_for_checkpoint():"
-          << __LINE__ << " Freeing federate data allocated for checkpointing.\n";
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Freeing federate data allocated for checkpointing.\n" );
    }
 
    // Delegate to the Execution Control specific implementation.
@@ -3528,10 +3475,7 @@ void Federate::checkpoint_before()
 {
 
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      ostringstream msg;
-      msg << "Federate::checkpoint_before():"
-          << __LINE__ << " Preparing for a checkpoint.\n";
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Preparing for a checkpoint.\n" );
    }
 
    // Delegate to the Execution Control specific implementation.
@@ -3549,27 +3493,20 @@ void Federate::checkpoint_preload()
 {
    // TrickHLA only supports a checkpoint load as part of an HLA Restore process.
    if ( save_restore_service.restore_state != THLARestoreProcessEnum::RESTORE_INITIATED ) {
-      ostringstream msg;
-      msg << "Federate::checkpoint_preload():" << __LINE__
-          << " Checkpoint loading only supported as part of an HLA Restore process!\n";
-      message_publish( MSG_WARNING, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Checkpoint loading only supported as part of an HLA Restore process!\n", MSG_WARNING );
 
       string restore_label_str;
       StringUtilities::to_string( restore_label_str, save_restore_service.restore_label );
       ostringstream errmsg;
-      errmsg << "Federate::checkpoint_preload():" << __LINE__
-             << " Unexpected Restore state for label: " << restore_label_str << "\n"
+      errmsg << "Unexpected Restore state for label: " << restore_label_str << "\n"
              << "   Expected state: RESTORE_INITIATED\n"
              << "   Current state : " << TrickHLA::to_string( save_restore_service.restore_state ) << "\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
       return;
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      ostringstream msg;
-      msg << "Federate::checkpoint_preload():"
-          << __LINE__ << " Preparing to load checkpoint file as part of an HLA Restore process.\n";
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Preparing to load checkpoint file as part of an HLA Restore process.\n" );
    }
 
    // Delegate to the Execution Control specific implementation.
@@ -3586,10 +3523,7 @@ void Federate::checkpoint_preload()
 void Federate::checkpoint_after()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      ostringstream msg;
-      msg << "Federate::checkpoint_after():"
-          << __LINE__ << " Cleaning up after a checkpoint.\n";
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Cleaning up after a checkpoint.\n" );
    }
 
    // Delegate to the Execution Control specific implementation.
@@ -3609,18 +3543,13 @@ void Federate::checkpoint_restart()
 {
    // TrickHLA only supports a checkpoint load as part of an HLA Restore process.
    if ( save_restore_service.restore_state != THLARestoreProcessEnum::RESTORE_CHECKPOINT ) {
-      ostringstream msg;
-      msg << "Federate::checkpoint_restart():"
-          << __LINE__ << " Checkpoint restart only supported as part of an HLA Restore process!\n";
-      message_publish( MSG_WARNING, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   "Checkpoint restart only supported as part of an HLA Restore process!\n", MSG_WARNING );
       return;
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      ostringstream msg;
-      msg << "Federate::checkpoint_restart():"
-          << __LINE__ << " Restarting after loading a checkpoint.\n";
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Restarting after loading a checkpoint.\n" );
    }
 
    // Delegate to the Execution Control specific implementation.
@@ -3645,8 +3574,9 @@ void Federate::create_federation()
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "Federate::create_federation():%d Attempting to create Federation '%s'\n",
-                       __LINE__, get_federation_name().c_str() );
+      ostringstream msg;
+      msg << "Attempting to create Federation '" << get_federation_name() << "'\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    // Create the wide-string version of the federation name.
@@ -3689,8 +3619,9 @@ void Federate::create_federation()
       this->federation_exists              = true;
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "Federate::create_federation():%d Created Federation '%s'\n",
-                          __LINE__, get_federation_name().c_str() );
+         ostringstream msg;
+         msg << "Created Federation '" << get_federation_name() << "'\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
    } catch ( RTI1516_NAMESPACE::FederationExecutionAlreadyExists const &e ) {
       // Just ignore the exception if the federation execution already exits
@@ -3775,10 +3706,9 @@ void Federate::join_federation(
    if ( this->federation_joined ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          ostringstream errmsg;
-         errmsg << "Federate::join_federation():" << __LINE__
-                << " Federation '" << get_federation_name()
-                << "': ALREADY JOINED FEDERATION EXECUTION\n";
-         message_publish( MSG_WARNING, errmsg.str().c_str() );
+         errmsg << "Federation '" << get_federation_name()
+                << "' ALREADY JOINED FEDERATION EXECUTION\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
       }
       return;
    }
@@ -3810,8 +3740,9 @@ void Federate::join_federation(
    // unique if you do save/restore unless you understand how save/restore
    // will use the information.
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "Federate::join_federation():%d Attempting to Join Federation '%s'\n",
-                       __LINE__, get_federation_name().c_str() );
+      ostringstream msg;
+      msg << "Attempting to Join Federation '" << get_federation_name() << "'\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
    try {
       this->federation_joined = false;
@@ -3835,8 +3766,10 @@ void Federate::join_federation(
          string id_str;
          StringUtilities::to_string( id_str, federate_id );
 
-         message_publish( MSG_NORMAL, "Federate::join_federation():%d Joined Federation '%s', Federate-Handle:%s\n",
-                          __LINE__, get_federation_name().c_str(), id_str.c_str() );
+         ostringstream msg;
+         msg << "Joined Federation '" << get_federation_name()
+             << "', Federate-Handle:" << id_str << "\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
    } catch ( RTI1516_NAMESPACE::CouldNotCreateLogicalTimeFactory const &e ) {
       DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, e );
@@ -3898,10 +3831,9 @@ void Federate::create_and_join_federation()
    if ( this->federation_joined ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          ostringstream errmsg;
-         errmsg << "Federate::create_and_join_federation():" << __LINE__
-                << " Federation \"" << get_federation_name()
-                << "\": ALREADY JOINED FEDERATION EXECUTION\n";
-         message_publish( MSG_WARNING, errmsg.str().c_str() );
+         errmsg << "Federation '" << get_federation_name()
+                << "' ALREADY JOINED FEDERATION EXECUTION\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
       }
       return;
    }
@@ -3919,8 +3851,11 @@ void Federate::create_and_join_federation()
       join_federation( get_federate_name(), get_federate_type() );
 
       if ( !this->federation_joined ) {
-         message_publish( MSG_WARNING, "Federate::create_and_join_federation():%d Failed to join federation \"%s\" on attempt %d of %d!\n",
-                          __LINE__, get_federation_name().c_str(), k, max_retries );
+         ostringstream msg;
+         msg << "Failed to join Federation '" << get_federation_name()
+             << "' on attempt " << k << " of " << max_retries << "!\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
+
          Utilities::micro_sleep( 100000 );
       }
    }
@@ -3930,7 +3865,6 @@ void Federate::create_and_join_federation()
       errmsg << "Federate '" << get_federate_name()
              << "' FAILED TO JOIN the '" << get_federation_name()
              << "' Federation.\n";
-
       DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 }
@@ -3950,8 +3884,7 @@ void Federate::enable_async_delivery()
 
    try {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "Federate::enable_async_delivery():%d Enabling Asynchronous Delivery\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Enabling Asynchronous Delivery\n" );
       }
 
       // Turn on asynchronous delivery of receive ordered messages. This will
@@ -4024,8 +3957,9 @@ void Federate::send_zero_lookahead_and_requested_data(
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "Federate::send_zero_lookahead_and_requested_data():%d Object:'%s'\n",
-                       __LINE__, obj_instance_name.c_str() );
+      ostringstream msg;
+      msg << "Object '" << obj_instance_name << "'\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    obj->send_zero_lookahead_and_requested_data( time_management_service.granted_time );
@@ -4055,8 +3989,9 @@ void Federate::wait_to_receive_zero_lookahead_data(
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "Federate::wait_to_receive_zero_lookahead_data():%d Object:'%s'\n",
-                       __LINE__, obj_instance_name.c_str() );
+      ostringstream msg;
+      msg << "Object '" << obj_instance_name << "'\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    // See if we already have data without the overhead of calling TARA/TAG. This
@@ -4099,8 +4034,7 @@ void Federate::wait_to_receive_zero_lookahead_data(
 
          if ( print_timer.timeout( wallclock_time ) ) {
             print_timer.reset();
-            message_publish( MSG_NORMAL, "Federate::wait_to_receive_zero_lookahead_data():%d Waiting...\n",
-                             __LINE__ );
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Waiting...\n" );
          }
 
          // The TARA will cause zero-lookahead data to be reflected before the TAG.
@@ -4133,8 +4067,9 @@ void Federate::send_blocking_io_data(
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "Federate::send_blocking_io_data():%d Object:'%s'\n",
-                       __LINE__, obj_instance_name.c_str() );
+      ostringstream msg;
+      msg << "Object '" << obj_instance_name << "'\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    obj->send_blocking_io_data();
@@ -4164,8 +4099,9 @@ void Federate::wait_to_receive_blocking_io_data(
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "Federate::wait_to_receive_blocking_io_data():%d Object:'%s'\n",
-                       __LINE__, obj_instance_name.c_str() );
+      ostringstream msg;
+      msg << "Object '" << obj_instance_name << "'\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    // See if we already have data. This is most likely the case if multiple data
@@ -4203,8 +4139,7 @@ void Federate::wait_to_receive_blocking_io_data(
 
          if ( print_timer.timeout( wallclock_time ) ) {
             print_timer.reset();
-            message_publish( MSG_NORMAL, "Federate::wait_to_receive_blocking_io_data():%d Waiting...\n",
-                             __LINE__ );
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Waiting...\n" );
          }
       }
    }
@@ -4258,7 +4193,7 @@ void Federate::shutdown()
    this->shutdown_called = true;
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "Federate::shutdown():%d\n", __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
 #if defined( TRICKHLA_COLLECT_TAG_STATS )
@@ -4267,31 +4202,29 @@ void Federate::shutdown()
                                         ? ( tag_wait_time / tag_wait_count )
                                         : tag_wait_time;
    ostringstream tag_msg;
-   tag_msg << "Federate::shutdown():" << __LINE__ << "\n"
+   tag_msg << "\n"
            << "Total # waits for TAG:" << tag_wait_count << "\n"
            << "  Total TAG wait time:" << tag_wait_time << " seconds\n"
            << "Average TAG wait time:" << avg_tag_wait_time << " seconds\n";
-   message_publish( MSG_INFO, tag_msg.str().c_str() );
+   DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, tag_msg.str(), MSG_INFO );
 #endif // TRICKHLA_COLLECT_TAG_STATS
 
 #ifdef TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
    for ( int i = 0; i < object_service.obj_count; ++i ) {
       ostringstream msg1;
-      msg1 << "Federate::shutdown():" << __LINE__
-           << " Object[" << i << "]:'" << object_service.objects[i].get_name() << "'"
+      msg1 << "Object[" << i << "]:'" << object_service.objects[i].get_name() << "'"
            << " send_count:" << object_service.objects[i].send_count
            << " receive_count:" << object_service.objects[i].receive_count << "\n";
-      message_publish( MSG_INFO, msg1.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg1.str(), MSG_INFO );
    }
 #endif // TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
 
 #ifdef TRICKHLA_CYCLIC_READ_TIME_STATS
    for ( int i = 0; i < object_service.obj_count; ++i ) {
       ostringstream msg2;
-      msg2 << "Federate::shutdown():" << __LINE__
-           << " Object[" << i << "]:'" << object_service.objects[i].get_name() << "' "
+      msg2 << "Object[" << i << "]:'" << object_service.objects[i].get_name() << "' "
            << object_service.objects[i].elapsed_time_stats.to_string() << "\n";
-      message_publish( MSG_INFO, msg2.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg2.str(), MSG_INFO );
    }
 #endif // TRICKHLA_CYCLIC_READ_TIME_STATS
 
@@ -4337,15 +4270,17 @@ void Federate::shutdown()
    // NOTE: Don't use the TRICKHLA_VALIDATE_FPU_CONTROL_WORD because it can
    // be disabled in the TrickHLA compile-config header file.
    if ( ( _fpu_cw & _FPU_PC_MASK ) != ( __fpu_control & _FPU_PC_MASK ) ) {
-      message_publish( MSG_WARNING, "%s:%d WARNING: We have detected that the current \
-Floating-Point Unit (FPU) Control-Word Precision-Control value (%#x: %s) does \
-not match the Precision-Control value at program startup (%#x: %s). The change \
-in FPU Control-Word Precision-Control could cause the numerical values in your \
-simulation to be slightly different in the 7th or 8th decimal place. Please \
-contact the TrickHLA team for support.\n",
-                       __FILE__, __LINE__,
-                       ( _fpu_cw & _FPU_PC_MASK ), _FPU_PC_PRINT( _fpu_cw ),
-                       ( __fpu_control & _FPU_PC_MASK ), _FPU_PC_PRINT( __fpu_control ) );
+      ostringstream msg;
+      msg << "We have detected that the current Floating-Point Unit (FPU)"
+          << "Control-Word Precision-Control value (0x" << std::hex
+          << ( _fpu_cw & _FPU_PC_MASK ) << ": " << _FPU_PC_PRINT( _fpu_cw )
+          << ") does not match the Precision-Control value at program startup (0x" << std::hex
+          << ( __fpu_control & _FPU_PC_MASK ) << ": " << _FPU_PC_PRINT( __fpu_control )
+          << "). The change in FPU Control-Word Precision-Control could cause"
+          << " the numerical values in your simulation to be slightly different"
+          << " in the 7th or 8th decimal place. Please contact the TrickHLA team"
+          << " for support.\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
    }
 #endif // FPU_CW_PROTECTION
 }
@@ -4373,8 +4308,9 @@ void Federate::resign()
    // this federate owns but does not own the privilegeToDelete for.
    try {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "Federate::resign():%d Attempting to resign from Federation '%s'\n",
-                          __LINE__, get_federation_name().c_str() );
+         ostringstream msg;
+         msg << "Attempting to resign from Federation '" << get_federation_name() << "'\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
 
       if ( is_execution_member() ) {
@@ -4383,12 +4319,14 @@ void Federate::resign()
          this->federation_joined = false;
 
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-            message_publish( MSG_NORMAL, "Federate::resign():%d Resigned from Federation '%s'\n",
-                             __LINE__, get_federation_name().c_str() );
+            ostringstream msg;
+            msg << "Resigned from Federation '" << get_federation_name() << "'\n";
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
          }
       } else {
-         message_publish( MSG_NORMAL, "Federate::resign():%d Not execution member of Federation '%s'\n",
-                          __LINE__, get_federation_name().c_str() );
+         ostringstream msg;
+         msg << "Not execution member of Federation '" << get_federation_name() << "'\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
    } catch ( InvalidResignAction const &e ) {
       DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, e );
@@ -4434,9 +4372,10 @@ void Federate::resign_so_we_can_rejoin()
 
    try {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "Federate::resign_so_we_can_rejoin():%d \
-Federation \"%s\": RESIGNING FROM FEDERATION (with the ability to rejoin federation)\n",
-                          __LINE__, get_federation_name().c_str() );
+         ostringstream msg;
+         msg << "RESIGNING FROM FEDERATION '" << get_federation_name()
+             << "' with the ability to rejoin Federation.\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
 
       RTI_ambassador->resignFederationExecution( RTI1516_NAMESPACE::UNCONDITIONALLY_DIVEST_ATTRIBUTES );
@@ -4498,8 +4437,9 @@ void Federate::destroy()
 
    try {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "Federate::destroy():%d Attempting to Destroy Federation '%s'.\n",
-                          __LINE__, get_federation_name().c_str() );
+         ostringstream msg;
+         msg << "Attempting to Destroy Federation '" << get_federation_name() << "'\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
 
       RTI_ambassador->destroyFederationExecution( federation_name_ws );
@@ -4508,8 +4448,9 @@ void Federate::destroy()
       this->federation_joined = false;
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "Federate::destroy():%d Destroyed Federation '%s'.\n",
-                          __LINE__, get_federation_name().c_str() );
+         ostringstream msg;
+         msg << "Destroyed Federation '" << get_federation_name() << "'\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
    } catch ( RTI1516_NAMESPACE::FederatesCurrentlyJoined const &e ) {
       this->federation_joined = false;
@@ -4541,8 +4482,7 @@ void Federate::destroy()
 
    try {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "Federate::destroy():%d Attempting to disconnect from RTI.\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Attempting to disconnect from RTI.\n" );
       }
 
       RTI_ambassador->disconnect();
@@ -4551,8 +4491,7 @@ void Federate::destroy()
       this->connected         = false;
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "Federate::destroy():%d Disconnected from RTI.\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Disconnected from RTI.\n" );
       }
    } catch ( RTI1516_NAMESPACE::FederateIsExecutionMember const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -4589,8 +4528,9 @@ void Federate::destroy_orphaned_federation()
    StringUtilities::to_wstring( federation_name_ws, federation_name );
 
    if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "Federate::destroy_orphaned_federation():%d Attempting to Destroy Orphaned Federation '%s'.\n",
-                       __LINE__, get_federation_name().c_str() );
+      ostringstream msg;
+      msg << "Attempting to Destroy Orphaned Federation '" << get_federation_name() << "'\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    try {
@@ -4599,8 +4539,9 @@ void Federate::destroy_orphaned_federation()
       // If we don't get an exception then we successfully destroyed
       // an orphaned federation.
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_NORMAL, "Federate::destroy_orphaned_federation():%d Successfully Destroyed Orphaned Federation '%s'.\n",
-                          __LINE__, get_federation_name().c_str() );
+         ostringstream msg;
+         msg << "Successfully Destroyed Orphaned Federation '" << get_federation_name() << "'\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
    } catch ( RTI1516_NAMESPACE::Exception const &e ) {
       // Ignore any exception since we are just removing an orphaned federation.
@@ -4635,8 +4576,7 @@ void Federate::set_federation_name(
 void Federate::ask_MOM_for_auto_provide_setting()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "Federate::ask_MOM_for_auto_provide_setting():%d\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    // Make sure the MOM handles get initialized before we try to use them.
@@ -4688,8 +4628,7 @@ void Federate::ask_MOM_for_auto_provide_setting()
 
          if ( print_timer.timeout( wallclock_time ) ) {
             print_timer.reset();
-            message_publish( MSG_NORMAL, "Federate::ask_MOM_for_auto_provide_setting():%d Waiting...\n",
-                             __LINE__ );
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Waiting...\n" );
          }
       }
    }
@@ -4698,9 +4637,10 @@ void Federate::ask_MOM_for_auto_provide_setting()
    unsubscribe_attributes( MOM_HLAfederation_class_handle, fedMomAttributes );
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      string const auto_provide_status = get_auto_provide_status_string( auto_provide_setting );
-      message_publish( MSG_NORMAL, "Federate::ask_MOM_for_auto_provide_setting():%d Auto-Provide:%s value:%d\n",
-                       __LINE__, auto_provide_status.c_str(), auto_provide_setting );
+      string const  auto_provide_status = get_auto_provide_status_string( auto_provide_setting );
+      ostringstream msg;
+      msg << "Auto-Provide:" << auto_provide_status << " value:" << auto_provide_setting << "\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    fedMomAttributes.clear();
@@ -4714,9 +4654,10 @@ void Federate::enable_MOM_auto_provide_setting(
    this->auto_provide_setting = enable ? 1 : 0;
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      string const auto_provide_status = get_auto_provide_status_string( auto_provide_setting );
-      message_publish( MSG_NORMAL, "Federate::enable_MOM_auto_provide_setting():%d Auto-Provide:%s\n",
-                       __LINE__, auto_provide_status.c_str() );
+      string const  auto_provide_status = get_auto_provide_status_string( auto_provide_setting );
+      ostringstream msg;
+      msg << "Auto-Provide:" << auto_provide_status << "\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    publish_interaction_class( MOM_HLAsetSwitches_class_handle );
@@ -4740,8 +4681,7 @@ void Federate::enable_MOM_auto_provide_setting(
 void Federate::backup_auto_provide_setting_from_MOM_then_disable()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "Federate::backup_auto_provide_setting_from_MOM_then_disable():%d\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    ask_MOM_for_auto_provide_setting();
@@ -4761,10 +4701,11 @@ void Federate::restore_orig_MOM_auto_provide_setting()
    // match the current setting.
    if ( auto_provide_setting != orig_auto_provide_setting ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         string const auto_provide_status = get_auto_provide_status_string( orig_auto_provide_setting );
-         message_publish( MSG_NORMAL, "Federate::restore_orig_MOM_auto_provide_setting():%d Auto-Provide:%s value:%d\n",
-                          __LINE__, auto_provide_status.c_str(),
-                          orig_auto_provide_setting );
+         string const  auto_provide_status = get_auto_provide_status_string( orig_auto_provide_setting );
+         ostringstream msg;
+         msg << "Auto-Provide:" << auto_provide_status
+             << " value:" << orig_auto_provide_setting << "\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
       enable_MOM_auto_provide_setting( orig_auto_provide_setting > 0 );
    }
@@ -4773,17 +4714,16 @@ void Federate::restore_orig_MOM_auto_provide_setting()
 void Federate::add_MOM_HLAfederation_instance_handle(
    ObjectInstanceHandle const &instance_hndl )
 {
-   string id_str;
-   StringUtilities::to_string( id_str, instance_hndl );
-   wstring id_ws;
-   StringUtilities::to_wstring( id_ws, id_str );
-   MOM_HLAfederation_instance_name_map[instance_hndl] = id_ws;
+   string instance_str;
+   StringUtilities::to_string( instance_str, instance_hndl );
+   wstring instance_ws;
+   StringUtilities::to_wstring( instance_ws, instance_str );
+   MOM_HLAfederation_instance_name_map[instance_hndl] = instance_ws;
 
    if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream summary;
-      summary << "Federate::add_MOM_HLAfederation_instance_id():" << __LINE__
-              << " Object Instance:" << id_str << "\n";
-      message_publish( MSG_NORMAL, summary.str().c_str() );
+      summary << "Federate Object-Instance-Handle:" << instance_str << "\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, summary.str() );
    }
 }
 
@@ -4797,13 +4737,12 @@ void Federate::remove_MOM_HLAfederation_instance_handle(
       MOM_HLAfederation_instance_name_map.erase( iter );
 
       if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         string handle_str;
-         StringUtilities::to_string( handle_str, instance_hndl );
+         string instance_str;
+         StringUtilities::to_string( instance_str, instance_hndl );
 
          ostringstream summary;
-         summary << "Federate::remove_MOM_HLAfederation_instance_id():" << __LINE__
-                 << " Object Instance:" << handle_str << "\n";
-         message_publish( MSG_NORMAL, summary.str().c_str() );
+         summary << "Federate Object-Instance-Handle:" << instance_str << "\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, summary.str() );
       }
    }
 }
@@ -4821,8 +4760,8 @@ void Federate::set_MOM_HLAfederation_instance_attributes(
    // Determine if this is a MOM HLAfederation instance.
    if ( !is_MOM_HLAfederation_instance_handle( instance_hndl ) ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         message_publish( MSG_WARNING, "Federate::set_federation_instance_attributes():%d WARNING: Unknown object class, expected 'HLAmanager.HLAfederation'.\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      "Unknown object class, expected 'HLAmanager.HLAfederation'.\n", MSG_WARNING );
       }
       return;
    }
@@ -4847,10 +4786,11 @@ void Federate::set_MOM_HLAfederation_instance_attributes(
             DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, e );
          }
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-            string const auto_provide_status = get_auto_provide_status_string( auto_provide_setting );
-            message_publish( MSG_NORMAL, "Federate::set_MOM_HLAfederation_instance_attributes():%d Auto-Provide:%s value:%d\n",
-                             __LINE__, auto_provide_status.c_str(),
-                             auto_provide_setting );
+            string const  auto_provide_status = get_auto_provide_status_string( auto_provide_setting );
+            ostringstream msg;
+            msg << "Auto-Provide:" << auto_provide_status
+                << " value:" << auto_provide_setting << "\n";
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
          }
 
       } else if ( handle == MOM_HLAfederatesInFederation_handle ) {
@@ -4892,8 +4832,9 @@ void Federate::set_MOM_HLAfederation_instance_attributes(
          }
 
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-            message_publish( MSG_NORMAL, "Federate::set_MOM_HLAfederation_instance_attributes():%d Found a FederationID list with %d elements.\n",
-                             __LINE__, federate_handles.size() );
+            ostringstream msg;
+            msg << "Found a Federation-ID list with " << federate_handles.size() << " elements.\n";
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
          }
       }
    }
@@ -4905,15 +4846,15 @@ void Federate::set_MOM_HLAfederation_instance_attributes(
 void Federate::restore_federate_handles_from_MOM()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      message_publish( MSG_NORMAL, "Federate::restore_federate_handles_from_MOM:%d\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    // Check to insure that we are in the correct Restore state.
    if ( save_restore_service.restore_state != THLARestoreProcessEnum::RESTORE_CHECKPOINT ) {
-      message_publish( MSG_WARNING,
-                       "Federate::restore_federate_handles_from_MOM:%d : Invalid Restore state: \'%s\'!\n",
-                       __LINE__, TrickHLA::to_string( save_restore_service.restore_state ).c_str() );
+      ostringstream msg;
+      msg << "Invalid Restore state '"
+          << TrickHLA::to_string( save_restore_service.restore_state ) << "'\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
       return;
    }
 
@@ -4989,8 +4930,7 @@ void Federate::restore_federate_handles_from_MOM()
 
          if ( print_timer.timeout( wallclock_time ) ) {
             print_timer.reset();
-            message_publish( MSG_NORMAL, "Federate::restore_federate_handles_from_MOM:%d Waiting...\n",
-                             __LINE__ );
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Waiting...\n" );
          }
       }
    } while ( !all_found );
@@ -5011,15 +4951,20 @@ void Federate::rebuild_federate_handles(
    KnownFederateMap::iterator              fed_iter;
    AttributeHandleValueMap::const_iterator attr_iter;
 
+   string instance_str;
+   StringUtilities::to_string( instance_str, instance_hndl );
+
    // Find the joined federate associated with this object instance handle.
    fed_iter = joined_federates_map.find( instance_hndl );
    if ( fed_iter == joined_federates_map.end() ) {
-      string id_str;
-      StringUtilities::to_string( id_str, instance_hndl );
-      message_publish( MSG_ERROR, "Federate::rebuild_federate_handles():%d Federate OID:%s\n",
-                       __LINE__, id_str.c_str() );
+      ostringstream msg;
+      msg << "Federate Object-Instance-Handle:" << instance_str << "\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_ERROR );
       return;
    }
+
+   ostringstream summary;
+   summary << "\n";
 
    // Get the reference to the joined federate.
    KnownFederate &joined_federate = static_cast< KnownFederate & >( fed_iter->second );
@@ -5044,16 +4989,16 @@ void Federate::rebuild_federate_handles(
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         string id_str;
-         StringUtilities::to_string( id_str, instance_hndl );
          string fed_id;
          StringUtilities::to_string( fed_id, fed_handle );
-         message_publish( MSG_NORMAL, "Federate::rebuild_federate_handles():%d Federate OID:%s Federate-ID:%s\n",
-                          __LINE__, id_str.c_str(), fed_id.c_str() );
+         summary << "   Federate Object-Instance-Handle:" << instance_str
+                 << " Federate-Handle:" << fed_id << "\n";
       }
    }
 
-   return;
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, summary.str() );
+   }
 }
 
 /*!

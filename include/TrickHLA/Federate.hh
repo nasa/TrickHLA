@@ -762,7 +762,7 @@ class Federate : public CheckpointConversionBase
     * FederateHandle ID associated with the Federate instance.
     * @param id     Object instance handle.
     * @param values Attribute values. */
-   void set_MOM_HLAfederate_instance_attributes( RTI1516_NAMESPACE::ObjectInstanceHandle const    &id,
+   void set_MOM_HLAfederate_instance_attributes( RTI1516_NAMESPACE::ObjectInstanceHandle const    &instance_hndl,
                                                  RTI1516_NAMESPACE::AttributeHandleValueMap const &values );
 
    /*! @brief Set all the federate MOM instance handles by using the previously
@@ -811,13 +811,13 @@ class Federate : public CheckpointConversionBase
 
    /*! @brief Determine if the specified federate handle is for one of the joined federates.
     *  @return True if joined federate, otherwise false.
-    *  @param handle MOM HLAfederate instance handle. */
-   bool is_joined_federate_by_federate_handle( RTI1516_NAMESPACE::FederateHandle const &handle );
+    *  @param instance_hndl MOM HLAfederate instance handle. */
+   bool is_joined_federate_by_federate_handle( RTI1516_NAMESPACE::FederateHandle const &fed_handle );
 
    /*! @brief Determine if the specified instance handle is for one of the joined federates.
     *  @return True if joined federate, otherwise false.
-    *  @param handle MOM HLAfederate instance handle. */
-   bool is_joined_federate_by_object_handle( RTI1516_NAMESPACE::ObjectInstanceHandle const &handle );
+    *  @param instance_hndl MOM HLAfederate instance handle. */
+   bool is_joined_federate_by_object_handle( RTI1516_NAMESPACE::ObjectInstanceHandle const &instance_hndl );
 
    /*! @brief Determine if the specified federate MOM name is a joined federate.
     *  @return True if a name of joined federate, otherwise false.
