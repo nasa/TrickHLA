@@ -215,12 +215,13 @@ class StringUtilities
       std::string const &pretty_func_name,
       size_t const       line_number )
    {
-      std::cout << pretty_func_name << "  ********* " << std::endl; //TEMP
-
       // Extract the function name from the __PRETTY_FUNCTION__ macro of the form:
       // namespace::class_name::func_name()
-      size_t const name_end    = pretty_func_name.rfind( "(" );
-      size_t       name_start  = pretty_func_name.rfind( " ", name_end ) + 1;
+      // __PRETTY_FUNCTION__ Examples:
+      // clang: static EncoderBase *TrickHLA::EncoderFactory::create(void *, ATTRIBUTES *, const EncodingEnum, const string &)
+      //   gcc: static TrickHLA::EncoderBase* TrickHLA::EncoderFactory::create(void*, ATTRIBUTES*, TrickHLA::EncodingEnum, const string&)
+      size_t const name_end   = pretty_func_name.rfind( "(" );
+      size_t       name_start = pretty_func_name.rfind( " ", name_end - 1 ) + 1;
       while ( pretty_func_name[name_start] == '*' ) {
          ++name_start;
       }
