@@ -695,7 +695,11 @@ void FedAmb::discoverObjectInstance(
       StringUtilities::to_string( name_str, objectInstanceName );
 
       DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
-                                   string( "DISCOVERED '" ).append( name_str ).append( "' Instance-ID:" ).append( id_str ).append( "\n" ) );
+                                   string( "DISCOVERED '" )
+                                      .append( name_str )
+                                      .append( "' Instance-ID:" )
+                                      .append( id_str )
+                                      .append( "\n" ) );
    }
 
    if ( object_service == nullptr ) {
@@ -741,7 +745,9 @@ void FedAmb::discoverObjectInstance(
       string fed_id;
       StringUtilities::to_string( fed_id, producingFederate );
       DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
-                                   string( "Producing Federate '" ).append( fed_id ).append( "' calling 'discoverObjectInstance' to finish the discovery.\n" ) );
+                                   string( "Producing Federate '" )
+                                      .append( fed_id )
+                                      .append( "' calling 'discoverObjectInstance' to finish the discovery.\n" ) );
    }
 
    if ( object_service == nullptr ) {
@@ -788,7 +794,9 @@ void FedAmb::reflectAttributeValues(
 #endif // IEEE_1516_2025
 {
    // Get the TrickHLA object for the given Object Instance Handle.
-   Object *trickhla_obj = ( object_service != nullptr ) ? object_service->get_trickhla_object( objectInstance ) : nullptr;
+   Object *trickhla_obj = ( object_service != nullptr )
+                             ? object_service->get_trickhla_object( objectInstance )
+                             : nullptr;
 
    // If the HLA Object Instance is found in the list of TrickHLA Object
    // Instances then this is to be processed as a federate recognized/defined
@@ -889,7 +897,9 @@ void FedAmb::reflectAttributeValues(
    SupplementalReflectInfo        reflectInfo ) throw( FederateInternalError )
 {
    // Get the TrickHLA object for the given Object Instance Handle.
-   Object *trickhla_obj = ( object_service != nullptr ) ? object_service->get_trickhla_object( objectInstance ) : nullptr;
+   Object *trickhla_obj = ( object_service != nullptr )
+                             ? object_service->get_trickhla_object( objectInstance )
+                             : nullptr;
 
    if ( trickhla_obj != nullptr ) {
 
@@ -914,7 +924,9 @@ void FedAmb::reflectAttributeValues(
          StringUtilities::to_string( id_str, objectInstance );
 
          DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
-                                      string( "Received update to Unknown Object Instance, ID:" ).append( id_str ).append( "\n" ),
+                                      string( "Received update to Unknown Object Instance, ID:" )
+                                         .append( id_str )
+                                         .append( "\n" ),
                                       MSG_WARNING );
       }
    }
@@ -946,7 +958,9 @@ void FedAmb::reflectAttributeValues(
 #endif // IEEE_1516_2025
 {
    // Get the TrickHLA object for the given Object Instance Handle.
-   Object *trickhla_obj = ( object_service != nullptr ) ? object_service->get_trickhla_object( objectInstance ) : nullptr;
+   Object *trickhla_obj = ( object_service != nullptr )
+                             ? object_service->get_trickhla_object( objectInstance )
+                             : nullptr;
 
    if ( trickhla_obj != nullptr ) {
 
@@ -1146,7 +1160,11 @@ void FedAmb::removeObjectInstance(
          string tag;
          StringUtilities::to_printable_string( tag, userSuppliedTag );
          DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
-                                      string( "User-supplied-tag:'" ).append( tag ).append( "' Instance-ID:" ).append( id_str ).append( "\n" ) );
+                                      string( "User-supplied-tag:'" )
+                                         .append( tag )
+                                         .append( "' Instance-ID:" )
+                                         .append( id_str )
+                                         .append( "\n" ) );
       } else {
          DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
                                       string( "Instance-ID:" ).append( id_str ).append( "\n" ) );
@@ -1425,10 +1443,14 @@ void FedAmb::requestAttributeOwnershipAssumption(
       string tag;
       StringUtilities::to_printable_string( tag, userSuppliedTag );
       DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
-                                   string( "Push request received, User-supplied-tag:'" ).append( tag ).append( "'\n" ) );
+                                   string( "Push request received, User-supplied-tag:'" )
+                                      .append( tag )
+                                      .append( "'\n" ) );
    }
 
-   Object *trickhla_obj = ( object_service != nullptr ) ? object_service->get_trickhla_object( objectInstance ) : nullptr;
+   Object *trickhla_obj = ( object_service != nullptr )
+                             ? object_service->get_trickhla_object( objectInstance )
+                             : nullptr;
 
    if ( trickhla_obj != nullptr ) {
 
@@ -1454,7 +1476,9 @@ void FedAmb::requestAttributeOwnershipAssumption(
 
             // We can accept ownership of the attribute if our object contains it
             // as an attribute, is remotely owned, and we are setup to publish it.
-            if ( ( trick_hla_attr != nullptr ) && trick_hla_attr->is_remotely_owned() && trick_hla_attr->is_publish() ) {
+            if ( ( trick_hla_attr != nullptr )
+                 && trick_hla_attr->is_remotely_owned()
+                 && trick_hla_attr->is_publish() ) {
 
                trick_hla_attr->set_push_requested( true );
 
@@ -1550,7 +1574,9 @@ void FedAmb::requestDivestitureConfirmation(
    AttributeHandleSet const &releasedAttributes ) throw( FederateInternalError )
 #endif // IEEE_1516_2025
 {
-   Object *trickhla_obj = ( object_service != nullptr ) ? object_service->get_trickhla_object( objectInstance ) : nullptr;
+   Object *trickhla_obj = ( object_service != nullptr )
+                             ? object_service->get_trickhla_object( objectInstance )
+                             : nullptr;
 
    if ( trickhla_obj == nullptr ) {
       string id_str;
@@ -1650,7 +1676,9 @@ void FedAmb::attributeOwnershipAcquisitionNotification(
       DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
-   Object *trickhla_obj = ( object_service != nullptr ) ? object_service->get_trickhla_object( objectInstance ) : nullptr;
+   Object *trickhla_obj = ( object_service != nullptr )
+                             ? object_service->get_trickhla_object( objectInstance )
+                             : nullptr;
 
    if ( trickhla_obj != nullptr ) {
 
@@ -1669,7 +1697,9 @@ void FedAmb::attributeOwnershipAcquisitionNotification(
 
          // Mark the attribute as locally owned if the object has it as an
          // attribute and is remotely owned, and we are setup to publish it.
-         if ( ( trick_hla_attr != nullptr ) && trick_hla_attr->is_remotely_owned() && trick_hla_attr->is_publish() ) {
+         if ( ( trick_hla_attr != nullptr )
+              && trick_hla_attr->is_remotely_owned()
+              && trick_hla_attr->is_publish() ) {
 
             trick_hla_attr->mark_locally_owned();
             any_attribute_acquired = true;
@@ -1778,9 +1808,13 @@ void FedAmb::requestAttributeOwnershipRelease(
       string tag;
       StringUtilities::to_printable_string( tag, userSuppliedTag );
       DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
-                                   string( "Pull request received, User-supplied-tag:'" ).append( tag ).append( "'\n" ) );
+                                   string( "Pull request received, User-supplied-tag:'" )
+                                      .append( tag )
+                                      .append( "'\n" ) );
    }
-   Object *trickhla_obj = ( object_service != nullptr ) ? object_service->get_trickhla_object( objectInstance ) : nullptr;
+   Object *trickhla_obj = ( object_service != nullptr )
+                             ? object_service->get_trickhla_object( objectInstance )
+                             : nullptr;
 
    if ( trickhla_obj != nullptr ) {
 
@@ -1939,7 +1973,9 @@ void FedAmb::timeRegulationEnabled(
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
-                                   string( "Federate '" ).append( federate->get_federate_name() ).append( "'\n" ) );
+                                   string( "Federate '" )
+                                      .append( federate->get_federate_name() )
+                                      .append( "'\n" ) );
    }
    federate->time_management_service.set_time_regulation_enabled( time );
 }
