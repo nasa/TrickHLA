@@ -1752,9 +1752,8 @@ void Object::send_cyclic_and_requested_data(
                                                update_time.get() );
             } else {
                if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-                  ostringstream msg;
-                  msg << "Object '" << get_name() << "', Receive Order (RO) Attribute update.\n";
-                  DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
+                  DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                               string( "Object '" ).append( get_name() ).append( "', Receive Order (RO) Attribute update.\n" ) );
                }
 
                // Send as Receive Order (i.e. with no timestamp).
@@ -2058,9 +2057,8 @@ void Object::send_blocking_io_data()
             RTIambassador *rti_amb = federate->get_RTI_ambassador();
 
             if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-               ostringstream msg;
-               msg << "Object '" << get_name() << "', Receive Order (RO) Attribute update.\n";
-               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                            string( "Object '" ).append( get_name() ).append( "', Receive Order (RO) Attribute update.\n" ) );
             }
 
             // Send as Receive Order (i.e. with no timestamp).

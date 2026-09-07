@@ -694,9 +694,8 @@ void FedAmb::discoverObjectInstance(
       string name_str;
       StringUtilities::to_string( name_str, objectInstanceName );
 
-      ostringstream msg;
-      msg << "DISCOVERED '" << name_str << "' Instance-ID:" << id_str << "\n";
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   string( "DISCOVERED '" ).append( name_str ).append( "' Instance-ID:" ).append( id_str ).append( "\n" ) );
    }
 
    if ( object_service == nullptr ) {
@@ -741,9 +740,8 @@ void FedAmb::discoverObjectInstance(
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       string fed_id;
       StringUtilities::to_string( fed_id, producingFederate );
-      ostringstream msg;
-      msg << "Producing Federate '" << fed_id << "' calling 'discoverObjectInstance' to finish the discovery.\n";
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   string( "Producing Federate '" ).append( fed_id ).append( "' calling 'discoverObjectInstance' to finish the discovery.\n" ) );
    }
 
    if ( object_service == nullptr ) {
@@ -901,7 +899,7 @@ void FedAmb::reflectAttributeValues(
 
          ostringstream msg;
          msg << "'" << trickhla_obj->get_name() << "' HLA-time:"
-             << setprecision( 18 ) << i64time.get_time_in_seconds() << " seconds\n";
+             << setprecision( 18 ) << i64time.get_time_in_seconds() << " seconds.\n";
          DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
 
@@ -915,9 +913,9 @@ void FedAmb::reflectAttributeValues(
          string id_str;
          StringUtilities::to_string( id_str, objectInstance );
 
-         ostringstream msg;
-         msg << "Received update to Unknown Object Instance, ID:" << id_str << "\n";
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      string( "Received update to Unknown Object Instance, ID:" ).append( id_str ).append( "\n" ),
+                                      MSG_WARNING );
       }
    }
 }
@@ -958,7 +956,7 @@ void FedAmb::reflectAttributeValues(
 
          ostringstream msg;
          msg << "'" << trickhla_obj->get_name() << "' HLA-time:"
-             << setprecision( 18 ) << i64time.get_time_in_seconds() << " seconds\n";
+             << setprecision( 18 ) << i64time.get_time_in_seconds() << " seconds.\n";
          DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
 
@@ -1035,7 +1033,7 @@ void FedAmb::receiveInteraction(
 
          ostringstream msg;
          msg << " HLA-time:" << setprecision( 18 )
-             << i64time.get_time_in_seconds() << " seconds\n";
+             << i64time.get_time_in_seconds() << " seconds.\n";
          DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
 
@@ -1081,7 +1079,7 @@ void FedAmb::receiveInteraction(
 
          ostringstream msg;
          msg << " HLA-time:" << setprecision( 18 )
-             << i64time.get_time_in_seconds() << " seconds\n";
+             << i64time.get_time_in_seconds() << " seconds.\n";
          DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
 
@@ -1147,9 +1145,8 @@ void FedAmb::removeObjectInstance(
       if ( userSuppliedTag.size() > 0 ) {
          string tag;
          StringUtilities::to_printable_string( tag, userSuppliedTag );
-         ostringstream msg;
-         msg << "User-supplied-tag:'" << tag << "' Instance-ID:" << id_str << "\n";
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      string( "User-supplied-tag:'" ).append( tag ).append( "' Instance-ID:" ).append( id_str ).append( "\n" ) );
       } else {
          DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
                                       string( "Instance-ID:" ).append( id_str ).append( "\n" ) );
@@ -1186,12 +1183,12 @@ void FedAmb::removeObjectInstance(
          StringUtilities::to_printable_string( tag, userSuppliedTag );
          ostringstream msg;
          msg << "User-supplied-tag:'" << tag << "' Instance-ID:" << id_str << " HLA-time:"
-             << setprecision( 18 ) << i64time.get_time_in_seconds() << " seconds\n";
+             << setprecision( 18 ) << i64time.get_time_in_seconds() << " seconds.\n";
          DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       } else {
          ostringstream msg;
          msg << "Instance-ID:" << id_str << " HLA-time:" << setprecision( 18 )
-             << i64time.get_time_in_seconds() << " seconds\n";
+             << i64time.get_time_in_seconds() << " seconds.\n";
          DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
    }
@@ -1235,12 +1232,12 @@ void FedAmb::removeObjectInstance(
          StringUtilities::to_printable_string( tag, userSuppliedTag );
          ostringstream msg;
          msg << "User-supplied-tag:'" << tag << "' Instance-ID:" << id_str << " HLA-time:"
-             << setprecision( 18 ) << i64time.get_time_in_seconds() << " seconds\n";
+             << setprecision( 18 ) << i64time.get_time_in_seconds() << " seconds.\n";
          DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       } else {
          ostringstream msg;
          msg << "Instance-ID:" << id_str << " HLA-time:" << setprecision( 18 )
-             << i64time.get_time_in_seconds() << " seconds\n";
+             << i64time.get_time_in_seconds() << " seconds.\n";
          DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
    }
@@ -1427,9 +1424,8 @@ void FedAmb::requestAttributeOwnershipAssumption(
    if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       string tag;
       StringUtilities::to_printable_string( tag, userSuppliedTag );
-      ostringstream msg;
-      msg << "Push request received, User-supplied-tag:'" << tag << "'\n";
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   string( "Push request received, User-supplied-tag:'" ).append( tag ).append( "'\n" ) );
    }
 
    Object *trickhla_obj = ( object_service != nullptr ) ? object_service->get_trickhla_object( objectInstance ) : nullptr;
@@ -1781,9 +1777,8 @@ void FedAmb::requestAttributeOwnershipRelease(
    if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
       string tag;
       StringUtilities::to_printable_string( tag, userSuppliedTag );
-      ostringstream msg;
-      msg << "pull request received, User-supplied-tag:'" << tag << "\n";
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   string( "Pull request received, User-supplied-tag:'" ).append( tag ).append( "'\n" ) );
    }
    Object *trickhla_obj = ( object_service != nullptr ) ? object_service->get_trickhla_object( objectInstance ) : nullptr;
 
@@ -1960,7 +1955,7 @@ void FedAmb::timeConstrainedEnabled(
       msg << "Federate '" << federate->get_federate_name()
           << "' time granted to " << setprecision( 18 )
           << federate->time_management_service.get_granted_time().get_time_in_seconds()
-          << " seconds\n";
+          << " seconds.\n";
       DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
    federate->time_management_service.set_time_constrained_enabled( time );

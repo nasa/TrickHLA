@@ -924,8 +924,7 @@ void TimeManagementServices::time_advance_request()
    // Do not ask for a time advance on an initialization pass.
    if ( exec_get_mode() == Initialization ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_TIME_MGMT_SERVICES ) ) {
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
-                                      "exec_get_mode() == Initialization so returning.\n" );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "In Initialization mode so returning.\n" );
       }
       return;
    }

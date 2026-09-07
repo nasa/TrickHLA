@@ -1176,7 +1176,7 @@ void ExecutionControl::sync_point_announced(
    // Check for the case when the SyncPoint is FEDSAVE_SYNC_POINT.
    if ( label.compare( IMSim::FEDSAVE_SYNC_POINT ) == 0 ) {
       if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         string        save_sp_label;
+         string save_sp_label;
          StringUtilities::to_string( save_sp_label, IMSim::FEDSAVE_SYNC_POINT );
          ostringstream const msg2;
          msg2 << save_sp_label << "\n";
