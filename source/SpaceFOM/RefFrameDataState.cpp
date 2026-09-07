@@ -31,12 +31,13 @@ NASA, Johnson Space Center\n
 // System includes.
 #include <cstddef>
 #include <ostream>
-#include <sstream>
 
 // Trick includes.
-#include "trick/message_proto.h"
 #include "trick/message_type.h"
 #include "trick/vector_macros.h"
+
+// TrickhLA incluides.
+#include "TrickHLA/DebugHandler.hh"
 
 // SpaceFOM includes.
 #include "SpaceFOM/QuaternionData.hh"
@@ -44,6 +45,7 @@ NASA, Johnson Space Center\n
 
 using namespace std;
 using namespace SpaceFOM;
+using namespace TrickHLA;
 
 /*!
  * @job_class{initialization}
@@ -145,23 +147,17 @@ bool RefFrameDataState::transform_to_parent(
 
    // Check for null reference to transformed frame data.
    if ( frame_out == nullptr ) {
-      std::ostringstream errmsg;
-      errmsg << "SpaceFOM::RefFrameDataState::transform_to_parent() ERROR:%d nullptr transformed frame reference!\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "nullptr transformed frame reference!\n", MSG_WARNING );
       return ( false );
    }
    // You cannot call this function on itself.
    if ( frame_out == this ) {
-      std::ostringstream errmsg;
-      errmsg << "SpaceFOM::RefFrameDataState::transform_to_parent() ERROR:%d Computation on itself is not allowed!\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Computation on itself is not allowed!\n", MSG_WARNING );
       return ( false );
    }
    // You cannot write into the 'to' frame.
    if ( frame_out == &frame_to ) {
-      std::ostringstream errmsg;
-      errmsg << "SpaceFOM::RefFrameDataState::transform_to_parent() ERROR:%d Not safe to compute into the 'to' frame!\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Not safe to compute into the 'to' frame!\n", MSG_WARNING );
       return ( false );
    }
 
@@ -279,23 +275,17 @@ bool RefFrameDataState::transform_to_child(
 
    // Check for null reference to transformed frame data.
    if ( frame_out == nullptr ) {
-      std::ostringstream errmsg;
-      errmsg << "SpaceFOM::RefFrameDataState::transform_to_child() ERROR:%d nullptr transformed frame reference!\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "nullptr transformed frame reference!\n", MSG_WARNING );
       return ( false );
    }
    // You cannot call this function on itself.
    if ( frame_out == this ) {
-      std::ostringstream errmsg;
-      errmsg << "SpaceFOM::RefFrameDataState::transform_to_parent() ERROR:%d Computation on itself is not allowed!\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Computation on itself is not allowed!\n", MSG_WARNING );
       return ( false );
    }
    // You cannot write into the 'to' frame.
    if ( frame_out == &frame_to ) {
-      std::ostringstream errmsg;
-      errmsg << "SpaceFOM::RefFrameDataState::transform_to_parent() ERROR:%d Not safe to compute into the 'to' frame!\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Not safe to compute into the 'to' frame!\n", MSG_WARNING );
       return ( false );
    }
 

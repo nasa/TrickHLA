@@ -35,7 +35,6 @@ NASA, Johnson Space Center\n
 // Trick includes.
 #include "trick/Integrator.hh"
 #include "trick/matrix_macros.h"
-#include "trick/message_proto.h"
 #include "trick/message_type.h"
 #include "trick/vector_macros.h"
 
@@ -88,8 +87,7 @@ DynamicalEntityLagComp::~DynamicalEntityLagComp() // RETURN: -- None.
    // Free up any allocated intergrator.
    if ( this->integrator != nullptr ) {
       if ( !MemoryServices::delete_var( static_cast< void * >( this->integrator ) ) ) {
-         message_publish( MSG_WARNING, "SpaceFOM::DynamicalEntityBase::~DynamicalEntityBase():%d WARNING failed to delete memory for 'this->integrator'\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Failed to delete memory for 'this->integrator'\n", MSG_WARNING );
       }
       this->integrator = nullptr;
    }

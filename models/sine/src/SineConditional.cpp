@@ -35,9 +35,6 @@ NASA, Johnson Space Center\n
 #include <sstream>
 #include <string>
 
-// Trick include files.
-#include "trick/message_type.h"
-
 // TrickHLA include files.
 #include "TrickHLA/Attribute.hh"
 #include "TrickHLA/Conditional.hh"

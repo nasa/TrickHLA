@@ -28,17 +28,13 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
-#include <ostream>
 #include <sstream>
-
-// Trick includes.
-#include "trick/message_proto.h"
-#include "trick/message_type.h"
 
 // SpaceFOM includes.
 #include "SpaceFOM/PhysicalInterfaceDeleted.hh"
 
 // TrickHLA includes.
+#include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/ObjectDeletedHandler.hh"
 
@@ -66,8 +62,6 @@ PhysicalInterfaceDeleted::~PhysicalInterfaceDeleted()
 void PhysicalInterfaceDeleted::deleted()
 {
    ostringstream msg;
-   msg << "SpaceFOM::PhysicalInterfaceDeleted::deleted():" << __LINE__
-       << " Object '" << object->get_name() << "' deleted from the federation."
-       << "\n";
-   message_publish( MSG_NORMAL, msg.str().c_str() );
+   msg << "Object '" << object->get_name() << "' deleted from the federation.\n";
+   DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
 }

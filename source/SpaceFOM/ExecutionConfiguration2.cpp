@@ -54,8 +54,6 @@ NASA, Johnson Space Center\n
 
 // Trick includes.
 #include "trick/attributes.h"
-#include "trick/message_proto.h"
-#include "trick/message_type.h"
 
 // SpaceFOM includes.
 #include "SpaceFOM/ExecutionConfiguration.hh"
@@ -218,13 +216,11 @@ void ExecutionConfiguration2::pack()
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       ostringstream msg;
       msg << "\n"
-          << "=============================================================\n"
-          << "SpaceFOM::ExecutionConfiguration2::pack():" << __LINE__ << "\n"
           << "-- Extended ExCO Attributes --\n"
           << "   hla_base_time_multiplier: " << hla_base_time_multiplier
           << " " << Int64BaseTime::get_base_unit() << "\n"
           << "=============================================================\n";
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 }
 
@@ -242,13 +238,11 @@ void ExecutionConfiguration2::unpack()
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       ostringstream msg;
       msg << "\n"
-          << "=============================================================\n"
-          << "SpaceFOM::ExecutionConfiguration2::unpack():" << __LINE__ << "\n"
           << "-- Extended ExCO Attributes --\n"
           << "   hla_base_time_multiplier: " << hla_base_time_multiplier
           << " " << Int64BaseTime::get_base_unit() << "\n"
           << "=============================================================\n";
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 }
 
@@ -264,8 +258,6 @@ void ExecutionConfiguration2::print_execution_configuration() const
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       ostringstream msg;
       msg << "\n"
-          << "=============================================================\n"
-          << "SpaceFOM::ExecutionConfiguration2::print_exec_config():" << __LINE__ << "\n"
           << "              Object-Name: '" << get_name() << "'\n"
           << "          root_frame_name: '" << root_frame_name << "'\n"
           << "      scenario_time_epoch: " << StringUtilities::format_time( scenario_time_epoch ) << "\n"
@@ -282,6 +274,6 @@ void ExecutionConfiguration2::print_execution_configuration() const
           << "-- Extended ExCO Attributes --\n"
           << " hla_base_time_multiplier: " << hla_base_time_multiplier << " " << Int64BaseTime::get_base_unit() << "\n"
           << "=============================================================\n";
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 }

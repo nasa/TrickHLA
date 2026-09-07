@@ -32,9 +32,6 @@ NASA, Johnson Space Center\n
 #include <iostream>
 #include <sstream>
 
-// Trick include files.
-#include "trick/message_type.h"
-
 // TrickHLA include files.
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Types.hh"

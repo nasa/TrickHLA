@@ -59,9 +59,7 @@ NASA, Johnson Space Center\n
 // Trick includes.
 #include "trick/Executive.hh"
 #include "trick/attributes.h"
-#include "trick/exec_proto.h"
 #include "trick/exec_proto.hh"
-#include "trick/message_proto.h"
 #include "trick/message_type.h"
 
 // TrickHLA includes.
@@ -194,14 +192,12 @@ ExecutionControl::~ExecutionControl()
    if ( freeze_interaction != nullptr ) {
       if ( freeze_interaction->get_handler() != nullptr ) {
          if ( !MemoryServices::delete_var( freeze_interaction->get_handler() ) ) {
-            message_publish( MSG_WARNING, "IMSim::ExecutionControl::~ExecutionControl():%d WARNING failed to delete memory for 'freeze_interaction->get_handler()'\n",
-                             __LINE__ );
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Failed to delete memory for 'freeze_interaction->get_handler()'\n", MSG_WARNING );
          }
          freeze_interaction->set_handler( nullptr );
       }
       if ( !MemoryServices::delete_var( freeze_interaction ) ) {
-         message_publish( MSG_WARNING, "IMSim::ExecutionControl::~ExecutionControl():%d WARNING failed to delete memory for 'freeze_interaction'\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Failed to delete memory for 'freeze_interaction'\n", MSG_WARNING );
       }
       freeze_interaction = nullptr;
       freeze_inter_count = 0;
@@ -240,9 +236,8 @@ void ExecutionControl::initialize()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       ostringstream msg;
-      msg << "IMSim::ExecutionControl::initialize():" << __LINE__
-          << " Initialization-Scheme:'" << get_type() << "'\n";
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      msg << "Initialization-Scheme:'" << get_type() << "'\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    // FIXME: This is not consistent with the IMSim design document.
@@ -274,21 +269,18 @@ void ExecutionControl::initialize()
    /*
       if ( !is_master_preset() ) {
          ostringstream errmsg;
-         errmsg << "IMSim::ExecutionControl::initialize():" << __LINE__
-                << " WARNING: Only a preset master is supported. Make sure to set"
+         errmsg << "Only a preset master is supported. Make sure to set"
                 << " 'THLA.federate.use_preset_master = true' in your input.py file."
                 << " Setting use_preset_master to true!\n";
-         message_publish( MSG_WARNING, errmsg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
          this->use_preset_master = true;
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
          if ( is_master() ) {
-            message_publish( MSG_NORMAL, "IMSim::ExecutionControl::initialize():%d\n    THIS IS THE PRESET MASTER FEDERATE\n",
-                     __LINE__ );
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n    THIS IS THE PRESET MASTER FEDERATE\n" );
          } else {
-            message_publish( MSG_NORMAL, "IMSim::ExecutionControl::initialize():%d\n    THIS IS NOT THE PRESET MASTER FEDERATE\n",
-                     __LINE__ );
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n    THIS IS NOT THE PRESET MASTER FEDERATE\n" );
          }
       }
    */
@@ -302,8 +294,7 @@ void ExecutionControl::initialize()
 void ExecutionControl::pre_multi_phase_init_processes()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-      message_publish( MSG_NORMAL, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    // Reset the sim-config required flag to make it required.
@@ -365,11 +356,9 @@ void ExecutionControl::pre_multi_phase_init_processes()
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       if ( is_master() ) {
-         message_publish( MSG_NORMAL, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d\n    THIS IS THE MASTER FEDERATE\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n    THIS IS THE MASTER FEDERATE\n" );
       } else {
-         message_publish( MSG_NORMAL, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d\n    THIS IS NOT THE MASTER FEDERATE\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n    THIS IS NOT THE MASTER FEDERATE\n" );
       }
    }
 
@@ -404,10 +393,8 @@ void ExecutionControl::pre_multi_phase_init_processes()
             save_restore_service->read_known_federates_from_file( tRestoreName );
 
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-               message_publish( MSG_NORMAL, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d \
-You indicated that you want a restore => Master Federate <= \
-Waiting for the required federates to join.\n",
-                                __LINE__ );
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                            "You indicated that you want a restore => Master Federate <= Waiting for the required federates to join.\n" );
             }
             // Make sure only the required federates have joined the federation.
             string return_string;
@@ -443,10 +430,8 @@ Waiting for the required federates to join.\n",
             save_restore_service->copy_running_feds_into_known_feds();
 
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-               message_publish( MSG_NORMAL, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d \
-You indicated that you want a restore => THIS IS THE MASTER FEDERATE <= \
-initiating restore request for '%s' with the RTI.\n",
-                                __LINE__, tRestoreName );
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                            "You indicated that you want a restore => THIS IS THE MASTER FEDERATE <= initiating restore request for '%s' with the RTI.\n" );
             }
             // request federation restore from RTI
             wstring tRestoreName_wstr;
@@ -509,8 +494,8 @@ initiating restore request for '%s' with the RTI.\n",
                if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                   string label_str;
                   StringUtilities::to_string( label_str, IMSim::STARTUP_SYNC_POINT );
-                  message_publish( MSG_NORMAL, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d Label: '%s'\n",
-                                   __LINE__, label_str.c_str() );
+                  DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                               string( "Label: '" ).append( label_str ).append( "'\n" ) );
                }
             }
             register_sync_point( IMSim::STARTUP_SYNC_POINT );
@@ -530,15 +515,11 @@ initiating restore request for '%s' with the RTI.\n",
 
             if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                if ( is_late_joiner() ) {
-                  message_publish( MSG_NORMAL, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d\n\t\
-=> THIS IS THE MASTER FEDERATE ** originally a late joining federate ** <= Federation restore is complete\n    \
-Simulation has started and is now running...\n",
-                                   __LINE__ );
+                  DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                               "\n    => THIS IS THE MASTER FEDERATE ** originally a late joining federate ** <= Federation restore is complete\n    Simulation has started and is now running...\n" );
                } else {
-                  message_publish( MSG_NORMAL, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d\n    \
-=> THIS IS THE MASTER FEDERATE <= Federation restore is complete\n\t\
-Simulation has started and is now running...\n",
-                                   __LINE__ );
+                  DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                               "\n\t=> THIS IS THE MASTER FEDERATE <= Federation restore is complete\n\tSimulation has started and is now running...\n" );
                }
             }
 
@@ -646,10 +627,11 @@ Simulation has started and is now running...\n",
          save_restore_service->check_HLA_save_directory();
 
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-            message_publish( MSG_NORMAL, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d \
-You indicated that you want a restore => THIS IS NOT THE MASTER FEDERATE <= \
-loading of the federate from the checkpoint file '%s'.\n",
-                             __LINE__, tRestoreName );
+            ostringstream msg;
+            msg << "You indicated that you want a restore => THIS IS NOT THE MASTER"
+                << " FEDERATE <= loading of the federate from the checkpoint file '"
+                << tRestoreName << "'.\n";
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
          }
          string const restore_name = ( tRestoreName != nullptr ) ? tRestoreName : "";
          save_restore_service->restore_checkpoint( restore_name );
@@ -716,15 +698,11 @@ loading of the federate from the checkpoint file '%s'.\n",
 
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             if ( is_late_joiner() ) {
-               message_publish( MSG_NORMAL, "IMSim::ExecutionControl::pre_multi_phase_init_processes():%d\n\t\
-=> THIS IS NOT THE MASTER FEDERATE ** originally late joining federate ** <= Federation restore is complete\n    \
-Simulation has started and is now running...\n",
-                                __LINE__ );
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                            "\n\t=> THIS IS NOT THE MASTER FEDERATE ** originally late joining federate ** <= Federation restore is complete\n\tSimulation has started and is now running...\n" );
             } else {
-               message_publish( MSG_NORMAL, "IMSim::ExecutionControl::pre_multi_phase_init_processes2():%d\n    \
-=> THIS IS NOT THE MASTER FEDERATE <= Federation restore is complete\n    \
-Simulation has started and is now running...\n",
-                                __LINE__ );
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                            "\n\t=> THIS IS NOT THE MASTER FEDERATE <= Federation restore is complete\n\tSimulation has started and is now running...\n" );
             }
          }
 
@@ -925,8 +903,7 @@ FederateJoinConstraintsEnum ExecutionControl::determine_if_late_joining_or_resto
 
             if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
-               message_publish( MSG_NORMAL, "IMSim::ExecutionControl::determine_if_late_joining_or_restoring_federate_IMSim():%d Waiting...\n",
-                                __LINE__ );
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Waiting...\n" );
             }
          }
       }
@@ -935,16 +912,16 @@ FederateJoinConstraintsEnum ExecutionControl::determine_if_late_joining_or_resto
    if ( late_joiner_determined ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         message_publish( MSG_NORMAL, "IMSim::ExecutionControl::determine_if_late_joining_or_restoring_federate_IMSim():%d Late Joining Federate:%s\n",
-                          __LINE__, ( is_late_joiner() ? "Yes" : "No" ) );
+         ostringstream msg;
+         msg << "Late Joining Federate:" << ( is_late_joiner() ? "Yes" : "No" ) << "\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
       return TrickHLA::FEDERATE_JOIN_LATE;
 
    } else if ( is_restore_determined() ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         message_publish( MSG_NORMAL, "IMSim::ExecutionControl::determine_if_late_joining_or_restoring_federate_IMSim():%d Restoring the Federate!\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Restoring the Federate!\n" );
       }
       return TrickHLA::FEDERATE_JOIN_RESTORING;
 
@@ -1100,10 +1077,10 @@ void ExecutionControl::setup_interaction_ref_attributes()
 
    if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       ostringstream msg2;
-      msg2 << "IMSim::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__ << "\n"
+      msg2 << "\n"
            << "--------------- Trick REF-Attributes ---------------\n"
            << " FOM-Interaction:'" << freeze_interaction->get_FOM_name() << "'\n";
-      message_publish( MSG_NORMAL, msg2.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    // Initialize the TrickHLA Interaction before we use it.
@@ -1111,11 +1088,11 @@ void ExecutionControl::setup_interaction_ref_attributes()
 
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       ostringstream msg2;
-      msg2 << "IMSim::ExecutionControl::setup_interaction_ref_attributes():" << __LINE__
+      msg2 << "\n"
            << " FOM-Parameter:'" << tParm[0].get_FOM_name() << "'"
            << " NOTE: This is an auto-generated parameter so there is no"
            << " associated 'Trick-Name'.\n";
-      message_publish( MSG_NORMAL, msg2.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    // Initialize the TrickHLA Parameter. Since we built the interaction handler
@@ -1199,12 +1176,11 @@ void ExecutionControl::sync_point_announced(
    // Check for the case when the SyncPoint is FEDSAVE_SYNC_POINT.
    if ( label.compare( IMSim::FEDSAVE_SYNC_POINT ) == 0 ) {
       if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         ostringstream msg2;
          string        save_sp_label;
          StringUtilities::to_string( save_sp_label, IMSim::FEDSAVE_SYNC_POINT );
-         msg2 << "IMSim::ExecutionControl::sync_point_announced():" << __LINE__
-              << ": " << save_sp_label << "\n";
-         message_publish( MSG_NORMAL, msg2.str().c_str() );
+         ostringstream const msg2;
+         msg2 << save_sp_label << "\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg2.str() );
       }
       // Acieve the Save synchronization point.
       achieve_sync_point( IMSim::FEDSAVE_SYNC_POINT );
@@ -1338,11 +1314,13 @@ bool ExecutionControl::receive_interaction(
             if ( received_as_TSO ) {
                Int64Time _time;
                _time.set( theTime );
-               message_publish( MSG_NORMAL, "IMSim::ExecutionControl::receive_interaction(FREEZE):%d ID:%s, HLA-time:%G\n",
-                                __LINE__, handle.c_str(), _time.get_time_in_seconds() );
+               ostringstream msg;
+               msg << "Handle:" << handle << ", HLA-time:" << _time.get_time_in_seconds() << " seconds\n";
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
             } else {
-               message_publish( MSG_NORMAL, "IMSim::ExecutionControl::receive_interaction(FREEZE):%d ID:%s\n",
-                                __LINE__, handle.c_str() );
+               ostringstream msg;
+               msg << "Handle:" << handle << "\n";
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
             }
          }
 
@@ -1535,10 +1513,8 @@ void ExecutionControl::set_next_execution_control_mode(
          this->requested_execution_control_mode = TrickHLA::EXECUTION_CONTROL_UNINITIALIZED;
          if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             ostringstream errmsg;
-            errmsg << "IMSim::ExecutionControl::set_next_execution_mode():"
-                   << __LINE__ << " WARNING: Unknown execution mode value: "
-                   << exec_control << "\n";
-            message_publish( MSG_WARNING, errmsg.str().c_str() );
+            errmsg << "Unknown execution mode value: " << exec_control << "\n";
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
          }
          break;
       }
@@ -1555,20 +1531,18 @@ bool ExecutionControl::check_mode_transition_request()
    // Only the Master Federate receives and processes Mode Transition Requests.
    if ( !is_master() ) {
       ostringstream errmsg;
-      errmsg << "IMSim::ExecutionControl::check_mode_transition_request():"
-             << __LINE__ << " WARNING: Received Mode Transition Request and not Master: "
+      errmsg << "Received Mode Transition Request and not Master: "
              << mtr_enum_to_string( this->pending_mtr ) << "\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
       return false;
    }
 
    // First check to see if this is a valid MTR.
    if ( !is_mtr_valid( this->pending_mtr ) ) {
       ostringstream errmsg;
-      errmsg << "IMSim::ExecutionControl::check_mode_transition_request():"
-             << __LINE__ << " WARNING: Invalid Mode Transition Request: "
+      errmsg << "Invalid Mode Transition Request: "
              << mtr_enum_to_string( this->pending_mtr ) << "\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
       return false;
    }
 
@@ -1596,8 +1570,7 @@ bool ExecutionControl::process_mode_transition_request()
    // Print diagnostic message if appropriate.
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       ostringstream msg;
-      msg << "=============================================================\n"
-          << "IMSim::ExecutionControl::process_mode_transition_request()\n"
+      msg << "\n"
           << "\t current_scenario_time:     " << setprecision( 18 ) << scenario_timeline->get_time() << "\n"
           << "\t scenario_time_epoch:       " << setprecision( 18 ) << scenario_timeline->get_epoch() << "\n"
           << "\t scenario_time_epoch(ExCO): " << setprecision( 18 ) << scenario_time_epoch << "\n"
@@ -1615,7 +1588,7 @@ bool ExecutionControl::process_mode_transition_request()
           << "\t scenario_freeze_time:      " << setprecision( 18 ) << scenario_freeze_time << "\n"
           << "\t simulation_freeze_time:    " << setprecision( 18 ) << simulation_freeze_time << "\n"
           << "=============================================================\n";
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    // Check Mode Transition Request.
@@ -1709,11 +1682,10 @@ bool ExecutionControl::process_execution_control_updates()
    // The Master Federate should never have to process ExCO updates.
    if ( is_master() ) {
       ostringstream errmsg;
-      errmsg << "IMSim::ExecutionControl::process_execution_control_updates():"
-             << __LINE__ << " WARNING: Master receive an ExCO update: "
+      errmsg << "Master receive an ExCO update: "
              << execution_control_enum_to_string( this->requested_execution_control_mode )
              << "\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
 
       // Return that no mode changes occurred.
       return false;
@@ -1726,13 +1698,12 @@ bool ExecutionControl::process_execution_control_updates()
    // Check for consistency between ExecutionControl and ExCO.
    if ( exco_cem != execution_control_enum_to_int16( this->current_execution_control_mode ) ) {
       ostringstream errmsg;
-      errmsg << "IMSim::ExecutionControl::process_execution_control_updates():"
-             << __LINE__ << " WARNING: Current execution mode mismatch between ExecutionControl ("
+      errmsg << "Current execution mode mismatch between ExecutionControl ("
              << execution_control_enum_to_string( this->current_execution_control_mode )
              << ") and the ExCO current execution mode ("
              << execution_mode_enum_to_string( exco_cem )
              << ")!\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
    }
 
    // Check for change in execution mode.
@@ -1758,10 +1729,9 @@ bool ExecutionControl::process_execution_control_updates()
       }
       default: {
          ostringstream errmsg;
-         errmsg << "IMSim::ExecutionControl::process_execution_control_updates():"
-                << __LINE__ << " WARNING: Invalid ExCO next execution mode: "
+         errmsg << "Invalid ExCO next execution mode: "
                 << execution_mode_enum_to_string( exco_nem ) << "!\n";
-         message_publish( MSG_WARNING, errmsg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
 
          // Return that no mode changes occurred.
          return false;
@@ -1793,13 +1763,12 @@ bool ExecutionControl::process_execution_control_updates()
 
          } else {
             ostringstream errmsg;
-            errmsg << "IMSim::ExecutionControl::process_execution_control_updates():"
-                   << __LINE__ << " WARNING: Execution mode mismatch between current mode ("
+            errmsg << "Execution mode mismatch between current mode ("
                    << execution_control_enum_to_string( this->current_execution_control_mode )
                    << ") and the requested execution mode ("
                    << execution_control_enum_to_string( this->requested_execution_control_mode )
                    << ")!\n";
-            message_publish( MSG_WARNING, errmsg.str().c_str() );
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
 
             // Return that no mode changes occurred.
             return false;
@@ -1852,13 +1821,12 @@ bool ExecutionControl::process_execution_control_updates()
             }
             default: {
                ostringstream errmsg;
-               errmsg << "IMSim::ExecutionControl::process_execution_control_updates():"
-                      << __LINE__ << " WARNING: Execution mode mismatch between current mode ("
+               errmsg << "Execution mode mismatch between current mode ("
                       << execution_control_enum_to_string( this->current_execution_control_mode )
                       << ") and the requested execution mode ("
                       << execution_control_enum_to_string( this->requested_execution_control_mode )
                       << ")!\n";
-               message_publish( MSG_WARNING, errmsg.str().c_str() );
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
 
                // Return that no mode changes occurred.
                return false;
@@ -1873,13 +1841,12 @@ bool ExecutionControl::process_execution_control_updates()
             case TrickHLA::EXECUTION_CONTROL_SHUTDOWN: {
                // Print out a diagnostic warning message.
                ostringstream errmsg;
-               errmsg << "IMSim::ExecutionControl::process_execution_control_updates():"
-                      << __LINE__ << " WARNING: Execution mode mismatch between current mode ("
+               errmsg << "Execution mode mismatch between current mode ("
                       << execution_control_enum_to_string( this->current_execution_control_mode )
                       << ") and the requested execution mode ("
                       << execution_control_enum_to_string( this->requested_execution_control_mode )
                       << ")!\n";
-               message_publish( MSG_WARNING, errmsg.str().c_str() );
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
 
                // Mark the current execution mode as SHUTDOWN.
                this->current_execution_control_mode = TrickHLA::EXECUTION_CONTROL_SHUTDOWN;
@@ -1895,7 +1862,7 @@ bool ExecutionControl::process_execution_control_updates()
                // Print diagnostic message if appropriate.
                if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
                   ostringstream msg;
-                  msg << "ExecutionControl::process_execution_control_updates():" << __LINE__ << "\n"
+                  msg << "\n"
                       << "\t current_scenario_time:     " << setprecision( 18 ) << scenario_timeline->get_time() << "\n"
                       << "\t scenario_time_epoch:       " << setprecision( 18 ) << scenario_timeline->get_epoch() << "\n"
                       << "\t scenario_time_epoch(ExCO): " << setprecision( 18 ) << scenario_time_epoch << "\n"
@@ -1911,7 +1878,7 @@ bool ExecutionControl::process_execution_control_updates()
                       << "\t scenario_freeze_time:      " << setprecision( 18 ) << scenario_freeze_time << "\n"
                       << "\t simulation_freeze_time:    " << setprecision( 18 ) << simulation_freeze_time << "\n"
                       << "=============================================================\n";
-                  message_publish( MSG_NORMAL, msg.str().c_str() );
+                  DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
                }
 
                // Announce the pending freeze.
@@ -1927,13 +1894,12 @@ bool ExecutionControl::process_execution_control_updates()
             }
             default: {
                ostringstream errmsg;
-               errmsg << "IMSim::ExecutionControl::process_execution_control_updates():"
-                      << __LINE__ << " WARNING: Execution mode mismatch between current mode ("
+               errmsg << "Execution mode mismatch between current mode ("
                       << execution_control_enum_to_string( this->current_execution_control_mode )
                       << ") and the requested execution mode ("
                       << execution_control_enum_to_string( this->requested_execution_control_mode )
                       << ")!\n";
-               message_publish( MSG_WARNING, errmsg.str().c_str() );
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
 
                // Return that no mode changes occurred.
                return false;
@@ -1967,13 +1933,12 @@ bool ExecutionControl::process_execution_control_updates()
             }
             default: {
                ostringstream errmsg;
-               errmsg << "IMSim::ExecutionControl::process_execution_control_updates():"
-                      << __LINE__ << " WARNING: Execution mode mismatch between current mode ("
+               errmsg << "Execution mode mismatch between current mode ("
                       << execution_control_enum_to_string( this->current_execution_control_mode )
                       << ") and the requested execution mode ("
                       << execution_control_enum_to_string( this->requested_execution_control_mode )
                       << ")!\n";
-               message_publish( MSG_WARNING, errmsg.str().c_str() );
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
 
                // Return that no mode changes occurred.
                return false;
@@ -1987,11 +1952,10 @@ bool ExecutionControl::process_execution_control_updates()
 
          // Once in SHUTDOWN, we cannot do anything else.
          ostringstream errmsg;
-         errmsg << "IMSim::ExecutionControl::process_execution_control_updates():"
-                << __LINE__ << " WARNING: Shutting down but received mode transition: "
+         errmsg << "Shutting down but received mode transition: "
                 << execution_control_enum_to_string( this->requested_execution_control_mode )
                 << "\n";
-         message_publish( MSG_WARNING, errmsg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
 
          // Return that no mode changes occurred.
          return false;
@@ -2074,8 +2038,9 @@ bool ExecutionControl::run_mode_transition()
               diff = go_to_run_time - get_cte_time();
               if ( fmod( diff, 1.0 ) == 0.0 ) {
                  if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-                    message_publish( MSG_NORMAL, "IMSim::ExecutionControl::run_mode_transition():%d Going to run in %G seconds.\n",
-                             __LINE__, diff );
+                    ostringstream msg;
+                    msg << "Going to run in " << diff << " seconds.\n";
+                    DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
                  }
               }
            }
@@ -2084,8 +2049,11 @@ bool ExecutionControl::run_mode_transition()
            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
               double curr_cte_time = get_cte_time();
               diff                 = curr_cte_time - go_to_run_time;
-              message_publish( MSG_NORMAL, "IMSim::ExecutionControl::run_mode_transition():%d\n  Going to run at CTE time %.18G seconds.\n  Current CTE time %.18G seconds.\n  Difference: %.9lf seconds.\n",
-                       __LINE__, go_to_run_time, curr_cte_time, diff );
+              ostringstream msg;
+              msg << "Going to run at CTE time " << go_to_run_time
+                  << " seconds.\n  Current CTE time " << curr_cte_time
+                  << " seconds.\n  Difference: " << diff << " seconds.\n",
+              DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
            }
         }
      }
@@ -2192,11 +2160,11 @@ void ExecutionControl::enter_freeze()
          double freeze_scenario_time = -DBL_MAX; // freeze immediately
 
          if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-            message_publish( MSG_NORMAL,
-                             "IMSim::ExecutionControl::enter_freeze():%d announce_freeze:%s, freeze_federation:%s, freeze_scenario_time:%g\n",
-                             __LINE__, ( is_freeze_announced() ? "Yes" : "No" ),
-                             ( is_freeze_pending() ? "Yes" : "No" ),
-                             freeze_scenario_time );
+            ostringstream msg;
+            msg << "announce_freeze:" << ( is_freeze_announced() ? "Yes" : "No" )
+                << ", freeze_federation:" << ( is_freeze_pending() ? "Yes" : "No" )
+                << ", freeze_scenario_time:" << freeze_scenario_time << "\n";
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
          }
 
          trigger_freeze_interaction( freeze_scenario_time );
@@ -2245,8 +2213,7 @@ void ExecutionControl::check_pause( double const check_pause_delta )
 
    if ( is_freeze_pending() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         message_publish( MSG_NORMAL, "IMSim::ExecutionControl::check_pause():%d Commanding Trick Executive to FREEZE.\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Commanding Trick Executive to FREEZE.\n" );
       }
       if ( get_sim_time() <= 0.0 ) {
          exec_set_freeze_command( true );
@@ -2285,8 +2252,9 @@ void ExecutionControl::start_federation_save_at_SST(
    if ( freeze_interaction->get_handler() != nullptr ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         message_publish( MSG_NORMAL, "IMSim::ExecutionControl::start_federation_save_at_scenario_time(%g, '%s'):%d\n",
-                          freeze_sst, save_label.c_str(), __LINE__ );
+         ostringstream msg;
+         msg << "freeze_sst:" << freeze_sst << ", save_label:'" << save_label << "'\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
       set_announce_save();
 
@@ -2299,9 +2267,10 @@ void ExecutionControl::start_federation_save_at_SST(
    } else {
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
-         message_publish( MSG_NORMAL, "IMSim::ExecutionControl::start_federation_save_at_scenario_time(%g, '%s'):%d \
-freeze_interaction's HANLDER is nullptr! Request was ignored!\n",
-                          freeze_sst, save_label.c_str(), __LINE__ );
+         ostringstream msg;
+         msg << "freeze_sst:" << freeze_sst << ", save_label:'" << save_label
+             << "' freeze_interaction's HANLDER is nullptr! Request was ignored!\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
    }
 
@@ -2411,8 +2380,7 @@ bool ExecutionControl::check_scenario_freeze_time()
                double const freeze_sim_time = curr_sim_time + ( freeze_time - curr_scenario_time );
 
                ostringstream infomsg;
-               infomsg << "IMSim::ExecutionControl::check_scenario_freeze_time():" << __LINE__
-                       << " Going to Trick FREEZE mode immediately:\n";
+               infomsg << " Going to Trick FREEZE mode immediately:\n";
                if ( federate->get_time_management_service()->is_time_management_enabled() ) {
                   infomsg << "  Granted HLA-time:"
                           << federate->get_granted_time().get_time_in_seconds()
@@ -2422,7 +2390,7 @@ bool ExecutionControl::check_scenario_freeze_time()
                        << "  Freeze sim-time:" << freeze_sim_time << "\n"
                        << "  Current scenario-time:" << curr_scenario_time << "\n"
                        << "  Freeze scenario-time:" << freeze_time << "\n";
-               message_publish( MSG_NORMAL, infomsg.str().c_str() );
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
             }
          }
       }
@@ -2479,8 +2447,7 @@ bool ExecutionControl::is_save_initiated()
 
             if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
-               message_publish( MSG_NORMAL, "IMSim::ExecutionControl::is_save_initiated():%d Waiting '%s'\n",
-                                __LINE__ );
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Waiting...\n" );
             }
          }
       }

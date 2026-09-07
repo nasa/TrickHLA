@@ -42,7 +42,6 @@ NASA, Johnson Space Center\n
 #include "JEOD/JEODPhysicalInterface.hh"
 
 // Trick includes.
-#include "trick/message_proto.h"
 #include "trick/message_type.h"
 
 // SpaceFOM includes.
@@ -105,8 +104,7 @@ JEODPhysicalInterface::~JEODPhysicalInterface()
 
    if ( this->vehicle_point_id != nullptr ) {
       if ( !MemoryServices::delete_var( this->vehicle_point_id ) ) {
-         message_publish( MSG_WARNING, "SpaceFOM::JEODPhysicalInterface::~JEODPhysicalInterface():%d WARNING failed to delete Trick Memory for 'this->vehicle_point_id'\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Failed to delete Trick memory for 'this->vehicle_point_id'\n", MSG_WARNING );
       }
       this->vehicle_point_id = nullptr;
    }
@@ -158,9 +156,7 @@ void JEODPhysicalInterface::pack_from_working_data()
    // Check for nullptr vehicle point.
    // Note: This should never be true, but just in case.
    if ( this->vehicle_point_data == nullptr ) {
-      message_publish( MSG_WARNING,
-                       "SpaceFOM::JEODPhysicalInterface::pack():%d nullptr vehicle point data!\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "nullptr vehicle point data!\n", MSG_WARNING );
       return;
    }
 
@@ -169,10 +165,7 @@ void JEODPhysicalInterface::pack_from_working_data()
 
    // Check for initialization.
    if ( !initialized ) {
-      ostringstream errmsg;
-      errmsg << "JEODPhysicalInterface::pack() ERROR: The initialize() function"
-             << " has not been called!\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "The initialize() function has not been called!\n", MSG_WARNING );
    }
 
    // NOTE: Because TrickHLA handles the bundling of locally owned attributes
@@ -203,9 +196,7 @@ void JEODPhysicalInterface::unpack_into_working_data()
    // Check for nullptr vehicle point.
    // Note: This should never be true, but just in case.
    if ( this->vehicle_point_data == nullptr ) {
-      message_publish( MSG_WARNING,
-                       "SpaceFOM::JEODPhysicalInterface::unpack():%d nullptr vehicle point data!\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "nullptr vehicle point data!\n", MSG_WARNING );
       return;
    }
 
@@ -263,8 +254,7 @@ void JEODPhysicalInterface::set_vehicle_point_id( char const *new_id )
 {
    if ( this->vehicle_point_id != nullptr ) {
       if ( !MemoryServices::delete_var( this->vehicle_point_id ) ) {
-         message_publish( MSG_WARNING, "SpaceFOM::JEODPhysicalInterface::set_vehicle_point_id():%d WARNING failed to delete Trick Memory for 'this->vehicle_point_id'\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Failed to delete Trick Memory for 'this->vehicle_point_id'\n", MSG_WARNING );
       }
    }
    vehicle_point_id = MemoryServices::cstrdup( new_id );

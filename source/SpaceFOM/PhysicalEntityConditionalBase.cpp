@@ -31,11 +31,9 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstring>
-#include <ostream>
 #include <sstream>
 
 // Trick includes.
-#include "trick/message_proto.h"
 #include "trick/message_type.h"
 
 // SpaceFOM includes.
@@ -141,10 +139,8 @@ bool PhysicalEntityConditionalBase::should_send(
 #if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
       DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "The initialize() function has not been called!\n" );
 #else
-      ostringstream errmsg;
-      errmsg << "PhysicalEntityConditionalBase::should_send():" << __LINE__
-             << " WARNING: The initialize() function has not been called!\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   "The initialize() function has not been called!\n", MSG_WARNING );
 #endif
    }
 

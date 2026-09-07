@@ -42,7 +42,6 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick includes.
-#include "trick/message_proto.h"
 #include "trick/message_type.h"
 #include "trick/reference_frame.h"
 #include "trick/vector_macros.h"
@@ -148,14 +147,13 @@ void PhysicalEntityBase::base_config(
    //     assign the associated object in the 'create_connections()' routine.
    if ( mngr_object == nullptr ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
-         ostringstream errmsg;
-         errmsg << "PhysicalEntityBase::base_config() Warning: \n"
-                << "\tThe TrickHLA::Object associated with object \'" << entity_fed_name << "\' is nullptr.\n"
-                << "\tEither of the two things are possible:\n"
-                << "\t1). We are configuring in the input file, which is okay.\n"
-                << "\t2). We are configuring in default_data but forgot to allocate and\n"
-                << "\t    assign the associated object in the 'create_connections()' routine.";
-         message_publish( MSG_WARNING, errmsg.str().c_str() );
+         ostringstream msg;
+         msg << "\n\tThe TrickHLA::Object associated with object '" << entity_fed_name << "' is a nullptr.\n"
+             << "\tEither of the two things are possible:\n"
+             << "\t1). We are configuring in the input file, which is okay.\n"
+             << "\t2). We are configuring in default_data but forgot to allocate and\n"
+             << "\t    assign the associated object in the 'create_connections()' routine.";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
       }
       return;
    } else {
@@ -398,10 +396,7 @@ void PhysicalEntityBase::pack()
 #if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
       DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "The initialize() function has not been called!\n" );
 #else
-      ostringstream errmsg;
-      errmsg << "PhysicalEntityBase::pack():" << __LINE__
-             << " WARNING: The initialize() function has not been called!\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "The initialize() function has not been called!\n", MSG_WARNING );
 #endif
    }
 
@@ -413,9 +408,9 @@ void PhysicalEntityBase::pack()
    // Print out debug information if desired.
    if ( debug ) {
       ostringstream msg;
-      msg << "PhysicalEntityBase::pack():" << __LINE__ << "\n";
+      msg << "\n";
       debug_print( msg );
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    // Encode the data into the buffer.
@@ -439,10 +434,7 @@ void PhysicalEntityBase::unpack()
 #if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
       DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "The initialize() function has not been called!\n" );
 #else
-      ostringstream errmsg;
-      errmsg << "PhysicalEntityBase::unpack():" << __LINE__
-             << " WARNING: The initialize() function has not been called!\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "The initialize() function has not been called!\n", MSG_WARNING );
 #endif
    }
 
@@ -458,9 +450,9 @@ void PhysicalEntityBase::unpack()
    // Print out debug information if desired.
    if ( debug ) {
       ostringstream msg;
-      msg << "PhysicalEntityBase::unpack():" << __LINE__ << "\n";
+      msg << "\n";
       debug_print( msg );
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    return;

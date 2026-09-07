@@ -48,8 +48,6 @@ NASA, Johnson Space Center\n
 
 // Trick includes.
 #include "trick/exec_proto.h"
-#include "trick/message_proto.h"
-#include "trick/message_type.h"
 
 // SpaceFOM includes.
 #include "SpaceFOM/QuaternionData.hh"
@@ -162,7 +160,7 @@ void JEODRefFrameState::pack_from_working_data()
 
    if ( debug ) {
       ostringstream msg;
-      msg << "JEODRefFrameState::pack_from_working_data():" << __LINE__ << "\n"
+      msg << "\n"
           << "\tSim Sec: " << exec_get_sim_time() << "\n"
           << "\tSeconds: " << ( time_tt->trunc_julian_time * 86400.0 ) << "\n"
           << "\tDate: " << time_tt->calendar_year
@@ -172,7 +170,7 @@ void JEODRefFrameState::pack_from_working_data()
           << ":" << time_tt->calendar_minute
           << ":" << time_tt->calendar_second << "\n"
           << "\n";
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 }
 
@@ -222,7 +220,7 @@ void JEODRefFrameState::unpack_into_working_data()
 
    if ( debug ) {
       ostringstream msg;
-      msg << "JEODRefFrameState::unpack_into_working_data():" << __LINE__ << "\n"
+      msg << "\n"
           << "\tSim Sec: " << exec_get_sim_time() << "\n"
           << "\tSeconds: " << ( time_tt->trunc_julian_time * 86400.0 ) << "\n"
           << "\tDate: " << time_tt->calendar_year
@@ -232,7 +230,7 @@ void JEODRefFrameState::unpack_into_working_data()
           << ":" << time_tt->calendar_minute
           << ":" << time_tt->calendar_second << "\n"
           << "\n";
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 }
 

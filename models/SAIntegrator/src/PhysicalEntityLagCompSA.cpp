@@ -31,9 +31,6 @@ NASA, Johnson Space Center\n
 #include <cmath>
 #include <sstream>
 
-// Trick includes.
-#include "trick/message_type.h"
-
 // SpaceFOM includes.
 #include "SpaceFOM/PhysicalEntityBase.hh"
 #include "SpaceFOM/PhysicalEntityLagCompBase.hh"

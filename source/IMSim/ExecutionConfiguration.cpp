@@ -50,8 +50,6 @@ NASA, Johnson Space Center\n
 // Trick includes.
 #include "trick/Executive.hh"
 #include "trick/attributes.h"
-#include "trick/message_proto.h"
-#include "trick/message_type.h"
 
 // TrickHLA includes.
 #include "TrickHLA/Attribute.hh"
@@ -298,8 +296,7 @@ void ExecutionConfiguration::pack()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       ostringstream msg;
-      msg << "=============================================================\n"
-          << "IMSim::ExecutionConfiguration::pack():" << __LINE__ << "\n"
+      msg << "\n"
           << "\t Current Scenario Time:   " << setprecision( 18 ) << execution_control->scenario_timeline->get_time() << "\n"
           << "\t Current Simulation Time: " << the_exec->get_sim_time() << "\n"
           << "\t Current HLA grant time:  " << federate->get_granted_time().get_time_in_seconds() << "\n"
@@ -307,7 +304,7 @@ void ExecutionConfiguration::pack()
           << ".............................................................\n";
       print_simconfig( msg );
       msg << "=============================================================\n";
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 }
 
@@ -318,8 +315,7 @@ void ExecutionConfiguration::unpack()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       ostringstream msg;
-      msg << "=============================================================\n"
-          << "IMSim::ExecutionConfiguration::unpack():" << __LINE__ << "\n"
+      msg << "\n"
           << "\t Current Scenario Time:   " << setprecision( 18 ) << execution_control->scenario_timeline->get_time() << "\n"
           << "\t Current Simulation Time: " << the_exec->get_sim_time() << "\n"
           << "\t Current HLA grant time:  " << federate->get_granted_time().get_time_in_seconds() << "\n"
@@ -327,7 +323,7 @@ void ExecutionConfiguration::unpack()
           << ".............................................................\n";
       print_simconfig( msg );
       msg << "=============================================================\n";
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    // Mark that we have a Simulation Configuration update with pending changes.
@@ -377,11 +373,10 @@ void ExecutionConfiguration::setup_ref_attributes(
 void ExecutionConfiguration::print_execution_configuration() const
 {
    ostringstream msg;
-   msg << "=============================================================\n"
-       << "IMSim::ExecutionConfiguration::print_execution_configuration():" << __LINE__ << "\n";
+   msg << "\n";
    print_simconfig( msg );
    msg << "=============================================================\n";
-   message_publish( MSG_NORMAL, msg.str().c_str() );
+   DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
 }
 
 void ExecutionConfiguration::print_simconfig( std::ostream &stream ) const
@@ -408,8 +403,7 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-      message_publish( MSG_NORMAL, "IMSim::ExecutionConfiguration::wait_for_update():%d Waiting...\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Waiting...\n" );
    }
 
    // Make sure we have at least one piece of exec-config data we can receive.
@@ -446,15 +440,13 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
 
             if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
-               message_publish( MSG_NORMAL, "IMSim::ExecutionConfiguration::wait_for_update():%d Waiting...\n",
-                                __LINE__ );
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Waiting...\n" );
             }
          }
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-         message_publish( MSG_NORMAL, "IMSim::ExecutionConfiguration::wait_for_update():%d Received data.\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Received data.\n" );
       }
 
       // Receive the exec-config data from the master federate.

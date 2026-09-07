@@ -37,7 +37,6 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick includes.
-#include "trick/message_proto.h"
 #include "trick/message_type.h"
 #include "trick/reference_frame.h"
 #include "trick/vector_macros.h"
@@ -114,13 +113,14 @@ void PhysicalInterfaceBase::base_config(
    if ( mngr_object == nullptr ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          ostringstream errmsg;
-         errmsg << "PhysicalInterfaceBase::base_config() Warning: \n"
-                << "\tThe TrickHLA::Object associated with object \'" << interface_fed_name << "\' is nullptr.\n"
+         errmsg << "\n"
+                << "\tThe TrickHLA::Object associated with object \'"
+                << interface_fed_name << "\' is nullptr.\n"
                 << "\tEither of the two things are possible:\n"
                 << "\t1). We are configuring in the input file, which is okay.\n"
                 << "\t2). We are configuring in default_data but forgot to allocate and\n"
                 << "\t    assign the associated object in the 'create_connections()' routine.";
-         message_publish( MSG_WARNING, errmsg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
       }
       return;
    } else {
@@ -215,10 +215,7 @@ void PhysicalInterfaceBase::initialize()
    // Should have interface parent specified if creating this interface.
    if ( this->object->create_HLA_instance
         && this->packing_data.parent_name.empty() ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::PhysicalInterfaceBase::initialize():" << __LINE__
-             << " WARNING: Unexpected empty interface parent!\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Unexpected empty interface parent!\n", MSG_WARNING );
    }
 
    // Mark this as initialized.
@@ -262,13 +259,8 @@ void PhysicalInterfaceBase::initialize_callback(
  */
 void PhysicalInterfaceBase::set_name( std::string const &new_name )
 {
-   if ( this->object != nullptr
-        && this->object->create_HLA_instance
-        && new_name.empty() ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::PhysicalInterfaceBase::set_name():" << __LINE__
-             << " WARNING: Unexpected empty interface name!\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
+   if ( this->object != nullptr && this->object->create_HLA_instance && new_name.empty() ) {
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Unexpected empty interface name!\n", MSG_WARNING );
    }
    this->packing_data.name = new_name;
    return;
@@ -282,10 +274,7 @@ void PhysicalInterfaceBase::set_parent( std::string const &new_parent_name )
    if ( this->object != nullptr
         && this->object->create_HLA_instance
         && new_parent_name.empty() ) {
-      ostringstream errmsg;
-      errmsg << "SpaceFOM::PhysicalInterfaceBase::set_parent():" << __LINE__
-             << " WARNING: Unexpected empty parent name!\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Unexpected empty parent name!\n", MSG_WARNING );
    }
    this->packing_data.parent_name = new_parent_name;
 
@@ -300,10 +289,7 @@ void PhysicalInterfaceBase::pack()
 #if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
       DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "The initialize() function has not been called!\n" );
 #else
-      ostringstream errmsg;
-      errmsg << "PhysicalInterfaceBase::pack():" << __LINE__
-             << " WARNING: The initialize() function has not been called!\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "The initialize() function has not been called!\n", MSG_WARNING );
 #endif
    }
 
@@ -315,9 +301,9 @@ void PhysicalInterfaceBase::pack()
    // Print out debug information if desired.
    if ( debug ) {
       ostringstream msg;
-      msg << "PhysicalInterfaceBase::pack():" << __LINE__ << "\n";
+      msg << "\n";
       print_data( msg );
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
 #if defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
@@ -335,10 +321,7 @@ void PhysicalInterfaceBase::unpack()
 #if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
       DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "The initialize() function has not been called!\n" );
 #else
-      ostringstream errmsg;
-      errmsg << "PhysicalInterfaceBase::unpack():" << __LINE__
-             << " WARNING: The initialize() function has not been called!\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "The initialize() function has not been called!\n", MSG_WARNING );
 #endif
    }
 
@@ -353,9 +336,9 @@ void PhysicalInterfaceBase::unpack()
    // Print out debug information if desired.
    if ( debug ) {
       ostringstream msg;
-      msg << "PhysicalInterfaceBase::unpack():" << __LINE__ << "\n";
+      msg << "\n";
       print_data( msg );
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    return;

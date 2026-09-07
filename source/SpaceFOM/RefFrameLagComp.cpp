@@ -34,7 +34,6 @@ NASA, Johnson Space Center\n
 
 // Trick includes.
 #include "trick/Integrator.hh"
-#include "trick/message_proto.h"
 #include "trick/message_type.h"
 
 // SpaceFOM includes.
@@ -86,8 +85,7 @@ RefFrameLagComp::~RefFrameLagComp() // RETURN: -- None.
    // Free up any allocated intergrator.
    if ( this->integrator != nullptr ) {
       if ( !MemoryServices::delete_var( this->integrator ) ) {
-         message_publish( MSG_WARNING, "SpaceFOM::RefFrameBase::~RefFrameBase():%d WARNING failed to delete memory for 'this->integrator'\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Failed to delete memory for 'this->integrator'\n", MSG_WARNING );
       }
       this->integrator = nullptr;
    }

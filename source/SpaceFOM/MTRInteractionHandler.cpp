@@ -41,10 +41,6 @@ NASA, Johnson Space Center\n
 #include <sstream>
 #include <string>
 
-// Trick includes.
-#include "trick/message_proto.h"
-#include "trick/message_type.h"
-
 // SpaceFOM includes.
 #include "SpaceFOM/ExecutionControl.hh"
 #include "SpaceFOM/MTRInteractionHandler.hh"
@@ -166,8 +162,7 @@ void MTRInteractionHandler::send_interaction(
          StringUtilities::to_string( rti_user_supplied_tag_string, rti_user_supplied_tag );
          ostringstream msg;
 
-         msg << "++++SENDING++++ MTRInteractionHandler::send_interaction("
-             << "Receive Order):" << __LINE__ << "\n"
+         msg << "++++SENDING++++ Receive Order\n"
              << "  name: '" << name << "'\n"
              << "  user-supplied-tag: '" << rti_user_supplied_tag_string << "'\n"
              << "  user-supplied-tag-size: " << rti_user_supplied_tag.size() << "\n"
@@ -181,7 +176,7 @@ void MTRInteractionHandler::send_interaction(
              << Int64BaseTime::to_base_time( granted_time ) << " "
              << Int64BaseTime::get_base_unit() << ")\n"
              << "  send_cnt:" << ( send_cnt + 1 ) << "\n";
-         message_publish( MSG_NORMAL, msg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
 
       // Update the send count, which is just used for the message in this example.
@@ -201,8 +196,7 @@ void MTRInteractionHandler::send_interaction(
 
          // The interaction was Not sent.
          ostringstream msg;
-         msg << "+-+-NOT SENT-+-+ MTRInteractionHandler::send_sine_interaction():"
-             << __LINE__ << "\n"
+         msg << "+-+-NOT SENT-+-+\n"
              << "  name:'" << name << "'\n"
              << "  Scenario time: " << scenario_time << "\n"
              << "  Simulation time: " << sim_time << "\n";
@@ -212,7 +206,7 @@ void MTRInteractionHandler::send_interaction(
          msg << "  HLA grant time: " << granted_time << " ("
              << Int64BaseTime::to_base_time( granted_time ) << " "
              << Int64BaseTime::get_base_unit() << ")\n";
-         message_publish( MSG_NORMAL, msg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
    }
 }
@@ -263,8 +257,7 @@ void MTRInteractionHandler::receive_interaction(
       StringUtilities::to_string( user_supplied_tag_string, the_user_supplied_tag );
 
       ostringstream msg;
-      msg << "++++RECEIVING++++ SpaceFOM::MTRInteractionHandler::receive_interaction():"
-          << __LINE__ << "\n"
+      msg << "++++RECEIVING++++\n"
           << "  name:'" << name << "'\n"
           << "  user-supplied-tag: '" << user_supplied_tag_string << "'\n"
           << "  user-supplied-tag-size: " << the_user_supplied_tag.size() << "\n"
@@ -278,7 +271,7 @@ void MTRInteractionHandler::receive_interaction(
           << Int64BaseTime::to_base_time( this->granted_time ) << " "
           << Int64BaseTime::get_base_unit() << ")\n"
           << "  receive_cnt:" << ( receive_cnt + 1 ) << "\n";
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    ++receive_cnt;

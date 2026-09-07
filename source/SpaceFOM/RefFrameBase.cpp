@@ -42,7 +42,6 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick includes.
-#include "trick/message_proto.h"
 #include "trick/message_type.h"
 
 // TrickHLA includes.
@@ -115,13 +114,13 @@ void RefFrameBase::base_config(
    if ( mngr_object == nullptr ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          ostringstream errmsg;
-         errmsg << "RefFrameBase::base_config() Warning: \n"
+         errmsg << "\n"
                 << "\tThe TrickHLA::Object associated with object \'" << ref_frame_fed_name << "\' is nullptr.\n"
                 << "\tEither of the two things are possible:\n"
                 << "\t1). We are configuring in the input file, which is okay.\n"
                 << "\t2). We are configuring in default_data but forgot to allocate and\n"
                 << "\t    assign the associated object in the 'create_connections()' routine.";
-         message_publish( MSG_WARNING, errmsg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
       }
       return;
    } else {
@@ -227,15 +226,13 @@ void RefFrameBase::initialize()
          string const trick_name = ( name_attr != nullptr ) ? name_attr->get_trick_name() : "";
          string const fom_name   = ( name_attr != nullptr ) ? name_attr->get_FOM_name() : "";
 
-         errmsg << "SpaceFOM::RefFrameBase::initialize():" << __LINE__
-                << " WARNING: For RefFrame '" << this->packing_data.name
+         errmsg << "For RefFrame '" << this->packing_data.name
                 << "' and object '" << ( ( object != nullptr ) ? object->get_name() : "" )
                 << "' with Attribute Trick name '" << trick_name
                 << "' and FOM name '" << fom_name
                 << "', detected unexpected empty federation instance parent frame name!"
                 << "\n";
-
-         message_publish( MSG_WARNING, errmsg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
       }
 
       // Mark as root reference frame.
@@ -432,10 +429,7 @@ bool RefFrameBase::set_root( bool root_status )
 void RefFrameBase::publish()
 {
    if ( this->initialized ) {
-      ostringstream errmsg;
-      errmsg << "RefFrameBase::publish():" << __LINE__
-             << " WARNING: Ignoring, reference frame already initialized!\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Ignoring, reference frame already initialized!\n", MSG_WARNING );
    } else {
       if ( object == nullptr ) {
          DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr Object reference!\n" );
@@ -474,10 +468,7 @@ void RefFrameBase::publish()
 void RefFrameBase::subscribe()
 {
    if ( this->initialized ) {
-      ostringstream errmsg;
-      errmsg << "RefFrameBase::subscribe():" << __LINE__
-             << " WARNING: Ignoring, reference frame already initialized!\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Ignoring, reference frame already initialized!\n", MSG_WARNING );
    } else {
       if ( object == nullptr ) {
          DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr Object reference!\n" );
@@ -521,10 +512,7 @@ void RefFrameBase::pack()
 #if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
       DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "The initialize() function has not been called!\n" );
 #else
-      ostringstream errmsg;
-      errmsg << "RefFrameBase::pack():" << __LINE__
-             << " WARNING: The initialize() function has not been called!\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "The initialize() function has not been called!\n", MSG_WARNING );
 #endif
    }
 
@@ -536,9 +524,9 @@ void RefFrameBase::pack()
    // Print out debug information if desired.
    if ( debug ) {
       ostringstream msg;
-      msg << "RefFrameBase::pack():" << __LINE__ << "\n";
+      msg << "\n";
       print_data( msg );
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
 #if defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
@@ -559,10 +547,7 @@ void RefFrameBase::unpack()
 #if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
       DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "The initialize() function has not been called!\n" );
 #else
-      ostringstream errmsg;
-      errmsg << "RefFrameBase::unpack():" << __LINE__
-             << " WARNING: The initialize() function has not been called!\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "The initialize() function has not been called!\n", MSG_WARNING );
 #endif
    }
 
@@ -577,9 +562,9 @@ void RefFrameBase::unpack()
    // Print out debug information if desired.
    if ( debug ) {
       ostringstream msg;
-      msg << "RefFrameBase::unpack():" << __LINE__ << "\n";
+      msg << "\n";
       print_data( msg );
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    return;

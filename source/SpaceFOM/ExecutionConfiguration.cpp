@@ -55,7 +55,6 @@ NASA, Johnson Space Center\n
 // Trick includes.
 #include "trick/Executive.hh"
 #include "trick/attributes.h"
-#include "trick/message_proto.h"
 #include "trick/message_type.h"
 #include "trick/reference.h"
 
@@ -242,8 +241,6 @@ void ExecutionConfiguration::pack()
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       ostringstream msg;
       msg << "\n"
-          << "=============================================================\n"
-          << "SpaceFOM::ExecutionConfiguration::pack():" << __LINE__ << "\n"
           << "      Current Scenario Time: " << StringUtilities::format_time( execution_control->scenario_timeline->get_time() ) << "\n"
           << "    Current Simulation Time: " << StringUtilities::format_time( the_exec->get_sim_time() ) << "\n"
           << "   Current HLA Granted Time: " << StringUtilities::format_time( federate->get_granted_time() ) << "\n"
@@ -266,7 +263,7 @@ void ExecutionConfiguration::pack()
          msg << "     simulation_freeze_time: " << execution_control->get_simulation_freeze_time() << " seconds\n";
       }
       msg << "=============================================================\n";
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    if ( ( federate != nullptr ) && !federate->verify_time_constraints() ) {
@@ -282,8 +279,6 @@ void ExecutionConfiguration::unpack()
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       ostringstream msg;
       msg << "\n"
-          << "=============================================================\n"
-          << "SpaceFOM::ExecutionConfiguration::unpack():" << __LINE__ << "\n"
           << "      Current Scenario Time: " << StringUtilities::format_time( execution_control->scenario_timeline->get_time() ) << "\n"
           << "    Current Simulation Time: " << StringUtilities::format_time( the_exec->get_sim_time() ) << "\n"
           << "   Current HLA Granted Time: " << StringUtilities::format_time( federate->get_granted_time() ) << "\n"
@@ -303,7 +298,7 @@ void ExecutionConfiguration::unpack()
           << "        next_execution_mode: " << execution_mode_enum_to_string( execution_mode_int16_to_enum( next_execution_mode ) ) << "\n"
           << "     least_common_time_step: " << least_common_time_step << " " << Int64BaseTime::get_base_unit() << "\n"
           << "=============================================================\n";
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    verify_ExCO_data();
@@ -426,11 +421,7 @@ void ExecutionConfiguration::set_least_common_time_step(
       this->least_common_time_step = Int64BaseTime::to_base_time( lcts );
    } else {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-         ostringstream msg;
-         msg << "SpaceFOM::ExecutionConfiguration::set_least_common_time_step():" << __LINE__
-             << " WARNING: This is not a Master federate so this setting will be ignored."
-             << "\n";
-         message_publish( MSG_WARNING, msg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "This is not a Master federate so this setting will be ignored.\n", MSG_WARNING );
       }
    }
 }
@@ -578,21 +569,17 @@ void ExecutionConfiguration::setup_ref_attributes(
 
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       ostringstream msg;
-      msg << "SpaceFOM::ExecutionConfiguration::setup_interaction_ref_attributes():" << __LINE__
-          << " FOM-Parameter:'" << attributes[0].get_FOM_name() << "'"
+      msg << "FOM-Parameter:'" << attributes[0].get_FOM_name() << "'"
           << " NOTE: This is an auto-generated parameter so there is no"
           << " associated 'Trick-Name'.\n";
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       ostringstream msg;
-      msg << "SpaceFOM::ExecutionConfiguration::setup_ref_attributes():" << __LINE__
-          << "\n"
-          << "--------------- Trick REF-Attributes ---------------"
-          << "\n"
+      msg << "\n--------------- Trick REF-Attributes ---------------\n"
           << " Object FOM name:'" << this->FOM_name << "'\n";
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    free( static_cast< void * >( exco_ref2 ) );
@@ -604,8 +591,6 @@ void ExecutionConfiguration::print_execution_configuration() const
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
       ostringstream msg;
       msg << "\n"
-          << "=============================================================\n"
-          << "SpaceFOM::ExecutionConfiguration::print_exec_config():" << __LINE__ << "\n"
           << "             Object-Name: '" << get_name() << "'\n"
           << "         root_frame_name: '" << root_frame_name << "'\n"
           << "     scenario_time_epoch: " << StringUtilities::format_time( scenario_time_epoch ) << "\n"
@@ -620,7 +605,7 @@ void ExecutionConfiguration::print_execution_configuration() const
           << "     next_execution_mode: " << SpaceFOM::execution_mode_enum_to_string( SpaceFOM::execution_mode_int16_to_enum( next_execution_mode ) ) << "\n"
           << "  least_common_time_step: " << least_common_time_step << " " << Int64BaseTime::get_base_unit() << "\n"
           << "=============================================================\n";
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 }
 
@@ -633,8 +618,7 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-      message_publish( MSG_NORMAL, "SpaceFOM::ExecutionConfiguration::wait_for_update():%d Waiting...\n",
-                       __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Waiting...\n" );
    }
 
    // Make sure we have at least one piece of exec-config data we can receive.
@@ -671,15 +655,13 @@ bool ExecutionConfiguration::wait_for_update() // RETURN: -- None.
 
             if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
-               message_publish( MSG_NORMAL, "SpaceFOM::ExecutionConfiguration::wait_for_update():%d Waiting...\n",
-                                __LINE__ );
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Waiting...\n" );
             }
          }
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-         message_publish( MSG_NORMAL, "SpaceFOM::ExecutionConfiguration::wait_for_update():%d Received data.\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Received data.\n" );
       }
 
       // Receive the exec-config data from the master federate.

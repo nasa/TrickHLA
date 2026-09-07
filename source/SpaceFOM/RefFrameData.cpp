@@ -34,14 +34,17 @@ NASA, Johnson Space Center\n
 #include <sstream>
 
 // Trick includes.
-#include "trick/message_proto.h"
 #include "trick/message_type.h"
+
+// TrickHLA includes.
+#include "TrickHLA/DebugHandler.hh"
 
 // SpaceFOM includes.
 #include "SpaceFOM/RefFrameData.hh"
 #include "SpaceFOM/RefFrameDataState.hh"
 
 using namespace std;
+using namespace TrickHLA;
 using namespace SpaceFOM;
 
 /*!
@@ -119,9 +122,7 @@ bool RefFrameData::transform_to_parent(
 {
    // Check for null reference to transformed frame data.
    if ( frame_out == nullptr ) {
-      std::ostringstream errmsg;
-      errmsg << "SpaceFOM::RefFrameData::transform_to_parent() ERROR:%d nullptr transformed frame reference!\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "nullptr transformed frame reference!\n", MSG_WARNING );
       return ( false );
    }
 
@@ -139,20 +140,20 @@ bool RefFrameData::transform_to_parent(
    // frame.
    if ( this->name != frame_out->name ) {
       std::ostringstream errmsg;
-      errmsg << "SpaceFOM::RefFrameData::transform_to_parent() ERROR:%d Frame name mismatch: %s/%s!\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__, this->name.c_str(), frame_out->name.c_str() );
+      errmsg << "Frame name mismatch: '" << this->name << "' != '" << frame_out->name << "'!\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
       return ( false );
    }
    if ( this->parent_name != frame_to.name ) {
       std::ostringstream errmsg;
-      errmsg << "SpaceFOM::RefFrameData::transform_to_parent() ERROR:%d Frame incompatibility: %s/%s!\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__, this->parent_name.c_str(), frame_to.name.c_str() );
+      errmsg << "Frame incompatibility: '" << this->parent_name << "' != '" << frame_to.name << "'!\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
       return ( false );
    }
    if ( frame_to.parent_name != frame_out->parent_name ) {
       std::ostringstream errmsg;
-      errmsg << "SpaceFOM::RefFrameData::transform_to_parent() ERROR:%d Frame parent: %s/%s!\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__, frame_to.parent_name.c_str(), frame_out->parent_name.c_str() );
+      errmsg << "Frame parent: '" << frame_to.parent_name << "' != '" << frame_out->parent_name << "'!\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
       return ( false );
    }
 
@@ -169,9 +170,7 @@ bool RefFrameData::transform_to_child(
 {
    // Check for null reference to transformed frame data.
    if ( frame_out == nullptr ) {
-      std::ostringstream errmsg;
-      errmsg << "SpaceFOM::RefFrameData::transform_to_child() ERROR:%d nullptr transformed frame reference!\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__ );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "nullptr transformed frame reference!\n", MSG_WARNING );
       return ( false );
    }
 
@@ -185,20 +184,20 @@ bool RefFrameData::transform_to_child(
    // Check for frame compatibility.
    if ( this->name != frame_out->name ) {
       std::ostringstream errmsg;
-      errmsg << "SpaceFOM::RefFrameData::transform_to_child() ERROR:%d Frame name mismatch: %s/%s!\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__, this->name.c_str(), frame_out->name.c_str() );
+      errmsg << "Frame name mismatch: '" << this->name << "' != '" << frame_out->name << "'!\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
       return ( false );
    }
    if ( this->name != frame_to.parent_name ) {
       std::ostringstream errmsg;
-      errmsg << "SpaceFOM::RefFrameData::transform_to_child() ERROR:%d Frame incompatibility: %s/%s!\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__, this->name.c_str(), frame_to.parent_name.c_str() );
+      errmsg << "Frame incompatibility: '" << this->name << "' != '" << frame_to.parent_name << "'!\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
       return ( false );
    }
    if ( frame_to.name != frame_out->parent_name ) {
       std::ostringstream errmsg;
-      errmsg << "SpaceFOM::RefFrameData::transform_to_child() ERROR:%d Frame parent: %s/%s!\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str(), __LINE__, frame_to.name.c_str(), frame_out->parent_name.c_str() );
+      errmsg << "Frame parent: '" << frame_to.name << "' != '" << frame_out->parent_name << "'!\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
       return ( false );
    }
 

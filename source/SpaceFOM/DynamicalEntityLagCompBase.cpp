@@ -36,7 +36,6 @@ NASA, Johnson Space Center\n
 
 // Trick includes.
 #include "trick/matrix_macros.h"
-#include "trick/message_proto.h"
 #include "trick/message_type.h"
 #include "trick/trick_math_error.h"
 #include "trick/trick_math_proto.h"
@@ -164,10 +163,7 @@ void DynamicalEntityLagCompBase::send_lag_compensation()
 #if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
       DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "The initialize() function has not been called!\n" );
 #else
-      ostringstream errmsg;
-      errmsg << "DynamicalEntityLagCompBase::send_lag_compensation():" << __LINE__
-             << " WARNING: The initialize() function has not been called!\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "The initialize() function has not been called!\n", MSG_WARNING );
 #endif
    }
 
@@ -180,11 +176,11 @@ void DynamicalEntityLagCompBase::send_lag_compensation()
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
       ostringstream errmsg;
-      errmsg << "******* DynamicalEntityLagCompInteg::send_lag_compensation():" << __LINE__ << "\n"
+      errmsg << "\n"
              << " scenario-time:" << get_scenario_time() << "\n"
              << "     lookahead:" << this->compensate_dt << "\n"
              << " adjusted-time:" << end_t << "\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
    }
 
    // Copy the current DynamicalEntity state over to the lag compensated state.
@@ -197,7 +193,7 @@ void DynamicalEntityLagCompBase::send_lag_compensation()
       ostringstream msg;
       msg << "Send data before compensation: \n";
       print_lag_comp_data( msg );
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    // Compensate the data
@@ -206,9 +202,9 @@ void DynamicalEntityLagCompBase::send_lag_compensation()
    // Print out debug information if desired.
    if ( debug ) {
       ostringstream msg;
-      msg << "Send data after compensation: \n";
+      msg << "Send data after compensation:\n";
       print_lag_comp_data( msg );
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    // Copy the compensated state to the packing data.
@@ -227,10 +223,7 @@ void DynamicalEntityLagCompBase::receive_lag_compensation()
 #if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
       DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "The initialize() function has not been called!\n" );
 #else
-      ostringstream errmsg;
-      errmsg << "DynamicalEntityLagCompBase::receive_lag_compensation():" << __LINE__
-             << " WARNING: The initialize() function has not been called!\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "The initialize() function has not been called!\n", MSG_WARNING );
 #endif
    }
 
@@ -244,11 +237,11 @@ void DynamicalEntityLagCompBase::receive_lag_compensation()
    // on and off from a setting in the input file.
    if ( DebugHandler::show( DEBUG_LEVEL_6_TRACE, DEBUG_SOURCE_LAG_COMPENSATION ) ) {
       ostringstream errmsg;
-      errmsg << "******* DynamicalEntityLagCompInteg::receive_lag_compensation():" << __LINE__ << "\n"
+      errmsg << "\n"
              << "  scenario-time:" << end_t << "\n"
              << "      data-time:" << data_t << "\n"
              << " comp-time-step:" << this->compensate_dt << "\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
    }
 
    // Because of ownership transfers and attributes being sent at different
@@ -262,9 +255,9 @@ void DynamicalEntityLagCompBase::receive_lag_compensation()
       // Print out debug information if desired.
       if ( debug ) {
          ostringstream msg;
-         msg << "Receive data before compensation: \n";
+         msg << "Receive data before compensation:\n";
          print_lag_comp_data( msg );
-         message_publish( MSG_NORMAL, msg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
 
       // Compensate the data
@@ -273,18 +266,18 @@ void DynamicalEntityLagCompBase::receive_lag_compensation()
       // Print out debug information if desired.
       if ( debug ) {
          ostringstream msg;
-         msg << "Receive data after compensation: \n";
+         msg << "Receive data after compensation:\n";
          print_lag_comp_data( msg );
-         message_publish( MSG_NORMAL, msg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
 
    } else {
       if ( debug ) {
          ostringstream errmsg;
-         errmsg << "DynamicalEntityLagCompInteg::receive_lag_compensation(): No state data received.\n"
+         errmsg << "No state data received.\n"
                 << "\tvalue_changed: " << state_attr->is_changed()
                 << "; locally owned: " << state_attr->locally_owned << "\n";
-         message_publish( MSG_WARNING, errmsg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
       }
    }
    if ( inertia_attr->is_received() ) {
@@ -292,9 +285,7 @@ void DynamicalEntityLagCompBase::receive_lag_compensation()
       // inverse matrix will be set to all zeros.  This will zero out any
       // torque affects in the lag compensation dynamics.
       if ( dm_invert_symm( this->inertia_inv, this->inertia ) != TM_SUCCESS ) {
-         message_publish( MSG_WARNING,
-                          "SpaceFOM::DynamicalEntityLagCompInteg::receive_lag_compensation():%d Singular inertia matrix! Inversion failed!\n",
-                          __LINE__ );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Singular inertia matrix! Inversion failed!\n", MSG_WARNING );
          M_INIT( this->inertia_inv );
       }
    }

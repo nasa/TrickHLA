@@ -41,7 +41,6 @@ NASA, Johnson Space Center\n
 
 // Trick includes.
 #include "trick/matrix_macros.h"
-#include "trick/message_proto.h"
 #include "trick/message_type.h"
 #include "trick/vector_macros.h"
 
@@ -119,13 +118,13 @@ void DynamicalEntityBase::base_config(
    if ( mngr_object == nullptr ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          ostringstream errmsg;
-         errmsg << "DynamicalEntityBase::base_config() WARNING: \n"
+         errmsg << "\n"
                 << "\tThe TrickHLA::Object associated with object \'" << entity_fed_name << "\' is nullptr.\n"
                 << "\tEither of the two things are possible:\n"
                 << "\t1). We are configuring in the input file, which is okay.\n"
                 << "\t2). We are configuring in default_data but forgot to allocate and\n"
                 << "\t    assign the associated object in the 'create_connections()' routine.";
-         message_publish( MSG_WARNING, errmsg.str().c_str() );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
       }
       return;
    } else {
@@ -349,18 +348,13 @@ void DynamicalEntityBase::pack()
 #if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
       DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "The initialize() function has not been called!\n" );
 #else
-      ostringstream errmsg;
-      errmsg << "DynamicalEntityBase::pack():" << __LINE__
-             << " WARNING: The initialize() function has not been called!\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "The initialize() function has not been called!\n", MSG_WARNING );
 #endif
    }
 
    // Print out debug information if desired.
    if ( debug ) {
-      ostringstream msg;
-      msg << "DynamicalEntityBase::pack():" << __LINE__ << "\n";
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
    // Call the PhysicalEntityBase pack routine.
@@ -379,19 +373,15 @@ void DynamicalEntityBase::unpack()
 #if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
       DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "The initialize() function has not been called!\n" );
 #else
-      ostringstream errmsg;
-      errmsg << "DynamicalEntityBase::unpack():" << __LINE__
-             << " WARNING: The initialize() function has not been called!\n";
-      message_publish( MSG_WARNING, errmsg.str().c_str() );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "The initialize() function has not been called!\n", MSG_WARNING );
 #endif
    }
 
    // Print out debug information if desired.
    if ( debug ) {
       ostringstream msg;
-      msg << "DynamicalEntityBase::unpack():" << __LINE__ << "\n"
-          << "DynamicalEntity: lag comp type: " << this->object->lag_comp_type << "\n";
-      message_publish( MSG_WARNING, msg.str().c_str() );
+      msg << "\nDynamicalEntity: lag comp type: " << this->object->lag_comp_type << "\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
    }
 
    // Call the PhysicalEntityBase unpack routine.
