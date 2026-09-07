@@ -217,9 +217,12 @@ class StringUtilities
    {
       // Extract the function name from the __PRETTY_FUNCTION__ macro of the form:
       // namespace::class_name::func_name()
-      size_t const scope_delim = pretty_func_name.find( "::" );
-      size_t const name_start  = pretty_func_name.rfind( " ", scope_delim ) + 1;
       size_t const name_end    = pretty_func_name.rfind( "(" );
+      size_t const scope_delim = pretty_func_name.find( "::" );
+      size_t       name_start  = pretty_func_name.rfind( " ", scope_delim ) + 1;
+      while ( pretty_func_name[name_start] == '*' ) {
+         ++name_start;
+      }
       return ( pretty_func_name.substr( name_start, name_end - name_start )
                   .append( "():" )
                   .append( std::to_string( line_number ) ) );
