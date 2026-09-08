@@ -31,7 +31,7 @@ NASA, Johnson Space Center\n
 
 // Use stl algorithm API's.
 // Default: TRICKHLA_USE_STL_ALGORITHM
-#define TRICKHLA_USE_STL_ALGORITHM
+#define NO_TRICKHLA_USE_STL_ALGORITHM
 
 // Either use encoding into opaque buffer (old way) or the EncoderFactory (preferred).
 // Default: DONT_USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS
