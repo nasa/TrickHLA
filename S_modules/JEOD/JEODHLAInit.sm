@@ -135,7 +135,7 @@ class JEODHLAInitSimObject : public Trick::SimObject {
                    << "::" << time_tt.calendar_hour
                    << ":" << time_tt.calendar_minute
                    << ":" << time_tt.calendar_second << "\n"
-                   << "\n;
+                   << "\n";
       }
       return;
    }
