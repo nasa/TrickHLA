@@ -204,7 +204,7 @@ class SyncPointManagerBase : public CheckpointConversionBase
    //
    /*! @brief Tasks to perform after a checkpoint load.  Usually as part of an HLA Restore.
     *  Delegates to federate service checkpoint functions. */
-   void checkpoint_restart() override;
+   void checkpoint_restart() override; // cppcheck-suppress [uselessOverride]
 
   protected:
    bool register_sync_point( SyncPoint *sp );

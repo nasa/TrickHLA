@@ -120,20 +120,12 @@ void SyncPointList::clear()
 SyncPoint *SyncPointList::get(
    wstring const &label )
 {
-#if defined( TRICKHLA_USE_STL_ALGORITHM )
-   auto found_it = std::find_if( list.begin(), list.end(),
-                                 [&label]( SyncPoint *sp ) -> bool {
-                                    return ( label.compare( sp->get_label() ) == 0 );
-                                 } );
-   return ( ( found_it != list.end() ) ? *found_it : nullptr );
-#else
    for ( SyncPoint *sp : list ) {
-      if ( label.compare( sp->get_label() ) == 0 ) {
+      if ( label.compare( sp->get_label() ) == 0 ) { // cppcheck-suppress [useStlAlgorithm]
          return sp;
       }
    }
    return nullptr;
-#endif // TRICKHLA_USE_STL_ALGORITHM
 }
 
 bool SyncPointList::add(
@@ -219,19 +211,12 @@ bool SyncPointList::add(
 bool SyncPointList::contains(
    wstring const &label )
 {
-#if defined( TRICKHLA_USE_STL_ALGORITHM )
-   return std::any_of( list.begin(), list.end(),
-                       [&label]( SyncPoint const *sp ) -> bool {
-                          return ( label.compare( sp->get_label() ) == 0 );
-                       } );
-#else
-   for ( SyncPoint const *sp : list ) {
+   for ( SyncPoint const *sp : list ) { // cppcheck-suppress [useStlAlgorithm]
       if ( label.compare( sp->get_label() ) == 0 ) {
          return true;
       }
    }
    return false;
-#endif // TRICKHLA_USE_STL_ALGORITHM
 }
 
 bool SyncPointList::is_registered(
@@ -293,20 +278,11 @@ bool SyncPointList::is_synchronized(
 
 bool SyncPointList::is_all_synchronized()
 {
-#if defined( TRICKHLA_USE_STL_ALGORITHM )
-   if ( std::any_of( list.begin(), list.end(),
-                     []( SyncPoint const *sp ) -> bool {
-                        return !sp->is_synchronized();
-                     } ) ) {
-      return false;
-   }
-#else
-   for ( SyncPoint const *sp : list ) {
+   for ( SyncPoint const *sp : list ) { // cppcheck-suppress [useStlAlgorithm]
       if ( !sp->is_synchronized() ) {
          return false;
       }
    }
-#endif // TRICKHLA_USE_STL_ALGORITHM
 
    // Can only be synchronized if the list was not empty and we had no
    // unsynchronized sync-points.

@@ -279,19 +279,12 @@ bool SyncPointManagerBase::contains_sync_point(
 {
    MutexProtection const auto_unlock_mutex( &mutex );
 
-#if defined( TRICKHLA_USE_STL_ALGORITHM )
-   return ( std::any_of( sync_pnt_lists.begin(), sync_pnt_lists.end(),
-                         [&label]( SyncPointList *sync_pnt_list ) -> bool {
-                            return sync_pnt_list->contains( label );
-                         } ) );
-#else
    for ( SyncPointList *sync_pnt_list : sync_pnt_lists ) {
-      if ( sync_pnt_list->contains( label ) ) {
+      if ( sync_pnt_list->contains( label ) ) { // cppcheck-suppress [useStlAlgorithm]
          return true;
       }
    }
    return false;
-#endif // TRICKHLA_USE_STL_ALGORITHM
 }
 
 /*
@@ -1307,7 +1300,7 @@ SyncPointList *SyncPointManagerBase::get_sync_point_list(
    string const &list_name )
 {
    for ( SyncPointList *sp_list : sync_pnt_lists ) {
-      if ( ( sp_list != nullptr ) && list_name.compare( sp_list->get_list_name() ) == 0 ) {
+      if ( ( sp_list != nullptr ) && list_name.compare( sp_list->get_list_name() ) == 0 ) { // cppcheck-suppress [useStlAlgorithm]
          return sp_list;
       }
    }

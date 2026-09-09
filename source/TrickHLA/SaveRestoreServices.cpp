@@ -1117,22 +1117,13 @@ void SaveRestoreServices::restore_waiting_for_request_status()
 
    } else {
 
-#if defined( TRICKHLA_USE_STL_ALGORITHM )
-      if ( std::any_of( restore_status_response.begin(), restore_status_response.end(),
-                        []( FederateRestoreStatus const &status ) -> bool {
-                           return ( status.status != NO_RESTORE_IN_PROGRESS );
-                        } ) ) {
-         restore_conflict = true;
-      }
-#else
       // Iterate through the response vector to check for ongoing restores.
       for ( FederateRestoreStatus const &status : restore_status_response ) {
-         if ( status.status != NO_RESTORE_IN_PROGRESS ) {
+         if ( status.status != NO_RESTORE_IN_PROGRESS ) { // cppcheck-suppress [useStlAlgorithm]
             restore_conflict = true;
             break;
          }
       }
-#endif // TRICKHLA_USE_STL_ALGORITHM
    }
 
    // Check for Restore response status conflict.

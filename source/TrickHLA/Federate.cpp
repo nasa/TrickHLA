@@ -1429,16 +1429,6 @@ bool Federate::check_joined_federates_match()
             break;
          }
 
-#if defined( TRICKHLA_USE_STL_ALGORITHM )
-         // If no match was found for at least one federate in the federates
-         // in Federation list, then mark this as a fail.
-         if ( std::all_of( federate_handles.begin(), federate_handles.end(),
-                           [&joined_federate]( auto const &fed_handle ) -> bool {
-                              return ( fed_handle != joined_federate.federate_handle );
-                           } ) ) {
-            success = false;
-         }
-#else
          // Iterate through the federates in Federation list.
          bool found = false;
          for ( FederateHandle federate_handle : federate_handles ) { // NOLINT(misc-const-correctness)
@@ -1455,7 +1445,6 @@ bool Federate::check_joined_federates_match()
          if ( !found ) {
             success = false;
          }
-#endif // TRICKHLA_USE_STL_ALGORITHM
 
          // Break out of the loop if the we find any fail.
          if ( !success ) {
@@ -1831,16 +1820,6 @@ string Federate::wait_for_required_federates_to_join()
       return status_string;
    }
 
-#if defined( TRICKHLA_USE_STL_ALGORITHM )
-   // Determine how many required federates we have.
-   size_t num_required_feds = 0;
-   std::for_each( known_federates.begin(), known_federates.end(),
-                  [&num_required_feds]( auto const &known_fed ) {
-                     if ( known_fed.required ) {
-                        ++num_required_feds;
-                     }
-                  } );
-#else
    // Determine how many required federates we have.
    size_t num_required_feds = 0;
    for ( auto const &known_fed : known_federates ) {
@@ -1848,7 +1827,6 @@ string Federate::wait_for_required_federates_to_join()
          ++num_required_feds; // cppcheck-suppress [useStlAlgorithm]
       }
    }
-#endif // TRICKHLA_USE_STL_ALGORITHM
 
    // If we don't have any required Federates then return.
    if ( num_required_feds == 0 ) {

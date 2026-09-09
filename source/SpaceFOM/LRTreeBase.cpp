@@ -346,12 +346,6 @@ bool LRTreeBase::has_node( string const &name )
  */
 bool LRTreeBase::has_node( LRTreeNodeBase const *node )
 {
-#if defined( TRICKHLA_USE_STL_ALGORITHM )
-   return std::any_of( nodes.begin(), nodes.end(),
-                       [node]( LRTreeNodeBase *node_item ) -> bool {
-                          return ( node_item == node );
-                       } );
-#else
    vector< LRTreeNodeBase * >::iterator node_iter;
 
    // Find the node in the vector.
@@ -361,7 +355,6 @@ bool LRTreeBase::has_node( LRTreeNodeBase const *node )
       }
    }
    return ( false );
-#endif // TRICKHLA_USE_STL_ALGORITHM
 }
 
 /*!
