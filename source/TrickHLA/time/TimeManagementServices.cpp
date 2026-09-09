@@ -147,10 +147,10 @@ void TimeManagementServices::initialize_thread_state(
    this->HLA_cycle_time_in_base_time = Int64BaseTime::to_base_time( this->HLA_cycle_time );
 
    if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_TIME_MGMT_SERVICES ) ) {
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
-                                   string( "Trick main thread (id:0, data_cycle:" )
-                                      .append( std::to_string( this->HLA_cycle_time ) )
-                                      .append( ")\n" ) );
+      ostringstream msg;
+      msg << "Trick main thread (id:0, data_cycle:"
+          << setprecision( 18 ) << this->HLA_cycle_time << ")\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    // Make sure the Trick thread coordinator is initialized. This will
@@ -223,21 +223,20 @@ void TimeManagementServices::set_time_advance_granted(
       this->time_adv_state = TIME_ADVANCE_GRANTED;
 
       if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_TIME_MGMT_SERVICES ) ) {
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
-                                      string( "Granted-time:" )
-                                         .append( std::to_string( this->HLA_time ) )
-                                         .append( ", Requested-time:" )
-                                         .append( std::to_string( requested_time.get_time_in_seconds() ) )
-                                         .append( "\n" ) );
+         ostringstream msg;
+         msg << "Granted-time:" << setprecision( 18 ) << this->HLA_time
+             << ", Requested-time:" << setprecision( 18 )
+             << requested_time.get_time_in_seconds() << " seconds\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
    } else {
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_TIME_MGMT_SERVICES ) ) {
          ostringstream errmsg;
          errmsg << "'" << federate->get_federate_name()
-                << "': IGNORING GRANTED TIME " << setprecision( 18 )
+                << "', IGNORING GRANTED TIME " << setprecision( 18 )
                 << int64_time.get_time_in_seconds()
                 << " seconds because it is less than the requested time "
-                << requested_time.get_time_in_seconds() << " seconds\n";
+                << requested_time.get_time_in_seconds() << " seconds.\n";
          DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
       }
    }
@@ -501,10 +500,10 @@ void TimeManagementServices::time_advance_request_to_GALT()
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_TIME_MGMT_SERVICES ) ) {
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
-                                   string( "Requested-Time:" )
-                                      .append( std::to_string( requested_time.get_time_in_seconds() ) )
-                                      .append( " seconds\n" ) );
+      ostringstream msg;
+      msg << "Requested-time:" << setprecision( 18 )
+          << requested_time.get_time_in_seconds() << " seconds\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    // Perform the time-advance request to go to the requested time.
@@ -560,10 +559,10 @@ void TimeManagementServices::time_advance_request_to_GALT_LCTS_multiple()
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
    if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_TIME_MGMT_SERVICES ) ) {
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
-                                   string( "Requested-Time:" )
-                                      .append( std::to_string( requested_time.get_time_in_seconds() ) )
-                                      .append( " seconds\n" ) );
+      ostringstream msg;
+      msg << "Requested-time:" << setprecision( 18 )
+          << requested_time.get_time_in_seconds() << " seconds\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    // Perform the time-advance request to go to the requested time.
@@ -647,7 +646,7 @@ void TimeManagementServices::set_time_constrained_enabled(
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_TIME_MGMT_SERVICES ) ) {
       ostringstream msg;
       msg << "'" << federate->get_federate_name()
-          << "': Time granted to: " << setprecision( 18 )
+          << "', Time granted to: " << setprecision( 18 )
           << get_granted_time().get_time_in_seconds() << " seconds\n";
       DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
@@ -679,7 +678,7 @@ void TimeManagementServices::setup_time_constrained()
          DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
                                       string( "'" )
                                          .append( federate->get_federation_name() )
-                                         .append( "': ENABLING TIME CONSTRAINED\n" ) );
+                                         .append( "', ENABLING TIME CONSTRAINED\n" ) );
       }
 
       {
@@ -733,7 +732,7 @@ void TimeManagementServices::setup_time_constrained()
                DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
                                             string( "'" )
                                                .append( federate->get_federation_name() )
-                                               .append( "': ENABLING TIME CONSTRAINED, waiting...\n" ) );
+                                               .append( "', ENABLING TIME CONSTRAINED, waiting...\n" ) );
             }
          }
       }
@@ -783,7 +782,7 @@ void TimeManagementServices::set_time_regulation_enabled(
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_TIME_MGMT_SERVICES ) ) {
       ostringstream msg;
       msg << "'" << federate->get_federate_name()
-          << "': Time granted to: " << setprecision( 18 )
+          << "', Time granted to: " << setprecision( 18 )
           << get_granted_time().get_time_in_seconds() << " seconds\n";
       DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
@@ -813,9 +812,9 @@ void TimeManagementServices::setup_time_regulation()
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_TIME_MGMT_SERVICES ) ) {
          ostringstream msg;
          msg << "'" << federate->get_federation_name()
-             << "': ENABLING TIME REGULATION WITH LOOKAHEAD = "
+             << "', ENABLING TIME REGULATION WITH LOOKAHEAD "
              << setprecision( 18 ) << lookahead.get_time_in_seconds()
-             << " seconds.\n";
+             << " seconds\n";
          DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
 
@@ -874,7 +873,7 @@ void TimeManagementServices::setup_time_regulation()
                print_timer.reset();
                ostringstream msg;
                msg << "'" << federate->get_federation_name()
-                   << "': ENABLING TIME REGULATION WITH LOOKAHEAD = "
+                   << "', ENABLING TIME REGULATION WITH LOOKAHEAD = "
                    << setprecision( 18 ) << lookahead.get_time_in_seconds()
                    << " seconds, waiting...\n";
                DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
