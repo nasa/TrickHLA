@@ -42,7 +42,6 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
-#include <algorithm>
 #include <cstddef>
 #include <map>
 #include <ostream>
@@ -59,7 +58,6 @@ NASA, Johnson Space Center\n
 #include "SpaceFOM/LRTreeNodeBase.hh"
 
 // TrickHLA includes.
-#include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Types.hh"
 

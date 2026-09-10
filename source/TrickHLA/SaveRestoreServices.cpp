@@ -32,7 +32,6 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
-#include <algorithm>
 #include <cstdlib>
 #include <cstring>
 #include <fstream>
