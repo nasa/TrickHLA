@@ -1056,6 +1056,10 @@ process described in section 7.2 figure 7-2.
 */
 void ExecutionControl::pre_multi_phase_init_processes()
 {
+   if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
+   }
+
    ExecutionConfiguration *ExCO = get_execution_configuration();
 
    // The User Must specify an ExCO.
@@ -1196,6 +1200,10 @@ process described in section 7.2 and figures 7-8 and 7-9.
 */
 void ExecutionControl::post_multi_phase_init_processes()
 {
+   if ( DebugHandler::show( DEBUG_LEVEL_5_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
+   }
+
    ExecutionConfiguration *ExCO = get_execution_configuration();
 
    // When we join the federation, setup the list of current federates.

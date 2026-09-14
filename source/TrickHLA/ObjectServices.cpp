@@ -726,7 +726,9 @@ void ObjectServices::setup_object_ref_attributes(
    Object   *data_objects )
 {
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
+      ostringstream msg;
+      msg << "data_obj_count:" << data_obj_count << "\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
    // Resolve all the Ref-Attributes for all the simulation initialization
@@ -736,10 +738,10 @@ void ObjectServices::setup_object_ref_attributes(
       // Initialize the TrickHLA-Object before we use it.
       data_objects[n].initialize( this->federate );
 
-      ostringstream msg;
-
       int const  attr_count = data_objects[n].get_attribute_count();
       Attribute *attrs      = data_objects[n].get_attributes();
+
+      ostringstream msg;
 
       if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
          msg << "\n--------------- Trick REF-Attributes ---------------\n"
