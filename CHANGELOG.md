@@ -66,7 +66,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Added a check to verify an attribute is not already owned and is configured to be published before executing a pull ownership request. Otherwise an error message is displayed and the simulation is terminated.
 - Added more detailed status messages indicating if an Attribute is sent or received for the TrickHLA::Conditional and TrickHLA::Packing interfaces used by the sine wave example simulations.
 - Added functions to DebugHandler to print HLA excecptions with a formatted message.
-- Added the collection and logging of HLA timing statistics. See the sims/SpaceFOM/SIM_sine input files for examples on how to enable the HLA time statistics including logging.
+- Added support to collect and log HLA timing statistics when HLA time management is used. See the sims/SpaceFOM/SIM_sine input files for an example on how to enable the HLA time statistics including logging. A summary of the HLA timing statistics is printed to the console at simulation shutdown.
   - For the Pacing federate:
     - The time waiting for the Time Advance Grant (TAG) should be essentially zero when realtime is enabled and there are no overruns. This is because the TAG callback arrives while Trick is waiting for the start of the next software frame.
     - The elapsed time from the Time Advance Request (TAR) to the TAG should be close to the federate frame margin.
