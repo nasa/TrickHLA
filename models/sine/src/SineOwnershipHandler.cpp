@@ -80,7 +80,7 @@ void SineOwnershipHandler::initialize_callback(
    int const TEST_CASE = 4;
 
    switch ( TEST_CASE ) {
-      case 0:
+      case 0: // cppcheck-suppress [unreachableSwitchCase,unmatchedSuppression]
          // Some examples on pulling attribute ownership.
 
          // Examples showing how to Pull all attributes.
@@ -97,7 +97,7 @@ void SineOwnershipHandler::initialize_callback(
          }
          break;
 
-      case 1:
+      case 1: // cppcheck-suppress [unreachableSwitchCase,unmatchedSuppression]
          // Some examples on pushing attribute ownership.
 
          // Examples showing how to Push all attributes.
@@ -114,7 +114,7 @@ void SineOwnershipHandler::initialize_callback(
          }
          break;
 
-      case 2:
+      case 2: // cppcheck-suppress [unreachableSwitchCase,unmatchedSuppression]
          // Example showing a mix of pushing and pulling attribute ownership.
 
          push_ownership(); // As soon as possible for all attributes.
@@ -124,14 +124,14 @@ void SineOwnershipHandler::initialize_callback(
          push_ownership( "Value", 9.0 );
          break;
 
-      case 3:
+      case 3: // cppcheck-suppress [unreachableSwitchCase,unmatchedSuppression]
          // Example showing a simple push and pull of ownership.
 
          push_ownership( 1.0 );
          pull_ownership( 5.0 );
          break;
 
-      case 4:
+      case 4: // cppcheck-suppress [unreachableSwitchCase,unmatchedSuppression]
          // Example showing a simple push and pull of ownership
          // for a single attribute.
 

@@ -49,6 +49,7 @@ def print_usage_message():
    print( '  -f --fed_name [name]   : Name of the Federate, default is A-side-Federate.' )
    print( '  -fe --fex_name [name]  : Name of the Federation Execution, default is SpaceFOM_sine.' )
    print( '  --freeze [on|off]      : on: Start in freeze (Default), off: Run and no sim-control.' )
+   print( '  --log-time-stats       : Log TrickHLA time statistics.' )
    print( '  --nostop               : Set no stop time on simulation.' )
    print( '  --realtime [on|off]    : on: Enable realtime (Default), off: disable realtime.' )
    print( '  -r --root_frame [name] : Name of the root reference frame, default is RootFrame.' )
@@ -73,6 +74,7 @@ def parse_command_line():
    global root_frame_name
    global realtime_enabled
    global freeze_enabled
+   global log_time_stats
 
    # Get the Trick command line arguments.
    argc = trick.command_line_args_get_argc()
@@ -115,6 +117,9 @@ def parse_command_line():
          else:
             print( 'ERROR: Missing --freeze [on|off] argument.' )
             print_usage = True
+
+      elif ( str( argv[index] ) == '--log-time-stats' ):
+         log_time_stats = True
 
       elif ( ( str( argv[index] ) == '-r' ) | ( str( argv[index] ) == '--root_frame' ) ):
          index = index + 1
@@ -179,6 +184,9 @@ freeze_enabled = True
 # Default is to NOT show verbose messages.
 verbose = False
 
+# Default is to NOT log TrickHLA time statistics.
+log_time_stats = False
+
 # Set the default Federate name.
 federate_name = 'A-side-Federate'
 
@@ -194,6 +202,12 @@ if ( print_usage == True ):
    print_usage_message()
 
 #---------------------------------------------
+# Set up the core simulation parameters.
+#---------------------------------------------
+core_frame_time = 0.250
+
+
+#---------------------------------------------
 # Set up Trick executive parameters.
 #---------------------------------------------
 # instruments.echo_jobs.echo_jobs_on()
@@ -206,7 +220,7 @@ if ( print_usage == True ):
 # Setup for Trick real time execution. This is the "Pacing" function.
 from TrickHLA_data.TrickHLA.TrickHLASimConfig import *
 sine_sim_config = TrickHLASimConfig( 'sine' )
-sine_sim_config.realtime( software_frame_time = 0.250 )
+sine_sim_config.realtime( software_frame_time = core_frame_time )
 sine_sim_config.sim_control_panel()
 sine_sim_config.start_in_freeze()
 
@@ -220,8 +234,22 @@ else:
 # Set up data to record.
 #---------------------------------------------
 exec( open( "Log_data/log_sine_states.py" ).read() )
-log_sine_states( 'A', 0.250 )
-log_sine_states( 'P', 0.250 )
+log_sine_states( 'A', core_frame_time )
+log_sine_states( 'P', core_frame_time )
+
+if log_time_stats:
+   # Import the TrickHLA Time Statistics Data Recording Group class.
+   from TrickHLA_data.TrickHLA.TrickHLATimeStatsDRG import TrickDataRecordingGroup, TrickHLATimeStatsDRG
+
+   # Create the TrickHLA Time Statistics Data Recording Group.
+   thla_time_drg = TrickHLATimeStatsDRG( core_frame_time )
+
+   # Initialize all the Data Recording Groups.
+   TrickDataRecordingGroup.initialize_groups()
+
+   # Enable the collection of TrickHLA time statistics.
+   THLA.federate.enable_time_statistics( True )
+
 
 # =========================================================================
 # Set up the HLA interfaces.
@@ -290,11 +318,11 @@ THLA.execution_control.scenario_timeline = THLA_INIT.scenario_timeline
 federate.set_HLA_base_time_unit_and_scale_trick_tics( trick.HLA_BASE_TIME_NANOSECONDS )
 
 # Must specify a federate HLA lookahead value in seconds.
-federate.set_lookahead_time( 0.250 )
+federate.set_lookahead_time( core_frame_time )
 
 # Must specify the Least Common Time Step for all federates in the
 # federation execution.
-federate.set_least_common_time_step( 0.250 )
+federate.set_least_common_time_step( core_frame_time )
 
 # Setup Time Management parameters.
 federate.set_time_regulating( True )

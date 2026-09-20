@@ -55,13 +55,42 @@ class ElapsedTimeStats
    // Public constructors and destructors.
    /*! @brief Default constructor for the TrickHLA ElapsedTimeStats class. */
    ElapsedTimeStats();
+   /*! @brief Constructor for the TrickHLA ElapsedTimeStats class. */
+   explicit ElapsedTimeStats( bool const enable );
+   /*! @brief Constructor for the TrickHLA ElapsedTimeStats class. */
+   ElapsedTimeStats( bool const enable, std::string const &message );
    /*! @brief Destructor for the TrickHLA ElapsedTimeStats class. */
    virtual ~ElapsedTimeStats();
 
-   // Use implicit copy constructor and assignment operator.
+   /*! @brief Enable or disable the collection of statistics. */
+   void set_enabled( bool const enable )
+   {
+      this->enabled = enable;
+   }
+
+   /*! @brief Is the collection of statistics enabled. */
+   bool is_enabled() const
+   {
+      return this->enabled;
+   }
+
+   /*! @brief Set a description. */
+   void set_description( std::string const &message )
+   {
+      this->description = message;
+   }
+
+   /*! @brief Start the timer for the elapsed time measurement. */
+   void start_timer();
 
    /*! @brief Measure the elapsed time. */
    void measure();
+
+   /*! @brief True if any valid measurements have been taken. */
+   bool any_measurements() const
+   {
+      return ( this->count > 0 );
+   }
 
    /*! @brief Convert confidence level to Z value. */
    static double confidence_to_Z( double &confidence );
@@ -70,21 +99,31 @@ class ElapsedTimeStats
    std::string const to_string();
 
   private:
-   bool first_pass; ///< @trick_units{--} Flag indicates first pass to determine external clock.
+   bool enabled; ///< @trick_units{--} Flag to enable time measurements.
 
-   int time_tic_value; ///< @trick_units{--}Trick time tics per second multiplier.
+   std::string description; ///< @trick_units{--} Description message.
 
-   int64_t prev_time; ///< @trick_units{microseconds} Previous elapsed time.
+   int64_t start_time; ///< @trick_units{microseconds} Start time for the measurement.
 
    uint64_t count; ///< @trick_units{--} Number of elapsed times measured.
 
-   double elapsed_time; ///< @trick_units{milliseconds} Current elapsed time.
+   double elapsed_time;      ///< @trick_units{milliseconds} Current elapsed time.
+   double elapsed_time_prev; ///< @trick_units{milliseconds} Previous elapsed time.
 
-   double min; ///< @trick_units{milliseconds} Minimum elapsed time measured.
-   double max; ///< @trick_units{milliseconds} Maximum elapsed time measured.
+   double elapsed_time_avg; ///< @trick_units{milliseconds} Running average elapsed time measured.
+   double elapsed_time_min; ///< @trick_units{milliseconds} Minimum elapsed time measured.
+   double elapsed_time_max; ///< @trick_units{milliseconds} Maximum elapsed time measured.
 
-   double time_sum;         ///< @trick_units{milliseconds} Sum of the elapsed time measured.
-   double time_squared_sum; ///< @trick_units{milliseconds^2} Sum of the elapsed time squared.
+   double elapsed_time_sum;    ///< @trick_units{milliseconds} Sum of the elapsed time measured.
+   double elapsed_time_sq_sum; ///< @trick_units{milliseconds^2} Sum of the elapsed time squared.
+
+   double jitter; ///< @trick_units{milliseconds} Current jitter in the elapsed time.
+
+   double jitter_avg; ///< @trick_units{milliseconds} Running average jitter time measured.
+   double jitter_min; ///< @trick_units{milliseconds} Minimum jitter time measured.
+   double jitter_max; ///< @trick_units{milliseconds} Maximum jitter time measured.
+
+   double jitter_sum; ///< @trick_units{milliseconds} Sum of the jitter times.
 };
 
 } // namespace TrickHLA

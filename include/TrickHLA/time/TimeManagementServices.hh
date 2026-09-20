@@ -25,6 +25,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../../source/TrickHLA/time/TrickThreadCoordinator.cpp}
 @trick_link_dependency{../../../source/TrickHLA/DebugHandler.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Types.cpp}
+@trick_link_dependency{../../../source/TrickHLA/utils/ElapsedTimeStats.cpp}
 @trick_link_dependency{../../../source/TrickHLA/utils/MutexLock.cpp}
 @trick_link_dependency{../../../source/TrickHLA/utils/MutexProtection.cpp}
 
@@ -49,6 +50,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/time/Int64Interval.hh"
 #include "TrickHLA/time/Int64Time.hh"
 #include "TrickHLA/time/TrickThreadCoordinator.hh"
+#include "TrickHLA/utils/ElapsedTimeStats.hh"
 #include "TrickHLA/utils/MutexLock.hh"
 #include "TrickHLA/utils/MutexProtection.hh"
 #include "TrickHLA/utils/Utilities.hh"
@@ -366,8 +368,9 @@ class TimeManagementServices : public TrickThreadCoordinator, public CheckpointC
    bool time_regulating_state;  ///< @trick_units{--} Internal flag, federates HLA Time Regulation state (default: false).
    bool time_constrained_state; ///< @trick_units{--} Internal flag, federates HLA Time Constrained state (default: false).
 
-   uint64_t tag_wait_sum;   ///< @trick_units{--} Sum of all the TAG wait wallclock times.
-   uint64_t tag_wait_count; ///< @trick_units{--} Number of times we waited for TAG.
+   ElapsedTimeStats tag_wait_stats; ///< @trick_units{--} Time Advance Grant (TAG) elapsed time statistics.
+   ElapsedTimeStats tar_tag_stats;  ///< @trick_units{--} Time Advance Request (TAR) to TAG elapsed time statistics.
+   ElapsedTimeStats tara_tag_stats; ///< @trick_units{--} TAR Available (TARA) to TAG elapsed time statistics.
 
   private:
    // Do not allow the copy constructor or assignment operator.

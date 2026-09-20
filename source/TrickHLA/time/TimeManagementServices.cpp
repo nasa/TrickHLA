@@ -24,6 +24,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../Federate.cpp}
 @trick_link_dependency{../ObjectServices.cpp}
 @trick_link_dependency{../Types.cpp}
+@trick_link_dependency{../utils/ElapsedTimeStats.cpp}
 @trick_link_dependency{../utils/MutexLock.cpp}
 @trick_link_dependency{../utils/MutexProtection.cpp}
 @trick_link_dependency{../utils/SleepTimeout.cpp}
@@ -67,6 +68,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/time/Int64BaseTime.hh"
 #include "TrickHLA/time/TimeManagementServices.hh"
 #include "TrickHLA/time/TrickThreadCoordinator.hh"
+#include "TrickHLA/utils/ElapsedTimeStats.hh"
 #include "TrickHLA/utils/MutexProtection.hh"
 #include "TrickHLA/utils/SleepTimeout.hh"
 #include "TrickHLA/utils/Utilities.hh"
@@ -120,8 +122,9 @@ TimeManagementServices::TimeManagementServices(
      time_adv_state_mutex(),
      time_regulating_state( false ),
      time_constrained_state( false ),
-     tag_wait_sum( 0 ),
-     tag_wait_count( 0 )
+     tag_wait_stats( false ),
+     tar_tag_stats( false ),
+     tara_tag_stats( false )
 {
    return;
 }
@@ -928,7 +931,7 @@ void TimeManagementServices::time_advance_request()
       return;
    }
 
-   // -- start of checkpoint additions --
+   // -- start_timer of checkpoint additions --
    // TEMP   federate->set_save_completed( false ); // reset ONLY at the bottom of the frame...
    //  -- end of checkpoint additions --
 
@@ -957,7 +960,7 @@ void TimeManagementServices::time_advance_request()
  */
 void TimeManagementServices::perform_time_advance_request()
 {
-   // -- start of checkpoint additions --
+   // -- start_timer of checkpoint additions --
    // TEMP   federate->set_save_completed( false ); // reset ONLY at the bottom of the frame...
    //  -- end of checkpoint additions --
 
@@ -967,9 +970,11 @@ void TimeManagementServices::perform_time_advance_request()
       return;
    }
 
+   bool const zero_lookahead = is_zero_lookahead_time();
+
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_TIME_MGMT_SERVICES ) ) {
       ostringstream msg;
-      if ( is_zero_lookahead_time() ) {
+      if ( zero_lookahead ) {
          msg << "Time Advance Request Available (TARA) to " << setprecision( 18 )
              << requested_time.get_time_in_seconds() << " seconds.\n";
       } else {
@@ -997,7 +1002,7 @@ void TimeManagementServices::perform_time_advance_request()
       this->time_adv_state = TIME_ADVANCE_RESET;
 
       try {
-         if ( is_zero_lookahead_time() ) {
+         if ( zero_lookahead ) {
             // Request that time be advanced to the new time, but still allow
             // TSO data for Treq = Tgrant
             federate->RTI_ambassador->timeAdvanceRequestAvailable( requested_time.get() );
@@ -1037,6 +1042,11 @@ void TimeManagementServices::perform_time_advance_request()
       } catch ( RTI1516_NAMESPACE::RTIinternalError const &e ) {
          DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
       }
+   }
+
+   tar_tag_stats.start_timer();
+   if ( zero_lookahead ) {
+      tara_tag_stats.start_timer();
    }
 
    // Macro to restore the saved FPU Control Word register value.
@@ -1126,6 +1136,8 @@ void TimeManagementServices::wait_for_zero_lookahead_TARA_TAG()
       }
    }
 
+   tara_tag_stats.start_timer();
+
    unsigned short state;
    {
       // When auto_unlock_mutex goes out of scope it automatically unlocks
@@ -1179,6 +1191,8 @@ void TimeManagementServices::wait_for_zero_lookahead_TARA_TAG()
          }
       } while ( state != TIME_ADVANCE_GRANTED );
    }
+
+   tara_tag_stats.measure();
 }
 
 /*
@@ -1233,10 +1247,6 @@ bool TimeManagementServices::verify_time_constraints()
  */
 void TimeManagementServices::wait_for_time_advance_grant()
 {
-#if defined( TRICKHLA_COLLECT_TAG_STATS )
-   int64_t const tag_wait_start_time = clock_wall_time();
-#endif // TRICKHLA_COLLECT_TAG_STATS
-
    // Skip requesting time-advancement if time management is not enabled.
    if ( !this->time_management ) {
       return;
@@ -1249,6 +1259,8 @@ void TimeManagementServices::wait_for_time_advance_grant()
       }
       return;
    }
+
+   tag_wait_stats.start_timer();
 
    unsigned short state;
    {
@@ -1318,10 +1330,11 @@ void TimeManagementServices::wait_for_time_advance_grant()
       } while ( state != TIME_ADVANCE_GRANTED );
    }
 
-#if defined( TRICKHLA_COLLECT_TAG_STATS )
-   tag_wait_sum += ( clock_wall_time() - tag_wait_start_time );
-   ++tag_wait_count;
-#endif // TRICKHLA_COLLECT_TAG_STATS
+   tag_wait_stats.measure();
+   tar_tag_stats.measure();
+   if ( tara_tag_stats.is_enabled() && is_zero_lookahead_time() ) {
+      tara_tag_stats.measure();
+   }
 
    // Add the line number for a higher trace level.
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_TIME_MGMT_SERVICES ) ) {

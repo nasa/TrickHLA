@@ -47,6 +47,7 @@ def print_usage_message():
    print( '  -h --help             : Print this help message.' )
    print( '  -f --fed_name [name]  : Name of the Federate, default is P-side-Federate.' )
    print( '  -fe --fex_name [name] : Name of the Federation Execution, default is SpaceFOM_sine.' )
+   print( '  --log-time-stats      : Log TrickHLA time statistics.' )
    print( '  --nostop              : Set no stop time on simulation.' )
    print( '  -s --stop [time]      : Time to stop simulation, default is 10.0 seconds.' )
    print( '  --verbose             : Show verbose messages.' )
@@ -66,6 +67,7 @@ def parse_command_line():
    global verbose
    global federate_name
    global federation_name
+   global log_time_stats
 
    # Get the Trick command line arguments.
    argc = trick.command_line_args_get_argc()
@@ -94,6 +96,9 @@ def parse_command_line():
          else:
             print( 'ERROR: Missing --fex_name [name] argument.' )
             print_usage = True
+
+      elif ( str( argv[index] ) == '--log-time-stats' ):
+         log_time_stats = True
 
       elif ( str( argv[index] ) == '-nostop' ):
          run_duration = None
@@ -130,6 +135,9 @@ run_duration = 10.0
 # Default is to NOT show verbose messages.
 verbose = False
 
+# Default is to NOT log TrickHLA time statistics.
+log_time_stats = False
+
 # Set the default Federate name.
 federate_name = 'P-side-Federate'
 
@@ -140,6 +148,12 @@ parse_command_line()
 
 if ( print_usage == True ):
    print_usage_message()
+
+#---------------------------------------------
+# Set up the core simulation parameters.
+#---------------------------------------------
+core_frame_time = 0.250
+
 
 #---------------------------------------------
 # Set up Trick executive parameters.
@@ -153,7 +167,7 @@ if ( print_usage == True ):
 # Import and configure the TrickHLA base Simulation Configuration class.
 from TrickHLA_data.TrickHLA.TrickHLASimConfig import *
 sine_sim_config = TrickHLASimConfig( 'sine' )
-sine_sim_config.set_software_and_freeze_frame_time( software_frame_time = 0.250 )
+sine_sim_config.set_software_and_freeze_frame_time( software_frame_time = core_frame_time )
 sine_sim_config.start_in_freeze( False )
 
 
@@ -161,8 +175,22 @@ sine_sim_config.start_in_freeze( False )
 # Set up data to record.
 #---------------------------------------------
 exec( open( "Log_data/log_sine_states.py" ).read() )
-log_sine_states( 'A', 0.250 )
-log_sine_states( 'P', 0.250 )
+log_sine_states( 'A', core_frame_time )
+log_sine_states( 'P', core_frame_time )
+
+if log_time_stats:
+   # Import the TrickHLA Time Statistics Data Recording Group class.
+   from TrickHLA_data.TrickHLA.TrickHLATimeStatsDRG import TrickDataRecordingGroup, TrickHLATimeStatsDRG
+
+   # Create the TrickHLA Time Statistics Data Recording Group.
+   thla_time_drg = TrickHLATimeStatsDRG( core_frame_time )
+
+   # Initialize all the Data Recording Groups.
+   TrickDataRecordingGroup.initialize_groups()
+
+   # Enable the collection of TrickHLA time statistics.
+   THLA.federate.enable_time_statistics( True )
+
 
 # =========================================================================
 # Set up the HLA interfaces.
@@ -231,12 +259,12 @@ THLA.execution_control.scenario_timeline = THLA_INIT.scenario_timeline
 federate.set_HLA_base_time_unit_and_scale_trick_tics( trick.HLA_BASE_TIME_MICROSECONDS )
 
 # Must specify a federate HLA lookahead value in seconds.
-federate.set_lookahead_time( 0.250 )
+federate.set_lookahead_time( core_frame_time )
 
 # Must specify a Trick software frame that meets the time constraints
 # for the Least Common Time Step (LCTS) value set in the ExCO by the
 # Master federate. (LCTS >= RT) && (LCTS % RT = 0)
-trick.exec_set_software_frame( 0.250 )
+trick.exec_set_software_frame( core_frame_time )
 
 # Setup Time Management parameters.
 federate.set_time_regulating( True )

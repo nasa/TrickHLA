@@ -78,7 +78,7 @@ short Utilities::byteswap_short(
          out[1] = in[0];
          break;
       }
-      case 4: {
+      case 4: { // cppcheck-suppress [unreachableSwitchCase]
          out[0] = in[3];
          out[1] = in[2];
          out[2] = in[1];
@@ -112,7 +112,7 @@ unsigned short Utilities::byteswap_unsigned_short(
          out[1] = in[0];
          break;
       }
-      case 4: {
+      case 4: { // cppcheck-suppress [unreachableSwitchCase]
          out[0] = in[3];
          out[1] = in[2];
          out[2] = in[1];
@@ -199,7 +199,7 @@ long Utilities::byteswap_long(
 
    // sizeof(long) >= sizeof(int)
    switch ( size ) {
-      case 4: {
+      case 4: { // cppcheck-suppress [unreachableSwitchCase]
          out[0] = in[3];
          out[1] = in[2];
          out[2] = in[1];
@@ -239,7 +239,7 @@ unsigned long Utilities::byteswap_unsigned_long(
 
    // sizeof(long) >= sizeof(int)
    switch ( size ) {
-      case 4: {
+      case 4: { // cppcheck-suppress [unreachableSwitchCase]
          out[0] = in[3];
          out[1] = in[2];
          out[2] = in[1];
@@ -353,7 +353,7 @@ float Utilities::byteswap_float(
          out[3] = in[0];
          break;
       }
-      case 8: {
+      case 8: { // cppcheck-suppress [unreachableSwitchCase]
          out[0] = in[7];
          out[1] = in[6];
          out[2] = in[5];

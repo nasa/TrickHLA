@@ -210,7 +210,7 @@ EncoderBase *EncoderFactory::create(
       case TRICK_LONG: {
          // (long)
          switch ( sizeof( long ) ) {
-            case 4: {
+            case 4: { // cppcheck-suppress [unreachableSwitchCase]
                encoder = create_int32_encoder( address, attr, hla_encoding, data_name );
                break;
             }
@@ -233,7 +233,7 @@ EncoderBase *EncoderFactory::create(
       case TRICK_UNSIGNED_LONG: {
          // (unsigned long)
          switch ( sizeof( unsigned long ) ) {
-            case 4: {
+            case 4: { // cppcheck-suppress [unreachableSwitchCase]
 #if defined( IEEE_1516_2025 )
                encoder = create_uint32_encoder( address, attr, hla_encoding, data_name );
 #else

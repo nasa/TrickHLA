@@ -642,6 +642,16 @@ class Federate : public CheckpointConversionBase
       time_management_service.time_advance_request_to_GALT();
    }
 
+   /*! @brief Enable the collection of HLA time statistics.
+    *  @param enable True to enable statistics, false to disable. */
+   void enable_time_statistics( bool const enable )
+   {
+      time_management_service.tag_wait_stats.set_enabled( enable );
+      time_management_service.tar_tag_stats.set_enabled( enable );
+      time_management_service.tara_tag_stats.set_enabled(
+         enable && time_management_service.is_zero_lookahead_time() );
+   }
+
    //-------------------------------------------------------------------------
    // Management Object Model (MOM) interfaces.
    //

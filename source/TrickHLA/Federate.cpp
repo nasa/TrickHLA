@@ -4173,18 +4173,36 @@ void Federate::shutdown()
       DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
-#if defined( TRICKHLA_COLLECT_TAG_STATS )
-   double const  tag_wait_time     = (double)tag_wait_sum / exec_get_time_tic_value();
-   double const  avg_tag_wait_time = ( tag_wait_count != 0 )
-                                        ? ( tag_wait_time / tag_wait_count )
-                                        : tag_wait_time;
-   ostringstream tag_msg;
-   tag_msg << "\n"
-           << "Total # waits for TAG:" << tag_wait_count << "\n"
-           << "  Total TAG wait time:" << tag_wait_time << " seconds\n"
-           << "Average TAG wait time:" << avg_tag_wait_time << " seconds\n";
-   DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, tag_msg.str(), MSG_INFO );
-#endif // TRICKHLA_COLLECT_TAG_STATS
+   if ( time_management_service.tag_wait_stats.is_enabled() ) {
+
+      time_management_service.tag_wait_stats.set_description(
+         "Wait for Time Advance Grant (TAG) Statistics:" );
+
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   time_management_service.tag_wait_stats.to_string(),
+                                   MSG_INFO );
+   }
+
+   if ( time_management_service.tar_tag_stats.is_enabled() ) {
+
+      time_management_service.tar_tag_stats.set_description(
+         "Time Advance Request (TAR) to Time Advance Grant (TAG) Elapsed Time Statistics:" );
+
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   time_management_service.tar_tag_stats.to_string(),
+                                   MSG_INFO );
+   }
+
+   if ( time_management_service.tara_tag_stats.is_enabled()
+        && time_management_service.tara_tag_stats.any_measurements() ) {
+
+      time_management_service.tara_tag_stats.set_description(
+         "Time Advance Request Available (TARA) to Time Advance Grant (TAG) Elapsed Time Statistics:" );
+
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   time_management_service.tara_tag_stats.to_string(),
+                                   MSG_INFO );
+   }
 
 #ifdef TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
    for ( int i = 0; i < object_service.obj_count; ++i ) {

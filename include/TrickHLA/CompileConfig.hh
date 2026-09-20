@@ -38,10 +38,6 @@ NASA, Johnson Space Center\n
 // Default: TRICKHLA_ERROR_IF_NOT_INITIALIZED
 #define NO_TRICKHLA_ERROR_IF_NOT_INITIALIZED
 
-// Collect statistics on the wait times for the Time Advance Grant (TAG).
-// Default: NO_TRICKHLA_COLLECT_TAG_STATS
-#define NO_TRICKHLA_COLLECT_TAG_STATS
-
 // For blocking cyclic reads, do a check on the send and received data counts.
 // Default: NO_TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
 #define NO_TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
