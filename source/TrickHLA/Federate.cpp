@@ -3389,35 +3389,29 @@ void Federate::shutdown()
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       message_publish( MSG_NORMAL, "Federate::shutdown():%d\n", __LINE__ );
-   }
 
-   if ( tag_wait_stats.is_enabled() ) {
+      if ( tag_wait_stats.is_enabled() ) {
+         tag_wait_stats.set_description( "Wait for Time Advance Grant (TAG) Statistics:" );
+         ostringstream msg;
+         msg << "Federate::shutdown():" << __LINE__ << " INFO: " << tag_wait_stats.to_string();
+         message_publish( MSG_INFO, msg.str().c_str() );
+      }
 
-      tag_wait_stats.set_description( "Wait for Time Advance Grant (TAG) Statistics:" );
+      if ( tar_tag_stats.is_enabled() ) {
+         tar_tag_stats.set_description(
+            "Time Advance Request (TAR) to Time Advance Grant (TAG) Elapsed Time Statistics:" );
+         ostringstream msg;
+         msg << "Federate::shutdown():" << __LINE__ << " INFO: " << tar_tag_stats.to_string();
+         message_publish( MSG_INFO, msg.str().c_str() );
+      }
 
-      ostringstream msg;
-      msg << "Federate::shutdown():" << __LINE__ << " INFO: " << tag_wait_stats.to_string();
-      message_publish( MSG_INFO, msg.str().c_str() );
-   }
-
-   if ( tar_tag_stats.is_enabled() ) {
-
-      tar_tag_stats.set_description(
-         "Time Advance Request (TAR) to Time Advance Grant (TAG) Elapsed Time Statistics:" );
-
-      ostringstream msg;
-      msg << "Federate::shutdown():" << __LINE__ << " INFO: " << tar_tag_stats.to_string();
-      message_publish( MSG_INFO, msg.str().c_str() );
-   }
-
-   if ( tara_tag_stats.is_enabled() && tara_tag_stats.any_measurements() ) {
-
-      tara_tag_stats.set_description(
-         "Time Advance Request Available (TARA) to Time Advance Grant (TAG) Elapsed Time Statistics:" );
-
-      ostringstream msg;
-      msg << "Federate::shutdown():" << __LINE__ << " INFO: " << tara_tag_stats.to_string();
-      message_publish( MSG_INFO, msg.str().c_str() );
+      if ( tara_tag_stats.is_enabled() && tara_tag_stats.any_measurements() ) {
+         tara_tag_stats.set_description(
+            "Time Advance Request Available (TARA) to Time Advance Grant (TAG) Elapsed Time Statistics:" );
+         ostringstream msg;
+         msg << "Federate::shutdown():" << __LINE__ << " INFO: " << tara_tag_stats.to_string();
+         message_publish( MSG_INFO, msg.str().c_str() );
+      }
    }
 
 #ifdef TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
