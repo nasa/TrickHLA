@@ -106,11 +106,7 @@ int SleepTimeout::sleep() const
 // Current time as an integer in microseconds.
 int64_t SleepTimeout::time()
 {
-   // Make sure the time is always an integer in microseconds.
-   int const time_tic_value = exec_get_time_tic_value();
-   return ( time_tic_value == 1000000 )
-             ? clock_wall_time()
-             : ( ( clock_wall_time() * 1000000 ) / time_tic_value );
+   return clock_wall_time();
 }
 
 bool SleepTimeout::timeout() const

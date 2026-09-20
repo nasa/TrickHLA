@@ -70,8 +70,9 @@ class BasicClock
     *  @return Computer system time in seconds. */
    static double get_time()
    {
-      // Convert from an integer time to a floating-point time in seconds.
-      return ( (double)clock_wall_time() / (double)exec_get_time_tic_value() );
+      // Convert the wall clock time as an integer in microseconds to a
+      // floating-point time in seconds.
+      return ( (double)clock_wall_time() / 1000000.0 );
    }
 
   private:

@@ -43,6 +43,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Fixed compile time warnings about variable initialization for the IMSim ExecutionControl class.
 - Fixed Python exception handling based on pull request #185.
 - Simulations using the --verbose command-line setting no longer need 'on' to be specified to enable verbose messages.
+-- Fixed the use of the of the Trick wall clock, which is always an integer in microseconds regardless of the Trick time tick resolution.
 
 
 ## [v3.2.2] - 2026-04-01
