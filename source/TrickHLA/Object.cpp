@@ -4632,7 +4632,7 @@ void *ownership_divestiture_pthread_function(
    void *arg )
 {
    if ( arg != NULL ) {
-      DivestThreadArgs *divest_thread_args = reinterpret_cast< DivestThreadArgs * >( arg );
+      DivestThreadArgs const *divest_thread_args = reinterpret_cast< DivestThreadArgs * >( arg );
 
 #if THLA_OBJ_OWNERSHIP_DEBUG
       message_publish( MSG_NORMAL, "====== Object::ownership_divestiture_pthread_function():%d \

@@ -3391,18 +3391,34 @@ void Federate::shutdown()
       message_publish( MSG_NORMAL, "Federate::shutdown():%d\n", __LINE__ );
    }
 
-#if defined( TRICKHLA_COLLECT_TAG_STATS )
-   double const  tag_wait_time     = (double)tag_wait_sum / exec_get_time_tic_value();
-   double const  avg_tag_wait_time = ( tag_wait_count != 0 )
-                                        ? ( tag_wait_time / tag_wait_count )
-                                        : tag_wait_time;
-   ostringstream tag_msg;
-   tag_msg << "Federate::shutdown():" << __LINE__ << endl
-           << "Total # waits for TAG:" << tag_wait_count << endl
-           << "  Total TAG wait time:" << tag_wait_time << " seconds" << endl
-           << "Average TAG wait time:" << avg_tag_wait_time << " seconds" << endl;
-   message_publish( MSG_INFO, tag_msg.str().c_str() );
-#endif // TRICKHLA_COLLECT_TAG_STATS
+   if ( tag_wait_stats.is_enabled() ) {
+
+      tag_wait_stats.set_description( "Wait for Time Advance Grant (TAG) Statistics:" );
+
+      ostringstream msg;
+      msg << "Federate::shutdown():" << __LINE__ << " INFO: " << tag_wait_stats.to_string();
+      message_publish( MSG_INFO, msg.str().c_str() );
+   }
+
+   if ( tar_tag_stats.is_enabled() ) {
+
+      tar_tag_stats.set_description(
+         "Time Advance Request (TAR) to Time Advance Grant (TAG) Elapsed Time Statistics:" );
+
+      ostringstream msg;
+      msg << "Federate::shutdown():" << __LINE__ << " INFO: " << tar_tag_stats.to_string();
+      message_publish( MSG_INFO, msg.str().c_str() );
+   }
+
+   if ( tara_tag_stats.is_enabled() && tara_tag_stats.any_measurements() ) {
+
+      tara_tag_stats.set_description(
+         "Time Advance Request Available (TARA) to Time Advance Grant (TAG) Elapsed Time Statistics:" );
+
+      ostringstream msg;
+      msg << "Federate::shutdown():" << __LINE__ << " INFO: " << tara_tag_stats.to_string();
+      message_publish( MSG_INFO, msg.str().c_str() );
+   }
 
 #ifdef TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
    for ( int i = 0; i < manager->obj_count; ++i ) {
