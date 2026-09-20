@@ -65,13 +65,13 @@ class BasicClock
 
    // Use implicit copy constructor and assignment operator.
 
-   // Get the GMT time in seconds.
    /*! @brief Get the computer system time in seconds.
     *  @return Computer system time in seconds. */
    static double get_time()
    {
-      // Convert from an integer time to a floating-point time in seconds.
-      return ( (double)clock_wall_time() / (double)exec_get_time_tic_value() );
+      // The Trick wall clock is an integer in microseconds regardless of the
+      // Trick time tic resolution.
+      return ( (double)clock_wall_time() / 1000000.0 );
    }
 
   private:

@@ -269,6 +269,7 @@ std::string const ElapsedTimeStats::to_string()
           << " margin-of-error: " << ( moe_percent * 100.0 ) << "%% (" << moe
           << " milliseconds) with " << ( confidence * 100.0 ) << "%% confidence\n"
           << " min-sample-size: " << min_sample_size << "\n"
+          << "    jitter-count: " << ( count - 1 ) << "\n"
           << "     jitter-mean: " << jitter_avg << " milliseconds\n"
           << "      jitter-min: " << jitter_min << " milliseconds\n"
           << "      jitter-max: " << jitter_max << " milliseconds\n"
