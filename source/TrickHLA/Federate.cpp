@@ -4171,37 +4171,34 @@ void Federate::shutdown()
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
-   }
 
-   if ( time_management_service.tag_wait_stats.is_enabled() ) {
+      if ( time_management_service.tag_wait_stats.is_enabled() ) {
+         time_management_service.tag_wait_stats.set_description(
+            "Wait for Time Advance Grant (TAG) Statistics:" );
 
-      time_management_service.tag_wait_stats.set_description(
-         "Wait for Time Advance Grant (TAG) Statistics:" );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      time_management_service.tag_wait_stats.to_string(),
+                                      MSG_INFO );
+      }
 
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
-                                   time_management_service.tag_wait_stats.to_string(),
-                                   MSG_INFO );
-   }
+      if ( time_management_service.tar_tag_stats.is_enabled() ) {
+         time_management_service.tar_tag_stats.set_description(
+            "Time Advance Request (TAR) to Time Advance Grant (TAG) Elapsed Time Statistics:" );
 
-   if ( time_management_service.tar_tag_stats.is_enabled() ) {
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      time_management_service.tar_tag_stats.to_string(),
+                                      MSG_INFO );
+      }
 
-      time_management_service.tar_tag_stats.set_description(
-         "Time Advance Request (TAR) to Time Advance Grant (TAG) Elapsed Time Statistics:" );
+      if ( time_management_service.tara_tag_stats.is_enabled()
+           && time_management_service.tara_tag_stats.any_measurements() ) {
+         time_management_service.tara_tag_stats.set_description(
+            "Time Advance Request Available (TARA) to Time Advance Grant (TAG) Elapsed Time Statistics:" );
 
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
-                                   time_management_service.tar_tag_stats.to_string(),
-                                   MSG_INFO );
-   }
-
-   if ( time_management_service.tara_tag_stats.is_enabled()
-        && time_management_service.tara_tag_stats.any_measurements() ) {
-
-      time_management_service.tara_tag_stats.set_description(
-         "Time Advance Request Available (TARA) to Time Advance Grant (TAG) Elapsed Time Statistics:" );
-
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
-                                   time_management_service.tara_tag_stats.to_string(),
-                                   MSG_INFO );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      time_management_service.tara_tag_stats.to_string(),
+                                      MSG_INFO );
+      }
    }
 
 #ifdef TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
