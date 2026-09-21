@@ -390,7 +390,7 @@ void Federate::initialize()
 
    /*
     * Set the HLA Save directory for HLA Save and Restore.
-    * This may like an odd way to set that directory.  However, if the
+    * This may look like an odd way to set that directory.  However, if the
     * directory is set in the input file, it will only test for the
     * existence of the directory.  If it is not set in the input file, it
     * will pull the defaults from the Trick simulation execution.
@@ -478,7 +478,7 @@ void Federate::restart_initialization()
       DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr 'execution_control' pointer!\n" );
       return;
    }
-
+/*
    // Verify the user specified object and interaction arrays and counts.
    object_service.verify_object_arrays();
    interaction_service.verify_interaction_arrays();
@@ -527,6 +527,7 @@ void Federate::restart_initialization()
          object_service.objects[n].restore_data_after_checkpoint();
       }
    }
+*/
 
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 }
