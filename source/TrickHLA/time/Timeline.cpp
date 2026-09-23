@@ -51,17 +51,18 @@ Timeline::~Timeline()
    return;
 }
 
-/*! @brief Do a bounds check on the floating-point value to ensure it can
+/*!
+ * @brief Do a bounds check on the floating-point value to ensure it can
  * be converted to the 64-bit integer HLA logical time.
- *  @return Returns the time in seconds.
- *  @param value The time value to check and convert. */
-double Timeline::convert( double const value )
+ * @return Returns the time in seconds.
+ * @param value The time value to bounds check.
+ */
+double Timeline::bounds_check( double const value )
 {
-   double const min_res = get_min_resolution();
-   if ( value <= ( (double)std::numeric_limits< long long >::min() * min_res ) ) {
-      return (double)std::numeric_limits< long long >::min() * min_res;
-   } else if ( value >= ( (double)std::numeric_limits< long long >::max() * min_res ) ) {
-      return (double)std::numeric_limits< long long >::max() * min_res;
+   if ( value < get_min_time() ) {
+      return get_min_time();
+   } else if ( value > get_max_time() ) {
+      return get_max_time();
    }
    return value;
 }

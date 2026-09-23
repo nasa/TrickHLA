@@ -100,11 +100,27 @@ class Timeline
       return ( this->epoch );
    }
 
+   /*! @brief Get the minimum time that corresponds to the minimum
+    *   64-bit HLA Logical time for the given time resolution.
+    *  @return Returns the minimum supported time in seconds. */
+   virtual double get_min_time() const
+   {
+      return ( (double)std::numeric_limits< long long >::min() * get_min_resolution() );
+   }
+
+   /*! @brief Get the maximum time that corresponds to the minimum
+    *   64-bit HLA Logical time for the given time resolution.
+    *  @return Returns the maximum supported time in seconds. */
+   virtual double get_max_time() const
+   {
+      return ( (double)std::numeric_limits< long long >::max() * get_min_resolution() );
+   }
+
    /*! @brief Do a bounds check on the floating-point value to ensure it can
-    * be converted to the 64-bit integer HLA logical time.
+    *  be converted to the 64-bit integer HLA logical time.
     *  @return Returns the time in seconds.
-    *  @param value The time value to check and convert. */
-   virtual double convert( double const value );
+    *  @param value The time value to bounds check. */
+   virtual double bounds_check( double const value );
 
   protected:
    double epoch; /**<  @trick_units{s}
