@@ -478,56 +478,56 @@ void Federate::restart_initialization()
       DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr 'execution_control' pointer!\n" );
       return;
    }
-/*
-   // Verify the user specified object and interaction arrays and counts.
-   object_service.verify_object_arrays();
-   interaction_service.verify_interaction_arrays();
+   /*
+      // Verify the user specified object and interaction arrays and counts.
+      object_service.verify_object_arrays();
+      interaction_service.verify_interaction_arrays();
 
-   // The set_master() function set's additional parameter so call it again to
-   // force the a complete master state.
-   bool const master_flag = execution_control->is_master();
-   execution_control->set_master( master_flag );
+      // The set_master() function set's additional parameter so call it again to
+      // force the a complete master state.
+      bool const master_flag = execution_control->is_master();
+      execution_control->set_master( master_flag );
 
-   // Setup all the Trick Ref-Attributes for the user specified objects,
-   // attributes, interactions and parameters.
-   object_service.setup_object_ref_attributes();
-   interaction_service.setup_interaction_ref_attributes();
+      // Setup all the Trick Ref-Attributes for the user specified objects,
+      // attributes, interactions and parameters.
+      object_service.setup_object_ref_attributes();
+      interaction_service.setup_interaction_ref_attributes();
 
-   // Only continue the restart initialization if the Federate is an
-   // execution member and connected.
-   if ( is_execution_member() ) {
+      // Only continue the restart initialization if the Federate is an
+      // execution member and connected.
+      if ( is_execution_member() ) {
 
-      // Setup all the RTI handles for the objects, attributes and interaction
-      // parameters.
-      object_service.setup_object_RTI_handles();
-      interaction_service.setup_interaction_RTI_handles();
+         // Setup all the RTI handles for the objects, attributes and interaction
+         // parameters.
+         object_service.setup_object_RTI_handles();
+         interaction_service.setup_interaction_RTI_handles();
 
-      // Set the object instance handles based on its name.
-      object_service.set_all_object_instance_handles_by_name();
+         // Set the object instance handles based on its name.
+         object_service.set_all_object_instance_handles_by_name();
 
-      // Make sure we reinitialize the MOM interface handles.
-      initialize_MOM_handles();
+         // Make sure we reinitialize the MOM interface handles.
+         initialize_MOM_handles();
 
-      // Perform the next few steps if we are the Master federate.
-      if ( execution_control->is_master() ) {
+         // Perform the next few steps if we are the Master federate.
+         if ( execution_control->is_master() ) {
 
-         // Make sure all the federate instance handles are reset based on
-         // the federate name so that the wait for required federates will work
-         // after a checkpoint reload.
-         set_all_federate_MOM_instance_handles_by_name();
+            // Make sure all the federate instance handles are reset based on
+            // the federate name so that the wait for required federates will work
+            // after a checkpoint reload.
+            set_all_federate_MOM_instance_handles_by_name();
 
-         // Make sure all required federates have joined the federation.
-         wait_for_required_federates_to_join();
+            // Make sure all required federates have joined the federation.
+            wait_for_required_federates_to_join();
+         }
+
+         // TODO: Should this even be called here because the checkpoint restore
+         // should have already been called before we got here.
+         // Restore ownership_transfer data for all objects.
+         for ( int n = 0; n < object_service.obj_count; ++n ) {
+            object_service.objects[n].restore_data_after_checkpoint();
+         }
       }
-
-      // TODO: Should this even be called here because the checkpoint restore
-      // should have already been called before we got here.
-      // Restore ownership_transfer data for all objects.
-      for ( int n = 0; n < object_service.obj_count; ++n ) {
-         object_service.objects[n].restore_data_after_checkpoint();
-      }
-   }
-*/
+   */
 
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 }

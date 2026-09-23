@@ -100,9 +100,10 @@ class Timeline
       return ( this->epoch );
    }
 
-   /*! @brief Convert value to a time on the timeline with the minimum time resolution.
-    *  @return Returns the time in seconds on the timeline with the minimum resolution.
-    *  @param value The time value to convert. */
+   /*! @brief Do a bounds check on the floating-point value to ensure it can
+    * be converted to the 64-bit integer HLA logical time.
+    *  @return Returns the time in seconds.
+    *  @param value The time value to check and convert. */
    virtual double convert( double const value );
 
   protected:
