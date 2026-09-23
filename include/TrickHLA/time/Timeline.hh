@@ -36,6 +36,7 @@ NASA, Johnson Space Center\n
 // System includes.
 #include <cfloat>
 #include <cstdint>
+#include <limits>
 
 namespace TrickHLA
 {
@@ -99,20 +100,19 @@ class Timeline
       return ( this->epoch );
    }
 
-   /*! @brief Convert value to a time on the timeline with the minimum time resolution.
-    *  @return Returns the time in seconds on the timeline with the minimum resolution.
-    *  @param value The time value to convert. */
+   /*! @brief Do a bounds check on the floating-point value to ensure it can
+    * be converted to the 64-bit integer HLA logical time.
+    *  @return Returns the time in seconds.
+    *  @param value The time value to check and convert. */
    virtual double convert( double const value )
    {
-      double const min_resolution = get_min_resolution();
-      if ( min_resolution > DBL_MIN ) {
-         // Compute the time in tics, which truncates to a fixed-point number.
-         int64_t const time_tics = (int64_t)( value / min_resolution );
-
-         // Convert to a time in seconds with the minimum time resolution.
-         return (double)( time_tics * min_resolution );
+      double const min_res = get_min_resolution();
+      if ( value <= ( (double)std::numeric_limits< long long >::min() * min_res ) ) {
+         return (double)std::numeric_limits< long long >::min() * min_res;
+      } else if ( value >= ( (double)std::numeric_limits< long long >::max() * min_res ) ) {
+         return (double)std::numeric_limits< long long >::max() * min_res;
       }
-      return ( value );
+      return value;
    }
 
   protected:
