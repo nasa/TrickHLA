@@ -38,8 +38,8 @@ NASA, Johnson Space Center\n
 struct timespec;
 
 #define THLA_DEFAULT_SLEEP_TIMEOUT_IN_SEC ( (double)30.0 )
-#define THLA_DEFAULT_SLEEP_WAIT_IN_MICROS ( (long)10000 )
-#define THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS ( (long)25 )
+#define THLA_DEFAULT_SLEEP_WAIT_IN_MICROS ( (long)1000 )
+#define THLA_LOW_LATENCY_SLEEP_WAIT_IN_MICROS ( (long)1 )
 
 namespace TrickHLA
 {

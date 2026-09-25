@@ -84,6 +84,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Simulations using the --verbose command-line setting no longer need 'on' to be specified to enable verbose messages.
 - Fixed the use of the Trick wall clock, which is always an integer in microseconds regardless of the Trick time tic resolution.
 - Fixed Trick freeze at problem (issue #188).
+- Improved overall performance by reducing latency when waiting for asynchronous callbacks like waiting for an HLA Time Advance Grant (TAG).
 
 
 ## [v3.2.2] - 2026-04-01
