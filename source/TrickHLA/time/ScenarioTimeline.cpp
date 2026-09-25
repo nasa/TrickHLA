@@ -69,8 +69,7 @@ ScenarioTimeline::~ScenarioTimeline()
 double ScenarioTimeline::compute_simulation_time(
    double const scenario_time )
 {
-   // Make sure to convert to a time on the sim-timeline for the minimum resolution.
-   return ( sim_timeline.convert( scenario_time - ( epoch + sim_offset ) ) );
+   return ( scenario_time - ( epoch + sim_offset ) );
 }
 
 double ScenarioTimeline::time_from_simulation_time(
