@@ -69,7 +69,7 @@ ScenarioTimeline::~ScenarioTimeline()
 double ScenarioTimeline::compute_simulation_time(
    double const scenario_time )
 {
-   return ( sim_timeline.bounds_check( scenario_time - ( epoch + sim_offset ) ) );
+   return ( scenario_time - ( epoch + sim_offset ) );
 }
 
 double ScenarioTimeline::time_from_simulation_time(

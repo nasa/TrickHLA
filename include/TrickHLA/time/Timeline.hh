@@ -33,11 +33,6 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_TIMELINE_HH
 #define TRICKHLA_TIMELINE_HH
 
-// System includes.
-#include <cfloat>
-#include <cstdint>
-#include <limits>
-
 namespace TrickHLA
 {
 
@@ -98,36 +93,6 @@ class Timeline
    virtual double get_epoch() const
    {
       return ( this->epoch );
-   }
-
-   /*! @brief Get the minimum time that corresponds to the minimum
-    *   64-bit HLA Logical time for the given time resolution.
-    *  @return Returns the minimum supported time in seconds. */
-   virtual double get_min_time() const
-   {
-      return ( (double)std::numeric_limits< long long >::min() * get_min_resolution() );
-   }
-
-   /*! @brief Get the maximum time that corresponds to the minimum
-    *   64-bit HLA Logical time for the given time resolution.
-    *  @return Returns the maximum supported time in seconds. */
-   virtual double get_max_time() const
-   {
-      return ( (double)std::numeric_limits< long long >::max() * get_min_resolution() );
-   }
-
-   /*! @brief Do a bounds check on the floating-point value to ensure it can
-    *  be converted to the 64-bit integer HLA logical time.
-    *  @return Returns the time in seconds.
-    *  @param value The time value to check and bounds_check. */
-   virtual double bounds_check( double const value )
-   {
-      if ( value < get_min_time() ) {
-         return get_min_time();
-      } else if ( value > get_max_time() ) {
-         return get_max_time();
-      }
-      return value;
    }
 
   protected:
