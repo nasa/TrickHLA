@@ -123,10 +123,8 @@ bool SleepTimeout::timeout(
 /*! @brief Reset the internal timeout time. */
 void SleepTimeout::reset()
 {
-   int64_t const t = time();
-   if ( t < ( INT64_MAX - this->timeout_time ) ) {
-      this->timeout_clock_time = t + this->timeout_time;
-   } else {
-      this->timeout_clock_time = INT64_MAX;
-   }
+   int64_t const t          = time();
+   this->timeout_clock_time = ( t < ( INT64_MAX - this->timeout_time ) )
+                                 ? ( t + this->timeout_time )
+                                 : INT64_MAX;
 }
