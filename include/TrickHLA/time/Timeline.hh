@@ -116,12 +116,6 @@ class Timeline
       return ( (double)std::numeric_limits< long long >::max() * get_min_resolution() );
    }
 
-   /*! @brief Do a bounds check on the floating-point value to ensure it can
-    *  be converted to the 64-bit integer HLA logical time.
-    *  @return Returns the time in seconds.
-    *  @param value The time value to bounds check. */
-   virtual double bounds_check( double const value );
-
   protected:
    double epoch; /**<  @trick_units{s}
       Epoch for the simulation. This is the value of the timeline when the

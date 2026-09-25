@@ -24,10 +24,6 @@ NASA, Johnson Space Center\n
 @revs_end
 */
 
-// System includes.
-#include <cstdint>
-#include <limits>
-
 // TrickHLA includes.
 #include "TrickHLA/time/Timeline.hh"
 
@@ -49,20 +45,4 @@ Timeline::Timeline(
 Timeline::~Timeline()
 {
    return;
-}
-
-/*!
- * @brief Do a bounds check on the floating-point value to ensure it can
- * be converted to the 64-bit integer HLA logical time.
- * @return Returns the time in seconds.
- * @param value The time value to bounds check.
- */
-double Timeline::bounds_check( double const value )
-{
-   if ( value < get_min_time() ) {
-      return get_min_time();
-   } else if ( value > get_max_time() ) {
-      return get_max_time();
-   }
-   return value;
 }
