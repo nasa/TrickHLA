@@ -100,22 +100,6 @@ class Timeline
       return ( this->epoch );
    }
 
-   /*! @brief Get the minimum time that corresponds to the minimum
-    *   64-bit HLA Logical time for the given time resolution.
-    *  @return Returns the minimum supported time in seconds. */
-   virtual double get_min_time() const
-   {
-      return ( (double)std::numeric_limits< long long >::min() * get_min_resolution() );
-   }
-
-   /*! @brief Get the maximum time that corresponds to the minimum
-    *   64-bit HLA Logical time for the given time resolution.
-    *  @return Returns the maximum supported time in seconds. */
-   virtual double get_max_time() const
-   {
-      return ( (double)std::numeric_limits< long long >::max() * get_min_resolution() );
-   }
-
   protected:
    double epoch; /**<  @trick_units{s}
       Epoch for the simulation. This is the value of the timeline when the
