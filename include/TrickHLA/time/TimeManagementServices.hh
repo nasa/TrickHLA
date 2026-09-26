@@ -205,15 +205,14 @@ class TimeManagementServices : public TrickThreadCoordinator, public CheckpointC
    /*! @brief Verify the time constraints (i.e. Lookahead, LCTS, RT and dt). */
    virtual bool verify_time_constraints() override;
 
-   /*! @brief Shutdown this federate's time management. */
-   void shutdown_time_management();
+   /*! @brief Disable this federate's time management. */
+   void disable_time_management();
 
-   // TODO: Consider renaming these "shutdown" routines to disable.
-   /*! @brief Shutdown this federate's time constrained time management. */
-   void shutdown_time_constrained();
+   /*! @brief Disable this federate's time constrained time management. */
+   void disable_time_constrained();
 
-   /*! @brief Shutdown this federate's time regulating time management. */
-   void shutdown_time_regulating();
+   /*! @brief Disable this federate's time regulating time management. */
+   void disable_time_regulating();
 
    //
    // Routines to return federation state values.

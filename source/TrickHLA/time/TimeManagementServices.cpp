@@ -191,10 +191,10 @@ void TimeManagementServices::restart_initialization()
    if ( lookahead_time < 0.0 ) {
       ostringstream errmsg;
       errmsg << "Invalid HLA lookahead time!"
-             << " Lookahead time (" << lookahead_time << " seconds)"
-             << " must be greater than or equal to zero and not negative. Make"
-             << " sure 'lookahead_time' in your input.py or modified-data file is"
-             << " not a negative number.\n";
+             << " Lookahead time (" << setprecision( 18 ) << lookahead_time
+             << " seconds) must be greater than or equal to zero and not negative."
+             << " Make sure 'lookahead_time' in your input.py or modified-data"
+             << " file is not a negative number.\n";
       DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
@@ -464,7 +464,9 @@ void TimeManagementServices::time_advance_request_to_GALT()
 {
    // Simply return if we are the master federate that created the federation,
    // or if time management is not enabled.
-   if ( !this->time_management || ( federate->get_execution_control()->is_master() && !federate->get_execution_control()->is_late_joiner() ) ) {
+   if ( !this->time_management
+        || ( federate->get_execution_control()->is_master()
+             && !federate->get_execution_control()->is_late_joiner() ) ) {
       return;
    }
 
@@ -601,7 +603,7 @@ void TimeManagementServices::setup_time_management()
          if ( this->time_constrained_state ) {
             // Disable time constrained if our current HLA state indicates we
             // are already constrained.
-            shutdown_time_constrained();
+            disable_time_constrained();
          }
       }
 
@@ -615,7 +617,7 @@ void TimeManagementServices::setup_time_management()
          if ( this->time_regulating_state ) {
             // Disable time regulation if our current HLA state indicates we
             // are already regulating.
-            shutdown_time_regulating();
+            disable_time_regulating();
          }
       }
    } else {
@@ -623,10 +625,10 @@ void TimeManagementServices::setup_time_management()
 
       // Disable time constrained and time regulation.
       if ( this->time_constrained_state ) {
-         shutdown_time_constrained();
+         disable_time_constrained();
       }
       if ( this->time_regulating_state ) {
-         shutdown_time_regulating();
+         disable_time_regulating();
       }
    }
 }
@@ -721,11 +723,11 @@ void TimeManagementServices::setup_time_constrained()
                sleep_timer.reset();
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
-                  errmsg << "Unexpectedly the TimeManagementServices is no longer an execution"
-                         << " member. This means we are either not connected to the"
-                         << " RTI or we are no longer joined to the federation"
-                         << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!\n";
+                  errmsg << "Unexpectedly the TimeManagementServices is no longer"
+                         << " an execution member. This means we are either not"
+                         << " connected to the RTI or we are no longer joined to"
+                         << " the federation execution because someone forced our"
+                         << " resignation at the Central RTI Component (CRC) level!\n";
                   DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
                }
             }
@@ -863,11 +865,11 @@ void TimeManagementServices::setup_time_regulation()
                sleep_timer.reset();
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
-                  errmsg << "Unexpectedly the TimeManagementServices is no longer an execution"
-                         << " member. This means we are either not connected to the"
-                         << " RTI or we are no longer joined to the federation"
-                         << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!\n";
+                  errmsg << "Unexpectedly the TimeManagementServices is no longer"
+                         << " an execution member. This means we are either not"
+                         << " connected to the RTI or we are no longer joined to"
+                         << " the federation execution because someone forced our"
+                         << " resignation at the Central RTI Component (CRC) level!\n";
                   DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
                }
             }
@@ -1175,11 +1177,11 @@ void TimeManagementServices::wait_for_zero_lookahead_TARA_TAG()
                sleep_timer.reset();
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
-                  errmsg << "Unexpectedly the TimeManagementServices is no longer an execution"
-                         << " member. This means we are either not connected to the"
-                         << " RTI or we are no longer joined to the federation"
-                         << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!\n";
+                  errmsg << "Unexpectedly the TimeManagementServices is no longer"
+                         << " an execution member. This means we are either not"
+                         << " connected to the RTI or we are no longer joined to"
+                         << " the federation execution because someone forced our"
+                         << " resignation at the Central RTI Component (CRC) level!\n";
                   DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
                }
             }
@@ -1313,11 +1315,11 @@ void TimeManagementServices::wait_for_time_advance_grant()
                sleep_timer.reset();
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
-                  errmsg << "Unexpectedly the TimeManagementServices is no longer an execution"
-                         << " member. This means we are either not connected to the"
-                         << " RTI or we are no longer joined to the federation"
-                         << " execution because someone forced our resignation at"
-                         << " the Central RTI Component (CRC) level!\n";
+                  errmsg << "Unexpectedly the TimeManagementServices is no longer"
+                         << " an execution member. This means we are either not"
+                         << " connected to the RTI or we are no longer joined to"
+                         << " the federation execution because someone forced our"
+                         << " resignation at the Central RTI Component (CRC) level!\n";
                   DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
                }
             }
@@ -1346,20 +1348,20 @@ void TimeManagementServices::wait_for_time_advance_grant()
 }
 
 /*!
- *  @details Shutdown this federate's time management by shutting down time
+ *  @details Disable this federate's time management by shutting down time
  *  constraint management and time regulating management.
  *  @job_class{shutdown}
  */
-void TimeManagementServices::shutdown_time_management()
+void TimeManagementServices::disable_time_management()
 {
-   shutdown_time_constrained();
-   shutdown_time_regulating();
+   disable_time_constrained();
+   disable_time_regulating();
 }
 
 /*!
  *  @job_class{shutdown}
  */
-void TimeManagementServices::shutdown_time_constrained()
+void TimeManagementServices::disable_time_constrained()
 {
    if ( !this->time_constrained_state ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_TIME_MGMT_SERVICES ) ) {
@@ -1410,7 +1412,7 @@ void TimeManagementServices::shutdown_time_constrained()
 /*!
  *  @job_class{shutdown}
  */
-void TimeManagementServices::shutdown_time_regulating()
+void TimeManagementServices::disable_time_regulating()
 {
    if ( !this->time_regulating_state ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_TIME_MGMT_SERVICES ) ) {
