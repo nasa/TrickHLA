@@ -1008,10 +1008,10 @@ std::string const ExecutionControlBase::map_save_label_to_federates_file_name(
    // Build up the checkpoint file name.
    // First get the federation name.
    federates_file_name = federate->get_federation_name();
-   federates_file_name += "_";
+   federates_file_name += '_';
    // Next get the federate name.
    federates_file_name += federate->get_federate_name();
-   federates_file_name += "_";
+   federates_file_name += '_';
    // Add the specified HLA Save label.
    federates_file_name += save_label_str;
    // Add the running_feds suffix.
@@ -1572,10 +1572,10 @@ std::string const ExecutionControlBase::map_label_to_checkpoint_file_name(
    // Build up the checkpoint file name.
    // First get the federation name.
    checkpoint_file_name = federate->get_federation_name();
-   checkpoint_file_name += "_";
+   checkpoint_file_name += '_';
    // Next get the federate name.
    checkpoint_file_name += federate->get_federate_name();
-   checkpoint_file_name += "_";
+   checkpoint_file_name += '_';
    // Add the specified HLA Save label.
    checkpoint_file_name += save_label_str;
    // Add the checkpoint suffix.
