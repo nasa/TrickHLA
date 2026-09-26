@@ -312,7 +312,7 @@ string SyncPointList::to_string()
 
    ostringstream msg;
 
-   msg << "SyncPointList::to_string():" << __LINE__
+   msg << StringUtilities::format( __PRETTY_FUNCTION__, __LINE__ )
        << " List:'" << get_list_name() << "' List-size:" << list.size() << "\n";
    for ( SyncPoint *sp : list ) {
       msg << list_index++ << ":'" << get_list_name() << "' Sync-point:"
@@ -332,7 +332,7 @@ string SyncPointList::to_string(
    string label_str;
    StringUtilities::to_string( label_str, label );
    ostringstream msg;
-   msg << "SyncPointList::to_string():" << __LINE__
+   msg << StringUtilities::format( __PRETTY_FUNCTION__, __LINE__ )
        << " Unknown sync-point label: '" << label_str << "'\n";
    return msg.str();
 }

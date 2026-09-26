@@ -229,9 +229,7 @@ void ExecutionConfiguration::pack()
    // run_duration setting.
    if ( terminate_time >= 1.0e20 ) {
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-         msg << "TrickHLA::ExecutionConfiguration::pack():" << __LINE__
-             << " Setting simulation termination time to "
-             << run_duration << " seconds.\n";
+         msg << "Setting simulation termination time to " << run_duration << " seconds.\n";
       }
       exec_set_terminate_time( this->run_duration );
    } else {
@@ -243,9 +241,7 @@ void ExecutionConfiguration::pack()
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-         msg << "TrickHLA::ExecutionConfiguration::pack():" << __LINE__
-             << " Setting simulation duration to "
-             << run_duration << " seconds.\n";
+         msg << "Setting simulation duration to " << run_duration << " seconds.\n";
       }
    }
 
@@ -286,9 +282,7 @@ void ExecutionConfiguration::unpack()
    // run_duration setting.
    if ( run_duration >= 0.0 ) {
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONFIG ) ) {
-         msg << "TrickHLA::ExecutionConfiguration::unpack():" << __LINE__
-             << " Setting simulation duration to "
-             << run_duration << " seconds.\n";
+         msg << "Setting simulation duration to " << run_duration << " seconds.\n";
       }
       exec_set_terminate_time( this->run_duration );
    }
@@ -335,7 +329,6 @@ void ExecutionConfiguration::print_execution_configuration() const
       ostringstream msg;
       msg << "\n"
           << "=============================================================\n"
-          << "TrickHLA::ExecutionConfiguration::print_exec_config():" << __LINE__ << "\n"
           << "\t Object-Name:           '" << get_name() << "'\n"
           << "\t run_duration:          " << setprecision( 18 ) << run_duration << " seconds\n"
           << "\t run_duration_base_time:" << setprecision( 18 ) << run_duration_base_time << " " << Int64BaseTime::get_base_unit() << "\n"

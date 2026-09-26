@@ -16,6 +16,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{FixedRecord/src/FixedRecData.cpp}
+@trick_link_dependency{../../../source/TrickHLA/utils/StringUtilities.cpp}
 
 @revs_title
 @revs_begin
@@ -30,10 +31,14 @@ NASA, Johnson Space Center\n
 #include <sstream>
 #include <string>
 
+// TrickHLA includes.
+#include "TrickHLA/utils/StringUtilities.hh"
+
 // FixedRecord model includes.
 #include "FixedRecord/include/FixedRecData.hh"
 
 using namespace std;
+using namespace TrickHLA;
 using namespace TrickHLAModel;
 
 FixedRecData::FixedRecData()
@@ -59,7 +64,7 @@ bool FixedRecData::compare(
    bool equal_values = true;
 
    ostringstream msg;
-   msg << "FixedRecData::compare():" << __LINE__ << "\n";
+   msg << StringUtilities::format( __PRETTY_FUNCTION__, __LINE__ ) << "\n";
 
    // FixedRecordTest.xml:
    // MainFixedRecObject
@@ -213,7 +218,7 @@ bool FixedRecData::compare(
 string FixedRecData::to_string()
 {
    ostringstream msg;
-   msg << "FixedRecData::to_string():" << __LINE__ << "\n"
+   msg << StringUtilities::format( __PRETTY_FUNCTION__, __LINE__ ) << "\n"
        << "\t field_1_string:"
        << ( ( field_1_string != nullptr ) ? field_1_string : "nullptr" ) << "\n"
        << "\t field_2_float64:" << field_2_float64 << "\n"

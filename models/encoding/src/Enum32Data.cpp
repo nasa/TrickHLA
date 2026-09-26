@@ -36,11 +36,13 @@ NASA, Johnson Space Center\n
 
 // TrickHLA include files.
 #include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/utils/StringUtilities.hh"
 
 // Model include files.
 #include "encoding/include/Enum32Data.hh"
 
 using namespace std;
+using namespace TrickHLA;
 using namespace TrickHLAModel;
 
 /*!
@@ -97,7 +99,7 @@ bool Enum32Data::compare(
    bool equal_values = true;
 
    ostringstream msg;
-   msg << "Enum32Data::compare():" << __LINE__ << "\n";
+   msg << StringUtilities::format( __PRETTY_FUNCTION__, __LINE__ ) << "\n";
 
    if ( this->enum32 == data.enum32 ) {
       msg << "this->enum32 (" << (long long)this->enum32 << ") == (" << (long long)data.enum32 << ") data.enum32\n";
@@ -160,7 +162,7 @@ bool Enum32Data::compare(
 string Enum32Data::to_string()
 {
    ostringstream msg;
-   msg << "Enum32Data::to_string():" << __LINE__ << "\n"
+   msg << StringUtilities::format( __PRETTY_FUNCTION__, __LINE__ ) << "\n"
        << "enum32:" << (long long)enum32 << "\n";
 
    for ( int i = 0; i < 3; ++i ) {

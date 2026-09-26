@@ -94,8 +94,11 @@ bool WStringData::compare(
 {
    bool equal_values = true;
 
+   wstring func_name_wstr;
+   StringUtilities::to_wstring( func_name_wstr, StringUtilities::format( __PRETTY_FUNCTION__, __LINE__ ) );
+
    wstringstream msg;
-   msg << "WStringData::compare():" << __LINE__ << "\n";
+   msg << func_name_wstr << "\n";
 
    if ( this->_wstring == data._wstring ) {
       msg << "this->wstring (" << this->_wstring << ") == (" << data._wstring << ") data.wstring\n";
@@ -167,8 +170,11 @@ string WStringData::to_string()
 
 wstring WStringData::to_wstring()
 {
+   wstring func_name_wstr;
+   StringUtilities::to_wstring( func_name_wstr, StringUtilities::format( __PRETTY_FUNCTION__, __LINE__ ) );
+
    wstringstream msg;
-   msg << "WStringData::to_wstring():" << __LINE__ << "\n"
+   msg << func_name_wstr << "\n"
        << "wstring:" << _wstring << "\n";
 
    for ( int i = 0; i < 3; ++i ) {

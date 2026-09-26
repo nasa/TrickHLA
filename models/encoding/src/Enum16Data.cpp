@@ -36,11 +36,13 @@ NASA, Johnson Space Center\n
 
 // TrickHLA include files.
 #include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/utils/StringUtilities.hh"
 
 // Model include files.
 #include "encoding/include/Enum16Data.hh"
 
 using namespace std;
+using namespace TrickHLA;
 using namespace TrickHLAModel;
 
 /*!
@@ -97,7 +99,7 @@ bool Enum16Data::compare(
    bool equal_values = true;
 
    ostringstream msg;
-   msg << "Enum16Data::compare():" << __LINE__ << "\n";
+   msg << StringUtilities::format( __PRETTY_FUNCTION__, __LINE__ ) << "\n";
 
    if ( this->enum16 == data.enum16 ) {
       msg << "this->enum16 (" << (long long)this->enum16 << ") == (" << (long long)data.enum16 << ") data.enum16\n";
@@ -160,7 +162,7 @@ bool Enum16Data::compare(
 string Enum16Data::to_string()
 {
    ostringstream msg;
-   msg << "Enum16Data::to_string():" << __LINE__ << "\n"
+   msg << StringUtilities::format( __PRETTY_FUNCTION__, __LINE__ ) << "\n"
        << "enum16:" << (long long)enum16 << "\n";
 
    for ( int i = 0; i < 3; ++i ) {

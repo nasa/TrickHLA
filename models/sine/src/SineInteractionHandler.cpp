@@ -97,8 +97,7 @@ void SineInteractionHandler::send_sine_interaction(
    time = send_time;
 
    ostringstream msg;
-   msg << "SineInteractionHandler::send_sine_interaction():" << __LINE__
-       << " Interaction from:\"" << ( ( name != nullptr ) ? name : "Unknown" )
+   msg << "Interaction from:\"" << ( ( name != nullptr ) ? name : "Unknown" )
        << "\" Send-count:" << ( send_cnt + 1 ) << "\n";
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_INTERACTION ) ) {

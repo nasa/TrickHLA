@@ -33,10 +33,14 @@ NASA, Johnson Space Center\n
 // Trick include files.
 #include "trick/memorymanager_c_intf.h"
 
+// TrickHLA includes.
+#include "TrickHLA/utils/StringUtilities.hh"
+
 // Model include files.
 #include "encoding/include/StringData.hh"
 
 using namespace std;
+using namespace TrickHLA;
 using namespace TrickHLAModel;
 
 /*!
@@ -98,7 +102,7 @@ bool StringData::compare(
    bool equal_values = true;
 
    ostringstream msg;
-   msg << "StringData::compare():" << __LINE__ << "\n";
+   msg << StringUtilities::format( __PRETTY_FUNCTION__, __LINE__ ) << "\n";
 
    if ( this->_string == data._string ) {
       msg << "this->string '" << this->_string << "' == '" << data._string << "' data.string\n";
@@ -164,7 +168,7 @@ bool StringData::compare(
 string StringData::to_string()
 {
    ostringstream msg;
-   msg << "StringData::to_string():" << __LINE__ << "\n"
+   msg << StringUtilities::format( __PRETTY_FUNCTION__, __LINE__ ) << "\n"
        << "string:" << _string << "\n";
 
    for ( int i = 0; i < 3; ++i ) {

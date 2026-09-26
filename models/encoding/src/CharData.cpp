@@ -100,7 +100,7 @@ bool CharData::compare(
    bool equal_values = true;
 
    ostringstream msg;
-   msg << "CharData::compare():" << __LINE__ << "\n";
+   msg << StringUtilities::format( __PRETTY_FUNCTION__, __LINE__ ) << "\n";
 
    if ( this->_char == data._char ) {
       msg << "this->char (" << (int)this->_char << ") == (" << (int)data._char << ") data.char\n";
@@ -171,7 +171,7 @@ bool CharData::compare(
 string CharData::to_string()
 {
    ostringstream msg;
-   msg << "CharData::to_string():" << __LINE__ << "\n"
+   msg << StringUtilities::format( __PRETTY_FUNCTION__, __LINE__ ) << "\n"
        << "char:" << (int)_char << "\n";
 
    for ( int i = 0; i < 3; ++i ) {

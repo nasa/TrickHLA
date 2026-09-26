@@ -23,6 +23,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../../source/TrickHLA/Object.cpp}
 @trick_link_dependency{../../../source/TrickHLA/Types.cpp}
 @trick_link_dependency{../../../source/TrickHLA/time/Int64BaseTime.cpp}
+@trick_link_dependency{../../../source/TrickHLA/utils/StringUtilities.cpp}
 @trick_link_dependency{simconfig/src/SimpleSimConfig.cpp}
 
 @revs_title
@@ -166,8 +167,7 @@ void SimpleSimConfig::pack()
    // run_duration setting.
    if ( terminate_time >= 1.0e20 ) {
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
-         msg << "SimpleSimConfig::pack():" << __LINE__
-             << " Setting simulation termination time to "
+         msg << "Setting simulation termination time to "
              << run_duration << " seconds.\n";
       }
       exec_set_terminate_time( this->run_duration );
@@ -180,9 +180,7 @@ void SimpleSimConfig::pack()
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
-         msg << "SimpleSimConfig::pack(:" << __LINE__
-             << " Setting simulation duration to "
-             << run_duration << " seconds.\n";
+         msg << "Setting simulation duration to " << run_duration << " seconds.\n";
       }
    }
 
@@ -220,9 +218,7 @@ void SimpleSimConfig::unpack()
    // run_duration setting.
    if ( run_duration >= 0.0 ) {
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_PACKING ) ) {
-         msg << "SimpleSimConfig::unpack():" << __LINE__
-             << " Setting simulation duration to "
-             << run_duration << " seconds.\n";
+         msg << " Setting simulation duration to " << run_duration << " seconds.\n";
       }
       exec_set_terminate_time( this->run_duration );
    }

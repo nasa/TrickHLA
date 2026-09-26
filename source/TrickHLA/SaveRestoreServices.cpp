@@ -258,8 +258,7 @@ bool SaveRestoreServices::check_HLA_save_directory()
 
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
          ostringstream errmsg;
-         errmsg << "SaveRestoreServices::check_HLA_save_directory():" << __LINE__
-                << " Save directory path '" << this->HLA_save_directory
+         errmsg << "Save directory path '" << this->HLA_save_directory
                 << "' does NOT exist!\n";
          DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_ERROR );
       }
@@ -270,8 +269,7 @@ bool SaveRestoreServices::check_HLA_save_directory()
 
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
          ostringstream errmsg;
-         errmsg << "SaveRestoreServices::check_HLA_save_directory():" << __LINE__
-                << " Save directory path '" << this->HLA_save_directory
+         errmsg << "Save directory path '" << this->HLA_save_directory
                 << "' exists but is NOT a directory!\n";
          DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_ERROR );
       }

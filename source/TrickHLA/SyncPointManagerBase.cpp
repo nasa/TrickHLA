@@ -1092,7 +1092,7 @@ string SyncPointManagerBase::to_string()
    {
       MutexProtection const auto_unlock_mutex( &mutex );
 
-      msg << "SyncPointManagerBase::to_string():" << __LINE__
+      msg << StringUtilities::format( __PRETTY_FUNCTION__, __LINE__ )
           << " Number of Sync-Point Lists:" << sync_pnt_lists.size() << "\n";
 
       for ( SyncPointList *sync_pnt_list : sync_pnt_lists ) {
@@ -1115,7 +1115,7 @@ string SyncPointManagerBase::to_string(
    string label_str;
    StringUtilities::to_string( label_str, label );
    ostringstream msg;
-   msg << "SyncPointManagerBase::to_string():" << __LINE__
+   msg << StringUtilities::format( __PRETTY_FUNCTION__, __LINE__ )
        << " Unknown sync-point label:'" << label_str << "'\n";
    return msg.str();
 }
@@ -1130,7 +1130,7 @@ string SyncPointManagerBase::to_string(
       return sp_list->to_string();
    }
 
-   return "SyncPointManagerBase::to_string():" + std::to_string( __LINE__ )
+   return StringUtilities::format( __PRETTY_FUNCTION__, __LINE__ )
           + " Unknown list name '" + list_name + "'\n";
 }
 

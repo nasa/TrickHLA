@@ -205,8 +205,7 @@ bool RelStateBase::compute_state(
       // Print out the path transformation if debug is set.
       if ( debug ) {
          ostringstream msg;
-         msg << "SpaceFOM::RelStateBase::compute_state():" << __LINE__ << "\n";
-         msg << "Path transformation for " << entity->name << "\n";
+         msg << "\nPath transformation for " << entity->name << "\n";
          path_transform.print_data( msg );
          DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
