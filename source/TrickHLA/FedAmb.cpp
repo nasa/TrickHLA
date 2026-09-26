@@ -811,7 +811,7 @@ void FedAmb::reflectAttributeValues(
 
 #ifdef TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
       ++trickhla_obj->receive_count;
-#endif
+#endif // TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
 
       return;
    }
@@ -917,7 +917,7 @@ void FedAmb::reflectAttributeValues(
 
 #   ifdef TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
       ++trickhla_obj->receive_count;
-#   endif
+#   endif // TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
    } else {
       if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          string id_str;
@@ -978,7 +978,7 @@ void FedAmb::reflectAttributeValues(
 
 #ifdef TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
       ++trickhla_obj->receive_count;
-#endif
+#endif // TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
    } else {
       if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
          string id_str;

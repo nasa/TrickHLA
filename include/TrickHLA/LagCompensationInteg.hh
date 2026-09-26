@@ -32,9 +32,6 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_LAG_COMPENSATION_INTEG_HH
 #define TRICKHLA_LAG_COMPENSATION_INTEG_HH
 
-// System includes.
-#include <stddef.h>
-
 // Trick includes.
 #include "trick/Integrator.hh"
 

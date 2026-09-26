@@ -29,9 +29,6 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_LAG_COMPENSATION_INTEG_BASE_HH
 #define TRICKHLA_LAG_COMPENSATION_INTEG_BASE_HH
 
-// System includes.
-#include <stddef.h>
-
 namespace TrickHLA
 {
 

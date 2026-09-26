@@ -40,8 +40,8 @@ NASA, Johnson Space Center\n
 
 // JEOD model includes.
 #include "environment/time/include/time_tt.hh"
-#include "utils/quaternion/include/quat.hh"
-#include "utils/ref_frames/include/ref_frame_state.hh"
+#include "utils/quaternion/include/quat.hh"            // NOLINT(misc-header-include-cycle)
+#include "utils/ref_frames/include/ref_frame_state.hh" // NOLINT(misc-header-include-cycle)
 
 // JEOD includes.
 #include "JEOD/JEODRefFrameState.hh"

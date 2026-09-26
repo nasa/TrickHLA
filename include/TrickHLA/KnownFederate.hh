@@ -35,7 +35,10 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstdint>
+#include <map>
+#include <set>
 #include <string>
+#include <vector>
 
 // TrickHLA includes.
 #include "TrickHLA/HLAStandardSupport.hh"

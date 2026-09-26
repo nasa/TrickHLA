@@ -40,11 +40,6 @@ NASA, Johnson Space Center\n
 // System includes.
 #include <string>
 
-// Trick includes.
-#include "trick/attributes.h"
-#include "trick/message_proto.h"
-#include "trick/message_type.h"
-
 // TrickHLA includes.
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/RecordElement.hh"

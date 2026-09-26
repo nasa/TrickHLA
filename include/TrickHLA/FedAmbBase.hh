@@ -36,10 +36,6 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_FED_AMB_BASE_HH
 #define TRICKHLA_FED_AMB_BASE_HH
 
-// System includes.
-#include <set>
-#include <string>
-
 // TrickHLA includes.
 #include "TrickHLA/HLAStandardSupport.hh"
 

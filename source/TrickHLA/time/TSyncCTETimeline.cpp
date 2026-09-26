@@ -42,7 +42,6 @@ NASA, Johnson Space Center\n
 
 // Trick includes.
 #   include "trick/exec_proto.h"
-#   include "trick/message_proto.h"
 #   include "trick/message_type.h"
 
 // TrickHLA includes.
@@ -142,8 +141,8 @@ int TSyncCTETimeline::clock_init()
    TSYNC_ERROR err = TSYNC_open( &board_handle, full_device_name.c_str() );
    if ( err != TSYNC_SUCCESS ) {
       ostringstream errmsg;
-      errmsg << "Could not open TSync CTE card '"
-             << full_device_name << "' [" << tsync_strerror( err ) << "]\n";
+      errmsg << "Could not open TSync CTE card '" << full_device_name
+             << "' [" << tsync_strerror( err ) << "]\n";
       DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_ERROR );
       return 1;
    }

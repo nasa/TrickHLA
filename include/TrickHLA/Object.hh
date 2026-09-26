@@ -49,6 +49,7 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_OBJECT_HH
 
 // System includes.
+#include <cstdint>
 #include <map>
 #include <string>
 
@@ -792,7 +793,7 @@ class Object : public CheckpointConversionBase
 #ifdef TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
    uint64_t send_count;    ///< @trick_units{--} Number of times data from this object was sent.
    uint64_t receive_count; ///< @trick_units{--} Number of times data for this object was received.
-#endif
+#endif                     // TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
 
    ElapsedTimeStats elapsed_time_stats; ///< @trick_units{--} Statistics of elapsed times between cyclic data reads.
 

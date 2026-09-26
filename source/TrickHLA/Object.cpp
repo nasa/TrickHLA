@@ -171,7 +171,7 @@ Object::Object()
 #ifdef TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
    this->send_count    = 0;
    this->receive_count = 0;
-#endif
+#endif // TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
 
    // Make sure we allocate the map.
    this->attribute_values_map = new AttributeHandleValueMap();
@@ -1614,7 +1614,7 @@ void Object::send_requested_data(
          }
 #ifdef TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
          ++send_count;
-#endif
+#endif // TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
       }
    } catch ( InvalidLogicalTime const &e ) {
       string id_str;
@@ -1763,7 +1763,7 @@ void Object::send_cyclic_and_requested_data(
             }
 #ifdef TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
             ++send_count;
-#endif
+#endif // TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
          }
       } catch ( InvalidLogicalTime const &e ) {
          string id_str;
@@ -1929,7 +1929,7 @@ void Object::send_zero_lookahead_and_requested_data(
             }
 #ifdef TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
             ++send_count;
-#endif
+#endif // TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
          }
       } catch ( InvalidLogicalTime const &e ) {
          string id_str;
@@ -2068,7 +2068,7 @@ void Object::send_blocking_io_data()
 
 #ifdef TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
             ++send_count;
-#endif
+#endif // TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
          }
       } catch ( InvalidLogicalTime const &e ) {
          string id_str;
@@ -2485,7 +2485,7 @@ void Object::send_init_data()
                                          TrickHLA::EMPTY_USER_SUPPLIED_TAG );
 #ifdef TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
          ++send_count;
-#endif
+#endif // TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
       }
    } catch ( InvalidLogicalTime const &e ) {
       string id_str;

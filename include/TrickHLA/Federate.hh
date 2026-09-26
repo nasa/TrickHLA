@@ -52,9 +52,6 @@ NASA, Johnson Space Center\n
 #include <cstddef>
 #include <string>
 
-// Trick includes.
-#include "trick/Flag.h"
-
 // TrickHLA includes.
 #include "TrickHLA/CheckpointConversionBase.hh"
 #include "TrickHLA/CompileConfig.hh"

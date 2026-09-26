@@ -35,7 +35,6 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_SYNC_POINT_LIST_HH
 
 // System includes.
-#include <cstddef>
 #include <string>
 
 // TrickHLA

@@ -32,6 +32,7 @@ NASA, Johnson Space Center\n
 // System includes.
 #include <cstdint>
 #include <cstring>
+#include <iomanip>
 #include <sstream>
 #include <string>
 
@@ -146,7 +147,7 @@ double Int64Time::get_time_in_seconds() const
 string Int64Time::to_string() const
 {
    ostringstream msg;
-   msg << "Int64Time<" << get_time_in_seconds() << ">";
+   msg << "Int64Time<" << setprecision( 18 ) << get_time_in_seconds() << ">";
    return msg.str();
 }
 

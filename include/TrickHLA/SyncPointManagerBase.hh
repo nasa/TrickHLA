@@ -37,6 +37,7 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <string>
+#include <vector>
 
 // trickHLA includes.
 #include "TrickHLA/CheckpointConversionBase.hh"

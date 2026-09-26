@@ -41,11 +41,7 @@ NASA, Johnson Space Center\n
 // System includes.
 #include <cstdint>
 #include <map>
-#include <stdlib.h>
 #include <string>
-
-// Trick includes.
-#include "trick/reference.h"
 
 // TrickHLA includes.
 #include "TrickHLA/CompileConfig.hh"

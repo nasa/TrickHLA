@@ -39,7 +39,7 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_INTERACTION_SERVICES_HH
 
 // System includes.
-#include <string>
+#include <cstddef>
 
 // TrickHLA includes.
 #include "TrickHLA/CheckpointConversionBase.hh"
