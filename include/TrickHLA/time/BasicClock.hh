@@ -53,7 +53,7 @@ class BasicClock
   public:
    // Public constructors and destructors.
    /*! @brief Default constructor for the TrickHLA BasicClock class. */
-   BasicClock() : first_pass( true )
+   BasicClock()
    {
       return;
    }
@@ -73,9 +73,6 @@ class BasicClock
       // Trick time tic resolution.
       return ( (double)clock_wall_time() / 1000000.0 );
    }
-
-  private:
-   bool first_pass; ///< @trick_io{**} Flag indicates first pass to determine external clock.
 };
 
 } // namespace TrickHLA
