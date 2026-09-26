@@ -700,7 +700,8 @@ void Federate::create_RTI_ambassador_and_connect()
       errmsg << "Federate '" << name
              << "' for Federation '" << federation_name
              << "' with local_settings '" << local_settings
-             << "' encountered Exception ConnectionFailed: '" << rti_err_msg << "'\n";
+             << "' encountered Exception ConnectionFailed: '"
+             << rti_err_msg << "'\n";
       DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
 #if defined( IEEE_1516_2010 )
    } catch ( InvalidLocalSettingsDesignator const &e ) {
@@ -1106,8 +1107,9 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
          string type_str;
          StringUtilities::to_string( type_str, joined_federate.type );
          ostringstream msg;
-         msg << "Federate Object-Instance-Handle:" << instance_str << " Type:'" << type_str
-             << "' size:" << joined_federate.type.size() << "\n";
+         msg << "Federate Object-Instance-Handle:" << instance_str
+             << " Type:'" << type_str << "' size:" << joined_federate.type.size()
+             << "\n";
          DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
    }
@@ -1223,8 +1225,7 @@ void Federate::set_all_federate_MOM_instance_handles_by_name()
       string fed_mom_instance_name;
       StringUtilities::to_string( fed_mom_instance_name, fed_mom_instance_name_ws );
       ostringstream errmsg;
-      errmsg << "Object Instance Not Known for '"
-             << fed_mom_instance_name << "'\n";
+      errmsg << "Object Instance Not Known for '" << fed_mom_instance_name << "'\n";
       DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    } catch ( FederateNotExecutionMember const &e ) {
       // Macro to restore the saved FPU Control Word register value.
@@ -1431,7 +1432,7 @@ bool Federate::check_joined_federates_match()
 
          // Iterate through the federates in Federation list.
          bool found = false;
-         for ( FederateHandle federate_handle : federate_handles ) { // NOLINT(misc-const-correctness)
+         for ( FederateHandle const &federate_handle : federate_handles ) {
 
             // Check for matching federate handle.
             if ( federate_handle == joined_federate.federate_handle ) { // cppcheck-suppress [useStlAlgorithm]
@@ -1485,8 +1486,8 @@ bool Federate::verify_joined_federates()
             StringUtilities::to_string( joined_feds_str, list_joined_federates() );
             ostringstream errmsg;
             errmsg << "There are " << joined_federates_map.size()
-                   << " joined federates in the list but expected " << federate_handles.size()
-                   << ". List of joined federates:\n"
+                   << " joined federates in the list but expected "
+                   << federate_handles.size() << ". List of joined federates:\n"
                    << joined_feds_str << "\n";
             DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
          }
@@ -1494,7 +1495,7 @@ bool Federate::verify_joined_federates()
       }
 
       // Iterate through the federates in Federation list.
-      for ( FederateHandle const &federate_handle : federate_handles ) { // NOLINT(misc-const-correctness)
+      for ( FederateHandle const &federate_handle : federate_handles ) {
 
          bool found = false;
 
@@ -1669,8 +1670,7 @@ void Federate::update_joined_federates()
          ostringstream errmsg;
          errmsg << "Found " << federate_handles.size()
                 << " in the federatesInFederation list but there are "
-                << joined_federates_map.size()
-                << " in the joined federates map!\n";
+                << joined_federates_map.size() << " in the joined federates map!\n";
          DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_ERROR );
 
          // Mark the update process as failed.
@@ -1839,10 +1839,7 @@ string Federate::wait_for_required_federates_to_join()
    // Create a summary of the required federates.
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       ostringstream summary;
-      summary << "Federate::wait_for_required_federates_to_join():"
-              << __LINE__ << "\n"
-              << "WAITING FOR " << num_required_feds
-              << " REQUIRED FEDERATES:";
+      summary << "\nWAITING FOR " << num_required_feds << " REQUIRED FEDERATES:";
 
       // Display the initial summary of the required federates we are waiting for.
       int cnt = 0;
@@ -1852,9 +1849,7 @@ string Federate::wait_for_required_federates_to_join()
             ++cnt;
             std::string name_str;
             StringUtilities::to_string( name_str, known_federates[i].name );
-            summary << "\n"
-                    << "    " << cnt
-                    << ": Waiting for required federate '"
+            summary << "\n    " << cnt << ": Waiting for required federate '"
                     << name_str << "'";
          }
       }
@@ -1986,24 +1981,21 @@ string Federate::wait_for_required_federates_to_join()
 
             // Build the federate summary as an output string stream.
             ostringstream summary;
-            summary << "\nWAITING FOR " << num_required_feds
-                    << " REQUIRED FEDERATES:";
+            summary << "\nWAITING FOR " << num_required_feds << " REQUIRED FEDERATES:";
 
             // Summarize the required federates first.
             int cnt = 0;
-            for ( KnownFederate &known_fed : known_federates ) { // NOLINT(misc-const-correctness)
+            for ( KnownFederate const &known_fed : known_federates ) {
                ++cnt;
                std::string know_fed_str;
                StringUtilities::to_string( know_fed_str, known_fed.name );
                if ( known_fed.required ) {
                   if ( is_joined_federate_by_name( known_fed.name ) ) {
-                     summary << "\n"
-                             << "    " << cnt
-                             << ": Found joined required federate '" << know_fed_str << "'";
+                     summary << "\n    " << cnt << ": Found joined required federate '"
+                             << know_fed_str << "'";
                   } else {
-                     summary << "\n"
-                             << "    " << cnt
-                             << ": Waiting for required federate '" << know_fed_str << "'";
+                     summary << "\n    " << cnt << ": Waiting for required federate '"
+                             << know_fed_str << "'";
                   }
                }
             }
@@ -2024,8 +2016,7 @@ string Federate::wait_for_required_federates_to_join()
                   string fedname;
                   StringUtilities::to_string( fedname, joined_federate.name );
 
-                  summary << "\n"
-                          << "    " << cnt << ": Found joined federate '"
+                  summary << "\n    " << cnt << ": Found joined federate '"
                           << fedname << "'";
                }
             }
@@ -2098,8 +2089,7 @@ string Federate::wait_for_required_federates_to_join()
          names += *cii + ", ";
       }
       names.resize( names.length() - 2 ); // remove trailing comma and space
-      errmsg << names << "\n"
-             << "\tThe required federates are: ";
+      errmsg << names << "\n\tThe required federates are: ";
       names = "";
       for ( size_t i = 0; i < known_federates.size(); ++i ) {
          if ( known_federates[i].required ) {
@@ -2110,8 +2100,7 @@ string Federate::wait_for_required_federates_to_join()
          }
       }
       names.resize( names.length() - 2 ); // remove trailing comma and space
-      errmsg << names << "\n"
-             << "TERMINATING EXECUTION!";
+      errmsg << names << "\nTERMINATING EXECUTION!";
 
       status_string = errmsg.str();
       return status_string;
@@ -2148,8 +2137,7 @@ void Federate::update_and_print_joined_federates()
       ostringstream errmsg;
       errmsg << "Unexpected Federates update state."
              << "  We expected FEDERATE_UPDATE_NONE but the state was "
-             << to_string( federate_update_state )
-             << "!\n";
+             << to_string( federate_update_state ) << "!\n";
       DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
@@ -2241,8 +2229,7 @@ void Federate::update_and_print_joined_federates()
          ++cnt;
          std::string name_str;
          StringUtilities::to_string( name_str, joined_federate.name );
-         summary << "\n"
-                 << "    " << cnt << ": Found running federate '" << name_str << "'";
+         summary << "\n    " << cnt << ": Found running federate '" << name_str << "'";
       }
       summary << "\n";
 
@@ -3366,7 +3353,6 @@ void Federate::restore( string const &label )
  */
 void Federate::restore( wstring const &label )
 {
-
    // Sanity checks.
    if ( execution_control == nullptr ) {
       string label_str;
@@ -3391,7 +3377,6 @@ void Federate::restore( wstring const &label )
 /*! @brief Convert data to a form Trick can checkpoint. */
 void Federate::convert_data_before_checkpoint()
 {
-
    if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Converting the federate data for checkpointing.\n" );
    }
@@ -3451,7 +3436,6 @@ void Federate::free_converted_data_for_checkpoint()
  */
 void Federate::checkpoint_before()
 {
-
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Preparing for a checkpoint.\n" );
    }
@@ -3620,8 +3604,7 @@ void Federate::create_federation()
       StringUtilities::to_string( rti_err_msg, e.what() );
 
       ostringstream errmsg;
-      errmsg << "Could not open FOM-modules: '"
-             << FOM_modules << "'";
+      errmsg << "Could not open FOM-modules: '" << FOM_modules << "'";
       if ( !MIM_module.empty() ) {
          errmsg << " or MIM-module: '" << MIM_module << "'";
       }
@@ -3637,8 +3620,7 @@ void Federate::create_federation()
       StringUtilities::to_string( rti_err_msg, e.what() );
 
       ostringstream errmsg;
-      errmsg << "Problem reading FOM-modules: '"
-             << FOM_modules << "'";
+      errmsg << "Problem reading FOM-modules: '" << FOM_modules << "'";
       if ( !MIM_module.empty() ) {
          errmsg << " or MIM-module: '" << MIM_module << "'";
       }
@@ -3650,9 +3632,8 @@ void Federate::create_federation()
       ostringstream errmsg;
       errmsg << "Could not create logical time factory 'HLAinteger64Time"
              << "', RTI Exception: " << rti_err_msg << "\n"
-             << "  Make sure that you "
-             << "are using a IEEE_1516_2010-compliant RTI version which "
-             << "supplies the 'HLAinteger64Time' class.\n";
+             << "  Make sure that you  are using a IEEE_1516_2010-compliant"
+             << " RTI version, which supplies the 'HLAinteger64Time' class.\n";
       DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    } catch ( RTI1516_NAMESPACE::NotConnected const &e ) {
       DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, e );
@@ -4232,7 +4213,7 @@ void Federate::shutdown()
    }
 
    // Disable Time Constrained and Time Regulation for this federate.
-   time_management_service.shutdown_time_management();
+   time_management_service.disable_time_management();
 
    // Resign from the federation.
    // If the federate can rejoin, resign in a way so we can rejoin later...

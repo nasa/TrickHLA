@@ -226,8 +226,7 @@ void TrickThreadCoordinator::initialize_thread_coordinator(
    if ( thread_state == nullptr ) {
       ostringstream errmsg;
       errmsg << "Could not allocate memory for 'thread_state'"
-             << " for requested size " << thread_cnt
-             << "!\n";
+             << " for requested size " << thread_cnt << "!\n";
       DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
@@ -277,8 +276,7 @@ void TrickThreadCoordinator::initialize_thread_coordinator(
                    << "' specified in the input file for 'federate.disable_associated_thread_ids'"
                    << " is not valid because this Trick child thread does not"
                    << " exist in the S_define file! Valid Trick child thread-ID"
-                   << " range is 1 to " << ( thread_cnt - 1 )
-                   << "!\n";
+                   << " range is 1 to " << ( thread_cnt - 1 ) << "!\n";
             DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
          }
       }
@@ -289,16 +287,14 @@ void TrickThreadCoordinator::initialize_thread_coordinator(
    if ( data_cycle_time_per_thread == nullptr ) {
       ostringstream errmsg;
       errmsg << "Could not allocate memory for 'data_cycle_time_per_thread'"
-             << " for requested size " << thread_cnt
-             << "!\n";
+             << " for requested size " << thread_cnt << "!\n";
       DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
    data_cycle_base_time_per_thread = MemoryServices::declare_var( data_cycle_base_time_per_thread, thread_cnt );
    if ( data_cycle_base_time_per_thread == nullptr ) {
       ostringstream errmsg;
       errmsg << "Could not allocate memory for 'data_cycle_base_time_per_thread'"
-             << " for requested size " << thread_cnt
-             << "!\n";
+             << " for requested size " << thread_cnt << "!\n";
       DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
    for ( unsigned int thread_id = 0; thread_id < thread_cnt; ++thread_id ) {
@@ -314,8 +310,7 @@ void TrickThreadCoordinator::initialize_thread_coordinator(
       if ( data_cycle_time_per_obj == nullptr ) {
          ostringstream errmsg;
          errmsg << "Could not allocate memory for 'data_cycle_time_per_obj'"
-                << " for requested size " << object_service->obj_count
-                << "'!\n";
+                << " for requested size " << object_service->obj_count << "'!\n";
          DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
          return;
       }
@@ -323,8 +318,7 @@ void TrickThreadCoordinator::initialize_thread_coordinator(
       if ( data_cycle_base_time_per_obj == nullptr ) {
          ostringstream errmsg;
          errmsg << "Could not allocate memory for 'data_cycle_base_time_per_obj'"
-                << " for requested size " << object_service->obj_count
-                << "'!\n";
+                << " for requested size " << object_service->obj_count << "'!\n";
          DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
          return;
       }
@@ -566,8 +560,8 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
              << Int64BaseTime::to_seconds( main_thread_data_cycle_base_time )
              << "). This requires you to specify all the HLA object instance"
              << " names associated with this Trick "
-             << ( ( thread_id == 0 ) ? "main" : "child" ) << " thread so that TrickHLA"
-             << " can properly ensure data coherency.\n";
+             << ( ( thread_id == 0 ) ? "main" : "child" )
+             << " thread so that TrickHLA can properly ensure data coherency.\n";
       DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
@@ -634,8 +628,8 @@ void TrickThreadCoordinator::associate_to_trick_child_thread(
                       << " specified for this thread association:\n"
                       << "trick.exec_set_thread_process_type( " << thread_id
                       << ", trick.PROCESS_TYPE_AMF_CHILD )\n"
-                      << "trick.exec_set_thread_amf_cycle_time( " << thread_id << ", "
-                      << setprecision( 18 ) << data_cycle << " )\n";
+                      << "trick.exec_set_thread_amf_cycle_time( " << thread_id
+                      << ", " << setprecision( 18 ) << data_cycle << " )\n";
                DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
             }
             break;
@@ -736,8 +730,7 @@ void TrickThreadCoordinator::verify_trick_thread_associations()
               && object_service->objects[obj_index].thread_ids_array[thread_id]
               && ( data_cycle_base_time_per_thread[thread_id] == 0LL ) ) {
             ostringstream errmsg;
-            errmsg << "Object instance '"
-                   << object_service->objects[obj_index].get_name()
+            errmsg << "Object instance '" << object_service->objects[obj_index].get_name()
                    << "' specified a Trick thread-ID:" << thread_id << ", but no thread"
                    << " with this ID was associated in the S_define file!\n";
             DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
@@ -972,8 +965,8 @@ void TrickThreadCoordinator::wait_to_send_data_for_main_thread()
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
                   errmsg << "Unexpectedly the Federate is no longer an execution"
-                         << " member. This means we are either not connected to the"
-                         << " RTI or we are no longer joined to the federation"
+                         << " member. This means we are either not connected to"
+                         << " the RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
                          << " the Central RTI Component (CRC) level!\n";
                   DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
@@ -1069,8 +1062,8 @@ void TrickThreadCoordinator::wait_to_send_data_for_child_thread(
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
                   errmsg << "Unexpectedly the Federate is no longer an execution"
-                         << " member. This means we are either not connected to the"
-                         << " RTI or we are no longer joined to the federation"
+                         << " member. This means we are either not connected to"
+                         << " the RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
                          << " the Central RTI Component (CRC) level!\n";
                   DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
@@ -1166,8 +1159,8 @@ void TrickThreadCoordinator::wait_to_receive_data()
                if ( !federate->is_execution_member() ) {
                   ostringstream errmsg;
                   errmsg << "Unexpectedly the Federate is no longer an execution"
-                         << " member. This means we are either not connected to the"
-                         << " RTI or we are no longer joined to the federation"
+                         << " member. This means we are either not connected to"
+                         << " the RTI or we are no longer joined to the federation"
                          << " execution because someone forced our resignation at"
                          << " the Central RTI Component (CRC) level!\n";
                   DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
@@ -1453,8 +1446,8 @@ bool TrickThreadCoordinator::verify_time_constraints(
          if ( lcts_base_time <= 0 ) {
             ostringstream errmsg;
             errmsg << "For this Master federate, the ExCO Least Common"
-                   << " Time Step (LCTS:"
-                   << lcts_base_time << " " << Int64BaseTime::get_base_unit()
+                   << " Time Step (LCTS:" << lcts_base_time
+                   << " " << Int64BaseTime::get_base_unit()
                    << ") must be greater than zero!\n";
             DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
             return false;

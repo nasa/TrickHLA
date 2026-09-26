@@ -88,10 +88,9 @@ EncoderBase *EncoderFactory::create(
       errmsg << "Could not retrieve Trick ref-attributes for '"
              << trick_name << "'. Please check your input or modified-data"
              << " files to make sure the object attribute Trick name is"
-             << " correctly specified. If '" << trick_name
-             << "' is an inherited variable then make sure the base class"
-             << " uses either the 'public' or 'protected' access level for"
-             << " the variable.\n";
+             << " correctly specified. If '" << trick_name << "' is an inherited"
+             << " variable then make sure the base class uses either the 'public'"
+             << " or 'protected' access level for the variable.\n";
       DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
       return nullptr;
    }
@@ -220,10 +219,9 @@ EncoderBase *EncoderFactory::create(
             }
             default: {
                ostringstream errmsg;
-               errmsg << "Trick attributes for the variable '"
-                      << data_name << "' is of type 'long', but has"
-                      << " an unrecognized size of " << sizeof( long )
-                      << " bytes.\n";
+               errmsg << "Trick attributes for the variable '" << data_name
+                      << "' is of type 'long', but has an unrecognized size of "
+                      << sizeof( long ) << " bytes.\n";
                DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
                break;
             }
@@ -267,10 +265,9 @@ EncoderBase *EncoderFactory::create(
             }
             default: {
                ostringstream errmsg;
-               errmsg << "Trick attributes for the variable '"
-                      << data_name << "' is of type 'unsigned long', but has"
-                      << " an unrecognized size of " << sizeof( unsigned long )
-                      << " bytes.\n";
+               errmsg << "Trick attributes for the variable '" << data_name
+                      << "' is of type 'unsigned long', but has an unrecognized size of "
+                      << sizeof( unsigned long ) << " bytes.\n";
                DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
                break;
             }
@@ -291,8 +288,7 @@ EncoderBase *EncoderFactory::create(
          // (signed int : 1), Not supported
          ostringstream errmsg;
          errmsg << "Trick attributes for the variable '" << data_name
-                << "' is of type bit-field 'int : 1', and is"
-                << " not supported.\n";
+                << "' is of type bit-field 'int : 1', and is not supported.\n";
          DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
          break;
       }

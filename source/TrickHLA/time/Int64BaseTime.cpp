@@ -326,7 +326,7 @@ void Int64BaseTime::update_unit_for_multiplier()
       }
       default: {
          base_unit        = HLA_BASE_TIME_NOT_DEFINED;
-         base_unit_string = std::to_string( base_time_multiplier ) + " Ticks/second";
+         base_unit_string = std::to_string( base_time_multiplier ) + " Tics/second";
          break;
       }
    }
