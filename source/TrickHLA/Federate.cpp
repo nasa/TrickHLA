@@ -4153,6 +4153,14 @@ void Federate::shutdown()
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
+   }
+
+#if defined( TRICKHLA_PRINT_HLA_TIME_STATS )
+   // Print the HLA time statistics if compile time setting is defined.
+   if ( true ) {
+#else
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+#endif // TRICKHLA_PRINT_HLA_TIME_STATS
 
       if ( time_management_service.tag_wait_stats.is_enabled() ) {
          time_management_service.tag_wait_stats.set_description(

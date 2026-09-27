@@ -3,6 +3,7 @@
 * [SIM_Entity_Test](./SpaceFOM/SIM_Entity_Test/README.md)
 * [SIM_Frames_Test](./SpaceFOM/SIM_Frames_Test/README.md)
 * [SIM_hla_time](./SpaceFOM/SIM_hla_time/README.md)
+* [SIM_hla_time_overhead](./SpaceFOM/SIM_hla_time_overhead/README.md)
 * [SIM_Roles_Test](./SpaceFOM/SIM_Roles_Test/README.md)
 * [SIM_Roles_Test_designated_late_joiner](./SpaceFOM/SIM_Roles_Test_designated_late_joiner/README.md)
 * [SIM_Roles_Test_sync](./SpaceFOM/SIM_Roles_Test_sync/README.md)

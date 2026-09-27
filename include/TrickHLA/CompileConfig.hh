@@ -29,6 +29,13 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_COMPILE_CONFIG_HH
 #define TRICKHLA_COMPILE_CONFIG_HH
 
+// This is intended to always print a summary to the console regardless of the
+// input file configured verbose level. This is useful for debugging HLA time
+// overhead and leaving verbose comments off to not affect timing statistics.
+// See sims/SpaceFOM/SIM_hla_time_overhead.
+// Default: NO_TRICKHLA_PRINT_HLA_TIME_STATS
+#define NO_TRICKHLA_PRINT_HLA_TIME_STATS
+
 // Either use encoding into opaque buffer (old way) or the EncoderFactory (preferred).
 // Default: DONT_USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS
 #define DONT_USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS

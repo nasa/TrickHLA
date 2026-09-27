@@ -1,8 +1,7 @@
 ##############################################################################
 # PURPOSE:
-#    (This is a Python input file for configuring the Analytic federate for
-#     the sine wave example that uses the Space Reference FOM configured to be
-#     the Master, Pacing, and Root Reference Frame Publisher (RRFP) roles.)
+#    (This is a Python input file for configuring the Propagated federate
+#     for the HLA time overhead example that uses the Space Reference FOM.)
 #
 # REFERENCE:
 #    (Trick 19 documentation.)
@@ -13,7 +12,7 @@
 #
 # PROGRAMMERS:
 #    (((Edwin Z. Crues) (NASA/ER7) (Jan 2019) (--) (SpaceFOM support and testing.))
-#     ((Dan Dexter) (NASA/ER6) (Mar 2024) (--) (SpaceFOM sine example.)))
+#     ((Dan Dexter) (NASA/ER6) (Sept 2026) (--) (SpaceFOM HLA time overhead example.)))
 ##############################################################################
 import os
 import sys
@@ -37,24 +36,18 @@ from TrickHLA_data.SpaceFOM.SpaceFOMFederateConfig2 import *
 # Load the SpaceFOM specific reference frame configuration object.
 from TrickHLA_data.SpaceFOM.SpaceFOMRefFrameObject import *
 
-# Load the sine specific Sine object.
-from TrickHLA_data.sine.SineObject import *
-
 
 def print_usage_message():
 
    print( ' ' )
-   print( 'TrickHLA Sine Wave SpaceFOM Simulation Command Line Configuration Options:' )
-   print( '  -h --help              : Print this help message.' )
-   print( '  -f --fed_name [name]   : Name of the Federate, default is A-side-Federate.' )
-   print( '  -fe --fex_name [name]  : Name of the Federation Execution, default is SpaceFOM_sine.' )
-   print( '  --freeze [on|off]      : on: Start in freeze (Default), off: Run and no sim-control.' )
+   print( 'TrickHLA SpaceFOM Roles Test Simulation Command Line Configuration Options:' )
+   print( '  -h --help             : Print this help message.' )
+   print( '  -f --fed_name [name]  : Name of the Federate, default is Fed2.' )
+   print( '  -fe --fex_name [name] : Name of the Federation Execution, default is SpaceFOM_hla_time_overhead.' )
    print( '  --log-time-stats       : Log TrickHLA time statistics.' )
-   print( '  --nostop               : Set no stop time on simulation.' )
-   print( '  --realtime [on|off]    : on: Enable realtime (Default), off: disable realtime.' )
-   print( '  -r --root_frame [name] : Name of the root reference frame, default is RootFrame.' )
-   print( '  -s --stop [time]       : Time to stop simulation, default is 10.0 seconds.' )
-   print( '  --verbose              : Show verbose messages.' )
+   print( '  --nostop              : Set no stop time on simulation.' )
+   print( '  -s --stop [time]      : Time to stop simulation, default is 10.0 seconds.' )
+   print( '  --verbose             : Show verbose messages.' )
    print( ' ' )
 
    trick.exec_terminate_with_return( -1,
@@ -71,9 +64,6 @@ def parse_command_line():
    global verbose
    global federate_name
    global federation_name
-   global root_frame_name
-   global realtime_enabled
-   global freeze_enabled
    global log_time_stats
 
    # Get the Trick command line arguments.
@@ -104,46 +94,10 @@ def parse_command_line():
             print( 'ERROR: Missing --fex_name [name] argument.' )
             print_usage = True
 
-      elif ( str( argv[index] ) == '--freeze' ):
-         index = index + 1
-         if ( index < argc ):
-            if ( str( argv[index] ) == 'on' ):
-               freeze_enabled = True
-            elif ( str( argv[index] ) == 'off' ):
-               freeze_enabled = False
-            else:
-               print( 'ERROR: Unknown --freeze argument: ' + str( argv[index] ) )
-               print_usage = True
-         else:
-            print( 'ERROR: Missing --freeze [on|off] argument.' )
-            print_usage = True
-
       elif ( str( argv[index] ) == '--log-time-stats' ):
          log_time_stats = True
 
-      elif ( ( str( argv[index] ) == '-r' ) | ( str( argv[index] ) == '--root_frame' ) ):
-         index = index + 1
-         if ( index < argc ):
-            root_frame_name = str( argv[index] )
-         else:
-            print( 'ERROR: Missing --root_frame [name] argument.' )
-            print_usage = True
-
-      elif ( str( argv[index] ) == '--realtime' ):
-         index = index + 1
-         if ( index < argc ):
-            if ( str( argv[index] ) == 'on' ):
-               realtime_enabled = True
-            elif ( str( argv[index] ) == 'off' ):
-               realtime_enabled = False
-            else:
-               print( 'ERROR: Unknown --realtime argument: ' + str( argv[index] ) )
-               print_usage = True
-         else:
-            print( 'ERROR: Missing --realtime [on|off] argument.' )
-            print_usage = True
-
-      elif ( str( argv[index] ) == '--nostop' ):
+      elif ( str( argv[index] ) == '-nostop' ):
          run_duration = None
 
       elif ( ( str( argv[index] ) == '-s' ) | ( str( argv[index] ) == '--stop' ) ):
@@ -173,13 +127,7 @@ def parse_command_line():
 print_usage = False
 
 # Set the default run duration.
-run_duration = 10.0
-
-# Set the default to enable realtime.
-realtime_enabled = True
-
-# Start in freeze mode and a simulation control panel.
-freeze_enabled = True
+run_duration = 10000.0
 
 # Default is to NOT show verbose messages.
 verbose = False
@@ -188,13 +136,10 @@ verbose = False
 log_time_stats = False
 
 # Set the default Federate name.
-federate_name = 'A-side-Federate'
+federate_name = 'Fed2'
 
 # Set the default Federation Execution name.
-federation_name = 'SpaceFOM_sine'
-
-# Set the default Root Reference Frame name.
-root_frame_name = 'RootFrame'
+federation_name = 'SpaceFOM_hla_time_overhead'
 
 parse_command_line()
 
@@ -204,7 +149,7 @@ if ( print_usage == True ):
 #---------------------------------------------
 # Set up the core simulation parameters.
 #---------------------------------------------
-core_frame_time = 0.250
+core_frame_time = 1.000
 
 
 #---------------------------------------------
@@ -217,41 +162,10 @@ core_frame_time = 0.250
 # trick.checkpoint_end( 1 )
 
 # Import and configure the TrickHLA base Simulation Configuration class.
-# Setup for Trick real time execution. This is the "Pacing" function.
 from TrickHLA_data.TrickHLA.TrickHLASimConfig import *
-sine_sim_config = TrickHLASimConfig( 'sine' )
-sine_sim_config.realtime( software_frame_time = core_frame_time )
-sine_sim_config.sim_control_panel()
-if ( freeze_enabled ):
-   sine_sim_config.start_in_freeze()
-else:
-	sine_sim_config.start_in_freeze( False )
-
-if ( realtime_enabled ):
-   trick.real_time_enable()
-else:
-   trick.real_time_disable()
-
-
-#---------------------------------------------
-# Set up data to record.
-#---------------------------------------------
-exec( open( "Log_data/log_sine_states.py" ).read() )
-log_sine_states( 'A', core_frame_time )
-log_sine_states( 'P', core_frame_time )
-
-if log_time_stats:
-   # Import the TrickHLA Time Statistics Data Recording Group class.
-   from TrickHLA_data.TrickHLA.TrickHLATimeStatsDRG import TrickDataRecordingGroup, TrickHLATimeStatsDRG
-
-   # Create the TrickHLA Time Statistics Data Recording Group.
-   thla_time_drg = TrickHLATimeStatsDRG( core_frame_time )
-
-   # Initialize all the Data Recording Groups.
-   TrickDataRecordingGroup.initialize_groups()
-
-   # Enable the collection of TrickHLA time statistics.
-   THLA.federate.enable_time_statistics( True )
+sim_config = TrickHLASimConfig( 'HLA-time-overhead' )
+sim_config.set_software_and_freeze_frame_time( software_frame_time = core_frame_time )
+sim_config.start_in_freeze( False )
 
 
 # =========================================================================
@@ -280,26 +194,15 @@ else:
 #--------------------------------------------------------------------------
 # Configure this federate SpaceFOM roles for this federate.
 #--------------------------------------------------------------------------
-federate.set_master_role( True )  # This is the Master federate.
-federate.set_pacing_role( True )  # This is the Pacing federate.
-federate.set_RRFP_role( True )    # This is the Root Reference Frame Publisher.
+federate.set_master_role( False )  # This is NOT the Master federate.
+federate.set_pacing_role( False )  # This is NOT the Pacing federate.
+federate.set_RRFP_role( False )    # This is NOT the Root Reference Frame Publisher.
 
 #--------------------------------------------------------------------------
 # Add in known required federates.
 #--------------------------------------------------------------------------
+federate.add_known_federate( True, 'Fed1' )
 federate.add_known_federate( True, str( federate.federate.name ) )
-federate.add_known_federate( True, 'P-side-Federate' )
-
-#--------------------------------------------------------------------------
-# Configure the FOM modules.
-#--------------------------------------------------------------------------
-federate.add_FOM_module( 'FOMs/sine/Sine_FOM.xml' )
-
-#--------------------------------------------------------------------------
-# Configure the multiphase initialization sync-points.
-#--------------------------------------------------------------------------
-federate.add_multiphase_init_sync_point( 'Analytic_init_phase' )
-federate.add_multiphase_init_sync_point( 'Propagated_init_phase' )
 
 #--------------------------------------------------------------------------
 # Configure the CRC.
@@ -308,7 +211,7 @@ federate.add_multiphase_init_sync_point( 'Propagated_init_phase' )
 THLA.federate.local_settings = 'crcHost = localhost:8989'
 
 #--------------------------------------------------------------------------
-# Set up federate time related parameters.
+# Set up federate related time related parameters.
 #--------------------------------------------------------------------------
 # Set the simulation timeline to be used for time computations.
 THLA.execution_control.sim_timeline = THLA_INIT.sim_timeline
@@ -318,116 +221,37 @@ THLA.execution_control.scenario_timeline = THLA_INIT.scenario_timeline
 
 # Specify the HLA base time unit (default: trick.HLA_BASE_TIME_MICROSECONDS)
 # and scale the Trick time tics value.
-federate.set_HLA_base_time_unit_and_scale_trick_tics( trick.HLA_BASE_TIME_NANOSECONDS )
+federate.set_HLA_base_time_unit_and_scale_trick_tics( trick.HLA_BASE_TIME_MICROSECONDS )
 
 # Must specify a federate HLA lookahead value in seconds.
 federate.set_lookahead_time( core_frame_time )
 
-# Must specify the Least Common Time Step for all federates in the
-# federation execution.
-federate.set_least_common_time_step( core_frame_time )
+# Must specify a Trick software frame that meets the time constraints
+# for the Least Common Time Step (LCTS) value set in the ExCO by the
+# Master federate. (LCTS >= RT) && (LCTS % RT = 0)
+trick.exec_set_software_frame( core_frame_time )
 
 # Setup Time Management parameters.
 federate.set_time_regulating( True )
 federate.set_time_constrained( True )
 
+
 #---------------------------------------------
-# Set up the initial Sine states
+# Set up data to record.
 #---------------------------------------------
-exec( open( "Modified_data/sine_init.py" ).read() )
+# Enable the collection of TrickHLA time statistics.
+THLA.federate.enable_time_statistics( True )
 
-# Example of a 1-dimensional dynamic array.
-A.packing.buff_size = 10
-A.packing.buff = trick.sim_services.alloc_type( A.packing.buff_size, 'unsigned char' )
-P.packing.buff_size = 10
-P.packing.buff = trick.sim_services.alloc_type( P.packing.buff_size, 'unsigned char' )
+if log_time_stats:
+   # Import the TrickHLA Time Statistics Data Recording Group class.
+   from TrickHLA_data.TrickHLA.TrickHLATimeStatsDRG import TrickDataRecordingGroup, TrickHLATimeStatsDRG
 
-# We are taking advantage of the input file to specify a unique name for the
-# sim-data name field for the A-side federate.
-A.sim_data.name = 'A.sim_data.name.A-side'
-P.sim_data.name = 'P.sim_data.name.A-side'
+   # Create the TrickHLA Time Statistics Data Recording Group.
+   thla_time_drg = TrickHLATimeStatsDRG( core_frame_time )
 
-# We are taking advantage of the input file to specify a unique name and
-# message for the A-side federate interaction handler.
-A.interaction_handler.name = 'A-side: A.interaction_handler.name'
-P.interaction_handler.name = 'A-side: P.interaction_handler.name'
+   # Initialize all the Data Recording Groups.
+   TrickDataRecordingGroup.initialize_groups()
 
-A.interaction_handler.message = 'A-side: A.interaction_handler.message'
-P.interaction_handler.message = 'A-side: P.interaction_handler.message'
-
-#---------------------------------------------------------------------------
-# Set up for Sine data.
-#---------------------------------------------------------------------------
-
-sine_A = SineObject(
-   sine_create_object       = True,
-   sine_obj_instance_name   = 'A-side-Federate.Sine',
-   sine_trick_sim_obj_name  = 'A',
-   sine_packing             = A.packing,
-   sine_conditional         = A.conditional,
-   sine_lag_comp            = A.lag_compensation,
-   sine_lag_comp_type       = trick.TrickHLA.LAG_COMPENSATION_NONE,
-   sine_ownership           = A.ownership_handler,
-   sine_deleted             = A.obj_deleted,
-   sine_attribute_publish   = True,
-   sine_attribute_subscribe = True )
-
-# Add this sine object to the list of managed objects.
-federate.add_fed_object( sine_A )
-
-sine_P = SineObject(
-   sine_create_object       = False,
-   sine_obj_instance_name   = 'P-side-Federate.Sine',
-   sine_trick_sim_obj_name  = 'P',
-   sine_packing             = P.packing,
-   sine_conditional         = P.conditional,
-   sine_lag_comp            = P.lag_compensation,
-   sine_lag_comp_type       = trick.TrickHLA.LAG_COMPENSATION_NONE,
-   sine_deleted             = P.obj_deleted,
-   sine_attribute_publish   = True,
-   sine_attribute_subscribe = True )
-
-# Add this sine object to the list of managed objects.
-federate.add_fed_object( sine_P )
-
-#---------------------------------------------------------------------------
-# Set up for Root Reference Frame data.
-#---------------------------------------------------------------------------
-ref_frame_tree.root_frame_data.name = root_frame_name
-ref_frame_tree.root_frame_data.parent_name = ''
-
-ref_frame_tree.root_frame_data.state.pos[0] = 0.0
-ref_frame_tree.root_frame_data.state.pos[1] = 0.0
-ref_frame_tree.root_frame_data.state.pos[2] = 0.0
-ref_frame_tree.root_frame_data.state.vel[0] = 0.0
-ref_frame_tree.root_frame_data.state.vel[1] = 0.0
-ref_frame_tree.root_frame_data.state.vel[2] = 0.0
-ref_frame_tree.root_frame_data.state.att.scalar = 1.0
-ref_frame_tree.root_frame_data.state.att.vector[0] = 0.0
-ref_frame_tree.root_frame_data.state.att.vector[1] = 0.0
-ref_frame_tree.root_frame_data.state.att.vector[2] = 0.0
-ref_frame_tree.root_frame_data.state.ang_vel[0] = 0.0
-ref_frame_tree.root_frame_data.state.ang_vel[1] = 0.0
-ref_frame_tree.root_frame_data.state.ang_vel[2] = 0.0
-ref_frame_tree.root_frame_data.state.time = 0.0
-
-ref_frame_tree.leaf_frame_data.name = 'FrameA'
-ref_frame_tree.leaf_frame_data.parent_name = root_frame_name
-
-ref_frame_tree.leaf_frame_data.state.pos[0] = 10.0
-ref_frame_tree.leaf_frame_data.state.pos[1] = 10.0
-ref_frame_tree.leaf_frame_data.state.pos[2] = 10.0
-ref_frame_tree.leaf_frame_data.state.vel[0] = 0.0
-ref_frame_tree.leaf_frame_data.state.vel[1] = 0.1
-ref_frame_tree.leaf_frame_data.state.vel[2] = 0.0
-ref_frame_tree.leaf_frame_data.state.att.scalar = 1.0
-ref_frame_tree.leaf_frame_data.state.att.vector[0] = 0.0
-ref_frame_tree.leaf_frame_data.state.att.vector[1] = 0.0
-ref_frame_tree.leaf_frame_data.state.att.vector[2] = 0.0
-ref_frame_tree.leaf_frame_data.state.ang_vel[0] = 0.0
-ref_frame_tree.leaf_frame_data.state.ang_vel[1] = 0.1
-ref_frame_tree.leaf_frame_data.state.ang_vel[2] = 0.0
-ref_frame_tree.leaf_frame_data.state.time = 0.0
 
 #---------------------------------------------------------------------------
 # Set up the Root Reference Frame object for discovery.
@@ -436,7 +260,7 @@ ref_frame_tree.leaf_frame_data.state.time = 0.0
 #---------------------------------------------------------------------------
 root_frame = SpaceFOMRefFrameObject( 
    create_frame_object          = federate.is_RRFP,
-   frame_instance_name          = root_frame_name,
+   frame_instance_name          = 'RootFrame',
    frame_S_define_instance      = root_ref_frame.frame_packing,
    frame_S_define_instance_name = 'root_ref_frame.frame_packing',
    frame_conditional            = root_ref_frame.conditional )
@@ -454,12 +278,12 @@ federate.set_root_frame( root_frame )
 # Set up an alternate vehicle reference frame object for discovery.
 #---------------------------------------------------------------------------
 frame_A = SpaceFOMRefFrameObject( 
-   create_frame_object          = True,
+   create_frame_object          = False,
    frame_instance_name          = 'FrameA',
    frame_S_define_instance      = leaf_ref_frame.frame_packing,
    frame_S_define_instance_name = 'leaf_ref_frame.frame_packing',
    parent_S_define_instance     = root_ref_frame.frame_packing,
-   parent_name                  = root_frame_name,
+   parent_name                  = 'RootFrame',
    frame_conditional            = leaf_ref_frame.conditional,
    frame_lag_comp               = leaf_ref_frame.lag_compensation,
    frame_ownership              = leaf_ref_frame.ownership_handler,
@@ -489,8 +313,6 @@ federate.add_sim_object( THLA )
 federate.add_sim_object( THLA_INIT )
 federate.add_sim_object( root_ref_frame )
 federate.add_sim_object( leaf_ref_frame )
-federate.add_sim_object( A )
-federate.add_sim_object( P )
 
 #---------------------------------------------------------------------------
 # Make sure that the Python federate configuration object is initialized.
@@ -503,3 +325,10 @@ federate.initialize()
 #---------------------------------------------------------------------------
 if run_duration:
    trick.sim_services.exec_set_terminate_time( run_duration )
+
+#---------------------------------------------------------------------------
+# Send a timed MTR request to the Master federate.
+#---------------------------------------------------------------------------
+# Send an interaction.
+#trick.add_read( 3.0 , """THLA.execution_control.send_MTR_interaction( trick.SpaceFOM.MTR_GOTO_FREEZE )""" )
+#trick.add_read( 5.0 , """THLA.execution_control.send_MTR_interaction( trick.SpaceFOM.MTR_GOTO_SHUTDOWN )""" )
