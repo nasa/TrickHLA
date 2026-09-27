@@ -220,10 +220,7 @@ from TrickHLA_data.TrickHLA.TrickHLASimConfig import *
 sim_config = TrickHLASimConfig( 'HLA-time-overhead' )
 sim_config.realtime( software_frame_time = core_frame_time )
 sim_config.sim_control_panel()
-if ( freeze_enabled ):
-   sim_config.start_in_freeze()
-else:
-	sim_config.start_in_freeze( False )
+sim_config.start_in_freeze( freeze_enabled )
 
 if ( realtime_enabled ):
    trick.real_time_enable()

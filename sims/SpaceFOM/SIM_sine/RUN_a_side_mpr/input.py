@@ -219,13 +219,10 @@ core_frame_time = 0.250
 # Import and configure the TrickHLA base Simulation Configuration class.
 # Setup for Trick real time execution. This is the "Pacing" function.
 from TrickHLA_data.TrickHLA.TrickHLASimConfig import *
-sine_sim_config = TrickHLASimConfig( 'sine' )
-sine_sim_config.realtime( software_frame_time = core_frame_time )
-sine_sim_config.sim_control_panel()
-if ( freeze_enabled ):
-   sine_sim_config.start_in_freeze()
-else:
-	sine_sim_config.start_in_freeze( False )
+sim_config = TrickHLASimConfig( 'sine' )
+sim_config.realtime( software_frame_time = core_frame_time )
+sim_config.sim_control_panel()
+sim_config.start_in_freeze( freeze_enabled )
 
 if ( realtime_enabled ):
    trick.real_time_enable()
