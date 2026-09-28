@@ -41,6 +41,7 @@ NASA, Johnson Space Center\n
 #include <climits>
 #include <cstddef>
 #include <iomanip>
+#include <limits>
 
 // Trick includes.
 #include "trick/parameter_types.h"
