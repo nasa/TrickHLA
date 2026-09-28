@@ -38,6 +38,7 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_STRING_UTILITIES_HH
 
 // System includes.
+#include <climits>
 #include <cstddef>
 #include <iomanip>
 #include <limits>
