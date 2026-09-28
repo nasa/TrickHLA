@@ -41,6 +41,7 @@ NASA, Johnson Space Center\n
 #include <vector>
 
 // TrickHLA includes.
+#include "TrickHLA/utils/StringUtilities.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/SaveRestoreServices.hh"
 
@@ -114,6 +115,26 @@ class KnownFederate
       : name(),
         type(),
         required( false ),
+        object_instance_handle(),
+        MOM_instance_name()
+   {
+      return;
+   };
+   /*! @brief Initialization constructor for the TrickHLA KnownFederate class. */
+   KnownFederate( bool required, std::string name, std::string type )
+      : required( required ),
+        object_instance_handle(),
+        MOM_instance_name()
+   {
+      StringUtilities::to_wstring( this->name, name );
+      StringUtilities::to_wstring( this->type, type );
+      return;
+   };
+   /*! @brief Initialization constructor for the TrickHLA KnownFederate class. */
+   KnownFederate( bool required, std::wstring name, std::wstring type )
+      : name( name ),
+        type( type ),
+        required( required ),
         object_instance_handle(),
         MOM_instance_name()
    {

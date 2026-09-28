@@ -265,6 +265,18 @@ class Federate : public CheckpointConversionBase
    //
    // Federate management functions.
    //
+   /*! @brief Add a federate to the list of known federates.
+    *  @param required Is the federate required.
+    *  @param name     The name of the known federate.
+    *  @param type     The type of the known federate. */
+   void add_known_federate( bool required, std::string name, std::string type );
+
+   /*! @brief Add a federate to the list of known federates.
+    *  @param required Is the federate required.
+    *  @param name     The name of the known federate.
+    *  @param type     The type of the known federate. */
+   void add_known_federate( bool required, std::wstring name, std::wstring type );
+
    /*! @brief Verify the joined federates list against the federates in Federatio list.
     *  @return True if all federate in Federation and only all are in the joined federates map. */
    bool verify_joined_federates();
@@ -603,6 +615,20 @@ class Federate : public CheckpointConversionBase
    void set_lookahead( double const value )
    {
       time_management_service.set_lookahead( value );
+   }
+
+   /*! @brief Sets the HLA time management constrained state.
+    *  @param value Time constrained status. True = On, False = Off. */
+   void set_time_constrained( bool const value )
+   {
+      time_management_service.time_constrained = value;
+   }
+
+   /*! @brief Sets the HLA time management regulating state.
+    *  @param value Time regulated status. True = On, False = Off. */
+   void set_time_regulating( bool const value )
+   {
+      time_management_service.time_regulating = value;
    }
 
    /*! @brief Get the current granted HLA federation execution time.

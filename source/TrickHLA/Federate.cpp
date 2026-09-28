@@ -1459,6 +1459,29 @@ bool Federate::check_joined_federates_match()
 }
 
 /*!
+ *  @job_class{initialization}
+ */
+void Federate::add_known_federate(
+   bool        required,
+   std::string name,
+   std::string type )
+{
+   KnownFederate known_fed( required, name, type );
+   known_federates.push_back( known_fed );
+   return;
+}
+
+void Federate::add_known_federate(
+   bool         required,
+   std::wstring name,
+   std::wstring type )
+{
+   KnownFederate known_fed( required, name, type );
+   known_federates.push_back( known_fed );
+   return;
+}
+
+/*!
  *  @job_class{scheduled}
  *  @detail This function will check the list of federate in the Federation
  *  received from the MOM Federation federatesInFederation interface and
