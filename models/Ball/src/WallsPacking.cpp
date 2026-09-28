@@ -33,20 +33,15 @@ NASA, Johnson Space Center\n
 // System include files.
 #include <cstdlib>
 #include <iostream>
-#include <limits>
 #include <math.h>
 #include <sstream>
 #include <string>
 
 // Trick include files.
 #include "trick/MemoryManager.hh"
-#include "trick/exec_proto.hh"
-#include "trick/matrix_macros.h"
-#include "trick/vector_macros.h"
 
 // TrickHLA include files.
 #include "TrickHLA/Attribute.hh"
-#include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Packing.hh"
@@ -54,6 +49,7 @@ NASA, Johnson Space Center\n
 
 // Wall include files.
 #include "Ball/include/WallsPacking.hh"
+#include "Ball/include/ball_walls.h"
 
 using namespace std;
 using namespace TrickHLA;
@@ -118,8 +114,8 @@ void WallsPacking::base_config(
    bool              publishes,
    TrickHLA::Object *mngr_object )
 {
-   string entity_name_str = string( sim_obj_name ) + "." + string( walls_obj_name );
-   string trick_name_str;
+   string const entity_name_str = string( sim_obj_name ) + "." + string( walls_obj_name );
+   string       trick_name_str;
 
    // Associate the instantiated Manager object with this packing object.
    this->object = mngr_object;

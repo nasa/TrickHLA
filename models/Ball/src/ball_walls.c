@@ -31,14 +31,14 @@ NASA, Johnson Space Center\n
 #include <stdio.h>
 
 /* Trick include files. */
-#include "sim_services/Executive/include/exec_proto.h"
-#include "sim_services/Integrator/include/integrator_c_intf.h"
-#include "sim_services/Message/include/message_proto.h"
+#include "trick/integrator_c_intf.h"
+#include "trick/message_proto.h"
+#include "trick/regula_falsi.h"
 
 /* Model include files. */
-#include "../include/ball_proto.h"
-#include "../include/ball_state.h"
-#include "../include/ball_walls.h"
+#include "Ball/include/ball_proto.h"
+#include "Ball/include/ball_state.h"
+#include "Ball/include/ball_walls.h"
 
 /*!
  * @job_class{derivative}

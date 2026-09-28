@@ -30,24 +30,24 @@ NASA, Johnson Space Center\n
 /* System include files. */
 
 /* Trick include files. */
-#include "sim_services/Executive/include/exec_proto.h"
-#include "sim_services/Message/include/message_proto.h"
+#include "trick/exec_proto.h"
+#include "trick/message_proto.h"
 
 /* Model include files. */
-#include "../include/ball_proto.h"
-#include "../include/ball_state.h"
+#include "Ball/include/ball_proto.h"
+#include "Ball/include/ball_state.h"
 
 /*!
  * @job_class{scheduled}
  */
 int ball_print(
-   BallState *state )
+   BallState const *state )
 {
    /* Check if printing is active (True). */
    if ( state->input.print_state ) {
 
       /* GET SHORTHAND NOTATION FOR DATA STRUCTURES */
-      BallState_Out *SO = &( state->output );
+      BallState_Out const *SO = &( state->output );
 
       message_publish( 0, "Ball %s: time = %8.2f; position = %12.6f , %12.6f; velocity = %12.6f , %12.6f\n",
                        state->name, exec_get_sim_time(),
