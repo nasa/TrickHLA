@@ -35,16 +35,10 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_SYNC_POINT_MANAGER_BASE_HH
 #define TRICKHLA_SYNC_POINT_MANAGER_BASE_HH
 
-// System includes.
-#include <string>
-#include <vector>
-
 // trickHLA includes.
 #include "TrickHLA/CheckpointConversionBase.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/SyncPointList.hh"
-#include "TrickHLA/Types.hh"
-#include "TrickHLA/time/Int64Time.hh"
 #include "TrickHLA/utils/MutexLock.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need

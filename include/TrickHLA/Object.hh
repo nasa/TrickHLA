@@ -48,21 +48,13 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_OBJECT_HH
 #define TRICKHLA_OBJECT_HH
 
-// System includes.
-#include <cstdint>
-#include <map>
-#include <string>
-
 // TrickHLA includes.
 #include "TrickHLA/Attribute.hh"
 #include "TrickHLA/CheckpointConversionBase.hh"
-#include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/ReflectedAttributesQueue.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/BasicClock.hh"
-#include "TrickHLA/time/Int64Interval.hh"
-#include "TrickHLA/time/Int64Time.hh"
 #include "TrickHLA/utils/ElapsedTimeStats.hh"
 #include "TrickHLA/utils/MutexLock.hh"
 #include "TrickHLA/utils/MutexProtection.hh"
@@ -80,6 +72,7 @@ NASA, Johnson Space Center\n
 #include "RTI/Handle.h"
 #include "RTI/RTI1516.h"
 #include "RTI/Typedefs.h"
+#include "RTI/VariableLengthData.h"
 
 #if defined( IEEE_1516_2010 )
 #   pragma GCC diagnostic pop

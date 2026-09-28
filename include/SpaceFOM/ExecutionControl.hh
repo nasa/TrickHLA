@@ -41,9 +41,6 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_EXECUTON_CONTROL_HH
 #define SPACEFOM_EXECUTON_CONTROL_HH
 
-// System includes.
-#include <string>
-
 // SpaceFOM includes.
 #include "SpaceFOM/ExecutionConfiguration.hh"
 #include "SpaceFOM/MTRInteractionHandler.hh"

@@ -34,11 +34,7 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_OWNERSHIP_ITEM_HH
 #define TRICKHLA_OWNERSHIP_ITEM_HH
 
-// System includes.
-#include <string>
-
 // TrickHLA includes.
-#include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Item.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need

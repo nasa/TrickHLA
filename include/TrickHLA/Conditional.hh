@@ -37,9 +37,6 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_CONDITIONAL_HH
 #define TRICKHLA_CONDITIONAL_HH
 
-// System includes.
-#include <string>
-
 // TrickHLA includes.
 #include "TrickHLA/CheckpointConversionBase.hh"
 #include "TrickHLA/ObjectCallbackBase.hh"

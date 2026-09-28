@@ -37,7 +37,6 @@ thread data cycle time being longer than the main thread data cycle time.}
 
 // System includes
 #include <cstdint>
-#include <string>
 
 // TrickHLA includes.
 #include "TrickHLA/Types.hh"

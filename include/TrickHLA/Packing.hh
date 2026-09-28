@@ -38,9 +38,6 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_PACKING_HH
 #define TRICKHLA_PACKING_HH
 
-// System includes.
-#include <string>
-
 // TrickHLA includes.
 #include "TrickHLA/CheckpointConversionBase.hh"
 #include "TrickHLA/ObjectCallbackBase.hh"

@@ -35,11 +35,6 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_STRING_UNICODE_FIXED_ARRAY_ENCODER_HH
 #define TRICKHLA_STRING_UNICODE_FIXED_ARRAY_ENCODER_HH
 
-// System includes.
-#include <cstddef>
-#include <string>
-#include <vector>
-
 // Trick includes.
 #include "trick/attributes.h"
 

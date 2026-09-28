@@ -50,12 +50,9 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstddef>
-#include <string>
 
 // TrickHLA includes.
-#include "TrickHLA/CheckpointConversionBase.hh"
 #include "TrickHLA/CompileConfig.hh"
-#include "TrickHLA/ExecutionConfigurationBase.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/InteractionServices.hh"
@@ -89,6 +86,7 @@ NASA, Johnson Space Center\n
 #include "RTI/Enums.h"
 #include "RTI/Handle.h"
 #include "RTI/RTI1516.h"
+#include "RTI/RTIambassador.h"
 #include "RTI/Typedefs.h"
 #include "RTI/VariableLengthData.h"
 

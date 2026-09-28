@@ -35,14 +35,9 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstdint>
-#include <map>
-#include <set>
-#include <string>
-#include <vector>
 
 // TrickHLA includes.
 #include "TrickHLA/HLAStandardSupport.hh"
-#include "TrickHLA/SaveRestoreServices.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -53,7 +48,8 @@ NASA, Johnson Space Center\n
 #endif
 
 // HLA include files.
-#include <RTI/Typedefs.h>
+#include "RTI/Handle.h"
+#include "RTI/Typedefs.h"
 
 #if defined( IEEE_1516_2010 )
 #   pragma GCC diagnostic pop

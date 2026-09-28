@@ -36,6 +36,7 @@ NASA, Johnson Space Center\n
 // TrickHLA includes.
 #include "TrickHLA/Attribute.hh"
 #include "TrickHLA/RecordElement.hh"
+#include "TrickHLA/Types.hh"
 
 namespace SpaceFOM
 {

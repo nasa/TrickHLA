@@ -47,8 +47,15 @@ NASA, Johnson Space Center\n
 
 // TrickHLA includes.
 #include "TrickHLA/time/Int64Time.hh"
-#include "TrickHLA/time/SimTimeline.hh"
 #include "TrickHLA/time/Timeline.hh"
+
+// Forward Declared Classes: Since these classes are only used as references
+// through pointers, these classes are included as forward declarations. This
+// helps to limit issues with recursive includes.
+namespace TrickHLA
+{
+class SimTimeline;
+} // namespace TrickHLA
 
 namespace TrickHLA
 {

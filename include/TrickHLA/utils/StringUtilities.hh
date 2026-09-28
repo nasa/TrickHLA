@@ -19,10 +19,9 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../../../source/TrickHLA/Federate.cpp}
+@trick_link_dependency{../../../source/TrickHLA/MemoryServices.cpp}
 @trick_link_dependency{../../../source/TrickHLA/time/Int64BaseTime.cpp}
 @trick_link_dependency{../../../source/TrickHLA/time/Int64Time.cpp}
-@trick_link_dependency{../../../source/TrickHLA/ObjectServices.cpp}
 @trick_link_dependency{../../../source/TrickHLA/utils/StringUtilities.cpp}
 
 @revs_title
@@ -41,12 +40,7 @@ NASA, Johnson Space Center\n
 // System includes.
 #include <climits>
 #include <cstddef>
-#include <cstring>
 #include <iomanip>
-#include <limits>
-#include <sstream>
-#include <string>
-#include <vector>
 
 // Trick includes.
 #include "trick/parameter_types.h"
@@ -54,6 +48,7 @@ NASA, Johnson Space Center\n
 // TrickHLA includes.
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/MemoryServices.hh"
+#include "TrickHLA/MemoryServices_impl.hh"
 #include "TrickHLA/time/Int64BaseTime.hh"
 #include "TrickHLA/time/Int64Time.hh"
 

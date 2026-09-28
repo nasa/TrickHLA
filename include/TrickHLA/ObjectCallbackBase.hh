@@ -37,9 +37,6 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_OBJECT_CALLBACK_BASE_HH
 #define TRICKHLA_OBJECT_CALLBACK_BASE_HH
 
-// System includes.
-#include <string>
-
 // TrickHLA includes.
 #include "TrickHLA/time/Int64Interval.hh"
 #include "TrickHLA/time/Int64Time.hh"

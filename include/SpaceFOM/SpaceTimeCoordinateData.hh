@@ -37,9 +37,6 @@ NASA, Johnson Space Center\n
 // System includes.
 #include <iostream>
 
-// TrickHLA includes.
-#include "TrickHLA/Types.hh"
-
 // SpaceFOM includes.
 #include "SpaceFOM/QuaternionData.hh"
 

@@ -38,18 +38,12 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_INTERACTION_SERVICES_HH
 #define TRICKHLA_INTERACTION_SERVICES_HH
 
-// System includes.
-#include <cstddef>
-
 // TrickHLA includes.
 #include "TrickHLA/CheckpointConversionBase.hh"
-#include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Interaction.hh"
 #include "TrickHLA/InteractionItem.hh"
 #include "TrickHLA/ItemQueue.hh"
-#include "TrickHLA/Types.hh"
-#include "TrickHLA/utils/MutexLock.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.

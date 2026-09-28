@@ -41,9 +41,6 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_INTERACTION_HH
 #define TRICKHLA_INTERACTION_HH
 
-// System includes.
-#include <string>
-
 // TrickHLA includes.
 #include "TrickHLA/CheckpointConversionBase.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
@@ -51,7 +48,6 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/InteractionItem.hh"
 #include "TrickHLA/Parameter.hh"
 #include "TrickHLA/Types.hh"
-#include "TrickHLA/time/Int64Time.hh"
 #include "TrickHLA/utils/MutexLock.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
