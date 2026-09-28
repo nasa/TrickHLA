@@ -37,13 +37,11 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_SAVE_RESTORE_SERVICES_HH
 
 // System includes.
-#include <string>
+#include <cstdint>
 
 // TrickHLA includes.
 #include "TrickHLA/CheckpointConversionBase.hh"
-#include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
-#include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64Time.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need

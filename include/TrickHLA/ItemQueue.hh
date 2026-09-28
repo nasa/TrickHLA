@@ -36,10 +36,6 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_ITEM_QUEUE_HH
 #define TRICKHLA_ITEM_QUEUE_HH
 
-// System includes.
-#include <cstddef>
-#include <string>
-
 // TrickHLA includes.
 #include "TrickHLA/Item.hh"
 #include "TrickHLA/utils/MutexLock.hh"

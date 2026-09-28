@@ -33,10 +33,10 @@ NASA, Johnson Space Center\n
 */
 
 /* Trick include files. */
-#include "sim_services/include/collect_macros.h"
+#include "trick/collect_macros.h"
 
 /* Model include files. */
-#include "../include/ball_state.h"
+#include "Ball/include/ball_state.h"
 
 /*!
  * @job_class{derivative}
@@ -46,9 +46,9 @@ int ball_state_deriv(
 {
 
    /* GET SHORTHAND NOTATION FOR DATA STRUCTURES */
-   BallState_In const *SI = &( state->input );
-   BallState_Out      *SO = &( state->output );
-   BallState_Work     *SW = &( state->work );
+   BallState_In const   *SI = &( state->input );
+   BallState_Out        *SO = &( state->output );
+   BallState_Work const *SW = &( state->work );
 
    /* LOCAL VARIABLE DECLARATIONS */
    double **collected_forces;

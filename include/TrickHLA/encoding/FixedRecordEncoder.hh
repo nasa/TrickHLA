@@ -33,10 +33,6 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_FIXED_RECORD_ENCODER_HH
 #define TRICKHLA_FIXED_RECORD_ENCODER_HH
 
-// System includes.
-#include <cstddef>
-#include <string>
-
 // TrickHLA includes.
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/encoding/EncoderBase.hh"

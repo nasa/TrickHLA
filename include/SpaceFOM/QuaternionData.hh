@@ -38,9 +38,6 @@ NASA, Johnson Space Center\n
 // Trick includes.
 #include "trick/reference_frame.h"
 
-// TrickHLA includes.
-#include "TrickHLA/RecordElement.hh"
-
 namespace SpaceFOM
 {
 

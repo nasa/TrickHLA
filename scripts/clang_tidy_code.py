@@ -304,6 +304,8 @@ Examples:\n  clang_tidy_code --TrickHLA --SpaceFOM -v --check-includes --check-c
    if args.process_all or args.process_models:
       include_dirs.extend( ['-I./models'] )
 
+      if os.path.isdir( './models/Ball/src' ):
+         source_dirs.extend( ['./models/Ball/src/'] )
       if os.path.isdir( './models/DistIf/src' ):
          source_dirs.extend( ['./models/DistIf/src/'] )
       if os.path.isdir( './models/encoding/src' ):

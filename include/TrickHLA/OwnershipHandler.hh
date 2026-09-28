@@ -39,10 +39,6 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_OWNERSHIP_HANDLER_HH
 #define TRICKHLA_OWNERSHIP_HANDLER_HH
 
-// System includes.
-#include <map>
-#include <string>
-
 // TrickHLA includes.
 #include "TrickHLA/Attribute.hh"
 #include "TrickHLA/CheckpointConversionBase.hh"

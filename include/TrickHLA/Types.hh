@@ -33,11 +33,8 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_TYPES_HH
 
 // System include files.
-#include <cstddef>
-#include <map>
+#include <cstdint>
 #include <queue>
-#include <string>
-#include <vector>
 
 // TrickHLA includes.
 #include "TrickHLA/HLAStandardSupport.hh"

@@ -32,10 +32,8 @@ NASA, Johnson Space Center\n
 
 */
 
-/* System include files. */
-#include <math.h>
-
 /* Trick includes. */
+#include "trick/regula_falsi.h"
 
 /* Model include files. */
 #include "Ball/include/ball_state.h"

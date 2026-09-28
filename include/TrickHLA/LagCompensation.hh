@@ -37,9 +37,6 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_LAG_COMPENSATION_HH
 #define TRICKHLA_LAG_COMPENSATION_HH
 
-// System includes.
-#include <string>
-
 // TrickHLA includes.
 #include "TrickHLA/CheckpointConversionBase.hh"
 #include "TrickHLA/ObjectCallbackBase.hh"

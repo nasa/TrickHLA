@@ -42,17 +42,11 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_OBJECT_SERVICES_HH
 #define TRICKHLA_OBJECT_SERVICES_HH
 
-// System includes.
-#include <string>
-
 // TrickHLA includes.
 #include "TrickHLA/CheckpointConversionBase.hh"
-#include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Types.hh"
-#include "TrickHLA/time/Int64Interval.hh"
-#include "TrickHLA/time/Int64Time.hh"
 #include "TrickHLA/utils/MutexLock.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need

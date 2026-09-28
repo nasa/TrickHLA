@@ -38,8 +38,8 @@ NASA, Johnson Space Center\n
 /* Trick include files. */
 
 /* Model include files. */
-#include "../include/ball_proto.h"
-#include "../include/ball_state.h"
+#include "Ball/include/ball_proto.h"
+#include "Ball/include/ball_state.h"
 
 /*!
  * @job_class{initialization}
@@ -49,8 +49,8 @@ int ball_state_init(
 {
 
    /* GET SHORHAND NOTATION FOR DATA STRUCTURES */
-   BallState_In  *BI = &( state->input );
-   BallState_Out *BO = &( state->output );
+   BallState_In const *BI = &( state->input );
+   BallState_Out      *BO = &( state->output );
 
    /* TRANSFER INPUT POSITION STATES TO OUTPUT POSITION STATES */
    BO->position[0] = BI->position[0]; /* X position */

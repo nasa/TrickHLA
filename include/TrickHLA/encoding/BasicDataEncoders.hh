@@ -33,15 +33,10 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_BASIC_DATA_ENCODERS_HH
 #define TRICKHLA_BASIC_DATA_ENCODERS_HH
 
-// System includes.
-#include <cstddef>
-#include <string>
-
 // Trick include files.
 #include "trick/attributes.h"
 
 // TrickHLA include files.
-#include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/encoding/EncoderBase.hh"
 

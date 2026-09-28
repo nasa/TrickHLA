@@ -38,18 +38,11 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_ATTRIBUTE_HH
 #define TRICKHLA_ATTRIBUTE_HH
 
-// System includes.
-#include <cstdint>
-#include <map>
-#include <string>
-
 // TrickHLA includes.
 #include "TrickHLA/CompileConfig.hh"
-#include "TrickHLA/Conditional.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/RecordElement.hh"
 #include "TrickHLA/Types.hh"
-#include "TrickHLA/utils/Utilities.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -60,6 +53,7 @@ NASA, Johnson Space Center\n
 #endif
 
 // HLA include files.
+#include "RTI/Handle.h"
 #include "RTI/RTI1516.h"
 
 #if defined( IEEE_1516_2010 )

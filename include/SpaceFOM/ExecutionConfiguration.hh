@@ -38,7 +38,6 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstdint>
-#include <string>
 
 // SpaceFOM includes.
 #include "SpaceFOM/Types.hh"

@@ -35,10 +35,6 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_FLOAT64_TO_LOGICAL_TIME_ENCODER_HH
 #define TRICKHLA_FLOAT64_TO_LOGICAL_TIME_ENCODER_HH
 
-// System includes.
-#include <cstddef>
-#include <string>
-
 // Trick includes.
 #include "trick/attributes.h"
 

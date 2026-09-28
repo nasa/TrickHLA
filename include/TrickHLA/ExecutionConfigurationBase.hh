@@ -43,12 +43,7 @@ execution.
 #ifndef TRICKHLA_EXECUTION_CONFIGURATION_BASE_HH
 #define TRICKHLA_EXECUTION_CONFIGURATION_BASE_HH
 
-// System includes.
-#include <string>
-
 // TrickHLA includes.
-#include "TrickHLA/CheckpointConversionBase.hh"
-#include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Packing.hh"
 

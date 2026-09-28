@@ -40,13 +40,9 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstdint>
-#include <string>
 
 // SpaceFOM includes.
 #include "SpaceFOM/ExecutionConfiguration.hh"
-
-// TrickHLA includes.
-#include "TrickHLA/Types.hh"
 
 namespace SpaceFOM
 {

@@ -70,12 +70,12 @@ int ball_force_default_data( BallForce *force );
  *  @param force Force parameters for force model.
  *  @param position Current ball state.
  *  @return Always returns zero. */
-int ball_force_field( BallForce *force, BallState *position );
+int ball_force_field( BallForce *force, BallState const *position );
 
 /*! @brief Simple print out of ball state.
  *  @param state Ball state parameters.
  *  @return Always returns zero. */
-int ball_print( BallState *state );
+int ball_print( BallState const *state );
 
 /*! @brief Initializes the ball state model.
  *  @param state Ball state parameters.

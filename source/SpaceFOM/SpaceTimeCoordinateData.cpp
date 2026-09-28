@@ -41,7 +41,6 @@ NASA, Johnson Space Center\n
 
 using namespace std;
 using namespace SpaceFOM;
-using namespace TrickHLA;
 
 /*!
  * @job_class{initialization}

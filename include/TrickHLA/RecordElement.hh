@@ -33,10 +33,6 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_RECORD_ELEMENT_HH
 #define TRICKHLA_RECORD_ELEMENT_HH
 
-// System includes.
-#include <cstddef>
-#include <string>
-
 // Trick includes.
 #include "trick/attributes.h"
 

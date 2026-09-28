@@ -37,8 +37,8 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_PARAMETER_HH
 #define TRICKHLA_PARAMETER_HH
 
-// System includes.
-#include <string>
+// Trick includes.
+#include "trick/attributes.h"
 
 // TrickHLA includes.
 #include "TrickHLA/HLAStandardSupport.hh"

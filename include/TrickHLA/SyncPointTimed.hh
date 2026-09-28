@@ -36,9 +36,6 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_SYNC_POINT_TIMED_HH
 #define TRICKHLA_SYNC_POINT_TIMED_HH
 
-// System includes
-#include <string>
-
 // TrickHLA includes.
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/SyncPoint.hh"

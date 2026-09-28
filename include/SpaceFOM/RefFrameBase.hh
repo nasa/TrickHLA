@@ -44,7 +44,6 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <iostream>
-#include <string>
 
 // TrickHLA includes.
 #include "TrickHLA/CompileConfig.hh"

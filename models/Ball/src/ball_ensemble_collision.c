@@ -30,11 +30,14 @@ NASA, Johnson Space Center\n
 /* System include files. */
 
 /* Trick include files. */
-#include "sim_services/Executive/include/exec_proto.h"
-#include "sim_services/Message/include/message_proto.h"
+#include "trick/exec_proto.h"
+#include "trick/message_proto.h"
+#include "trick/regula_falsi.h"
 
 /* Model include files. */
-#include "../include/ball_proto.h"
+#include "Ball/include/ball_proto.h"
+#include "Ball/include/ball_state.h"
+#include "Ball/include/ball_walls.h"
 
 /*!
  * @job_class{dynamic_event}

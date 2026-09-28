@@ -35,7 +35,7 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_MEMORY_SERVICES_HH
 
 // System includes.
-#include <string>
+#include <cstddef>
 
 // Trick includes.
 #include "trick/attributes.h"
@@ -72,7 +72,7 @@ class MemoryServices
     * @param enh_type_spec Type specifier followed by zero or more asterisks.
     * @param n_elems       The number of items of the given type to allocate.
     * @return An address to the allocated memory or nullptr on failure.  */
-   static void *declare_var( char const *enh_type_spec, size_t n_elems );
+   static void *declare_var( char const *enh_type_spec, std::size_t n_elems );
 
    /*! @brief Delete the memory at the named allocation address.
     * @param  var_name Name of the Trick memory allocation.
@@ -134,7 +134,7 @@ class MemoryServices
     * @param  cdims      Array of dimension sizes.
     * @return An address to the allocated memory or nullptr on failure. */
    template < typename T >
-   static T declare_var( T type, std::string const &class_name, size_t n_stars, std::string const &var_name, size_t n_cdims, size_t *cdims );
+   static T declare_var( T type, std::string const &class_name, std::size_t n_stars, std::string const &var_name, std::size_t n_cdims, std::size_t *cdims );
 
    /*! @brief Allocate an array of a specified type instances.
     * @detail An allocation (variable) may by named (@b var_name != "") or anonymous
@@ -147,7 +147,7 @@ class MemoryServices
     * @param  var_name Name of the allocation for Trick.  Anonymous allocation if empty.
     * @return An address to the allocated memory or nullptr on failure. */
    template < typename T >
-   static T declare_var( T type, size_t n_elems, std::string const &var_name );
+   static T declare_var( T type, std::size_t n_elems, std::string const &var_name );
 
    /*! @brief Allocate an array of a specified type instances.
     * @detail An allocation (variable) may by named (@b var_name != "") or anonymous
@@ -159,7 +159,7 @@ class MemoryServices
     * @param  n_elems  Number of elements in the array.
     * @return An address to the allocated memory or nullptr on failure. */
    template < typename T >
-   static T declare_var( T type, size_t n_elems );
+   static T declare_var( T type, std::size_t n_elems );
 
    /*! @brief Allocate a contiguous region of memory as specified by an
     * allocation declaration string.
@@ -180,7 +180,7 @@ class MemoryServices
     * @param  n_elems       The number of items of the given type to allocate.
     * @return An address to the allocated memory or nullptr on failure.  */
    template < typename T >
-   static T declare_var( T type, std::string const &enh_type_spec, size_t n_elems );
+   static T declare_var( T type, std::string const &enh_type_spec, std::size_t n_elems );
 
    /*! @brief Resize one-dimensional array by address.
     * @tparam T             Template type parameter.
@@ -188,7 +188,7 @@ class MemoryServices
     * @param  n_elems       The number of items of the given type to allocate.
     * @return An address to the allocated memory or nullptr on failure.  */
    template < typename T >
-   static T resize_array( T address, size_t n_elems );
+   static T resize_array( T address, std::size_t n_elems );
 
    /*! @brief Delete the memory at the specified address.
     * @tparam T    Template type parameter.

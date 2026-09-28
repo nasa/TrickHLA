@@ -33,11 +33,6 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_VARIABLE_ARRAY_ENCODER_BASE_HH
 #define TRICKHLA_VARIABLE_ARRAY_ENCODER_BASE_HH
 
-// System includes.
-#include <cstddef>
-#include <string>
-#include <vector>
-
 // Trick includes.
 #include "trick/attributes.h"
 #include "trick/parameter_types.h"

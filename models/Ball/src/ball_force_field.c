@@ -44,17 +44,17 @@ NASA, Johnson Space Center\n
 /* Trick include files. */
 
 /* Model include files. */
-#include "../include/ball_force.h"
-#include "../include/ball_proto.h"
+#include "Ball/include/ball_force.h"
+#include "Ball/include/ball_proto.h"
+#include "Ball/include/ball_state.h"
 
 /*!
  * @job_class{derivative}
  */
 int ball_force_field(
-   BallForce *force,
-   BallState *state )
+   BallForce       *force,
+   BallState const *state )
 {
-
    /* GET SHORTHAND NOTATION FOR DATA STRUCTURES */
    BallForce_In const *FI = &( force->input );
    BallForce_Out      *FO = &( force->output );

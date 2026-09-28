@@ -35,9 +35,6 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_EXECUTON_CONTROL_HH
 #define TRICKHLA_EXECUTON_CONTROL_HH
 
-// System includes.
-#include <string>
-
 // TrickHLA includes.
 #include "TrickHLA/ExecutionConfiguration.hh"
 #include "TrickHLA/ExecutionControlBase.hh"

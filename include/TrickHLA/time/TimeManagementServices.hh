@@ -39,12 +39,11 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_TIME_MANAGEMENT_SERVICES_HH
 #define TRICKHLA_TIME_MANAGEMENT_SERVICES_HH
 
-// Trick includes.
-#include "trick/Flag.h"
+// System includes.
+#include <cstdint>
 
 // TrickHLA includes.
 #include "TrickHLA/CheckpointConversionBase.hh"
-#include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64Interval.hh"
@@ -53,7 +52,6 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/utils/ElapsedTimeStats.hh"
 #include "TrickHLA/utils/MutexLock.hh"
 #include "TrickHLA/utils/MutexProtection.hh"
-#include "TrickHLA/utils/Utilities.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.

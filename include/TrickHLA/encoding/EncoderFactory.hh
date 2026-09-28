@@ -33,17 +33,20 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_ENCODER_FACTORY_HH
 #define TRICKHLA_ENCODER_FACTORY_HH
 
-// System includes.
-#include <string>
-
 // Trick includes.
 #include "trick/attributes.h"
 
 // TrickHLA includes.
-#include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Types.hh"
-#include "TrickHLA/encoding/EncoderBase.hh"
+
+// Forward Declared Classes: Since these classes are only used as references
+// through pointers, these classes are included as forward declarations. This
+// helps to limit issues with recursive includes.
+namespace TrickHLA
+{
+class EncoderBase;
+} // namespace TrickHLA
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
