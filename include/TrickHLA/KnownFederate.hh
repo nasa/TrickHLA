@@ -37,8 +37,8 @@ NASA, Johnson Space Center\n
 #include <cstdint>
 
 // TrickHLA includes.
-#include "TrickHLA/utils/StringUtilities.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
+#include "TrickHLA/utils/StringUtilities.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -116,8 +116,9 @@ class KnownFederate
    {
       return;
    };
+
    /*! @brief Initialization constructor for the TrickHLA KnownFederate class. */
-   KnownFederate( bool required, std::string name, std::string type )
+   KnownFederate( bool const required, std::string const &name, std::string const &type )
       : required( required ),
         object_instance_handle(),
         MOM_instance_name()
@@ -126,8 +127,9 @@ class KnownFederate
       StringUtilities::to_wstring( this->type, type );
       return;
    };
+
    /*! @brief Initialization constructor for the TrickHLA KnownFederate class. */
-   KnownFederate( bool required, std::wstring name, std::wstring type )
+   KnownFederate( bool const required, std::wstring const &name, std::wstring const &type )
       : name( name ),
         type( type ),
         required( required ),
@@ -136,6 +138,7 @@ class KnownFederate
    {
       return;
    };
+
    /*! @brief Destructor for the TrickHLA KnownFederate class. */
    virtual ~KnownFederate()
    {

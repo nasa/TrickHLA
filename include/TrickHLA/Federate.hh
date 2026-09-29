@@ -21,6 +21,7 @@ NASA, Johnson Space Center\n
 
 @tldh
 @trick_link_dependency{../../source/TrickHLA/DebugHandler.cpp}
+@trick_link_dependency{../../source/TrickHLA/ExecutionConfigurationBase.cpp}
 @trick_link_dependency{../../source/TrickHLA/ExecutionControlBase.cpp}
 @trick_link_dependency{../../source/TrickHLA/FedAmb.cpp}
 @trick_link_dependency{../../source/TrickHLA/Federate.cpp}
@@ -265,17 +266,21 @@ class Federate : public CheckpointConversionBase
    //
    /*! @brief Add a federate to the list of known federates.
     *  @param required Is the federate required.
-    *  @param name     The name of the known federate.
-    *  @param type     The type of the known federate. */
-   void add_known_federate( bool required, std::string name, std::string type );
+    *  @param known_fed_name The name of the known federate.
+    *  @param known_fed_type The type of the known federate. */
+   void add_known_federate( bool const         required,
+                            std::string const &known_fed_name,
+                            std::string const &known_fed_type );
 
    /*! @brief Add a federate to the list of known federates.
     *  @param required Is the federate required.
-    *  @param name     The name of the known federate.
-    *  @param type     The type of the known federate. */
-   void add_known_federate( bool required, std::wstring name, std::wstring type );
+    *  @param known_fed_name The name of the known federate.
+    *  @param known_fed_type The type of the known federate. */
+   void add_known_federate( bool const          required,
+                            std::wstring const &known_fed_name,
+                            std::wstring const &known_fed_type );
 
-   /*! @brief Verify the joined federates list against the federates in Federatio list.
+   /*! @brief Verify the joined federates list against the federates in Federates list.
     *  @return True if all federate in Federation and only all are in the joined federates map. */
    bool verify_joined_federates();
 
