@@ -370,7 +370,7 @@ void SaveRestoreServices::save_request(
       return;
    }
 
-   // Check the Federation Save state to ensure that a Save is applicable .
+   // Check the Federation Save state to ensure that a Save is applicable.
    if ( ( save_state != THLASaveProcessEnum::SAVE_NONE )
         && ( save_state != THLASaveProcessEnum::SAVE_UNSUPPORTED ) ) {
 
@@ -1664,9 +1664,6 @@ void SaveRestoreServices::restore_after_checkpoint_load()
 
    // Restore the data constructs from loading the checkpoint file.
    federate->restore_data_after_checkpoint();
-   if ( execution_control != nullptr ) {
-      execution_control->restore_data_after_checkpoint();
-   }
 
    //
    // Get us restarted again...
@@ -1675,8 +1672,10 @@ void SaveRestoreServices::restore_after_checkpoint_load()
    // Reset RTI data to the state it was in when checkpointed
    object_service->setup_object_ref_attributes();
    interaction_service->setup_interaction_ref_attributes();
+
    object_service->setup_object_RTI_handles();
    interaction_service->setup_interaction_RTI_handles();
+   
    object_service->set_all_object_instance_handles_by_name();
 
    // FIXME: These need to be implemented.
