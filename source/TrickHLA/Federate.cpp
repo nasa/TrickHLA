@@ -1412,21 +1412,21 @@ bool Federate::check_joined_federates_match()
  *  @job_class{initialization}
  */
 void Federate::add_known_federate(
-   bool        required,
-   std::string name,
-   std::string type )
+   bool const         required,
+   std::string const &known_fed_name,
+   std::string const &known_fed_type )
 {
-   KnownFederate known_fed( required, name, type );
+   KnownFederate const known_fed( required, known_fed_name, known_fed_type );
    known_federates.push_back( known_fed );
    return;
 }
 
 void Federate::add_known_federate(
-   bool         required,
-   std::wstring name,
-   std::wstring type )
+   bool const          required,
+   std::wstring const &known_fed_name,
+   std::wstring const &known_fed_type )
 {
-   KnownFederate known_fed( required, name, type );
+   KnownFederate const known_fed( required, known_fed_name, known_fed_type );
    known_federates.push_back( known_fed );
    return;
 }

@@ -4,10 +4,13 @@
 ##include <climits>
 
 ##include "TrickHLA/CompileConfig.hh"
+##include "TrickHLA/Conditional.hh"
+##include "TrickHLA/ExecutionConfigurationBase.hh"
 ##include "TrickHLA/Federate.hh"
 ##include "TrickHLA/LagCompensation.hh"
 ##include "TrickHLA/ObjectDeletedHandler.hh"
 ##include "TrickHLA/OwnershipHandler.hh"
+##include "TrickHLA/Packing.hh"
 ##include "TrickHLA/encoding/EncoderFactory.hh"
 ##include "TrickHLA/encoding/EncoderBase.hh"
 
