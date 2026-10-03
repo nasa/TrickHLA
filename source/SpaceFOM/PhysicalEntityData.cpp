@@ -48,7 +48,7 @@ PhysicalEntityData::PhysicalEntityData()
      parent_frame(),
      state()
 {
-   for ( unsigned int iinc = 0; iinc < 3; iinc++ ) {
+   for ( unsigned int iinc = 0; iinc < 3; ++iinc ) {
       this->accel[iinc]     = 0.0;
       this->ang_accel[iinc] = 0.0;
       this->cm[iinc]        = 0.0;
@@ -101,7 +101,7 @@ void PhysicalEntityData::copy( PhysicalEntityData const &source )
    this->state = source.state;
 
    // Copy the accelerations and CM vectors.
-   for ( int iinc = 0; iinc < 3; iinc++ ) {
+   for ( int iinc = 0; iinc < 3; ++iinc ) {
       this->accel[iinc]     = source.accel[iinc];
       this->ang_accel[iinc] = source.ang_accel[iinc];
       this->cm[iinc]        = source.cm[iinc];

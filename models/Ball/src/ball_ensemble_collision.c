@@ -52,7 +52,7 @@ double ball_ensemble_collision(
    /* NOTE: This routine only checks for collisions with walls not between balls. */
 
    /* Check for collisions with walls. */
-   for ( int iinc = 0; iinc < num_balls; iinc++ ) {
+   for ( int iinc = 0; iinc < num_balls; ++iinc ) {
 
       double tgo = ball_ceiling( walls, states[iinc] );
       if ( tgo < event_tgo ) {

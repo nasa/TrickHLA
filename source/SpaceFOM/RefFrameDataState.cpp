@@ -96,7 +96,7 @@ void RefFrameDataState::copy( RefFrameDataState const &source )
    this->state = source.state;
 
    // Copy the accelerations.
-   for ( int iinc = 0; iinc < 3; iinc++ ) {
+   for ( int iinc = 0; iinc < 3; ++iinc ) {
       this->accel[iinc]     = source.accel[iinc];
       this->ang_accel[iinc] = source.ang_accel[iinc];
    }
