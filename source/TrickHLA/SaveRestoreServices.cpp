@@ -294,7 +294,8 @@ bool SaveRestoreServices::save_set_state( THLASaveProcessEnum state )
         && ( state != THLASaveProcessEnum::SAVE_UNSUPPORTED ) ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "HLA SaveRestore NOT supported!\n", MSG_WARNING );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      "HLA SaveRestore NOT supported!\n", MSG_WARNING );
       }
 
       // Make sure that the service state reflects the unsupported state.
@@ -365,7 +366,8 @@ void SaveRestoreServices::save_request(
    // If Federation SaveRestore is not supported then return without action.
    if ( save_state == THLASaveProcessEnum::SAVE_UNSUPPORTED ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "HLA SaveRestore NOT supported!\n", MSG_WARNING );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      "HLA SaveRestore NOT supported!\n", MSG_WARNING );
       }
       return;
    }
@@ -553,7 +555,8 @@ bool SaveRestoreServices::save_in_progress_check()
    // If Federation SaveRestore is not supported then return without action.
    if ( save_state == THLASaveProcessEnum::SAVE_UNSUPPORTED ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "HLA SaveRestore NOT supported!\n", MSG_WARNING );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      "HLA SaveRestore NOT supported!\n", MSG_WARNING );
       }
       return ( false );
    }
@@ -584,7 +587,8 @@ void SaveRestoreServices::save_succeded()
    // If Federation SaveRestore is not supported then return without action.
    if ( save_state == THLASaveProcessEnum::SAVE_UNSUPPORTED ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "HLA SaveRestore NOT supported!\n", MSG_WARNING );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      "HLA SaveRestore NOT supported!\n", MSG_WARNING );
       }
       return;
    }
@@ -617,7 +621,8 @@ void SaveRestoreServices::save_failed()
    // If Federation SaveRestore is not supported then return without action.
    if ( save_state == THLASaveProcessEnum::SAVE_UNSUPPORTED ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "HLA SaveRestore NOT supported!\n", MSG_WARNING );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      "HLA SaveRestore NOT supported!\n", MSG_WARNING );
       }
       return;
    }
@@ -1010,7 +1015,8 @@ bool SaveRestoreServices::restore_set_state( THLARestoreProcessEnum state )
         && ( state != THLARestoreProcessEnum::RESTORE_UNSUPPORTED ) ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "HLA SaveRestore NOT supported!\n", MSG_WARNING );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      "HLA SaveRestore NOT supported!\n", MSG_WARNING );
       }
 
       // Make sure that the service state reflects the unsupported state.
@@ -1034,7 +1040,8 @@ void SaveRestoreServices::restore_request_status()
    // initialization scheme selected by the user.
    if ( !execution_control->is_save_and_restore_supported() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "HLA SaveRestore NOT supported!\n", MSG_WARNING );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      "HLA SaveRestore NOT supported!\n", MSG_WARNING );
       }
       return;
    }
@@ -1087,7 +1094,8 @@ void SaveRestoreServices::restore_waiting_for_request_status()
    // execution control scheme selected by the user.
    if ( !execution_control->is_save_and_restore_supported() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "HLA SaveRestore NOT supported!\n", MSG_WARNING );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      "HLA SaveRestore NOT supported!\n", MSG_WARNING );
       }
       return;
    }
@@ -1104,7 +1112,8 @@ void SaveRestoreServices::restore_waiting_for_request_status()
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
          if ( execution_control->process_timer.timeout( execution_control->process_timer.time() ) ) {
             execution_control->process_timer.reset();
-            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Waiting for Restore status response...\n" );
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                         "Waiting for Restore status response...\n" );
          }
       }
 
@@ -1140,7 +1149,8 @@ void SaveRestoreServices::restore_waiting_for_request_status()
       restore_state = THLARestoreProcessEnum::RESTORE_STATUS_COMPLETE;
 
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Restore status response complete.\n" );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      "Restore status response complete.\n" );
       }
    }
 
@@ -1311,7 +1321,8 @@ void SaveRestoreServices::restore_waiting_for_request()
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
       if ( execution_control->process_timer.timeout( execution_control->process_timer.time() ) ) {
          execution_control->process_timer.reset();
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Waiting for Restore request callback...\n" );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      "Waiting for Restore request callback...\n" );
       }
    }
 
@@ -1383,7 +1394,8 @@ void SaveRestoreServices::restore_begun()
    // If Federation SaveRestore is not supported then return without action.
    if ( this->restore_state == THLARestoreProcessEnum::RESTORE_UNSUPPORTED ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "HLA SaveRestore NOT supported!\n", MSG_WARNING );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      "HLA SaveRestore NOT supported!\n", MSG_WARNING );
       }
       return;
    }
@@ -1425,7 +1437,8 @@ void SaveRestoreServices::restore_waiting_for_initiated()
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
       if ( execution_control->process_timer.timeout( execution_control->process_timer.time() ) ) {
          execution_control->process_timer.reset();
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Waiting for Restore initiated callback...\n" );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      "Waiting for Restore initiated callback...\n" );
       }
    }
 
@@ -1624,7 +1637,8 @@ void SaveRestoreServices::restore_after_checkpoint_load()
    // If Federation SaveRestore is not supported then return without action.
    if ( this->restore_state == THLARestoreProcessEnum::RESTORE_UNSUPPORTED ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "HLA SaveRestore NOT supported!\n", MSG_WARNING );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      "HLA SaveRestore NOT supported!\n", MSG_WARNING );
       }
       return;
    }
@@ -1675,7 +1689,7 @@ void SaveRestoreServices::restore_after_checkpoint_load()
 
    object_service->setup_object_RTI_handles();
    interaction_service->setup_interaction_RTI_handles();
-   
+
    object_service->set_all_object_instance_handles_by_name();
 
    // FIXME: These need to be implemented.
@@ -1784,7 +1798,8 @@ bool SaveRestoreServices::restore_waiting_for_completion()
    // If Federation SaveRestore is not supported then return without action.
    if ( this->restore_state == THLARestoreProcessEnum::RESTORE_UNSUPPORTED ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "HLA SaveRestore NOT supported!\n", MSG_WARNING );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      "HLA SaveRestore NOT supported!\n", MSG_WARNING );
       }
       return ( false );
    }

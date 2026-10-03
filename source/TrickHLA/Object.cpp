@@ -198,7 +198,9 @@ Object::~Object()
       if ( this->thread_ids_array != nullptr
            && MemoryServices::is_alloced( this->thread_ids_array ) ) {
          if ( !MemoryServices::delete_var( this->thread_ids_array ) ) {
-            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Failed to delete Trick Memory for 'this->thread_ids_array'\n", MSG_WARNING );
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                         "Failed to delete Trick Memory for 'this->thread_ids_array'\n",
+                                         MSG_WARNING );
          }
          this->thread_ids_array       = nullptr;
          this->thread_ids_array_count = 0;
@@ -238,7 +240,8 @@ void Object::initialize(
    // FIXME: This needs to me switched to use the Federate and then access the
    // services from the Federate instance.
    if ( federate == nullptr ) {
-      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr TrickHLA::Federate!\n" );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__,
+                               "Unexpected nullptr TrickHLA::Federate!\n" );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJECT ) ) {
@@ -272,7 +275,8 @@ void Object::initialize(
    }
 
    // Do a bounds check on the 'lag_comp_type' value.
-   if ( ( lag_comp_type < LAG_COMPENSATION_FIRST_VALUE ) || ( lag_comp_type > LAG_COMPENSATION_LAST_VALUE ) ) {
+   if ( ( lag_comp_type < LAG_COMPENSATION_FIRST_VALUE )
+        || ( lag_comp_type > LAG_COMPENSATION_LAST_VALUE ) ) {
       ostringstream errmsg;
       errmsg << "Object '" << name << "', the Lag-Compensation Type"
              << " setting 'lag_comp_type' has a value that is out of the valid"
@@ -562,7 +566,8 @@ void Object::remove()
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
          TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr RTIambassador.\n", MSG_WARNING );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      "Unexpected nullptr RTIambassador.\n", MSG_WARNING );
          return;
       }
 
@@ -731,7 +736,8 @@ void Object::publish_object_attributes()
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr RTIambassador.\n", MSG_WARNING );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   "Unexpected nullptr RTIambassador.\n", MSG_WARNING );
       return;
    }
 
@@ -795,7 +801,8 @@ void Object::unpublish_all_object_attributes()
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr RTIambassador.\n", MSG_WARNING );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   "Unexpected nullptr RTIambassador.\n", MSG_WARNING );
       return;
    }
 
@@ -850,7 +857,8 @@ void Object::subscribe_to_object_attributes()
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr RTIambassador.\n", MSG_WARNING );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   "Unexpected nullptr RTIambassador.\n", MSG_WARNING );
       return;
    }
 
@@ -921,7 +929,8 @@ void Object::unsubscribe_all_object_attributes()
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr RTIambassador.\n", MSG_WARNING );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   "Unexpected nullptr RTIambassador.\n", MSG_WARNING );
       return;
    }
 
@@ -985,7 +994,8 @@ void Object::reserve_object_name_with_RTI()
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr RTIambassador.\n", MSG_WARNING );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   "Unexpected nullptr RTIambassador.\n", MSG_WARNING );
       return;
    }
 
@@ -1133,7 +1143,8 @@ void Object::register_object_with_RTI()
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr RTIambassador.\n", MSG_WARNING );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   "Unexpected nullptr RTIambassador.\n", MSG_WARNING );
       return;
    }
 
@@ -1753,7 +1764,9 @@ void Object::send_cyclic_and_requested_data(
             } else {
                if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
                   DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
-                                               string( "Object '" ).append( get_name() ).append( "', Receive Order (RO) Attribute update.\n" ) );
+                                               string( "Object '" )
+                                                  .append( get_name() )
+                                                  .append( "', Receive Order (RO) Attribute update.\n" ) );
                }
 
                // Send as Receive Order (i.e. with no timestamp).
@@ -2058,7 +2071,9 @@ void Object::send_blocking_io_data()
 
             if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
                DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
-                                            string( "Object '" ).append( get_name() ).append( "', Receive Order (RO) Attribute update.\n" ) );
+                                            string( "Object '" )
+                                               .append( get_name() )
+                                               .append( "', Receive Order (RO) Attribute update.\n" ) );
             }
 
             // Send as Receive Order (i.e. with no timestamp).
@@ -2247,7 +2262,8 @@ void Object::receive_cyclic_data()
    else if ( is_instance_handle_valid() && ( exec_get_sim_time() > 0.0 ) ) {
       ostringstream msg;
       msg << "Object '" << get_name() << "', NO new data at HLA-logical-time:"
-          << setprecision( 18 ) << federate->get_time_management_service()->get_granted_time().get_time_in_seconds()
+          << setprecision( 18 )
+          << federate->get_time_management_service()->get_granted_time().get_time_in_seconds()
           << " seconds.\n";
       DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
@@ -2256,7 +2272,8 @@ void Object::receive_cyclic_data()
    else {
       ostringstream msg;
       msg << "Object '" << get_name() << "', NO new data at HLA-logical-time:"
-          << setprecision( 18 ) << federate->get_time_management_service()->get_granted_time().get_time_in_seconds()
+          << setprecision( 18 )
+          << federate->get_time_management_service()->get_granted_time().get_time_in_seconds()
           << " seconds.\n";
       DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
@@ -2287,7 +2304,8 @@ void Object::receive_zero_lookahead_data()
 #if THLA_OBJ_DEBUG_RECEIVE
       ostringstream msg;
       msg << "Object '" << get_name() << "' at HLA-logical-time:"
-          << setprecision( 18 ) << federate->get_time_management_service()->get_granted_time().get_time_in_seconds()
+          << setprecision( 18 )
+          << federate->get_time_management_service()->get_granted_time().get_time_in_seconds()
           << " seconds.\n";
       DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
 #endif
@@ -2330,7 +2348,8 @@ void Object::receive_zero_lookahead_data()
    else if ( is_instance_handle_valid() && ( exec_get_sim_time() > 0.0 ) ) {
       ostringstream msg;
       msg << "Object '" << get_name() << "', NO new data at HLA-logical-time:"
-          << setprecision( 18 ) << federate->get_time_management_service()->get_granted_time().get_time_in_seconds()
+          << setprecision( 18 )
+          << federate->get_time_management_service()->get_granted_time().get_time_in_seconds()
           << " seconds.\n";
       DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
@@ -2339,7 +2358,8 @@ void Object::receive_zero_lookahead_data()
    else {
       ostringstream msg;
       msg << "Object '" << get_name() << "', NO new data at HLA-logical-time:"
-          << setprecision( 18 ) << federate->get_time_management_service()->get_granted_time().get_time_in_seconds()
+          << setprecision( 18 )
+          << federate->get_time_management_service()->get_granted_time().get_time_in_seconds()
           << " seconds.\n";
       DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
@@ -2370,7 +2390,8 @@ void Object::receive_blocking_io_data()
 #if THLA_OBJ_DEBUG_RECEIVE
       ostringstream msg;
       msg << "Object '" << get_name() << "' at HLA-logical-time:"
-          << setprecision( 18 ) << federate->get_time_management_service()->get_granted_time().get_time_in_seconds()
+          << setprecision( 18 )
+          << federate->get_time_management_service()->get_granted_time().get_time_in_seconds()
           << " seconds.\n";
       DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
 #endif
@@ -2413,7 +2434,8 @@ void Object::receive_blocking_io_data()
    else if ( is_instance_handle_valid() && ( exec_get_sim_time() > 0.0 ) ) {
       ostringstream msg;
       msg << "Object '" << get_name() << "' NO new data at HLA-logical-time:"
-          << setprecision( 18 ) << federate->get_time_management_service()->get_granted_time().get_time_in_seconds()
+          << setprecision( 18 )
+          << federate->get_time_management_service()->get_granted_time().get_time_in_seconds()
           << " seconds.\n";
       DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
@@ -2422,7 +2444,8 @@ void Object::receive_blocking_io_data()
    else {
       ostringstream msg;
       msg << "Object '" << get_name() << "' NO new data at HLA-logical-time:"
-          << setprecision( 18 ) << federate->get_time_management_service()->get_granted_time().get_time_in_seconds()
+          << setprecision( 18 )
+          << federate->get_time_management_service()->get_granted_time().get_time_in_seconds()
           << " seconds.\n";
       DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
@@ -2818,13 +2841,16 @@ void Object::release_ownership()
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr RTIambassador.\n", MSG_WARNING );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   "Unexpected nullptr RTIambassador.\n", MSG_WARNING );
       return;
    }
 
 #if THLA_OBJ_OWNERSHIP_DEBUG
    DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
-                                string( "\n===== Attributes of Object '" ).append( get_name() ).append( "'.\n" ) );
+                                string( "\n===== Attributes of Object '" )
+                                   .append( get_name() )
+                                   .append( "'.\n" ) );
 #endif
 
    AttributeHandleSet attrs;
@@ -2849,7 +2875,9 @@ void Object::release_ownership()
       if ( !this->divest_requested ) {
 #if THLA_OBJ_OWNERSHIP_DEBUG
          DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
-                                      string( "\n===== Another thread beat us to release Attributes of Object '" ).append( get_name() ).append( "'.\n" ) );
+                                      string( "\n===== Another thread beat us to release Attributes of Object '" )
+                                         .append( get_name() )
+                                         .append( "'.\n" ) );
 #endif
 
          // Another thread beat us to release the Attributes and is processing the
@@ -2960,7 +2988,8 @@ void Object::pull_ownership()
    // We need an RTI ambassador to be able to continue.
    RTIambassador *rti_amb = federate->get_RTI_ambassador();
    if ( rti_amb == nullptr ) {
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr RTIambassador.\n", MSG_WARNING );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   "Unexpected nullptr RTIambassador.\n", MSG_WARNING );
       return;
    }
 
@@ -3164,7 +3193,8 @@ void Object::pull_ownership_at_init(
                   ostringstream msg;
                   msg << "Object '" << get_name()
                       << "', can not pull ownership of Attribute '" << get_FOM_name()
-                      << "'->'" << attr->get_FOM_name() << "' because it is not configured to be published.\n";
+                      << "'->'" << attr->get_FOM_name()
+                      << "' because it is not configured to be published.\n";
                   DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
                }
             }
@@ -3204,7 +3234,8 @@ void Object::pull_ownership_at_init(
          TRICKHLA_RESTORE_FPU_CONTROL_WORD;
          TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr RTIambassador.\n", MSG_WARNING );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      "Unexpected nullptr RTIambassador.\n", MSG_WARNING );
          return;
       }
 
@@ -3267,7 +3298,8 @@ void Object::pull_ownership_at_init(
             if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
                ostringstream msg;
-               msg << "Object '" << get_name() << "', Waiting for Ownership Acquisition Notification callback...\n";
+               msg << "Object '" << get_name()
+                   << "', Waiting for Ownership Acquisition Notification callback...\n";
                DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
             }
          }
@@ -3376,7 +3408,8 @@ void Object::grant_pull_request()
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr RTIambassador.\n", MSG_WARNING );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   "Unexpected nullptr RTIambassador.\n", MSG_WARNING );
       return;
    }
 
@@ -3427,7 +3460,8 @@ void Object::grant_pull_request()
          if ( divested_attrs->empty() ) {
             if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
                ostringstream msg;
-               msg << "Object '" << get_name() << "', No attributes Divested since no Federate wanted them.\n";
+               msg << "Object '" << get_name()
+                   << "', No attributes Divested since no Federate wanted them.\n";
                DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
             }
          } else {
@@ -3535,7 +3569,8 @@ void Object::grant_push_request()
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr RTIambassador.\n", MSG_WARNING );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   "Unexpected nullptr RTIambassador.\n", MSG_WARNING );
       return;
    }
 
@@ -3588,7 +3623,8 @@ void Object::grant_push_request()
    } else {
       if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_OBJECT ) ) {
          ostringstream msg;
-         msg << "Object '" << get_name() << "', No attributes available to acquire ownership.\n";
+         msg << "Object '" << get_name()
+             << "', No attributes available to acquire ownership.\n";
          DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
    }
@@ -3613,7 +3649,8 @@ void *ownership_divestiture_pthread_function(
       DivestThreadArgs const *divest_thread_args = reinterpret_cast< DivestThreadArgs * >( arg );
 
 #if THLA_OBJ_OWNERSHIP_DEBUG
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n===== Calling negotiated_attribute_ownership_divestiture()\n" );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   "\n===== Calling negotiated_attribute_ownership_divestiture()\n" );
 #endif
 
       // Divest ownership of the specified set of attribute handles.
@@ -3621,7 +3658,8 @@ void *ownership_divestiture_pthread_function(
          divest_thread_args->handle_set );
 
 #if THLA_OBJ_OWNERSHIP_DEBUG
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n===== Returned from calling negotiated_attribute_ownership_divestiture()\n" );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   "\n===== Returned from calling negotiated_attribute_ownership_divestiture()\n" );
 #endif
 
       delete divest_thread_args;
@@ -3649,7 +3687,8 @@ void Object::negotiated_attribute_ownership_divestiture(
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr RTIambassador.\n", MSG_WARNING );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   "Unexpected nullptr RTIambassador.\n", MSG_WARNING );
       return;
    }
 
@@ -3729,7 +3768,8 @@ void Object::push_ownership()
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr RTIambassador.\n", MSG_WARNING );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   "Unexpected nullptr RTIambassador.\n", MSG_WARNING );
       return;
    }
 
@@ -3847,7 +3887,8 @@ void Object::push_ownership()
                                       ownership_divestiture_pthread_function,
                                       divest_thread_args );
       if ( ret ) {
-         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Failed to create ownership divestiture pthread!\n" );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__,
+                                  "Failed to create ownership divestiture pthread!\n" );
       }
    }
 }
@@ -3976,7 +4017,8 @@ void Object::push_ownership_at_init(
                                       ownership_divestiture_pthread_function,
                                       divest_thread_args );
       if ( ret ) {
-         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Failed to create ownership divestiture pthread!\n" );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__,
+                                  "Failed to create ownership divestiture pthread!\n" );
       }
 
       SleepTimeout print_timer;
@@ -4025,7 +4067,8 @@ void Object::push_ownership_at_init(
             if ( print_timer.timeout( wallclock_time ) ) {
                print_timer.reset();
                ostringstream msg;
-               msg << "Object '" << get_name() << "', Waiting for Divestiture Confirmation callback...\n";
+               msg << "Object '" << get_name()
+                   << "', Waiting for Divestiture Confirmation callback...\n";
                DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
             }
          }
@@ -4478,7 +4521,8 @@ void Object::pull_ownership_upon_rejoin()
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr RTIambassador.\n", MSG_WARNING );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   "Unexpected nullptr RTIambassador.\n", MSG_WARNING );
       return;
    }
 
