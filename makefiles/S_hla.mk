@@ -6,25 +6,22 @@
 # DEPENDENCIES:
 # 1) You must set the TRICKHLA_HOME, RTI_HOME, and RTI_VENDOR environment
 #    variables because this makefile depends on them.
-# 2) The bc, cut, grep, and which system command packages must be installed.
+# 2) The cut, grep, and which system command packages must be installed.
 #=============================================================================
 # Info and error message text colors.
 RED_TXT   =[31m
 GREEN_TXT =[32m
 RESET_TXT =[00m
 
-# Make sure the bc, cut, grep, and which system commands can be found.
+# Make sure the cut, grep, and which system commands can be found.
 ifeq (,$(findstring which, $(shell which which)))
-   $(error ${RED_TXT}S_hla.mk:ERROR: Could not find the which system command. Please ensure your PATH is correct or install the which command package.${RESET_TXT})
-endif
-ifeq (,$(findstring bc, $(shell which bc)))
-   $(error ${RED_TXT}S_hla.mk:ERROR: Could not find the bc system command. Please ensure your PATH is correct or install the bc arithmetic language processor command package.${RESET_TXT})
+   $(error ${RED_TXT}S_hla.mk:ERROR: Could not find the 'which' system command. Please ensure your PATH is correct or install the 'which' command package.${RESET_TXT})
 endif
 ifeq (,$(findstring cut, $(shell which cut)))
-   $(error ${RED_TXT}S_hla.mk:ERROR: Could not find the cut system command. Please ensure your PATH is correct or install the cut command package.${RESET_TXT})
+   $(error ${RED_TXT}S_hla.mk:ERROR: Could not find the 'cut' system command. Please ensure your PATH is correct or install the 'cut' command package.${RESET_TXT})
 endif
 ifeq (,$(findstring grep, $(shell which grep)))
-   $(error ${RED_TXT}S_hla.mk:ERROR: Could not find the grep system command. Please ensure your PATH is correct or install the grep command package.${RESET_TXT})
+   $(error ${RED_TXT}S_hla.mk:ERROR: Could not find the 'grep' system command. Please ensure your PATH is correct or install the 'grep' command package.${RESET_TXT})
 endif
 
 # Verify the TRICKHLA_HOME environment variables is set and the path is valid.
@@ -188,16 +185,13 @@ ifeq ($(TRICK_HOST_TYPE),Darwin)
 
       # Determine if the compiler is clang or gcc.
       ifneq (,$(findstring clang, $(shell $(CPPC_CMD) --version | grep clang)))
-
          # Determine the clang version.
          COMPILER_VERSION = $(shell $(CPPC_CMD) --version | grep clang | cut -d' ' -f 4 | cut -d . -f 1)
-         ifneq ("$(wildcard ${RTI_HOME}/lib/clang12)","")
-            # clang12 library exists and is the clang compiler at least version 12.
-            COMPILER_GTE_12 = $(shell echo $(COMPILER_VERSION)\>=12 | bc )
-         else
-            COMPILER_GTE_12 = 0
-         endif
-         ifeq ($(COMPILER_GTE_12),1)
+
+         ifeq ($(shell [ $(COMPILER_VERSION) -ge 12 ] && echo true),true)
+            ifeq ("$(wildcard ${RTI_HOME}/lib/clang12)","")
+               $(error ${RED_TXT}S_hla.mk:ERROR: Could not find Pitch RTI libraries for clang 12 on the Mac.${RESET_TXT})
+            endif
             ifdef DYLD_LIBRARY_PATH
                export DYLD_LIBRARY_PATH += :${RTI_HOME}/lib
             else
@@ -205,11 +199,11 @@ ifeq ($(TRICK_HOST_TYPE),Darwin)
             endif
             TRICK_USER_LINK_LIBS += -L${RTI_HOME}/lib -v -Wl,-rpath,${RTI_HOME}/lib -lrti1516_2025clang12 -lfedtime1516_2025clang12 -L${RTI_JAVA_LIB_PATH} -v -Wl,-rpath,${RTI_JAVA_LIB_PATH} -ljvm
          else
-            $(error ${RED_TXT}S_hla.mk:ERROR: Pitch RTI libraries require at least clang 12 on the Mac.${RESET_TXT})
+            $(error ${RED_TXT}S_hla.mk:ERROR: Pitch RTI requires at least clang 12 on the Mac.${RESET_TXT})
          endif
       else
          # Using gcc compiler instead of clang.
-         $(error ${RED_TXT}S_hla.mk:ERROR: Pitch RTI only supports clang on the Mac.${RESET_TXT})
+         $(error ${RED_TXT}S_hla.mk:ERROR: Pitch RTI for HLA 4 only supports clang on the Mac.${RESET_TXT})
       endif
       # Add the CLASSPATH and DYLD_LIBRARY_PATH environment variables to the 
       # simulation executable.
@@ -240,16 +234,13 @@ ifeq ($(TRICK_HOST_TYPE),Darwin)
 
       # Determine if the compiler is clang or gcc.
       ifneq (,$(findstring clang, $(shell $(CPPC_CMD) --version | grep clang)))
-
          # Determine the clang version.
          COMPILER_VERSION = $(shell $(CPPC_CMD) --version | grep clang | cut -d' ' -f 4 | cut -d . -f 1)
-         ifneq ("$(wildcard ${RTI_HOME}/lib/clang12)","")
-            # clang12 library exists and is the clang compiler at least version 12.
-            COMPILER_GTE_12 = $(shell echo $(COMPILER_VERSION)\>=12 | bc )
-         else
-            COMPILER_GTE_12 = 0
-         endif
-         ifeq ($(COMPILER_GTE_12),1)
+
+         ifeq ($(shell [ $(COMPILER_VERSION) -ge 12 ] && echo true),true)
+            ifeq ("$(wildcard ${RTI_HOME}/lib/clang12)","")
+               $(error ${RED_TXT}S_hla.mk:ERROR: Could not find Pitch RTI libraries for clang 12 on the Mac.${RESET_TXT})
+            endif
             ifdef DYLD_LIBRARY_PATH
                export DYLD_LIBRARY_PATH += :${RTI_HOME}/lib/clang12
             else
@@ -257,6 +248,9 @@ ifeq ($(TRICK_HOST_TYPE),Darwin)
             endif
             TRICK_USER_LINK_LIBS += -L${RTI_HOME}/lib -L${RTI_HOME}/lib/clang12 -v -Wl,-rpath,${RTI_HOME}/lib/clang12 -lrti1516e -lfedtime1516e -L${RTI_JAVA_LIB_PATH} -v -Wl,-rpath,${RTI_JAVA_LIB_PATH} -ljvm
          else
+            ifeq ("$(wildcard ${RTI_HOME}/lib/clang5)","")
+               $(error ${RED_TXT}S_hla.mk:ERROR: Could not find Pitch RTI libraries for clang 5 on the Mac.${RESET_TXT})
+            endif
             ifdef DYLD_LIBRARY_PATH
                export DYLD_LIBRARY_PATH += :${RTI_HOME}/lib/clang5
             else
@@ -266,12 +260,7 @@ ifeq ($(TRICK_HOST_TYPE),Darwin)
          endif
       else
          # Using gcc compiler instead of clang.
-         ifdef DYLD_LIBRARY_PATH
-            export DYLD_LIBRARY_PATH += :${RTI_HOME}/lib/gcc42
-         else
-            export DYLD_LIBRARY_PATH = ${RTI_HOME}/lib/gcc42
-         endif
-         TRICK_USER_LINK_LIBS += -L${RTI_HOME}/lib/gcc42 -lrti1516e -lfedtime1516e
+         $(error ${RED_TXT}S_hla.mk:ERROR: Pitch RTI only supports clang on the Mac.${RESET_TXT})
       endif
       # Add the CLASSPATH and DYLD_LIBRARY_PATH environment variables to the 
       # simulation executable.
@@ -338,10 +327,10 @@ else
       export TRICK_GTE_EXT += CLASSPATH
 
       # Determine which gcc library version to use.
-      ifeq ($(shell echo $(COMPILER_VERSION)\>=7 | bc),1)
+      ifeq ($(shell [ $(COMPILER_VERSION) -ge 7 ] && echo true),true)
          RTI_LIB_PATH = ${RTI_HOME}/lib
       else
-         $(error ${RED_TXT}S_hla.mk:ERROR: Pitch RTI libraries require at least gcc 7 for Linux.${RESET_TXT})
+         $(error ${RED_TXT}S_hla.mk:ERROR: Pitch RTI libraries for HLA 4 require at least gcc 7 for Linux.${RESET_TXT})
       endif
       TRICK_USER_LINK_LIBS += -L${RTI_LIB_PATH} -Wl,-rpath,${RTI_LIB_PATH} -lrti1516_2025gcc7 -lfedtime1516_2025gcc7
 
@@ -398,11 +387,11 @@ else
       export TRICK_GTE_EXT += CLASSPATH
 
       # Determine which gcc library version to use.
-      ifeq ($(shell echo $(COMPILER_VERSION)\>=7 | bc),1)
+      ifeq ($(shell [ $(COMPILER_VERSION) -ge 7 ] && echo true),true)
          RTI_LIB_PATH = ${RTI_HOME}/lib/gcc73_64
-      else ifeq ($(shell echo $(COMPILER_VERSION)\>=5 | bc),1)
+      else ifeq ($(shell [ $(COMPILER_VERSION) -ge 5 ] && echo true),true)
          RTI_LIB_PATH = ${RTI_HOME}/lib/gcc52_64
-      else ifeq ($(shell echo $(COMPILER_VERSION)\>=4 | bc),1)
+      else ifeq ($(shell [ $(COMPILER_VERSION) -ge 4 ] && echo true),true)
          RTI_LIB_PATH = ${RTI_HOME}/lib/gcc41_64
       else
          RTI_LIB_PATH = ${RTI_HOME}/lib/gcc34_64

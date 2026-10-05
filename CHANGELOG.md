@@ -4,12 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## [Unreleased] - 2026-07-02
+## [Unreleased] - 2026-10-05
 
 ### Notable Additions
 
 
 ### Breaking Changes
+
 - The TrickHLA Manager class has been refactored into InteractionServices and ObjectServices classes and incorporated into the Federate class. Only the Federate is used for scheduled job calls in the provided simulation modules (THLA.sm, SpaceFOM.sm, etc.) If you are not using the SpaceFOM python modules for configuring TrickHLA in the input file, you will need to update your input files to use the service instances.
 
 ```
@@ -50,6 +51,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ```
 
 - The minimum supported Trick version is 25.1.1 because of Trick changes for variable server security, swig class pointers, std::wstring and checkpoint ssupport.
+
+
+### Added
+
+
+### Changed
+
+
+
+## [v3.3.0] - 2026-10-05
+
+### Breaking Changes
+
+- The minimum supported Trick version is 25.1.0 because of Trick changes for variable server security, swig class pointers, and std::wstring support.
 - The function name to disable Trick child thread associations in TrickHLA was changed and the corresponding function call in the TrickHLAFederateConfig.py has also been updated.
   - FROM: disable_trick_child_thread_associations()
   - TO: disable_trick_thread_associations()
@@ -60,7 +75,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
-- Added checks to the S_hla.mk makefle to verify the bc, cut, grep, and which system commands are found before using them.
+- Added checks to the S_hla.mk makefle to verify the cut, grep, and which system commands are found before using them.
 - Added checks to the Packing and Lag Compensation implementations to verify initialization and will terminate with an error message if not initialized before use.
 - Added support for Trick variable server security that disables the variable server by default. Any Trick simulation that uses the simulation control panel will need to enable the Trick variable server and the TrickHLA example simulations do that.
 - Added a check to verify an attribute is not already owned and is configured to be published before executing a pull ownership request. Otherwise an error message is displayed and the simulation is terminated.
@@ -83,6 +98,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Fixed Python exception handling based on pull request #185.
 - Simulations using the --verbose command-line setting no longer need 'on' to be specified to enable verbose messages.
 - Fixed the use of the Trick wall clock, which is always an integer in microseconds regardless of the Trick time tic resolution.
+- Fixed the dependency on the bc system command in the S_hla.mk makefle (issue #187).
 - Fixed Trick freeze at problem (issue #188).
 - Improved overall performance by reducing latency when waiting for asynchronous callbacks like waiting for an HLA Time Advance Grant (TAG).
 
@@ -449,7 +465,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [d3.0.0] - 2024-11-22
 
 
-[Unreleased]: https://github.com/nasa/TrickHLA/compare/v3.2.2...HEAD
+[Unreleased]: https://github.com/nasa/TrickHLA/compare/v3.3.0...HEAD
+[v3.3.0]: https://github.com/nasa/TrickHLA/compare/v3.2.2...v3.3.0
 [v3.2.2]: https://github.com/nasa/TrickHLA/compare/v3.2.1...v3.2.2
 [v3.2.1]: https://github.com/nasa/TrickHLA/compare/v3.2.0...v3.2.1
 [v3.2.0]: https://github.com/nasa/TrickHLA/compare/v3.1.18...v3.2.0
