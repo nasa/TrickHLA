@@ -166,7 +166,7 @@ void BallPacking::base_config(
       ostringstream errmsg;
       errmsg << "Ball::BallPacking::base_config():" << __LINE__
              << " ERROR: Unexpected NULL federation instance Ball name!\n";
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    //---------------------------------------------------------
@@ -327,10 +327,11 @@ void BallPacking::set_name( char const *new_name )
  */
 void BallPacking::pack()
 {
-   // Check for initialization.
    if ( !initialized ) {
-      message_publish( MSG_WARNING, "BallPacking::pack():%d WARNING: The initialize() function has not been called!\n",
-                       __LINE__ );
+      ostringstream errmsg;
+      errmsg << "BallPacking::pack():" << __LINE__
+             << " ERROR: The initialize() function has not been called!\n";
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Check for latency/lag compensation.
@@ -354,10 +355,11 @@ void BallPacking::pack()
  */
 void BallPacking::unpack()
 {
-
    if ( !initialized ) {
-      message_publish( MSG_WARNING, "BallPacking::unpack():%d WARNING: The initialize() function has not been called!\n",
-                       __LINE__ );
+      ostringstream errmsg;
+      errmsg << "BallPacking::unpack():" << __LINE__
+             << " ERROR: The initialize() function has not been called!\n";
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Transfer the packing data into the working data.
@@ -413,7 +415,7 @@ void BallPacking::pack_from_working_data()
       errmsg << "TrickHLAModel::Ball::pack_from_working_data():" << __LINE__
              << " ERROR: Unexpected NULL name for Ball!\n";
       // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      TrickHLA::DebugHandler::terminate( errmsg.str() );
    }
 
    // Time tag for this state data.

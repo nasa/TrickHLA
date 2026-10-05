@@ -42,17 +42,27 @@ NASA, Johnson Space Center\n
 // System includes.
 #include <iostream>
 
+// TrickHLA includes.
+#include "TrickHLA/CompileConfig.hh"
+#include "TrickHLA/Packing.hh"
+#if defined( USE_SPACEFOM_ENCODERS )
+#   include "TrickHLA/OpaqueBuffer.hh"
+#endif
+
 // SpaceFOM includes.
 #include "SpaceFOM/PhysicalInterfaceData.hh"
-#include "SpaceFOM/QuaternionEncoder.hh"
-
-// TrickHLA includes.
-#include "TrickHLA/Packing.hh"
+#if defined( USE_SPACEFOM_ENCODERS )
+#   include "SpaceFOM/QuaternionEncoder.hh"
+#endif
 
 namespace SpaceFOM
 {
 
-class PhysicalInterfaceBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuffer
+class PhysicalInterfaceBase : public TrickHLA::Packing
+#if defined( USE_SPACEFOM_ENCODERS )
+   ,
+                              public TrickHLA::OpaqueBuffer
+#endif
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -82,12 +92,16 @@ class PhysicalInterfaceBase : public TrickHLA::Packing, public TrickHLA::OpaqueB
     *  @param interface_pkg_name    Name of the PhysicalInterface object in the SimObject.
     *  @param interface_fed_name    Name of the PhysicalInterface instance.
     *  @param mngr_object           TrickHLA::Object associated with this PhysicalInterface.
-    *  */
+    *  @param publish True to publish attributes, default will publish if create is true.
+    *  @param subscribe True to subscribe attributes, default will subscribe if create if false.
+    * */
    virtual void base_config( bool               create,
                              std::string const &sim_obj_name,
                              std::string const &interface_pkg_name,
                              std::string const &interface_fed_name,
-                             TrickHLA::Object  *mngr_object = NULL );
+                             TrickHLA::Object  *mngr_object = NULL,
+                             bool const         publish     = false,
+                             bool const         subscribe   = false );
 
    /*! @brief Interface instance initialization routine. */
    virtual void initialize();
@@ -153,8 +167,10 @@ class PhysicalInterfaceBase : public TrickHLA::Packing, public TrickHLA::OpaqueB
    // SpaceFOM TrickHLAObject data for the PhysicalInterface.
    PhysicalInterfaceData packing_data; ///< @trick_units{--} Physical interface packing data.
 
+#if defined( USE_SPACEFOM_ENCODERS )
    // Instantiate the attitude quaternion encoder.
    QuaternionEncoder quat_encoder; ///< @trick_units{--} Interface attitude quaternion encoder.
+#endif
 
    /*! @brief Print out the interface data values.
     *  @param stream Output stream. */

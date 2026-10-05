@@ -109,7 +109,9 @@ if not override_settings:
 if ( print_usage == True ):
    print_usage_message()
 
-# trick setup
+# Trick setup
+trick.var_resolve_hostname()
+trick.var_allow_connections()
 trick.sim_services.exec_set_trap_sigfpe( 1 )
 simControlPanel = trick.SimControlPanel()
 trick.add_external_application( simControlPanel )
@@ -204,7 +206,7 @@ cabinAtmo.conservation.isBsideHla = True
 
 # Configure the CRC, the default is the local host but can be overridden
 # with command line arguments --crcHost and --crcPort or --settings.
-# THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
+# THLA.federate.local_settings = 'crcHost = localhost\:8989'
 THLA.federate.local_settings = local_settings
 
 # Configure the federate

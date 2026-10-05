@@ -36,14 +36,20 @@ NASA, Johnson Space Center\n
 #include "trick/trick_byteswap.h"
 
 // TrickHLA includes.
+#include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
+#include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Version.hh"
+#include "TrickHLA/utils/StringUtilities.hh"
 #include "TrickHLA/utils/Utilities.hh"
+
+// HLA include files.
+#include "RTI/RTI1516.h"
 
 // For a Mac, add support for the FPU control word value at program start.
 #if defined( FPU_CW_PROTECTION ) && defined( __APPLE__ ) && ( defined( __i386__ ) || defined( __x86_64__ ) )
 fpu_control_t __fpu_control;
-#endif
+#endif // FPU_CW_PROTECTION
 
 using namespace std;
 using namespace TrickHLA;
@@ -104,7 +110,8 @@ short Utilities::byteswap_short(
          break;
       }
       default: {
-         size_t i, k;
+         size_t i;
+         size_t k;
          for ( i = 0, k = size - 1; i < size; ++i, --k ) {
             out[i] = in[k];
          }
@@ -137,7 +144,8 @@ unsigned short Utilities::byteswap_unsigned_short(
          break;
       }
       default: {
-         size_t i, k;
+         size_t i;
+         size_t k;
          for ( i = 0, k = size - 1; i < size; ++i, --k ) {
             out[i] = in[k];
          }
@@ -165,7 +173,8 @@ int Utilities::byteswap_int( // RETURN: -- Byteswap value.
          break;
       }
       default: {
-         size_t i, k;
+         size_t i;
+         size_t k;
          for ( i = 0, k = size - 1; i < size; ++i, --k ) {
             out[i] = in[k];
          }
@@ -193,7 +202,8 @@ unsigned int Utilities::byteswap_unsigned_int(
          break;
       }
       default: {
-         size_t i, k;
+         size_t i;
+         size_t k;
          for ( i = 0, k = size - 1; i < size; ++i, --k ) {
             out[i] = in[k];
          }
@@ -232,7 +242,8 @@ long Utilities::byteswap_long(
          break;
       }
       default: {
-         size_t i, k;
+         size_t i;
+         size_t k;
          for ( i = 0, k = size - 1; i < size; ++i, --k ) {
             out[i] = in[k];
          }
@@ -271,7 +282,8 @@ unsigned long Utilities::byteswap_unsigned_long(
          break;
       }
       default: {
-         size_t i, k;
+         size_t i;
+         size_t k;
          for ( i = 0, k = size - 1; i < size; ++i, --k ) {
             out[i] = in[k];
          }
@@ -304,7 +316,8 @@ long long Utilities::byteswap_long_long(
          break;
       }
       default: {
-         size_t i, k;
+         size_t i;
+         size_t k;
          for ( i = 0, k = size - 1; i < size; ++i, --k ) {
             out[i] = in[k];
          }
@@ -337,7 +350,8 @@ unsigned long long Utilities::byteswap_unsigned_long_long(
          break;
       }
       default: {
-         size_t i, k;
+         size_t i;
+         size_t k;
          for ( i = 0, k = size - 1; i < size; ++i, --k ) {
             out[i] = in[k];
          }
@@ -375,7 +389,8 @@ float Utilities::byteswap_float(
          break;
       }
       default: {
-         size_t i, k;
+         size_t i;
+         size_t k;
          for ( i = 0, k = size - 1; i < size; ++i, --k ) {
             out[i] = in[k];
          }
@@ -406,7 +421,8 @@ double Utilities::byteswap_double(
          break;
       }
       default: {
-         size_t i, k;
+         size_t i;
+         size_t k;
          for ( i = 0, k = size - 1; i < size; ++i, --k ) {
             out[i] = in[k];
          }
@@ -461,4 +477,18 @@ string const Utilities::get_version()
 string const &Utilities::get_release_date()
 {
    return TRICKHLA_RELEASE_DATE;
+}
+
+string const Utilities::get_rti_version()
+{
+   string rti_version;
+   StringUtilities::to_string( rti_version, RTI1516_NAMESPACE::rtiVersion() );
+   return rti_version;
+}
+
+string const Utilities::get_rti_name()
+{
+   string rti_name;
+   StringUtilities::to_string( rti_name, RTI1516_NAMESPACE::rtiName() );
+   return rti_name;
 }

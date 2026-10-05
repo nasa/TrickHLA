@@ -26,19 +26,16 @@
 # @revs_end
 #
 ##############################################################################
+import os
+import sys
 
 # Find the TrickHLA home location and append the path.
 trickhla_home = os.environ.get( "TRICKHLA_HOME" )
 if trickhla_home is None:
-   sys.exit( '\033[91m'\
-            +'Environment variable TRICKHLA_HOME is not defined!'\
-            +'\033[0m\n' )
+   sys.exit( '\033[91m'+'Environment variable TRICKHLA_HOME is not defined!'+'\033[0m\n' )
 else:
    if os.path.isdir( trickhla_home ) is False:
-      sys.exit( '\033[91m'\
-               +'TRICKHLA_HOME not found: '\
-               +trickhla_home\
-               +'\033[0m\n' )
+      sys.exit( '\033[91m'+'TRICKHLA_HOME not found: '+trickhla_home+'\033[0m\n' )
 
 # Append the path to the top level of the top level TrickHLA directory.
 # We need this to locate the TrickHLA_data Python data directory.
@@ -77,7 +74,8 @@ run_duration = 10.0
 # Configure the Ball simulation.
 #---------------------------------------------------------------------------
 ball_sim_config = BallSimConfig( 'Ball 2 Sim' )
-ball_sim_config.realtime()
+ball_sim_config.realtime( software_frame_time = 0.1 )
+ball_sim_config.start_in_freeze( False )
 
 
 #---------------------------------------------------------------------------
@@ -164,9 +162,6 @@ ball_fed_config = BallFederateConfig(
    federate_name   = 'Ball 2 Sim',
    federation_name = 'BallFederation',
    enabled         = True )
-
-# Check to see if we need to fix the Trick variable server address.
-ball_fed_config.fix_var_server_source_address()
 
 # Set the TrickHLA debug reporting level.
 #federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )

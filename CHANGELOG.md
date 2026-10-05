@@ -4,6 +4,48 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+
+## [v3.3.0] - 2026-10-05
+
+### Breaking Changes
+
+- The minimum supported Trick version is 25.1.0 because of Trick changes for variable server security, swig class pointers, and std::wstring support.
+- The function name to disable Trick child thread associations in TrickHLA was changed and the corresponding function call in the TrickHLAFederateConfig.py has also been updated.
+  - FROM: disable_trick_child_thread_associations()
+  - TO: disable_trick_thread_associations()
+- Simplified the DebugHandler terminate function name.
+  - FROM: DebugHandler::terminate_with_message()
+  - TO: DebugHandler::terminate()
+
+
+### Added
+
+- Added checks to the S_hla.mk makefle to verify the cut, grep, and which system commands are found before using them.
+- Added checks to the Packing and Lag Compensation implementations to verify initialization and will terminate with an error message if not initialized before use.
+- Added support for Trick variable server security that disables the variable server by default. Any Trick simulation that uses the simulation control panel will need to enable the Trick variable server and the TrickHLA example simulations do that.
+- Added a check to verify an attribute is not already owned and is configured to be published before executing a pull ownership request. Otherwise an error message is displayed and the simulation is terminated.
+- Added more detailed status messages indicating if an Attribute is sent or received for the TrickHLA::Conditional and TrickHLA::Packing interfaces used by the sine wave example simulations.
+- Added support to collect and log HLA timing statistics when HLA time management is used. See the sims/SpaceFOM/SIM_sine input files for an example on how to enable the HLA time statistics including logging. A summary of the HLA timing statistics is printed to the console at simulation shutdown.
+  - For the Pacing federate:
+    - The time waiting for the Time Advance Grant (TAG) should be essentially zero when realtime is enabled and there are no overruns. This is because the TAG callback arrives while Trick is waiting for the start of the next software frame.
+    - The elapsed time from the Time Advance Request (TAR) to the TAG should be close to the federate frame margin.
+  - For non-Pacing federates:
+    - The time waiting for the TAG should be close to the federate frame margin.
+    - The elapsed time from the TAR to the TAG is the frame margin plus additional HLA time management overhead.
+
+
+### Changed
+
+- Changed S_hla.mk to use c++14 as the default c++ standard for HLA Evolved now that Trick requires c++14 as the minimum.
+- Changed the SpaceFOM Quaternion and Space Time Coordinate data types to use the built-in TrickHLA fixed record support instead of the previous workaround of creating a custom encoder that required the use of an opaque-buffer to hold encoded data.
+- Fixed compile time warnings about variable initialization for the IMSim ExecutionControl class.
+- Fixed Python exception handling based on pull request #185.
+- Simulations using the --verbose command-line setting no longer need 'on' to be specified to enable verbose messages.
+- Fixed the use of the Trick wall clock, which is always an integer in microseconds regardless of the Trick time tic resolution.
+- Fixed the dependency on the bc system command in the S_hla.mk makefle (issue #187).
+- Fixed Trick freeze at problem (issue #188).
+
+
 ## [v3.2.2] - 2026-04-01
 
 ### Notable Additions
@@ -365,7 +407,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [d3.0.0] - 2024-11-22
 
 
-[Unreleased]: https://github.com/nasa/TrickHLA/compare/v3.2.2...HEAD
+[Unreleased]: https://github.com/nasa/TrickHLA/compare/v3.3.0...HEAD
+[v3.3.0]: https://github.com/nasa/TrickHLA/compare/v3.2.2...v3.3.0
 [v3.2.2]: https://github.com/nasa/TrickHLA/compare/v3.2.1...v3.2.2
 [v3.2.1]: https://github.com/nasa/TrickHLA/compare/v3.2.0...v3.2.1
 [v3.2.0]: https://github.com/nasa/TrickHLA/compare/v3.1.18...v3.2.0

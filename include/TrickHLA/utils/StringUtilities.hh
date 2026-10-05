@@ -209,9 +209,9 @@ class StringUtilities
       StringUtilities::to_string( config_addl_settings, rti_config.additionalSettings() );
 
       std::ostringstream msg;
-      msg << " RTI Configuration" << std::endl
-          << "         RTI config name: '" << config_name << "'" << std::endl
-          << "  RTI config rti-address: '" << config_rti_addr << "'" << std::endl
+      msg << " RTI Configuration\n"
+          << "         RTI config name: '" << config_name << "'\n"
+          << "  RTI config rti-address: '" << config_rti_addr << "'\n"
           << "RTI config addl-settings: '" << config_addl_settings << "'";
       return msg.str();
    }
@@ -243,10 +243,10 @@ class StringUtilities
       StringUtilities::to_string( result_msg, config_result.message );
 
       std::ostringstream msg;
-      msg << " RTI Configuration Result" << std::endl
-          << "        configuration used: " << ( config_result.configurationUsed ? "Yes" : "No" ) << std::endl
-          << "              address used: " << ( config_result.addressUsed ? "Yes" : "No" ) << std::endl
-          << "additional-settings result: " << additional_result_msg << std::endl
+      msg << " RTI Configuration Result\n"
+          << "        configuration used: " << ( config_result.configurationUsed ? "Yes" : "No" ) << "\n"
+          << "              address used: " << ( config_result.addressUsed ? "Yes" : "No" ) << "\n"
+          << "additional-settings result: " << additional_result_msg << "\n"
           << "     config result message: '" << result_msg << "'";
       return msg.str();
    }

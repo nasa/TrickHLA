@@ -48,8 +48,6 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstddef>
-#include <map>
-#include <memory>
 #include <string>
 
 // Trick includes.
@@ -400,6 +398,15 @@ class Federate : public TimeManagementServices, public SaveRestoreServices
    void set_startup( bool const flag )
    {
       this->got_startup_sync_point = flag;
+   }
+
+   /*! @brief Enable the collection of HLA time statistics.
+    *  @param enable True to enable statistics, false to disable. */
+   void enable_time_statistics( bool const enable )
+   {
+      tag_wait_stats.set_enabled( enable );
+      tar_tag_stats.set_enabled( enable );
+      tara_tag_stats.set_enabled( enable && is_zero_lookahead_time() );
    }
 
    //=======================================================================

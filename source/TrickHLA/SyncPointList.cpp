@@ -144,11 +144,11 @@ void SyncPointList::setup(
              << " ERROR: Unexpected NULL mutex for sync-point list named '"
              << this->list_name << "'! Make sure to call the set_mutex()"
              << " function for this SyncPointList instance." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return;
    }
 
-   MutexProtection auto_unlock_mutex( mutex );
+   MutexProtection const auto_unlock_mutex( mutex );
 
    set_federate( fed );
 }
@@ -179,7 +179,7 @@ void SyncPointList::set_federate(
       errmsg << "SyncPointList::set_federate():" << __LINE__
              << " ERROR: Unexpected NULL federate pointer for sync-point list named '"
              << this->list_name << "'!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return;
    }
 }
@@ -187,8 +187,8 @@ void SyncPointList::set_federate(
 SyncPtStateEnum SyncPointList::get_state(
    std::wstring const &label )
 {
-   MutexProtection  auto_unlock_mutex( mutex );
-   SyncPoint const *sp = get( label );
+   MutexProtection const auto_unlock_mutex( mutex );
+   SyncPoint const      *sp = get( label );
    return ( sp != NULL ) ? sp->get_state() : TrickHLA::SYNC_PT_STATE_UNKNOWN;
 }
 
@@ -244,7 +244,7 @@ void SyncPointList::clear()
 SyncPoint *SyncPointList::get(
    wstring const &label )
 {
-   MutexProtection auto_unlock_mutex( mutex );
+   MutexProtection const auto_unlock_mutex( mutex );
 
 #if SYNC_POINT_TMM_ARRAY
    for ( int i = 0; i < list_count; ++i ) {
@@ -261,7 +261,7 @@ SyncPoint *SyncPointList::get(
 bool SyncPointList::add(
    wstring const &label )
 {
-   MutexProtection auto_unlock_mutex( mutex );
+   MutexProtection const auto_unlock_mutex( mutex );
 
    if ( contains( label ) ) {
       string label_str;
@@ -270,7 +270,7 @@ bool SyncPointList::add(
       errmsg << "SyncPointList::add():" << __LINE__
              << " ERROR: The sync-point label '" << label_str
              << "' has already been added!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return false;
    }
 
@@ -289,7 +289,7 @@ bool SyncPointList::add(
       ostringstream errmsg;
       errmsg << "SyncPointList::add():" << __LINE__
              << " ERROR: Could not allocate memory for the sync-point list!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return false;
    }
 
@@ -303,7 +303,7 @@ bool SyncPointList::add(
              << " ERROR: Could not allocate memory for the sync-point list entry at array index:"
              << list_count << " for sync-point label '"
              << label_str << "'!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return false;
    }
    list[list_count]->set_label( label );
@@ -322,7 +322,7 @@ bool SyncPointList::add(
    wstring const   &label,
    Int64Time const &time )
 {
-   MutexProtection auto_unlock_mutex( mutex );
+   MutexProtection const auto_unlock_mutex( mutex );
 
    if ( contains( label ) ) {
       string label_str;
@@ -331,7 +331,7 @@ bool SyncPointList::add(
       errmsg << "SyncPointList::add():" << __LINE__
              << " ERROR: The sync-point label '" << label_str
              << "' has already been added!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return false;
    }
 
@@ -350,7 +350,7 @@ bool SyncPointList::add(
       ostringstream errmsg;
       errmsg << "SyncPointList::add():" << __LINE__
              << " ERROR: Could not allocate memory for the sync-point list!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return false;
    }
 
@@ -365,7 +365,7 @@ bool SyncPointList::add(
              << list_count << " for sync-point-timed label '"
              << label_str << "' with time " << time.get_time_in_seconds()
              << " seconds!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return false;
    }
    static_cast< SyncPointTimed * >( list[list_count] )->set_label( label );
@@ -384,7 +384,7 @@ bool SyncPointList::add(
 bool SyncPointList::contains(
    wstring const &label )
 {
-   MutexProtection auto_unlock_mutex( mutex );
+   MutexProtection const auto_unlock_mutex( mutex );
 
 #if SYNC_POINT_TMM_ARRAY
    for ( int i = 0; i < list_count; ++i ) {
@@ -401,7 +401,7 @@ bool SyncPointList::contains(
 bool SyncPointList::is_registered(
    wstring const &label )
 {
-   MutexProtection auto_unlock_mutex( mutex );
+   MutexProtection const auto_unlock_mutex( mutex );
 
    SyncPoint const *sp = get( label );
    return ( ( sp != NULL ) && sp->is_registered() );
@@ -415,7 +415,7 @@ bool SyncPointList::mark_registered(
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( mutex );
+   MutexProtection const auto_unlock_mutex( mutex );
 
    SyncPoint *sp = get( label );
    if ( sp != NULL ) {
@@ -428,7 +428,7 @@ bool SyncPointList::mark_registered(
 bool SyncPointList::register_sync_point(
    wstring const &label )
 {
-   MutexProtection auto_unlock_mutex( mutex );
+   MutexProtection const auto_unlock_mutex( mutex );
 
    SyncPoint *sp = get( label );
 
@@ -440,7 +440,7 @@ bool SyncPointList::register_sync_point(
       errmsg << "SyncPointList::register_sync_point():" << __LINE__
              << " ERROR: Did not find sync-point '" << label_str
              << "' in the '" << get_list_name() << "' list!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return false;
    }
    return register_sync_point( sp );
@@ -450,7 +450,7 @@ bool SyncPointList::register_sync_point(
    wstring const           &label,
    FederateHandleSet const &handle_set )
 {
-   MutexProtection auto_unlock_mutex( mutex );
+   MutexProtection const auto_unlock_mutex( mutex );
 
    SyncPoint *sp = get( label );
 
@@ -462,7 +462,7 @@ bool SyncPointList::register_sync_point(
       errmsg << "SyncPointList::register_sync_point():" << __LINE__
              << " ERROR: Did not find sync-point '" << label_str
              << "' in the '" << get_list_name() << "' list!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return false;
    }
    return register_sync_point( sp, handle_set );
@@ -471,7 +471,7 @@ bool SyncPointList::register_sync_point(
 // True if at least one sync-point is registered.
 bool SyncPointList::register_all()
 {
-   MutexProtection auto_unlock_mutex( mutex );
+   MutexProtection const auto_unlock_mutex( mutex );
 
    bool status = false;
 #if SYNC_POINT_TMM_ARRAY
@@ -489,7 +489,7 @@ bool SyncPointList::register_all()
 bool SyncPointList::register_all(
    FederateHandleSet const &handle_set )
 {
-   MutexProtection auto_unlock_mutex( mutex );
+   MutexProtection const auto_unlock_mutex( mutex );
 
    bool status = false;
 #if SYNC_POINT_TMM_ARRAY
@@ -511,14 +511,14 @@ bool SyncPointList::register_sync_point(
       ostringstream errmsg;
       errmsg << "SyncPointList::register_sync_point():" << __LINE__
              << " ERROR: Unexpected NULL SyncPoint!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return false;
    }
    if ( this->federate == NULL ) {
       ostringstream errmsg;
       errmsg << "SyncPointList::register_sync_point():" << __LINE__
              << " ERROR: Unexpected NULL federate pointer!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return false;
    }
 
@@ -532,7 +532,7 @@ bool SyncPointList::register_sync_point(
    try {
       // When auto_unlock_mutex goes out of scope it automatically unlocks
       // the mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( mutex );
+      MutexProtection const auto_unlock_mutex( mutex );
 
       RTI_amb->registerFederationSynchronizationPoint( sp->get_label(),
                                                        sp->encode_user_supplied_tag() );
@@ -553,7 +553,7 @@ bool SyncPointList::register_sync_point(
       errmsg << "SyncPointListBase::register_sync_point():" << __LINE__
              << " ERROR: Failed to register '" << label_str
              << "' synchronization point with RTI!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return false;
    }
 
@@ -572,14 +572,14 @@ bool SyncPointList::register_sync_point(
       ostringstream errmsg;
       errmsg << "SyncPointList::register_sync_point():" << __LINE__
              << " ERROR: Unexpected NULL SyncPoint!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return false;
    }
    if ( this->federate == NULL ) {
       ostringstream errmsg;
       errmsg << "SyncPointList::register_sync_point():" << __LINE__
              << " ERROR: Unexpected NULL federate pointer!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return false;
    }
 
@@ -593,7 +593,7 @@ bool SyncPointList::register_sync_point(
    try {
       // When auto_unlock_mutex goes out of scope it automatically unlocks
       // the mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( mutex );
+      MutexProtection const auto_unlock_mutex( mutex );
 
       RTI_amb->registerFederationSynchronizationPoint( sp->get_label(),
                                                        sp->encode_user_supplied_tag(),
@@ -615,7 +615,7 @@ bool SyncPointList::register_sync_point(
       errmsg << "SyncPointListBase::register_sync_point():" << __LINE__
              << " ERROR: Failed to register '" << label_str
              << "' synchronization point with RTI!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return false;
    }
 
@@ -629,7 +629,7 @@ bool SyncPointList::register_sync_point(
 bool SyncPointList::is_announced(
    wstring const &label )
 {
-   MutexProtection auto_unlock_mutex( mutex );
+   MutexProtection const auto_unlock_mutex( mutex );
 
    SyncPoint const *sp = get( label );
    return ( ( sp != NULL ) && sp->is_announced() );
@@ -644,7 +644,7 @@ bool SyncPointList::mark_announced(
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( mutex );
+   MutexProtection const auto_unlock_mutex( mutex );
 
    SyncPoint *sp = get( label );
    if ( sp != NULL ) {
@@ -662,7 +662,7 @@ bool SyncPointList::wait_for_announced(
    {
       // Scope this mutex lock because locking over the blocking wait call
       // below will cause deadlock.
-      MutexProtection auto_unlock_mutex( mutex );
+      MutexProtection const auto_unlock_mutex( mutex );
 
       sp = get( label );
 
@@ -674,7 +674,7 @@ bool SyncPointList::wait_for_announced(
          errmsg << "SyncPointList::wait_for_announced():" << __LINE__
                 << " ERROR: Could not find sync-point '" << label_str
                 << "' in the '" << get_list_name() << "' list!" << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
          return false;
       }
    }
@@ -706,14 +706,14 @@ bool SyncPointList::wait_for_announced(
       ostringstream errmsg;
       errmsg << "SyncPointList::wait_for_announced():" << __LINE__
              << " ERROR: Unexpected NULL SyncPoint!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return false;
    }
    if ( this->federate == NULL ) {
       ostringstream errmsg;
       errmsg << "SyncPointList::wait_for_announced():" << __LINE__
              << " ERROR: Unexpected NULL federate pointer!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return false;
    }
 
@@ -723,7 +723,7 @@ bool SyncPointList::wait_for_announced(
    {
       // When auto_unlock_mutex goes out of scope it automatically unlocks the
       // mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( mutex );
+      MutexProtection const auto_unlock_mutex( mutex );
       announced = sp->is_announced();
 
       if ( !announced && !sp->is_valid() ) {
@@ -731,7 +731,7 @@ bool SyncPointList::wait_for_announced(
          errmsg << "SyncPointList::wait_for_announced():" << __LINE__
                 << " ERROR: Bad sync-point state for sync-point!"
                 << " Sync-point: " << sp->to_string() << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
          return false;
       }
    }
@@ -762,14 +762,14 @@ bool SyncPointList::wait_for_announced(
       {
          // When auto_unlock_mutex goes out of scope it automatically unlocks the
          // mutex even if there is an exception.
-         MutexProtection auto_unlock_mutex( mutex );
+         MutexProtection const auto_unlock_mutex( mutex );
          announced = sp->is_announced();
       }
 
       if ( !announced ) {
 
          // To be more efficient, we get the time once and share it.
-         int64_t wallclock_time = sleep_timer.time();
+         int64_t const wallclock_time = sleep_timer.time();
 
          // Check to make sure we're still a member of the federation execution.
          if ( sleep_timer.timeout( wallclock_time ) ) {
@@ -782,7 +782,7 @@ bool SyncPointList::wait_for_announced(
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
                       << " the Central RTI Component (CRC) level!" << endl;
-               DebugHandler::terminate_with_message( errmsg.str() );
+               DebugHandler::terminate( errmsg.str() );
                return false;
             }
          }
@@ -809,7 +809,7 @@ bool SyncPointList::wait_for_announced(
 bool SyncPointList::is_achieved(
    wstring const &label )
 {
-   MutexProtection auto_unlock_mutex( mutex );
+   MutexProtection const auto_unlock_mutex( mutex );
 
    SyncPoint const *sp = get( label );
    return ( ( sp != NULL ) && sp->is_achieved() );
@@ -818,7 +818,7 @@ bool SyncPointList::is_achieved(
 bool SyncPointList::achieve(
    wstring const &label )
 {
-   MutexProtection auto_unlock_mutex( mutex );
+   MutexProtection const auto_unlock_mutex( mutex );
 
    SyncPoint *sp = get( label );
 
@@ -830,7 +830,7 @@ bool SyncPointList::achieve(
       errmsg << "SyncPointList::achieve_sync_point():" << __LINE__
              << " ERROR: Could not find sync-point '" << label_str
              << "' in the '" << get_list_name() << "' list!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return false;
    }
 
@@ -839,7 +839,7 @@ bool SyncPointList::achieve(
 
 bool SyncPointList::achieve_all()
 {
-   MutexProtection auto_unlock_mutex( mutex );
+   MutexProtection const auto_unlock_mutex( mutex );
 
    bool status = false;
 #if SYNC_POINT_TMM_ARRAY
@@ -861,14 +861,14 @@ bool SyncPointList::achieve_sync_point(
       ostringstream errmsg;
       errmsg << "SyncPointList::achieve_sync_point():" << __LINE__
              << " ERROR: Unexpected NULL SyncPoint!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return false;
    }
    if ( this->federate == NULL ) {
       ostringstream errmsg;
       errmsg << "SyncPointList::achieve_sync_point():" << __LINE__
              << " ERROR: Unexpected NULL federate pointer!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return false;
    }
 
@@ -891,7 +891,7 @@ bool SyncPointList::achieve_sync_point(
       try {
          // When auto_unlock_mutex goes out of scope it automatically unlocks the
          // mutex even if there is an exception.
-         MutexProtection auto_unlock_mutex( mutex );
+         MutexProtection const auto_unlock_mutex( mutex );
 
          RTI_amb->synchronizationPointAchieved( sp->get_label() );
 
@@ -996,7 +996,7 @@ bool SyncPointList::achieve_sync_point(
 bool SyncPointList::is_synchronized(
    wstring const &label )
 {
-   MutexProtection auto_unlock_mutex( mutex );
+   MutexProtection const auto_unlock_mutex( mutex );
 
    SyncPoint const *sp = get( label );
    return ( ( sp != NULL ) && sp->is_synchronized() );
@@ -1004,7 +1004,7 @@ bool SyncPointList::is_synchronized(
 
 bool SyncPointList::is_all_synchronized()
 {
-   MutexProtection auto_unlock_mutex( mutex );
+   MutexProtection const auto_unlock_mutex( mutex );
 
 #if SYNC_POINT_TMM_ARRAY
    for ( int i = 0; i < list_count; ++i ) {
@@ -1028,7 +1028,7 @@ bool SyncPointList::mark_synchronized(
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( mutex );
+   MutexProtection const auto_unlock_mutex( mutex );
 
    SyncPoint *sp = get( label );
    if ( sp != NULL ) {
@@ -1048,7 +1048,7 @@ bool SyncPointList::wait_for_synchronized(
    {
       // Scope this mutex lock because locking over the blocking wait call
       // below will cause deadlock.
-      MutexProtection auto_unlock_mutex( mutex );
+      MutexProtection const auto_unlock_mutex( mutex );
 
       sp = get( label );
 
@@ -1060,7 +1060,7 @@ bool SyncPointList::wait_for_synchronized(
          errmsg << "SyncPointList::wait_for_synchronized():" << __LINE__
                 << " ERROR: Could not find sync-point '" << label_str
                 << "' in the '" << get_list_name() << "' list!" << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
          return false;
       }
    }
@@ -1092,14 +1092,14 @@ bool SyncPointList::wait_for_synchronized(
       ostringstream errmsg;
       errmsg << "SyncPointList::wait_for_synchronized():" << __LINE__
              << " ERROR: Unexpected NULL SyncPoint!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return false;
    }
    if ( this->federate == NULL ) {
       ostringstream errmsg;
       errmsg << "SyncPointList::wait_for_synchronized():" << __LINE__
              << " ERROR: Unexpected NULL federate pointer!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return false;
    }
 
@@ -1124,7 +1124,7 @@ bool SyncPointList::wait_for_synchronized(
       {
          // When auto_unlock_mutex goes out of scope it automatically unlocks
          // the mutex even if there is an exception.
-         MutexProtection auto_unlock_mutex( mutex );
+         MutexProtection const auto_unlock_mutex( mutex );
          synchronized = sp->is_synchronized();
       }
 
@@ -1136,7 +1136,7 @@ bool SyncPointList::wait_for_synchronized(
          sleep_timer.sleep();
 
          // To be more efficient, we get the time once and share it.
-         int64_t wallclock_time = sleep_timer.time();
+         int64_t const wallclock_time = sleep_timer.time();
 
          // Check to make sure we're still a member of the federation execution.
          if ( sleep_timer.timeout( wallclock_time ) ) {
@@ -1149,7 +1149,7 @@ bool SyncPointList::wait_for_synchronized(
                       << " RTI or we are no longer joined to the federation"
                       << " execution because someone forced our resignation at"
                       << " the Central RTI Component (CRC) level!" << endl;
-               DebugHandler::terminate_with_message( errmsg.str() );
+               DebugHandler::terminate( errmsg.str() );
                return false;
             }
          }
@@ -1169,7 +1169,7 @@ std::string SyncPointList::to_string()
 {
    // Scope this mutex lock because locking over the blocking wait call
    // below will cause deadlock.
-   MutexProtection auto_unlock_mutex( mutex );
+   MutexProtection const auto_unlock_mutex( mutex );
 
    ostringstream msg;
 
@@ -1193,7 +1193,7 @@ std::string SyncPointList::to_string(
 {
    // Scope this mutex lock because locking over the blocking wait call
    // below will cause deadlock.
-   MutexProtection auto_unlock_mutex( mutex );
+   MutexProtection const auto_unlock_mutex( mutex );
 
    SyncPoint *sp = get( label );
    if ( sp != NULL ) {

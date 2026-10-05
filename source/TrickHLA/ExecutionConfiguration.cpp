@@ -135,7 +135,7 @@ void ExecutionConfiguration::configure_attributes()
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionConfiguration::configure_attributes():" << __LINE__
              << " ERROR: Unexpected empty S_define_name." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return;
    }
 
@@ -200,7 +200,7 @@ void ExecutionConfiguration::configure()
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionConfiguration::configure():" << __LINE__
              << " ERROR: Null TrickHLA::Manager passed in!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return;
    }
 
@@ -212,12 +212,12 @@ void ExecutionConfiguration::configure()
    ostringstream federate_list;
    int           required_federate_count = 0;
 
-   Federate *federate = manager->get_federate();
+   Federate const *federate = manager->get_federate();
    if ( federate == NULL ) {
       ostringstream errmsg;
       errmsg << "TrickHLA::ExecutionConfiguration::configure():" << __LINE__
              << " ERROR: Null TrickHLA-Federate pointer!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return;
    }
 
@@ -249,7 +249,7 @@ void ExecutionConfiguration::pack()
       msg << "===================================================" << endl;
    }
 
-   double terminate_time = exec_get_terminate_time();
+   double const terminate_time = exec_get_terminate_time();
 
    // Set the stop/termination time of the Trick simulation based on the
    // run_duration setting.

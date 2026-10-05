@@ -99,6 +99,10 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    /*! @brief Destructor for the IMSim ExecutionControl class. */
    virtual ~ExecutionControl();
 
+   /*! @brief Return the relevant IMSim::ExecutionConfiguration object.
+    *  @return Pointer to the relevant IMSim::ExecutionConfiguration object. */
+   ExecutionConfiguration *get_execution_configuration();
+
    /*! @brief Get the ExecutionControl type identification string.
     *  @return A constant reference to the type identification string.
     */
@@ -348,10 +352,6 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
    TrickHLA::Interaction *freeze_interaction; ///< @trick_io{**} Interaction to FREEZE the sim at a specified time.
 
    FreezeTimeSet freeze_scenario_times; ///< @trick_io{**} collection of scenario times when we must enter FREEZE mode
-
-   /*! @brief Return the relevant IMSim::ExecutionConfiguration object.
-    *  @return Pointer to the relevant IMSim::ExecutionConfiguration object. */
-   ExecutionConfiguration *get_execution_configuration();
 
    double scenario_time_epoch; /**<  @trick_units{s}
       Federation execution scenario time epoch. This is the beginning epoch

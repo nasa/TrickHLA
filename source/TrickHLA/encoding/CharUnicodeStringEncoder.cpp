@@ -81,8 +81,8 @@ CharUnicodeStringEncoder::CharUnicodeStringEncoder(
              << "' simulation variable (type:" << attr->type_name
              << ") is not the expected type '"
              << trickTypeCharString( TRICK_CHARACTER, "UNSUPPORTED_TYPE" )
-             << "'." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+             << "'.\n";
+      DebugHandler::terminate( errmsg.str() );
       return;
    }
 
@@ -90,8 +90,8 @@ CharUnicodeStringEncoder::CharUnicodeStringEncoder(
       ostringstream errmsg;
       errmsg << "CharUnicodeStringEncoder::CharUnicodeStringEncoder():" << __LINE__
              << " ERROR: Trick ref-attributes for '" << data_name
-             << "' the variable must be a dynamic variable array!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+             << "' the variable must be a dynamic variable array!\n";
+      DebugHandler::terminate( errmsg.str() );
       return;
    }
 

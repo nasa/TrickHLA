@@ -120,8 +120,7 @@ class FedAmb : public rti1516e::FederateAmbassador, public FedAmbBase
 
    // 4.8
    virtual void reportFederationExecutions(
-      rti1516e::FederationExecutionInformationVector const &
-         report ) throw( rti1516e::FederateInternalError );
+      rti1516e::FederationExecutionInformationVector const &report ) throw( rti1516e::FederateInternalError );
 
    // 4.7
    virtual void
@@ -166,8 +165,7 @@ class FedAmb : public rti1516e::FederateAmbassador, public FedAmbBase
 
    // 4.17
    virtual void federationSaveStatusResponse(
-      rti1516e::FederateHandleSaveStatusPairVector const &
-         response ) throw( rti1516e::FederateInternalError );
+      rti1516e::FederateHandleSaveStatusPairVector const &response ) throw( rti1516e::FederateInternalError );
 
    // 4.19
    virtual void requestFederationRestoreSucceeded(
@@ -197,8 +195,7 @@ class FedAmb : public rti1516e::FederateAmbassador, public FedAmbBase
 
    // 4.25
    virtual void federationRestoreStatusResponse(
-      rti1516e::FederateRestoreStatusVector const &
-         response ) throw( rti1516e::FederateInternalError );
+      rti1516e::FederateRestoreStatusVector const &response ) throw( rti1516e::FederateInternalError );
 
    /////////////////////////////////////
    // Declaration Management Services //

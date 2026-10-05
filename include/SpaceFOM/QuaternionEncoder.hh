@@ -33,31 +33,36 @@ NASA, Johnson Space Center\n
 #ifndef SPACEFOM_QUATERNION_ENCODER_HH
 #define SPACEFOM_QUATERNION_ENCODER_HH
 
-// SpaceFOM includes.
-#include "SpaceFOM/QuaternionData.hh"
-
 // TrickHLA includes.
+#include "TrickHLA/CompileConfig.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/OpaqueBuffer.hh"
+
+#if !defined( USE_SPACEFOM_ENCODERS )
+#   error QuaternionEncoder is not supported!
+#else
+
+// SpaceFOM includes.
+#   include "SpaceFOM/QuaternionData.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
-#if defined( IEEE_1516_2010 )
-#   pragma GCC diagnostic push
-#   pragma GCC diagnostic ignored "-Wdeprecated"
-#endif
+#   if defined( IEEE_1516_2010 )
+#      pragma GCC diagnostic push
+#      pragma GCC diagnostic ignored "-Wdeprecated"
+#   endif
 
 // HLA include files.
-#include "RTI/RTI1516.h"
-#include "RTI/VariableLengthData.h"
-#include "RTI/encoding/BasicDataElements.h"
-#include "RTI/encoding/HLAfixedArray.h"
-#include "RTI/encoding/HLAfixedRecord.h"
+#   include "RTI/RTI1516.h"
+#   include "RTI/VariableLengthData.h"
+#   include "RTI/encoding/BasicDataElements.h"
+#   include "RTI/encoding/HLAfixedArray.h"
+#   include "RTI/encoding/HLAfixedRecord.h"
 
-#if defined( IEEE_1516_2010 )
-#   pragma GCC diagnostic pop
-#endif
+#   if defined( IEEE_1516_2010 )
+#      pragma GCC diagnostic pop
+#   endif
 
 // Put this class in the SpaceFOM namespace.
 namespace SpaceFOM
@@ -114,5 +119,5 @@ class QuaternionEncoder : public TrickHLA::OpaqueBuffer
 };
 
 } // namespace SpaceFOM
-
+#endif // USE_SPACEFOM_ENCODERS
 #endif /* SPACEFOM_QUATERNION_ENCODER_HH */

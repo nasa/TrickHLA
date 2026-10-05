@@ -16,6 +16,7 @@
 import trick
 from ..TrickHLA.TrickHLAObjectConfig import *
 from ..TrickHLA.TrickHLAAttributeConfig import *
+from ..SpaceFOM.SpaceFOMQuaternionAttributeConfig import *
 
 
 class SpaceFOMPhysicalInterfaceObject( TrickHLAObjectConfig ):
@@ -53,18 +54,19 @@ class SpaceFOMPhysicalInterfaceObject( TrickHLAObjectConfig ):
          interface_S_define_instance.set_name( '' )
 
       # Call the base class constructor.
-      TrickHLAObjectConfig.__init__( self,
-                                     thla_create               = create_interface_object,
-                                     thla_instance_name        = interface_instance_name,
-                                     thla_FOM_name             = self.interface_FOM_name,
-                                     thla_lag_comp_instance    = interface_lag_comp,
-                                     thla_lag_comp_type        = interface_lag_comp_type,
-                                     thla_ownership_instance   = interface_ownership,
-                                     thla_deleted_instance     = interface_deleted,
-                                     thla_conditional_instance = interface_conditional,
-                                     thla_packing_instance     = interface_S_define_instance,
-                                     thla_object               = interface_thla_manager_object,
-                                     thla_thread_IDs           = interface_thread_IDs )
+      TrickHLAObjectConfig.__init__(
+                           self,
+                           thla_create               = create_interface_object,
+                           thla_instance_name        = interface_instance_name,
+                           thla_FOM_name             = self.interface_FOM_name,
+                           thla_lag_comp_instance    = interface_lag_comp,
+                           thla_lag_comp_type        = interface_lag_comp_type,
+                           thla_ownership_instance   = interface_ownership,
+                           thla_deleted_instance     = interface_deleted,
+                           thla_conditional_instance = interface_conditional,
+                           thla_packing_instance     = interface_S_define_instance,
+                           thla_object               = interface_thla_manager_object,
+                           thla_thread_IDs           = interface_thread_IDs )
 
       # Build the object attribute list.
       self.add_attributes()
@@ -85,46 +87,61 @@ class SpaceFOMPhysicalInterfaceObject( TrickHLAObjectConfig ):
 
       # Set up the map to the reference PhysicalInterface's name.
       trick_data_name = str( interface_instance_name ) + '.packing_data.name'
-      attribute = TrickHLAAttributeConfig( FOM_name      = 'name',
-                                           trick_name    = trick_data_name,
-                                           publish       = self.hla_attribute_publish,
-                                           subscribe     = self.hla_attribute_subscribe,
-                                           locally_owned = self.hla_create,
-                                           config        = trick.TrickHLA.CONFIG_INITIALIZE + trick.TrickHLA.CONFIG_CYCLIC,
-                                           rti_encoding  = trick.TrickHLA.ENCODING_UNICODE_STRING )
+      attribute = TrickHLAAttributeConfig(
+                           FOM_name      = 'name',
+                           trick_name    = trick_data_name,
+                           publish       = self.hla_attribute_publish,
+                           subscribe     = self.hla_attribute_subscribe,
+                           locally_owned = self.hla_create,
+                           config        = trick.TrickHLA.CONFIG_INITIALIZE_AND_CYCLIC,
+                           rti_encoding  = trick.TrickHLA.ENCODING_UNICODE_STRING )
       self.add_attribute( attribute )
 
       # Set up the map to the name of the PhysicalInterface's parent reference frame.
       trick_data_name = str( interface_instance_name ) + '.packing_data.parent_name'
-      attribute = TrickHLAAttributeConfig( FOM_name      = 'parent_name',
-                                           trick_name    = trick_data_name,
-                                           publish       = self.hla_attribute_publish,
-                                           subscribe     = self.hla_attribute_subscribe,
-                                           locally_owned = self.hla_create,
-                                           config        = trick.TrickHLA.CONFIG_INITIALIZE + trick.TrickHLA.CONFIG_CYCLIC,
-                                           rti_encoding  = trick.TrickHLA.ENCODING_UNICODE_STRING )
+      attribute = TrickHLAAttributeConfig(
+                           FOM_name      = 'parent_name',
+                           trick_name    = trick_data_name,
+                           publish       = self.hla_attribute_publish,
+                           subscribe     = self.hla_attribute_subscribe,
+                           locally_owned = self.hla_create,
+                           config        = trick.TrickHLA.CONFIG_INITIALIZE_AND_CYCLIC,
+                           rti_encoding  = trick.TrickHLA.ENCODING_UNICODE_STRING )
       self.add_attribute( attribute )
 
       # Set up the map to the PhysicalInterface's translational acceleration.
       trick_data_name = str( interface_instance_name ) + '.packing_data.position'
-      attribute = TrickHLAAttributeConfig( FOM_name      = 'position',
-                                           trick_name    = trick_data_name,
-                                           publish       = self.hla_attribute_publish,
-                                           subscribe     = self.hla_attribute_subscribe,
-                                           locally_owned = self.hla_create,
-                                           config        = trick.TrickHLA.CONFIG_INITIALIZE + trick.TrickHLA.CONFIG_CYCLIC,
-                                           rti_encoding  = trick.TrickHLA.ENCODING_LITTLE_ENDIAN )
+      attribute = TrickHLAAttributeConfig(
+                           FOM_name      = 'position',
+                           trick_name    = trick_data_name,
+                           publish       = self.hla_attribute_publish,
+                           subscribe     = self.hla_attribute_subscribe,
+                           locally_owned = self.hla_create,
+                           config        = trick.TrickHLA.CONFIG_INITIALIZE_AND_CYCLIC,
+                           rti_encoding  = trick.TrickHLA.ENCODING_LITTLE_ENDIAN )
       self.add_attribute( attribute )
 
       # Set up the map to the PhysicalInterface's struct to body attitude quaternion.
-      trick_data_name = str( interface_instance_name ) + '.quat_encoder.buffer'
-      attribute = TrickHLAAttributeConfig( FOM_name      = 'attitude',
-                                           trick_name    = trick_data_name,
-                                           publish       = self.hla_attribute_publish,
-                                           subscribe     = self.hla_attribute_subscribe,
-                                           locally_owned = self.hla_create,
-                                           config        = trick.TrickHLA.CONFIG_INITIALIZE + trick.TrickHLA.CONFIG_CYCLIC,
-                                           rti_encoding  = trick.TrickHLA.ENCODING_NONE )
-      self.add_attribute( attribute )
+      if ( True ):
+         trick_data_name = str( interface_instance_name ) + '.packing_data.attitude'
+         attribute = SpaceFOMQuaternionAttributeConfig(
+                              quat_FOM_name      = 'attitude',
+                              quat_trick_name    = trick_data_name,
+                              quat_publish       = self.hla_attribute_publish,
+                              quat_subscribe     = self.hla_attribute_subscribe,
+                              quat_locally_owned = self.hla_create,
+                              quat_config        = trick.TrickHLA.CONFIG_INITIALIZE_AND_CYCLIC )
+         self.add_attribute( attribute )
+      else:
+         trick_data_name = str( interface_instance_name ) + '.quat_encoder.buffer'
+         attribute = TrickHLAAttributeConfig(
+                              FOM_name      = 'attitude',
+                              trick_name    = trick_data_name,
+                              publish       = self.hla_attribute_publish,
+                              subscribe     = self.hla_attribute_subscribe,
+                              locally_owned = self.hla_create,
+                              config        = trick.TrickHLA.CONFIG_INITIALIZE_AND_CYCLIC,
+                              rti_encoding  = trick.TrickHLA.ENCODING_NONE )
+         self.add_attribute( attribute )
 
       return

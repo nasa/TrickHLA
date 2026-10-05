@@ -143,8 +143,8 @@ bool RefFrameTree::build_transform(
    RefFrameBase const *express_frame,
    RefFrameData       *transform_data )
 {
-   RefFrameBase *current_frame = NULL;
-   RefFrameBase *next_frame    = NULL;
+   RefFrameBase const *current_frame = NULL;
+   RefFrameBase const *next_frame    = NULL;
 
    LRTreeNodeVector::iterator path_itr;
 

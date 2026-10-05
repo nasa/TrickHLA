@@ -436,7 +436,7 @@ void create_connections() {
              << ": ERROR: Object count mismatch: allocated = " << THLA.manager.obj_count
              << " but set = " << object_count << std::endl;
       // Print message and terminate.
-      //TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      //TrickHLA::DebugHandler::terminate( errmsg.str() );
       message_publish( MSG_ERROR, errmsg.str().c_str() );
       exit( 1 );
    }
@@ -446,7 +446,7 @@ void create_connections() {
              << ": ERROR: Interaction count mismatch: allocated = " << THLA.manager.inter_count
              << " but set = " << interaction_count << std::endl;
       // Print message and terminate.
-      //TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      //TrickHLA::DebugHandler::terminate( errmsg.str() );
       message_publish( MSG_ERROR, errmsg.str().c_str() );
       exit(1);
    }

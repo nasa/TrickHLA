@@ -2,45 +2,74 @@
 # Set up HLA and TrickHLA environment.
 # Note the developer should check out the latest TrickHLA tag to the location
 # defined below in $TRICKHLA_HOME
+#
+# DEPENDENCIES:
+# 1) You must set the TRICKHLA_HOME, RTI_HOME, and RTI_VENDOR environment
+#    variables because this makefile depends on them.
+# 2) The cut, grep, and which system command packages must be installed.
 #=============================================================================
-TRICKHLA_HOME ?= ${MODEL_PACKAGE_HOME}/TrickHLA
-RTI_VENDOR    ?= Pitch_HLA_Evolved
-RTI_HOME      ?= ${HOME}/rti/pRTI1516e
-
 # Info and error message text colors.
 RED_TXT   =[31m
 GREEN_TXT =[32m
 RESET_TXT =[00m
 
-# Make sure the critical environment variable paths we depend on are valid.
+# Make sure the cut, grep, and which system commands can be found.
+ifeq (,$(findstring which, $(shell which which)))
+   $(error ${RED_TXT}S_hla.mk:ERROR: Could not find the 'which' system command. Please ensure your PATH is correct or install the 'which' command package.${RESET_TXT})
+endif
+ifeq (,$(findstring cut, $(shell which cut)))
+   $(error ${RED_TXT}S_hla.mk:ERROR: Could not find the 'cut' system command. Please ensure your PATH is correct or install the 'cut' command package.${RESET_TXT})
+endif
+ifeq (,$(findstring grep, $(shell which grep)))
+   $(error ${RED_TXT}S_hla.mk:ERROR: Could not find the 'grep' system command. Please ensure your PATH is correct or install the 'grep' command package.${RESET_TXT})
+endif
+
+# Verify the TRICKHLA_HOME environment variables is set and the path is valid.
+ifndef TRICKHLA_HOME
+   ifdef MODEL_PACKAGE_HOME
+      export TRICKHLA_HOME = ${MODEL_PACKAGE_HOME}/TrickHLA
+      $(info ${GREEN_TXT}S_hla.mk:INFO: Overriding TRICKHLA_HOME = ${TRICKHLA_HOME}${RESET_TXT})
+   else
+      $(error ${RED_TXT}S_hla.mk:ERROR: The TRICKHLA_HOME environment variable is not set.${RESET_TXT})
+   endif
+endif
 ifeq ("$(wildcard ${TRICKHLA_HOME})","")
    $(error ${RED_TXT}S_hla.mk:ERROR: Must specify a valid TRICKHLA_HOME environment variable, which is currently set to invalid path ${TRICKHLA_HOME}${RESET_TXT})
+endif
+
+# Verify the RTI_HOME environment variables is set and the path is valid.
+ifndef RTI_HOME
+   $(error ${RED_TXT}S_hla.mk:ERROR: The RTI_HOME environment variable is not set.${RESET_TXT})
 endif
 ifeq ("$(wildcard ${RTI_HOME})","")
    $(error ${RED_TXT}S_hla.mk:ERROR: Must specify a valid RTI_HOME environment variable, which is currently set to invalid path ${RTI_HOME}${RESET_TXT})
 endif
 
-# Set the IEEE-1516 standard and RTI include paths based on the
+# Verify the RTI_HOME environment variables is set and is valid.
+# Also set the IEEE-1516 standard and RTI include paths based on the
 # RTI vendor and version specified.
+ifndef RTI_VENDOR
+   $(error ${RED_TXT}S_hla.mk:ERROR: The RTI_VENDOR environment variable is not set.${RESET_TXT})
+endif
 IS_PITCH_RTI = 0
 ifeq ($(RTI_VENDOR),Pitch_HLA_4)
-   IS_PITCH_RTI   = 1
-   HLA_STANDARD   =  IEEE_1516_2025
-   RTI_INCLUDE    =  ${RTI_HOME}/api/cpp/HLA_1516-2025
+   IS_PITCH_RTI    = 1
+   HLA_STANDARD    = IEEE_1516_2025
+   RTI_INCLUDE     = ${RTI_HOME}/api/cpp/HLA_1516-2025
    TRICK_CFLAGS   += -I${RTI_INCLUDE}
    TRICK_CXXFLAGS += -I${RTI_INCLUDE}
 else ifeq ($(RTI_VENDOR),Pitch_HLA_Evolved)
-   IS_PITCH_RTI = 1
-   HLA_STANDARD = IEEE_1516_2010
-   RTI_INCLUDE  = ${RTI_HOME}/api/cpp/HLA_1516-2010
+   IS_PITCH_RTI    = 1
+   HLA_STANDARD    = IEEE_1516_2010
+   RTI_INCLUDE     = ${RTI_HOME}/api/cpp/HLA_1516-2010
    ifeq ("$(wildcard ${RTI_INCLUDE})","")
-      RTI_INCLUDE = ${RTI_HOME}/include
+      RTI_INCLUDE  = ${RTI_HOME}/include
    endif
    TRICK_CFLAGS   += -I${RTI_INCLUDE}
    TRICK_CXXFLAGS += -I${RTI_INCLUDE}
 else ifeq ($(RTI_VENDOR),MAK_HLA_Evolved)
-   HLA_STANDARD   =  IEEE_1516_2010
-   RTI_INCLUDE    =  ${RTI_HOME}/include/HLA1516E
+   HLA_STANDARD    = IEEE_1516_2010
+   RTI_INCLUDE     = ${RTI_HOME}/include/HLA1516E
    TRICK_CFLAGS   += -DRTI_VENDOR=MAK_HLA_Evolved -I${RTI_INCLUDE}
    TRICK_CXXFLAGS += -DRTI_VENDOR=MAK_HLA_Evolved -I${RTI_INCLUDE}
 else
@@ -72,8 +101,12 @@ endif
 
 # Needed for TrickHLA.
 TRICK_SFLAGS   += -I${TRICKHLA_HOME}/S_modules
-TRICK_CFLAGS   += -I${TRICKHLA_HOME}/include -I${TRICKHLA_HOME}/models -D${HLA_STANDARD} -Wno-deprecated-declarations
-TRICK_CXXFLAGS += -I${TRICKHLA_HOME}/include -I${TRICKHLA_HOME}/models -D${HLA_STANDARD} -Wno-deprecated-declarations
+TRICK_CFLAGS   += -I${TRICKHLA_HOME}/include -I${TRICKHLA_HOME}/models -D${HLA_STANDARD}
+TRICK_CXXFLAGS += -I${TRICKHLA_HOME}/include -I${TRICKHLA_HOME}/models -D${HLA_STANDARD}
+ifeq ($(HLA_STANDARD),IEEE_1516_2010)
+	TRICK_CFLAGS   += -Wno-deprecated-declarations
+	TRICK_CXXFLAGS += -Wno-deprecated-declarations
+endif
 
 # Configure the ICG and swig excludes.
 ifdef TRICK_ICG_EXCLUDE
@@ -106,6 +139,18 @@ else
    endif
 endif
 
+# Determine the Trick patch version number.
+ifneq (,$(findstring trick-version, $(shell which trick-version)))
+   TRICK_PATCH_VER = $(shell trick-version -v | cut -d . -f 3 | cut -d - -f 1)
+   ifeq (,$(TRICK_PATCH_VER))
+      $(error ${RED_TXT}S_hla.mk:ERROR: Could not determine Trick patch version using trick-version command!${RESET_TXT})
+   endif
+else
+   $(error ${RED_TXT}S_hla.mk:ERROR: Could not find the trick-version command!${RESET_TXT})
+endif
+TRICK_CFLAGS   += -DTRICK_PATCH=${TRICK_PATCH_VER}
+TRICK_CXXFLAGS += -DTRICK_PATCH=${TRICK_PATCH_VER}
+
 ifeq ($(TRICK_HOST_TYPE),Darwin)
    # macOS
 
@@ -114,7 +159,12 @@ ifeq ($(TRICK_HOST_TYPE),Darwin)
       # C++14 for ICG because the IEEE 1516-2010 APIs use dynamic exception
       # specifications. Otherwise this will result in compile time errors.
       TRICK_ICGFLAGS += --icg-std=c++14
-      $(info ${GREEN_TXT}S_hla.mk:INFO: Using C++14 for Trick ICG code.${RESET_TXT})
+
+      # Trick now requires at least c++14, and given HLA Evolved is using
+      # deprecated c++ APIs, we can only use c++14.
+      TRICK_CXXFLAGS += -std=c++14
+
+      $(info ${GREEN_TXT}S_hla.mk:INFO: Using the c++14 standard.${RESET_TXT})
    endif
 
    ifeq ($(RTI_VENDOR),Pitch_HLA_4)
@@ -141,16 +191,13 @@ ifeq ($(TRICK_HOST_TYPE),Darwin)
 
       # Determine if the compiler is clang or gcc.
       ifneq (,$(findstring clang, $(shell $(CPPC_CMD) --version | grep clang)))
-
          # Determine the clang version.
          COMPILER_VERSION = $(shell $(CPPC_CMD) --version | grep clang | cut -d' ' -f 4 | cut -d . -f 1)
-         ifneq ("$(wildcard ${RTI_HOME}/lib/clang12)","")
-            # clang12 library exists and is the clang compiler at least version 12.
-            COMPILER_GTE_12 = $(shell echo $(COMPILER_VERSION)\>=12 | bc )
-         else
-            COMPILER_GTE_12 = 0
-         endif
-         ifeq ($(COMPILER_GTE_12),1)
+
+         ifeq ($(shell [ $(COMPILER_VERSION) -ge 12 ] && echo true),true)
+            ifeq ("$(wildcard ${RTI_HOME}/lib/clang12)","")
+               $(error ${RED_TXT}S_hla.mk:ERROR: Could not find Pitch RTI libraries for clang 12 on the Mac.${RESET_TXT})
+            endif
             ifdef DYLD_LIBRARY_PATH
                export DYLD_LIBRARY_PATH += :${RTI_HOME}/lib
             else
@@ -158,11 +205,11 @@ ifeq ($(TRICK_HOST_TYPE),Darwin)
             endif
             TRICK_USER_LINK_LIBS += -L${RTI_HOME}/lib -v -Wl,-rpath,${RTI_HOME}/lib -lrti1516_2025clang12 -lfedtime1516_2025clang12 -L${RTI_JAVA_LIB_PATH} -v -Wl,-rpath,${RTI_JAVA_LIB_PATH} -ljvm
          else
-            $(error ${RED_TXT}S_hla.mk:ERROR: Pitch RTI libraries require at least clang 12 on the Mac.${RESET_TXT})
+            $(error ${RED_TXT}S_hla.mk:ERROR: Pitch RTI requires at least clang 12 on the Mac.${RESET_TXT})
          endif
       else
          # Using gcc compiler instead of clang.
-         $(error ${RED_TXT}S_hla.mk:ERROR: Pitch RTI only supports clang on the Mac.${RESET_TXT})
+         $(error ${RED_TXT}S_hla.mk:ERROR: Pitch RTI for HLA 4 only supports clang on the Mac.${RESET_TXT})
       endif
       # Add the CLASSPATH and DYLD_LIBRARY_PATH environment variables to the 
       # simulation executable.
@@ -193,16 +240,13 @@ ifeq ($(TRICK_HOST_TYPE),Darwin)
 
       # Determine if the compiler is clang or gcc.
       ifneq (,$(findstring clang, $(shell $(CPPC_CMD) --version | grep clang)))
-
          # Determine the clang version.
          COMPILER_VERSION = $(shell $(CPPC_CMD) --version | grep clang | cut -d' ' -f 4 | cut -d . -f 1)
-         ifneq ("$(wildcard ${RTI_HOME}/lib/clang12)","")
-            # clang12 library exists and is the clang compiler at least version 12.
-            COMPILER_GTE_12 = $(shell echo $(COMPILER_VERSION)\>=12 | bc )
-         else
-            COMPILER_GTE_12 = 0
-         endif
-         ifeq ($(COMPILER_GTE_12),1)
+
+         ifeq ($(shell [ $(COMPILER_VERSION) -ge 12 ] && echo true),true)
+            ifeq ("$(wildcard ${RTI_HOME}/lib/clang12)","")
+               $(error ${RED_TXT}S_hla.mk:ERROR: Could not find Pitch RTI libraries for clang 12 on the Mac.${RESET_TXT})
+            endif
             ifdef DYLD_LIBRARY_PATH
                export DYLD_LIBRARY_PATH += :${RTI_HOME}/lib/clang12
             else
@@ -210,6 +254,9 @@ ifeq ($(TRICK_HOST_TYPE),Darwin)
             endif
             TRICK_USER_LINK_LIBS += -L${RTI_HOME}/lib -L${RTI_HOME}/lib/clang12 -v -Wl,-rpath,${RTI_HOME}/lib/clang12 -lrti1516e -lfedtime1516e -L${RTI_JAVA_LIB_PATH} -v -Wl,-rpath,${RTI_JAVA_LIB_PATH} -ljvm
          else
+            ifeq ("$(wildcard ${RTI_HOME}/lib/clang5)","")
+               $(error ${RED_TXT}S_hla.mk:ERROR: Could not find Pitch RTI libraries for clang 5 on the Mac.${RESET_TXT})
+            endif
             ifdef DYLD_LIBRARY_PATH
                export DYLD_LIBRARY_PATH += :${RTI_HOME}/lib/clang5
             else
@@ -219,12 +266,7 @@ ifeq ($(TRICK_HOST_TYPE),Darwin)
          endif
       else
          # Using gcc compiler instead of clang.
-         ifdef DYLD_LIBRARY_PATH
-            export DYLD_LIBRARY_PATH += :${RTI_HOME}/lib/gcc42
-         else
-            export DYLD_LIBRARY_PATH = ${RTI_HOME}/lib/gcc42
-         endif
-         TRICK_USER_LINK_LIBS += -L${RTI_HOME}/lib/gcc42 -lrti1516e -lfedtime1516e
+         $(error ${RED_TXT}S_hla.mk:ERROR: Pitch RTI only supports clang on the Mac.${RESET_TXT})
       endif
       # Add the CLASSPATH and DYLD_LIBRARY_PATH environment variables to the 
       # simulation executable.
@@ -241,23 +283,17 @@ else
    COMPILER_VERSION = $(shell $(CPPC_CMD) -dumpversion | cut -d . -f 1)
 
    ifeq ($(HLA_STANDARD),IEEE_1516_2010)
-      # The gcc version 11 compiler defaults to C++17 which removed the
-      # dynamic exception specification. Instead fallback to C++14 because
-      # the IEEE 1516-2010 APIs use dynamic exception specifications.
-      # Otherwise this will result in compile time errors for C++17.
-      ifeq ($(shell echo $(COMPILER_VERSION)\>=11 | bc),1)
-         TRICK_CXXFLAGS += -std=c++14
-         $(info ${GREEN_TXT}S_hla.mk:INFO: Falling back to C++14 to compile Trick simulation.${RESET_TXT})
-      endif
-
       # ICG code needs to be targeted to either C++14 (gcc versions 6.1 to 10)
       # or C++11 (gcc 4.8.1+) because C++17 (gcc version 11+) removed the dynamic
       # exception specification and the IEEE 1516-2010 APIs use it. Otherwise
       # this will result in compile time errors.
-      ifeq ($(shell echo $(COMPILER_VERSION)\>=6 | bc),1)
-         TRICK_ICGFLAGS += --icg-std=c++14
-         $(info ${GREEN_TXT}S_hla.mk:INFO: Using C++14 for Trick ICG code.${RESET_TXT})
-      endif
+      TRICK_ICGFLAGS += --icg-std=c++14
+
+      # Trick now requires at least c++14, and given HLA Evolved is using
+      # deprecated c++ APIs, we can only use c++14.
+      TRICK_CXXFLAGS += -std=c++14
+
+      $(info ${GREEN_TXT}S_hla.mk:INFO: Using the c++14 standard.${RESET_TXT})
    endif
 
    ifeq ($(RTI_VENDOR),Pitch_HLA_4)
@@ -267,15 +303,21 @@ else
          $(info ${GREEN_TXT}S_hla.mk:INFO: User defined RTI_JAVA_HOME = ${RTI_JAVA_HOME}${RESET_TXT})
       endif
       RTI_JAVA_HOME ?= ${RTI_HOME}/jre
-      ifneq ("$(wildcard ${RTI_JAVA_HOME}/jre/lib/amd64/server)","")
+      ifneq ("$(wildcard ${RTI_JAVA_HOME}/lib/server)","")
+         RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/lib/server
+      else ifneq ("$(wildcard ${RTI_JAVA_HOME}/lib/amd64/server)","")
+         RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/lib/amd64/server
+      else ifneq ("$(wildcard ${RTI_JAVA_HOME}/lib/aarch64/server)","")
+         RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/lib/aarch64/server
+      else ifneq ("$(wildcard ${RTI_JAVA_HOME}/jre/lib/server)","")
+         RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/jre/lib/server
+      else ifneq ("$(wildcard ${RTI_JAVA_HOME}/jre/lib/amd64/server)","")
          RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/jre/lib/amd64/server
       else ifneq ("$(wildcard ${RTI_JAVA_HOME}/jre/lib/aarch64/server)","")
          RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/jre/lib/aarch64/server
-      else ifneq ("$(wildcard ${RTI_JAVA_HOME}/lib/server)","")
-         RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/lib/server
       else
          # Default to JRE that came with the Pitch RTI if needed.
-         RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/lib/amd64/server
+         RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/lib/server
       endif
       # Verify the RTI Java Home and Lib paths.
       ifeq ("$(wildcard ${RTI_JAVA_HOME})","")
@@ -284,24 +326,33 @@ else
       ifeq ("$(wildcard ${RTI_JAVA_LIB_PATH})","")
          $(error ${RED_TXT}S_hla.mk:ERROR: The path specified by RTI_JAVA_LIB_PATH is invalid for ${RTI_JAVA_LIB_PATH}${RESET_TXT})
       endif
-      TRICK_USER_LINK_LIBS += -L${RTI_JAVA_LIB_PATH}/.. -L${RTI_JAVA_LIB_PATH} -ljava -ljvm -lverify -Wl,-rpath,${RTI_JAVA_LIB_PATH}/.. -Wl,-rpath,${RTI_JAVA_LIB_PATH}
+      TRICK_USER_LINK_LIBS += -L${RTI_JAVA_LIB_PATH}/.. -L${RTI_JAVA_LIB_PATH} -Wl,-rpath,${RTI_JAVA_LIB_PATH}/.. -Wl,-rpath,${RTI_JAVA_LIB_PATH} -ljava -ljvm -lverify
 
       # Add the CLASSPATH environment variable to the simulation executable.
       export CLASSPATH     += ${RTI_HOME}/lib/prti1516_hla4.jar
       export TRICK_GTE_EXT += CLASSPATH
 
       # Determine which gcc library version to use.
-      ifeq ($(shell echo $(COMPILER_VERSION)\>=7 | bc),1)
+      ifeq ($(shell [ $(COMPILER_VERSION) -ge 7 ] && echo true),true)
          RTI_LIB_PATH = ${RTI_HOME}/lib
       else
-         $(error ${RED_TXT}S_hla.mk:ERROR: Pitch RTI libraries require at least gcc 7 for Linux.${RESET_TXT})
+         $(error ${RED_TXT}S_hla.mk:ERROR: Pitch RTI libraries for HLA 4 require at least gcc 7 for Linux.${RESET_TXT})
       endif
-      TRICK_USER_LINK_LIBS += -L${RTI_LIB_PATH} -lrti1516_2025gcc7 -lfedtime1516_2025gcc7 -Wl,-rpath,${RTI_LIB_PATH}
+      TRICK_USER_LINK_LIBS += -L${RTI_LIB_PATH} -Wl,-rpath,${RTI_LIB_PATH} -lrti1516_2025gcc7 -lfedtime1516_2025gcc7
 
-      # On Ubuntu, the user needs to add the LD_LIBRARY_PATH shown below to
-      # their environment.
+      ifdef LD_LIBRARY_PATH
+         ifeq (,$(findstring ${RTI_LIB_PATH}, $(LD_LIBRARY_PATH)))
+            export LD_LIBRARY_PATH += :${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}
+         endif
+      else
+         export LD_LIBRARY_PATH = ${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}
+      endif
+
+      # On Ubuntu, disable the new dtags to ensure RPATH is used and not RUNPATH.
       ifneq ("$(wildcard /etc/lsb-release)","")
-        $(info ${GREEN_TXT}S_hla.mk:INFO: Add this to your .bashrc file: export LD_LIBRARY_PATH=${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}${RESET_TXT})
+         ifneq (,$(findstring Ubuntu, $(shell grep DISTRIB_ID /etc/lsb-release | cut -d= -f2)))
+            TRICK_USER_LINK_LIBS += -Wl,--disable-new-dtags
+         endif
       endif
 
    else ifeq ($(RTI_VENDOR),Pitch_HLA_Evolved)
@@ -311,16 +362,23 @@ else
          $(info ${GREEN_TXT}S_hla.mk:INFO: User defined RTI_JAVA_HOME = ${RTI_JAVA_HOME}${RESET_TXT})
       endif
       RTI_JAVA_HOME ?= ${RTI_HOME}/jre
-      ifneq ("$(wildcard ${RTI_JAVA_HOME}/jre/lib/amd64/server)","")
+      ifneq ("$(wildcard ${RTI_JAVA_HOME}/lib/server)","")
+         RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/lib/server
+      else ifneq ("$(wildcard ${RTI_JAVA_HOME}/lib/amd64/server)","")
+         RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/lib/amd64/server
+      else ifneq ("$(wildcard ${RTI_JAVA_HOME}/lib/aarch64/server)","")
+         RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/lib/aarch64/server
+      else ifneq ("$(wildcard ${RTI_JAVA_HOME}/jre/lib/server)","")
+         RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/jre/lib/server
+      else ifneq ("$(wildcard ${RTI_JAVA_HOME}/jre/lib/amd64/server)","")
          RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/jre/lib/amd64/server
       else ifneq ("$(wildcard ${RTI_JAVA_HOME}/jre/lib/aarch64/server)","")
          RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/jre/lib/aarch64/server
-      else ifneq ("$(wildcard ${RTI_JAVA_HOME}/lib/server)","")
-         RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/lib/server
       else
          # Default to JRE that came with the Pitch RTI if needed.
-         RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/lib/amd64/server
+         RTI_JAVA_LIB_PATH ?= ${RTI_JAVA_HOME}/lib/server
       endif
+
       # Verify the RTI Java Home and Lib paths.
       ifeq ("$(wildcard ${RTI_JAVA_HOME})","")
          $(error ${RED_TXT}S_hla.mk:ERROR: The path specified by RTI_JAVA_HOME is invalid for ${RTI_JAVA_HOME}${RESET_TXT})
@@ -328,28 +386,37 @@ else
       ifeq ("$(wildcard ${RTI_JAVA_LIB_PATH})","")
          $(error ${RED_TXT}S_hla.mk:ERROR: The path specified by RTI_JAVA_LIB_PATH is invalid for ${RTI_JAVA_LIB_PATH}${RESET_TXT})
       endif
-      TRICK_USER_LINK_LIBS += -L${RTI_JAVA_LIB_PATH}/.. -L${RTI_JAVA_LIB_PATH} -ljava -ljvm -lverify -Wl,-rpath,${RTI_JAVA_LIB_PATH}/.. -Wl,-rpath,${RTI_JAVA_LIB_PATH}
+      TRICK_USER_LINK_LIBS += -L${RTI_JAVA_LIB_PATH}/.. -L${RTI_JAVA_LIB_PATH} -Wl,-rpath,${RTI_JAVA_LIB_PATH}/.. -Wl,-rpath,${RTI_JAVA_LIB_PATH} -ljava -ljvm -lverify
 
       # Add the CLASSPATH environment variable to the simulation executable.
       export CLASSPATH     += ${RTI_HOME}/lib/prti1516e.jar
       export TRICK_GTE_EXT += CLASSPATH
 
       # Determine which gcc library version to use.
-      ifeq ($(shell echo $(COMPILER_VERSION)\>=7 | bc),1)
+      ifeq ($(shell [ $(COMPILER_VERSION) -ge 7 ] && echo true),true)
          RTI_LIB_PATH = ${RTI_HOME}/lib/gcc73_64
-      else ifeq ($(shell echo $(COMPILER_VERSION)\>=5 | bc),1)
+      else ifeq ($(shell [ $(COMPILER_VERSION) -ge 5 ] && echo true),true)
          RTI_LIB_PATH = ${RTI_HOME}/lib/gcc52_64
-      else ifeq ($(shell echo $(COMPILER_VERSION)\>=4 | bc),1)
+      else ifeq ($(shell [ $(COMPILER_VERSION) -ge 4 ] && echo true),true)
          RTI_LIB_PATH = ${RTI_HOME}/lib/gcc41_64
       else
          RTI_LIB_PATH = ${RTI_HOME}/lib/gcc34_64
       endif
-      TRICK_USER_LINK_LIBS += -L${RTI_LIB_PATH} -lrti1516e64 -lfedtime1516e64 -Wl,-rpath,${RTI_LIB_PATH}
+      TRICK_USER_LINK_LIBS += -L${RTI_LIB_PATH} -Wl,-rpath,${RTI_LIB_PATH} -lrti1516e64 -lfedtime1516e64
 
-      # On Ubuntu, the user needs to add the LD_LIBRARY_PATH shown below to
-      # their environment.
+      ifdef LD_LIBRARY_PATH
+         ifeq (,$(findstring ${RTI_LIB_PATH}, $(LD_LIBRARY_PATH)))
+            export LD_LIBRARY_PATH += :${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}
+         endif
+      else
+         export LD_LIBRARY_PATH = ${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}
+      endif
+
+      # On Ubuntu, disable the new dtags to ensure RPATH is used and not RUNPATH.
       ifneq ("$(wildcard /etc/lsb-release)","")
-        $(info ${GREEN_TXT}S_hla.mk:INFO: Add this to your .bashrc file: export LD_LIBRARY_PATH=${RTI_JAVA_LIB_PATH}/..:${RTI_JAVA_LIB_PATH}:${RTI_LIB_PATH}${RESET_TXT})
+         ifneq (,$(findstring Ubuntu, $(shell grep DISTRIB_ID /etc/lsb-release | cut -d= -f2)))
+            TRICK_USER_LINK_LIBS += -Wl,--disable-new-dtags
+         endif
       endif
 
    else ifeq ($(RTI_VENDOR),MAK_HLA_Evolved)

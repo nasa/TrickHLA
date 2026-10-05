@@ -16,24 +16,24 @@ From the $TRICKHLA_HOME/sims/SpaceFOM/SIM_Roles_Test directory, run the
 Master, Pacing, and Root Reference Frame federate:
 
 ```
-./S_main_*.exe RUN_mpr/input.py --verbose on
+./S_main_*.exe RUN_mpr/input.py --verbose
 ```
 
 From the SIM_Entity_Test directory, run the Dynamical Entity federate:
 
 ```
-./S_main_*.exe RUN_DE/input.py --verbose on
+./S_main_*.exe RUN_DE/input.py --verbose
 ```
 
 From the SIM_Entity_Test directory, run the Physical Entity federate:
 
 ```
-./S_main_*.exe RUN_PE/input.py --verbose on
+./S_main_*.exe RUN_PE/input.py --verbose
 ```
 
 From the $TRICKHLA_HOME/sims/SpaceFOM/SIM_Roles_Test directory, run the
 Other federate:
 
 ```
-./S_main_*.exe RUN_other/input.py --verbose on
+./S_main_*.exe RUN_other/input.py --verbose
 ```

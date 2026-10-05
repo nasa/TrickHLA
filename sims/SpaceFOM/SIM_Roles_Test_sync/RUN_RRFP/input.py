@@ -14,8 +14,21 @@
 #    (((Edwin Z. Crues) (NASA/ER7) (Jan 2019) (--) (SpaceFOM support and testing.))
 #     ((Dan Dexter) (NASA/ER6) (Aug 2020) (--) (Updated command-line parsing.))))
 ##############################################################################
+import os
 import sys
-sys.path.append( '../../../' )
+
+# Find the TrickHLA home location and append the path.
+trickhla_home = os.environ.get( "TRICKHLA_HOME" )
+if trickhla_home is None:
+   sys.exit( '\033[91m'+'Environment variable TRICKHLA_HOME is not defined!'+'\033[0m\n' )
+else:
+   if os.path.isdir( trickhla_home ) is False:
+      sys.exit( '\033[91m'+'TRICKHLA_HOME not found: '+trickhla_home+'\033[0m\n' )
+
+# Append the path to the top level of the top level TrickHLA directory.
+# We need this to locate the TrickHLA_data Python data directory.
+if trickhla_home not in sys.path :
+   sys.path.append( trickhla_home )
 
 # Load the SpaceFOM specific federate configuration object.
 from TrickHLA_data.SpaceFOM.SpaceFOMFederateConfig import *
@@ -38,7 +51,7 @@ def print_usage_message():
    print( '  --constrained [on|off]  : on: Turns on HLA Time Constrained (Default), off: disables it.' )
    print( '  --stop [time]           : Time to stop simulation, default is 10.0 seconds.' )
    print( '  --nostop                : Set no stop time on simulation.' )
-   print( '  --verbose [on|off]      : on: Show verbose messages, off: disable messages (Default).' )
+   print( '  --verbose               : Show verbose messages.' )
    print( ' ' )
 
    trick.exec_terminate_with_return( -1,
@@ -138,18 +151,7 @@ def parse_command_line():
          print_usage = True
 
       elif ( str( argv[index] ) == '--verbose' ):
-         index = index + 1
-         if ( index < argc ):
-            if ( str( argv[index] ) == 'on' ):
-               verbose = True
-            elif ( str( argv[index] ) == 'off' ):
-               verbose = False
-            else:
-               print( 'ERROR: Unknown --verbose argument: ' + str( argv[index] ) )
-               print_usage = True
-         else:
-            print( 'ERROR: Missing --verbose [on|off] argument.' )
-            print_usage = True
+         verbose = True
 
       elif ( ( str( argv[index] ) == '-d' ) ):
          # Pass this on to Trick.
@@ -193,7 +195,7 @@ federation_name = 'SpaceFOM_Roles_Test'
 # Set the default Master Federate name.
 master_name = 'Master'
 
-# Set the default Paceing Federate name.
+# Set the default Pacing Federate name.
 pacing_name = 'Pacing'
 
 # Set the default Root Reference Frame name.
@@ -208,26 +210,24 @@ if ( print_usage == True ):
 # Set up Trick executive parameters.
 #---------------------------------------------
 # instruments.echo_jobs.echo_jobs_on()
-trick.exec_set_trap_sigfpe( True )
 # trick.checkpoint_pre_init(1)
 # trick.checkpoint_post_init(1)
 # trick.add_read(0.0 , '''trick.checkpoint('chkpnt_point')''')
 
+# Import and configure the TrickHLA base Simulation Configuration class.
+from TrickHLA_data.TrickHLA.TrickHLASimConfig import *
+roles_sim_config = TrickHLASimConfig( 'Roles' )
+roles_sim_config.realtime( software_frame_time = 0.250 )
+roles_sim_config.start_in_freeze( False )
+
 # Setup for Trick real time execution. This is the "Pacing" function.
 if ( realtime_clock == True ):
    print( 'Realtime Clock Enabled.' )
-   exec( open( "Modified_data/trick/realtime.py" ).read() )
+   trick.real_time_enable()
 else:
    print( 'Realtime Clock Disabled.' )
-   # Must specify a Trick software frame that meets the time constraints
-   # for the Least Common Time Step (LCTS) value set in the ExCO by the
-   # Master federate. (LCTS >= RT) && (LCTS % RT = 0)
-   trick.exec_set_software_frame( 0.250 )
+   trick.real_time_disable()
 
-trick.exec_set_enable_freeze( False )
-trick.exec_set_freeze_command( False )
-trick.sim_control_panel_set_enabled( False )
-trick.exec_set_stack_trace( False )
 
 # =========================================================================
 # Set up the HLA interfaces.
@@ -273,7 +273,7 @@ federate.set_RRFP_role( True )  # This is the Root Reference Frame Publisher.
 # Configure the CRC.
 #--------------------------------------------------------------------------
 # Pitch specific local settings designator:
-THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
+THLA.federate.local_settings = 'crcHost = localhost\:8989'
 # MAK specific local settings designator, which is anything from the rid.mtl file:
 # THLA.federate.local_settings = '(setqb RTI_tcpForwarderAddr \'192.168.15.3\') (setqb RTI_distributedForwarderPort 5000)'
 

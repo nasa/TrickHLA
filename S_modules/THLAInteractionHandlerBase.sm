@@ -85,7 +85,7 @@ class TrickHLAInteractionHandlerBaseSimObject : public Trick::SimObject {
          std::ostringstream errmsg;
          errmsg << "TrickHLAInteractionHandlerBaseSimObject::default_config():" << __LINE__
                 << " ERROR: Unexpected NULL InteractionHandler!" << std::endl;
-         TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+         TrickHLA::DebugHandler::terminate( errmsg.str() );
          return( -1 );
       }
 
@@ -104,7 +104,7 @@ class TrickHLAInteractionHandlerBaseSimObject : public Trick::SimObject {
                std::ostringstream errmsg;
                errmsg << "TrickHLAInteractionHandlerBaseSimObject::default_config():" << __LINE__
                       << " ERROR: InteractionHandler references do NOT match!" << std::endl;
-               TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+               TrickHLA::DebugHandler::terminate( errmsg.str() );
                return( -1 );
             }
             
@@ -146,7 +146,7 @@ class TrickHLAInteractionHandlerBaseSimObject : public Trick::SimObject {
          errmsg << "TrickHLAInteractionHandlerBaseSimObject::initialize():" << __LINE__
                 << " ERROR: The sim-object configure function must be called"
                 << " before calling this initialize function!" << std::endl;
-         TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+         TrickHLA::DebugHandler::terminate( errmsg.str() );
          return( -1 );
       }
 
@@ -155,7 +155,7 @@ class TrickHLAInteractionHandlerBaseSimObject : public Trick::SimObject {
          std::ostringstream errmsg;
          errmsg << "TrickHLAInteractionHandlerBaseSimObject::initialize():" << __LINE__
                 << " ERROR: Unexpected NULL Packing object!" << std::endl;
-         TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+         TrickHLA::DebugHandler::terminate( errmsg.str() );
          return( -1 );
       } else {
          handler_base_ptr->initialize();
@@ -176,7 +176,7 @@ class TrickHLAInteractionHandlerBaseSimObject : public Trick::SimObject {
                std::ostringstream errmsg;
                errmsg << "TrickHLAInteractionHandlerBaseSimObject::initialize():" << __LINE__
                       << " ERROR: InteractionHandler references do NOT match!" << std::endl;
-               TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+               TrickHLA::DebugHandler::terminate( errmsg.str() );
                return( -1 );
             }
             
@@ -200,7 +200,7 @@ class TrickHLAInteractionHandlerBaseSimObject : public Trick::SimObject {
          errmsg << "TrickHLAInteractionHandlerBaseSimObject::initialize():" << __LINE__
                 << " ERROR: The TrickHLA::InteractionHandler associated with"
                 << " interaction \'" << name << "\' is NULL." << std::endl;
-         //TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+         //TrickHLA::DebugHandler::terminate( errmsg.str() );
          message_publish( MSG_WARNING, errmsg.str().c_str() );
          
       }

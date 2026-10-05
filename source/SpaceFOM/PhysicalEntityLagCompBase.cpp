@@ -46,6 +46,7 @@ NASA, Johnson Space Center\n
 
 // TrickHLA includes.
 #include "TrickHLA/Attribute.hh"
+#include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/LagCompensation.hh"
 #include "TrickHLA/Object.hh"
@@ -156,12 +157,22 @@ void PhysicalEntityLagCompBase::initialize_states()
  *  TrickHLALagCompensation class. */
 void PhysicalEntityLagCompBase::send_lag_compensation()
 {
-   double begin_t = get_scenario_time();
-   double end_t;
+   if ( !initialized ) {
+      ostringstream errmsg;
+      errmsg << "PhysicalEntityLagCompBase::send_lag_compensation():" << __LINE__
+#if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
+             << " ERROR: The initialize() function has not been called!" << endl;
+      DebugHandler::terminate( errmsg.str() );
+#else
+             << " WARNING: The initialize() function has not been called!" << endl;
+      message_publish( MSG_WARNING, errmsg.str().c_str() );
+#endif
+   }
 
    // Save the compensation time step.
-   this->compensate_dt = get_lookahead().get_time_in_seconds();
-   end_t               = begin_t + this->compensate_dt;
+   this->compensate_dt  = get_lookahead().get_time_in_seconds();
+   double const begin_t = get_scenario_time();
+   double const end_t   = begin_t + this->compensate_dt;
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
@@ -209,8 +220,20 @@ void PhysicalEntityLagCompBase::send_lag_compensation()
  *  TrickHLALagCompensation class. */
 void PhysicalEntityLagCompBase::receive_lag_compensation()
 {
-   double end_t  = get_scenario_time();
-   double data_t = entity.get_time();
+   if ( !initialized ) {
+      ostringstream errmsg;
+      errmsg << "PhysicalEntityLagCompBase::receive_lag_compensation():" << __LINE__
+#if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
+             << " ERROR: The initialize() function has not been called!" << endl;
+      DebugHandler::terminate( errmsg.str() );
+#else
+             << " WARNING: The initialize() function has not been called!" << endl;
+      message_publish( MSG_WARNING, errmsg.str().c_str() );
+#endif
+   }
+
+   double const end_t  = get_scenario_time();
+   double const data_t = entity.get_time();
 
    // Save the compensation time step.
    this->compensate_dt = end_t - data_t;

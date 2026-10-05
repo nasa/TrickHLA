@@ -44,19 +44,29 @@ NASA, Johnson Space Center\n
 // System includes.
 #include <iostream>
 
+// TrickHLA includes.
+#include "TrickHLA/CompileConfig.hh"
+#include "TrickHLA/Packing.hh"
+#if defined( USE_SPACEFOM_ENCODERS )
+#   include "TrickHLA/OpaqueBuffer.hh"
+#endif
+
 // SpaceFOM includes.
 #include "SpaceFOM/PhysicalEntityData.hh"
-#include "SpaceFOM/QuaternionEncoder.hh"
 #include "SpaceFOM/SpaceTimeCoordinateData.hh"
-#include "SpaceFOM/SpaceTimeCoordinateEncoder.hh"
-
-// TrickHLA includes.
-#include "TrickHLA/Packing.hh"
+#if defined( USE_SPACEFOM_ENCODERS )
+#   include "SpaceFOM/QuaternionEncoder.hh"
+#   include "SpaceFOM/SpaceTimeCoordinateEncoder.hh"
+#endif // USE_SPACEFOM_ENCODERS
 
 namespace SpaceFOM
 {
 
-class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuffer
+class PhysicalEntityBase : public TrickHLA::Packing
+#if defined( USE_SPACEFOM_ENCODERS )
+   ,
+                           public TrickHLA::OpaqueBuffer
+#endif // USE_SPACEFOM_ENCODERS
 {
    // Let the Trick input processor access protected and private data.
    // InputProcessor is really just a marker class (does not really
@@ -86,12 +96,16 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
     *  @param entity_pkg_name Name of the PhysicalEntity object in the SimObject.
     *  @param entity_fed_name Name of the PhysicalEntity instance.
     *  @param mngr_object TrickHLA::Object associated with this PhysicalEntity.
+    *  @param publish True to publish attributes, default will publish if create is true.
+    *  @param subscribe True to subscribe attributes, default will subscribe if create if false.
     *  */
    virtual void base_config( bool               create,
                              std::string const &sim_obj_name,
                              std::string const &entity_pkg_name,
                              std::string const &entity_fed_name,
-                             TrickHLA::Object  *mngr_object = NULL );
+                             TrickHLA::Object  *mngr_object = NULL,
+                             bool const         publish     = false,
+                             bool const         subscribe   = false );
 
    /*! @brief Entity instance initialization routine. */
    virtual void initialize();
@@ -163,7 +177,7 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
 
    /*! @brief Packs the packing data object from the working data object(s),
     *  @details Called from the pack() function to pack the data from the working
-    *  data objects(s) into the pe_packing_data object.  */
+    *  data objects(s) into the pe_packing_data object. */
    virtual void pack_from_working_data() = 0;
 
    /*! @brief Unpacks the packing data object into the working data object(s),
@@ -196,8 +210,10 @@ class PhysicalEntityBase : public TrickHLA::Packing, public TrickHLA::OpaqueBuff
    PhysicalEntityData pe_packing_data; ///< @trick_units{--} Physical entity packing data.
 
    // Instantiate the aggregate data encoders
+#if defined( USE_SPACEFOM_ENCODERS )
    SpaceTimeCoordinateEncoder stc_encoder;  ///< @trick_units{--} Entity state encoder.
    QuaternionEncoder          quat_encoder; ///< @trick_units{--} Attitude quaternion encoder.
+#endif                                      // USE_SPACEFOM_ENCODERS
 
    /*! @brief Print out the packing data debug information.
     *  @param stream Output stream. */

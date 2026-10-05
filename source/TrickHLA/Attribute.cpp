@@ -131,7 +131,7 @@ void Attribute::initialize(
          errmsg << " For FOM Attribute Named '" << get_FOM_name() << "'.";
       }
       errmsg << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Make sure we have a valid attribute FOM name.
@@ -143,7 +143,7 @@ void Attribute::initialize(
              << object_index << "].attributes[" << attribute_index
              << "].FOM_name' in either your input.py file or modified-data files"
              << " is correctly specified." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    if ( rti_encoding != ENCODING_FIXED_RECORD ) {
@@ -157,7 +157,7 @@ void Attribute::initialize(
                 << object_index << "].attributes[" << attribute_index
                 << "].trick_name' in either your input.py file or modified-data files"
                 << " is correctly specified." << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       }
    }
 
@@ -172,7 +172,7 @@ void Attribute::initialize(
              << " to " << ENCODING_LAST_VALUE << ". Please check your input or"
              << " modified-data files to make sure the value for the 'rti_encoding'"
              << " is correctly specified." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Do a quick bounds check on the 'preferred_order' value.
@@ -185,7 +185,7 @@ void Attribute::initialize(
              << " one of TRANSPORT_TYPE_SPECIFIED_IN_FOM, THLA_TIMESTAMP_ORDER or"
              << " THLA_RECEIVE_ORDER. Please check your input or modified-data"
              << " files to make sure the 'preferred_order' is correctly specified." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Do a bounds check on the 'config' value.
@@ -199,7 +199,7 @@ void Attribute::initialize(
              << " to " << CONFIG_MAX_VALUE << ". Please check your input or"
              << " modified-data files to make sure the value for 'config'"
              << " is correctly specified." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Warn the user if the object attribute has a CONFIG_TYPE_NONE configuration.
@@ -226,7 +226,7 @@ void Attribute::initialize(
              << " seconds, which is not valid. The 'cycle_time' must be > 0."
              << " Please check your input or modified-data files to make sure"
              << " the value for the 'cycle_time' is correctly specified." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Initialize the element encoders including a fixed record encoder.
@@ -238,7 +238,7 @@ void Attribute::initialize(
              << " ERROR: Unexpected NULL encoder for Trick variable '"
              << get_trick_name() << "' with an 'rti_encoding' value of "
              << encoding_enum_to_string( rti_encoding ) << "." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {
@@ -280,7 +280,7 @@ VariableLengthData &Attribute::encode()
              << " ERROR: Unexpected error encoding HLA data for Trick variable '"
              << get_trick_name() << "' and FOM name '" << get_FOM_name()
              << "' with error: " << err_details << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    return encoder->data;
@@ -299,7 +299,7 @@ bool Attribute::decode(
              << " ERROR: Unexpected error decoding HLA data for Trick variable '"
              << get_trick_name() << "' and FOM name '" << get_FOM_name()
              << "' with error: " << err_details << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    update_after_decode();
@@ -334,7 +334,7 @@ void Attribute::determine_cycle_ratio(
                 << " must be > 0. Please make sure your S_define and/or THLA.sm"
                 << " simulation module specifies a valid cycle time for the"
                 << " send_cyclic_and_requested_data() job." << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       }
 
       // Do a bounds check on the 'cycle_time' value.
@@ -350,7 +350,7 @@ void Attribute::determine_cycle_ratio(
                 << " send_cyclic_and_requested_data() job). Please check your"
                 << " input or modified-data files to make sure the value for"
                 << " the attribute 'cycle_time' is specified correctly." << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       }
 
       this->cycle_ratio = (int)lround( this->cycle_time / core_job_cycle_time );
@@ -373,7 +373,7 @@ void Attribute::determine_cycle_ratio(
                 << "), which is not an integer. Please check your input or"
                 << " modified-data files to make sure the value for the attribute"
                 << " 'cycle_time' is specified correctly." << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       }
 
       if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_ATTRIBUTE ) ) {

@@ -15,10 +15,22 @@
 # PROGRAMMERS:
 #    (((Edwin Z. Crues) (NASA/ER7) (June 2023) (--) (JEOD support and testing.)))
 ##############################################################################
-import socket
-import subprocess
+import os
 import sys
-sys.path.append( '../../../' )
+
+# Find the TrickHLA home location and append the path.
+trickhla_home = os.environ.get( "TRICKHLA_HOME" )
+if trickhla_home is None:
+   sys.exit( '\033[91m'+'Environment variable TRICKHLA_HOME is not defined!'+'\033[0m\n' )
+else:
+   if os.path.isdir( trickhla_home ) is False:
+      sys.exit( '\033[91m'+'TRICKHLA_HOME not found: '+trickhla_home+'\033[0m\n' )
+
+# Append the path to the top level of the top level TrickHLA directory.
+# We need this to locate the TrickHLA_data Python data directory.
+if trickhla_home not in sys.path :
+   sys.path.append( trickhla_home )
+
 # Load the SpaceFOM specific federate configuration object.
 from TrickHLA_data.SpaceFOM.SpaceFOMFederateConfig import *
 # Load the SpaceFOM specific reference frame configuration object.
@@ -33,7 +45,7 @@ def print_usage_message():
    print( '  -h --help             : Print this help message.' )
    print( '  --stop [time]         : Time to stop simulation, default is 10.0 seconds.' )
    print( '  --nostop              : Set no stop time on simulation.' )
-   print( '  --verbose [on|off]    : on: Show verbose messages, off: disable messages (Default).' )
+   print( '  --verbose             : Show verbose messages.' )
    print( ' ' )
 
    trick.exec_terminate_with_return( -1,
@@ -73,18 +85,7 @@ def parse_command_line():
          print_usage = True
 
       elif ( str( argv[index] ) == '--verbose' ):
-         index = index + 1
-         if ( index < argc ):
-            if ( str( argv[index] ) == 'on' ):
-               verbose = True
-            elif ( str( argv[index] ) == 'off' ):
-               verbose = False
-            else:
-               print( 'ERROR: Unknown --verbose argument: ' + str( argv[index] ) )
-               print_usage = True
-         else:
-            print( 'ERROR: Missing --verbose [on|off] argument.' )
-            print_usage = True
+         verbose = True
 
       elif ( str( argv[index] ) == '-d' ):
          # Catch the Trick debug command line option an do NOT terminate.
@@ -100,31 +101,6 @@ def parse_command_line():
 
       index = index + 1
    return
-
-
-def fix_var_server_source_address():
-   # The Trick variable server uses the local host name without verifying the
-   # IP address it resolves to is actually used by the local host computer.
-   # Verify the IP address and fallback to 127.0.0.1 if we find a discrepancy.
-   # Otherwise the simulation control panel will not successfully connect.
-   try:
-      if ( trick.var_server_get_hostname() == socket.gethostname() ):
-         host_ip_addr = socket.gethostbyname( socket.gethostname() )
-         try:
-            ifconfig_out = subprocess.check_output( ['ifconfig'] ).decode()
-            if ( ifconfig_out.find( host_ip_addr ) < 0 ):
-               print( 'WARNING: Invalid IP address ' + host_ip_addr
-                      + ' resolved for host \'' + trick.var_server_get_hostname()
-                      + '\', setting the variable server source address to 127.0.0.1!' )
-               trick.var_server_set_source_address( '127.0.0.1' )
-         except:
-            return  # Use host source address as is.
-   except ( socket.error, socket.gaierror, socket.herror, socket.timeout ):
-      print( 'WARNING: Problem resolving \'' + trick.var_server_get_hostname()
-             + '\' host name to an address, setting the variable server source address to 127.0.0.1!' )
-      trick.var_server_set_source_address( '127.0.0.1' )
-   return
-
 
 # Default: Don't show usage.
 print_usage = False
@@ -144,23 +120,22 @@ if ( print_usage == True ):
 # Set up Trick executive parameters.
 #---------------------------------------------
 # instruments.echo_jobs.echo_jobs_on()
-trick.exec_set_trap_sigfpe( True )
 # trick.checkpoint_pre_init(1)
 # trick.checkpoint_post_init(1)
 # trick.add_read(0.0 , '''trick.checkpoint('chkpnt_point')''')
 
-trick.real_time_enable()
-trick.exec_set_software_frame( 0.250 )
-trick.exec_set_enable_freeze( True )
-trick.exec_set_freeze_command( True )
-trick.sim_control_panel_set_enabled( True )
-trick.exec_set_stack_trace( True )
+# Import and configure the TrickHLA base Simulation Configuration class.
+# Setup for Trick real time execution. This is the "Pacing" function.
+from TrickHLA_data.TrickHLA.TrickHLASimConfig import *
+jeod_sim_config = TrickHLASimConfig( 'jeod' )
+jeod_sim_config.realtime( software_frame_time = 0.250 )
+jeod_sim_config.sim_control_panel()
+jeod_sim_config.start_in_freeze()
 
 # FIXME: Use echo jobs to debug an initialization issue.
 #trick.echo_jobs_on()
 #trick.echo_jobs_off()
 
-fix_var_server_source_address()
 
 # =========================================================================
 # Set up the JEOD environment.
@@ -235,7 +210,7 @@ federate.add_known_federate( True, 'JEODRefFrames' )
 # Configure the CRC.
 #--------------------------------------------------------------------------
 # Pitch specific local settings designator:
-THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
+THLA.federate.local_settings = 'crcHost = localhost\:8989'
 # THLA.federate.local_settings = 'crcHost = 10.8.0.161\n crcPort = 8989'
 # MAK specific local settings designator, which is anything from the rid.mtl file:
 # THLA.federate.local_settings = '(setqb RTI_tcpForwarderAddr \'192.168.15.3\') (setqb RTI_distributedForwarderPort 5000)'

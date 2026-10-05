@@ -118,7 +118,7 @@ class SpaceFOMEMMRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObjec
          errmsg << "SpaceFOMEMMRefFrameTreeSimObject::configure_tree():" << __LINE__
                 << " ERROR: The TrickHLAManager Object array has not been allocated!\n";
          // Print message and terminate.
-         TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+         TrickHLA::DebugHandler::terminate( errmsg.str() );
       }
 
       // Check to see if the root reference frame is actualy being configured.

@@ -112,7 +112,7 @@ void PhysicalEntityLagCompSA::derivatives(
    QuaternionData qdot;
 
    // Cast the user data to a PhysicalEntityLagCompSA2 instance.
-   PhysicalEntityLagCompSA *lag_comp_data_ptr = static_cast< PhysicalEntityLagCompSA * >( udata );
+   PhysicalEntityLagCompSA const *lag_comp_data_ptr = static_cast< PhysicalEntityLagCompSA * >( udata );
 
    // Copy the time derivative of the attitude quaternion.
    qdot.derivative_first( states[3], &( states[4] ), &( states[10] ) );
@@ -186,8 +186,8 @@ int PhysicalEntityLagCompSA::integrate(
    double const t_begin,
    double const t_end )
 {
-   double compensate_dt = t_end - t_begin;
-   double dt_go         = compensate_dt;
+   double const compensate_dt = t_end - t_begin;
+   double       dt_go         = compensate_dt;
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.

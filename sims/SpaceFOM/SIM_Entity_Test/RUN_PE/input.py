@@ -16,8 +16,21 @@
 # PROGRAMMERS:
 #    (((Edwin Z. Crues) (NASA/ER7) (July 2023) (--) (SpaceFOM support and testing.)))
 ##############################################################################
+import os
 import sys
-sys.path.append( '../../../' )
+
+# Find the TrickHLA home location and append the path.
+trickhla_home = os.environ.get( "TRICKHLA_HOME" )
+if trickhla_home is None:
+   sys.exit( '\033[91m'+'Environment variable TRICKHLA_HOME is not defined!'+'\033[0m\n' )
+else:
+   if os.path.isdir( trickhla_home ) is False:
+      sys.exit( '\033[91m'+'TRICKHLA_HOME not found: '+trickhla_home+'\033[0m\n' )
+
+# Append the path to the top level of the top level TrickHLA directory.
+# We need this to locate the TrickHLA_data Python data directory.
+if trickhla_home not in sys.path :
+   sys.path.append( trickhla_home )
 
 # Load the SpaceFOM specific federate configuration object.
 from TrickHLA_data.SpaceFOM.SpaceFOMFederateConfig import *
@@ -44,7 +57,7 @@ def print_usage_message():
    print( '  -pe [name]            : Name of the PhysicalEntity, default is Enterprise.' )
    print( '  -pi [name]            : Name of the PhysicalInterface, default is Enterprise.dockingport.' )
    print( '  -s --stop [time]      : Time to stop simulation, default is 10.0 seconds.' )
-   print( '  --verbose [on|off]    : on: Show verbose messages, off: disable messages (Default).' )
+   print( '  --verbose             : Show verbose messages.' )
    print( ' ' )
 
    trick.exec_terminate_with_return( -1,
@@ -138,18 +151,7 @@ def parse_command_line():
             print_usage = True
 
       elif ( str( argv[index] ) == '--verbose' ):
-         index = index + 1
-         if ( index < argc ):
-            if ( str( argv[index] ) == 'on' ):
-               verbose = True
-            elif ( str( argv[index] ) == 'off' ):
-               verbose = False
-            else:
-               print( 'ERROR: Unknown --verbose argument: ' + str( argv[index] ) )
-               print_usage = True
-         else:
-            print( 'ERROR: Missing --verbose [on|off] argument.' )
-            print_usage = True
+         verbose = True
 
       elif ( ( str( argv[index] ) == '-d' ) ):
          # Pass this on to Trick.
@@ -199,16 +201,17 @@ if ( print_usage == True ):
 # Set up Trick executive parameters.
 #---------------------------------------------
 # instruments.echo_jobs.echo_jobs_on()
-trick.exec_set_trap_sigfpe( True )
 # trick.checkpoint_pre_init(1)
 # trick.checkpoint_post_init(1)
 # trick.add_read(0.0 , '''trick.checkpoint('chkpnt_point')''')
 # trick.checkpoint_end(1)
 
-trick.exec_set_enable_freeze( False )
-trick.exec_set_freeze_command( False )
-trick.sim_control_panel_set_enabled( False )
-trick.exec_set_stack_trace( False )
+# Import and configure the TrickHLA base Simulation Configuration class.
+from TrickHLA_data.TrickHLA.TrickHLASimConfig import *
+entity_sim_config = TrickHLASimConfig( 'Entity' )
+entity_sim_config.set_software_and_freeze_frame_time( software_frame_time = 0.250 )
+entity_sim_config.start_in_freeze( False )
+
 
 #---------------------------------------------
 # Setup the integrators
@@ -343,7 +346,7 @@ federate.add_known_federate( True, dyn_federate_name )
 # Configure the CRC.
 #--------------------------------------------------------------------------
 # Pitch specific local settings designator:
-THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
+THLA.federate.local_settings = 'crcHost = localhost\:8989'
 # THLA.federate.local_settings = 'crcHost = 10.8.0.161\n crcPort = 8989'
 # MAK specific local settings designator, which is anything from the rid.mtl file:
 # THLA.federate.local_settings = '(setqb RTI_tcpForwarderAddr \'192.168.15.3\') (setqb RTI_distributedForwarderPort 5000)'

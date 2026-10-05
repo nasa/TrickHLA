@@ -214,8 +214,8 @@ void RefFrameData::print_data( std::ostream &stream ) const
    // Set the print precision.
    stream.precision( 15 );
 
-   stream << "\tname:   '" << name << "'" << endl
-          << "\tparent: '" << parent_name << "'" << endl;
+   stream << "                name: '" << name << "'" << endl
+          << "              parent: '" << parent_name << "'" << endl;
    RefFrameDataState::print_data( stream );
 
    return;

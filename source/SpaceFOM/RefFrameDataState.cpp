@@ -416,25 +416,25 @@ void RefFrameDataState::print_data( std::ostream &stream ) const
    // Set the print precision.
    stream.precision( 15 );
 
-   stream << "\tposition: "
-          << "\t\t" << state.pos[0] << ", "
+   stream << "            position: "
+          << "\t" << state.pos[0] << ", "
           << "\t\t" << state.pos[1] << ", "
           << "\t\t" << state.pos[2] << endl;
-   stream << "\tvelocity: "
-          << "\t\t" << state.vel[0] << ", "
+   stream << "            velocity: "
+          << "\t" << state.vel[0] << ", "
           << "\t\t" << state.vel[1] << ", "
           << "\t\t" << state.vel[2] << endl;
-   stream << "\tacceleration: "
-          << "\t\t" << accel[0] << ", "
+   stream << "        acceleration: "
+          << "\t" << accel[0] << ", "
           << "\t\t" << accel[1] << ", "
           << "\t\t" << accel[2] << endl;
    state.att.print_data( stream );
-   stream << "\tangular velocity: "
-          << "\t\t" << state.ang_vel[0] << ", "
+   stream << "    angular velocity: "
+          << "\t" << state.ang_vel[0] << ", "
           << "\t\t" << state.ang_vel[1] << ", "
           << "\t\t" << state.ang_vel[2] << endl;
-   stream << "\tangular acceleration: "
-          << "\t\t" << ang_accel[0] << ", "
+   stream << "angular acceleration: "
+          << "\t" << ang_accel[0] << ", "
           << "\t\t" << ang_accel[1] << ", "
           << "\t\t" << ang_accel[2] << endl;
 

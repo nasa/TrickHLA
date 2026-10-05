@@ -171,13 +171,13 @@ void FreezeInteractionHandler::send_scenario_freeze_interaction(
       interaction->get_federate()->wait_for_time_advance_grant();
    }
 
-   Int64Interval lookahead              = interaction->get_federate()->get_lookahead();
-   Int64Time     granted                = interaction->get_federate()->get_granted_time();
-   Int64Time     granted_plus_lookahead = granted + lookahead;
+   Int64Interval const lookahead              = interaction->get_federate()->get_lookahead();
+   Int64Time const     granted                = interaction->get_federate()->get_granted_time();
+   Int64Time const     granted_plus_lookahead = granted + lookahead;
 
-   double curr_scenario_time   = interaction->get_manager()->get_execution_control()->get_scenario_time();
-   double freeze_scenario_time = freeze_time;
-   double freeze_hla_time      = granted.get_time_in_seconds() + ( freeze_scenario_time - curr_scenario_time );
+   double const curr_scenario_time   = interaction->get_manager()->get_execution_control()->get_scenario_time();
+   double       freeze_scenario_time = freeze_time;
+   double       freeze_hla_time      = granted.get_time_in_seconds() + ( freeze_scenario_time - curr_scenario_time );
 
    // The freeze interaction will go out as soon as possible even if the
    // federation freeze time is further out in the future. This is the HLA
@@ -198,7 +198,7 @@ Late joining federate, Freeze Interaction will now be sent for HLA time:%lf\n",
 
    // To avoid possible round off errors, do the math using the native 64-bit
    // integer type.
-   Int64Time interation_time_plus_lookahead = interaction_hla_time + lookahead;
+   Int64Time const interation_time_plus_lookahead = interaction_hla_time + lookahead;
 
    // Make sure the time we freeze the federation (on the HLA timeline) is
    // greater than the HLA time the interaction will go out on (TSO).
@@ -226,7 +226,7 @@ Late joining federate, Freeze Interaction will now be sent for HLA time:%lf\n",
 
    // Make sure the freeze HLA time is an integer multiple of the lookahead.
    if ( lookahead > 0.0 ) {
-      double freeze_t = trunc( freeze_hla_time / lookahead.get_time_in_seconds() ) * lookahead.get_time_in_seconds();
+      double const freeze_t = trunc( freeze_hla_time / lookahead.get_time_in_seconds() ) * lookahead.get_time_in_seconds();
       if ( freeze_hla_time > freeze_t ) {
          freeze_hla_time = freeze_t + lookahead.get_time_in_seconds();
 

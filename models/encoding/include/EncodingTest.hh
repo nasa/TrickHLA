@@ -39,6 +39,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{encoding/src/StringData.cpp}
 @trick_link_dependency{encoding/src/WCharData.cpp}
 @trick_link_dependency{encoding/src/WStringData.cpp}
+@trick_link_dependency{SpaceFOM/SpaceTimeCoordinateData.cpp}
 
 @revs_title
 @revs_begin
@@ -60,6 +61,9 @@ NASA, Johnson Space Center\n
 // TrickHLA includes.
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Types.hh"
+
+// SpaceFOM includes.
+#include "SpaceFOM/SpaceTimeCoordinateData.hh"
 
 #include "BoolData.hh"
 #include "CharData.hh"
@@ -235,6 +239,11 @@ class EncodingTest
                                             FixedRecData      &data1,
                                             std::string const &data2_trick_base_name,
                                             FixedRecData      &data2 );
+
+   static void stc_fixed_record_attribute_test( std::string const                 &data1_trick_base_name,
+                                                SpaceFOM::SpaceTimeCoordinateData &data1,
+                                                std::string const                 &data2_trick_base_name,
+                                                SpaceFOM::SpaceTimeCoordinateData &data2 );
 
    static void float64_logical_time_test( std::string const &data1_trick_base_name,
                                           Float64Data       &data1,

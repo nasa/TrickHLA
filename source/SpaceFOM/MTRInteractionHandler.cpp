@@ -131,7 +131,7 @@ void MTRInteractionHandler::send_interaction(
       ostringstream errmsg;
       errmsg << "SpaceFOM::MTRInteractionHandler::send_interaction():" << __LINE__
              << " ERROR: Unexpected NULL Interaction!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Get the ExecutionControl object and cast it to an SpaceFOM::ExecutionControl.
@@ -159,7 +159,7 @@ void MTRInteractionHandler::send_interaction(
 
    // Notify the parent interaction handler to send the interaction using
    // Receive Order (RO).
-   bool was_sent = InteractionHandler::send_interaction( rti_user_supplied_tag );
+   bool const was_sent = InteractionHandler::send_interaction( rti_user_supplied_tag );
 
    if ( was_sent ) {
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_INTERACTION ) ) {
@@ -227,7 +227,7 @@ void MTRInteractionHandler::receive_interaction(
       ostringstream errmsg;
       errmsg << "SpaceFOM::MTRInteractionHandler::receive_interaction():" << __LINE__
              << " ERROR: Unexpected NULL Interaction!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Get the ExecutionControl object and cast it to an SpaceFOM::ExecutionControl.
@@ -236,7 +236,7 @@ void MTRInteractionHandler::receive_interaction(
       ostringstream errmsg;
       errmsg << "SpaceFOM::MTRInteractionHandler::receive_interaction():" << __LINE__
              << "  ERROR: Unexpected NULL SpaceFOM::ExecutionControl!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       exit( 1 );
    }
 

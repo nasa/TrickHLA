@@ -18,6 +18,7 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{DebugHandler.cpp}
 @trick_link_dependency{InteractionItem.cpp}
+@trick_link_dependency{Item.cpp}
 @trick_link_dependency{Parameter.cpp}
 @trick_link_dependency{ParameterItem.cpp}
 @trick_link_dependency{Types.cpp}
@@ -52,6 +53,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/InteractionItem.hh"
+#include "TrickHLA/Item.hh"
 #include "TrickHLA/Parameter.hh"
 #include "TrickHLA/ParameterItem.hh"
 #include "TrickHLA/Types.hh"
@@ -92,7 +94,8 @@ InteractionItem::InteractionItem(
    Parameter                     *parameters,
    ParameterHandleValueMap const &theParameterValues,
    VariableLengthData const      &theUserSuppliedTag )
-   : index( inter_index ),
+   : Item(),
+     index( inter_index ),
      parameter_queue(),
      interaction_type( inter_type ),
      parm_items_count( 0 ),
@@ -115,7 +118,8 @@ InteractionItem::InteractionItem(
    ParameterHandleValueMap const &theParameterValues,
    VariableLengthData const      &theUserSuppliedTag,
    LogicalTime const             &theTime )
-   : index( inter_index ),
+   : Item(),
+     index( inter_index ),
      parameter_queue(),
      interaction_type( inter_type ),
      parm_items_count( 0 ),
@@ -131,7 +135,8 @@ InteractionItem::InteractionItem(
 
 InteractionItem::InteractionItem(
    InteractionItem const &rhs )
-   : index( rhs.index ),
+   : Item(),
+     index( rhs.index ),
      parameter_queue(),
      interaction_type( rhs.interaction_type ),
      parm_items_count( ( rhs.parm_items != NULL ) ? rhs.parm_items_count : 0 ),
@@ -149,7 +154,7 @@ InteractionItem::InteractionItem(
 
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &parameter_queue.mutex );
+   MutexProtection const auto_unlock_mutex( &parameter_queue.mutex );
 
    if ( parm_items != NULL ) {
       for ( size_t i = 0; i < parm_items_count; ++i ) {
@@ -190,7 +195,7 @@ void InteractionItem::initialize(
    {
       // When auto_unlock_mutex goes out of scope it automatically unlocks the
       // mutex even if there is an exception.
-      MutexProtection auto_unlock_mutex( &parameter_queue.mutex );
+      MutexProtection const auto_unlock_mutex( &parameter_queue.mutex );
 
       if ( parameters != NULL ) {
          // Decode all the parameters from the map.
@@ -231,7 +236,7 @@ void InteractionItem::checkpoint_queue()
 {
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
    // mutex even if there is an exception.
-   MutexProtection auto_unlock_mutex( &parameter_queue.mutex );
+   MutexProtection const auto_unlock_mutex( &parameter_queue.mutex );
 
    if ( !parameter_queue.empty() ) {
 
@@ -244,7 +249,7 @@ void InteractionItem::checkpoint_queue()
          errmsg << "InteractionItem::checkpoint_queue():" << __LINE__
                 << " ERROR: Failed to allocate enough memory for a parm_items linear"
                 << " array of " << parm_items_count << " elements" << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       }
 
       size_t         i;

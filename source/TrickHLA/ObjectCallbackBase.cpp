@@ -89,7 +89,7 @@ void ObjectCallbackBase::initialize()
       errmsg << "TrickHLA::ObjectCallbackBase::initialize():" << __LINE__
              << " ERROR: No Object name found, and it needs to be set"
              << " before calling the initialize() function!" << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    this->initialized = true;
@@ -119,7 +119,7 @@ void ObjectCallbackBase::set_object(
              << " ERROR: The initialize() function has already been called!"
              << endl;
       // Print message and terminate.
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Assign the object.
@@ -151,7 +151,7 @@ Attribute *ObjectCallbackBase::get_attribute_and_validate(
       ostringstream errmsg;
       errmsg << "ObjectCallbackBase::get_attribute_and_validate():" << __LINE__
              << " ERROR: No attribute FOM name specified." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Get the attribute by FOM name.
@@ -168,7 +168,7 @@ Attribute *ObjectCallbackBase::get_attribute_and_validate(
              << " correct, the FOM contains an attribute named '"
              << attr_FOM_name << "' and that your input.py file is properly"
              << " configured for this attribute." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
    return attr;
 }

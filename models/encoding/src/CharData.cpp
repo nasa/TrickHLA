@@ -71,7 +71,7 @@ CharData::CharData(
       }
    }
 
-   string str = "str-" + std::to_string( 1 + offset );
+   string const str = "str-" + std::to_string( 1 + offset );
 #if 1
    ptr_char = StringUtilities::mm_strdup_string( str );
 #else
@@ -100,22 +100,22 @@ bool CharData::compare(
    bool equal_values = true;
 
    ostringstream msg;
-   msg << "CharData::compare():" << __LINE__ << endl;
+   msg << "CharData::compare():" << __LINE__ << "\n";
 
    if ( this->_char == data._char ) {
-      msg << "this->char (" << (int)this->_char << ") == (" << (int)data._char << ") data.char" << endl;
+      msg << "this->char (" << (int)this->_char << ") == (" << (int)data._char << ") data.char\n";
    } else {
-      msg << "this->char (" << (int)this->_char << ") != (" << (int)data._char << ") data.char" << endl;
+      msg << "this->char (" << (int)this->_char << ") != (" << (int)data._char << ") data.char\n";
       equal_values = false;
    }
 
    for ( int i = 0; i < 3; ++i ) {
       if ( this->vec3_char[i] == data.vec3_char[i] ) {
          msg << "this->vec3_char[" << i << "] (" << (int)this->vec3_char[i]
-             << ") == (" << (int)data.vec3_char[i] << ") data.vec3_char[" << i << "]" << endl;
+             << ") == (" << (int)data.vec3_char[i] << ") data.vec3_char[" << i << "]\n";
       } else {
          msg << "this->vec3_char[" << i << "] (" << (int)this->vec3_char[i]
-             << ") != (" << (int)data.vec3_char[i] << ") data.vec3_char[" << i << "]" << endl;
+             << ") != (" << (int)data.vec3_char[i] << ") data.vec3_char[" << i << "]\n";
          equal_values = false;
       }
    }
@@ -124,27 +124,27 @@ bool CharData::compare(
       for ( int col = 0; col < 3; ++col ) {
          if ( this->m3x3_char[row][col] == data.m3x3_char[row][col] ) {
             msg << "this->m3x3_char[" << row << "][" << col << "] (" << (int)this->m3x3_char[row][col]
-                << ") == (" << (int)data.m3x3_char[row][col] << ") data.m3x3_char[" << row << "][" << col << "]" << endl;
+                << ") == (" << (int)data.m3x3_char[row][col] << ") data.m3x3_char[" << row << "][" << col << "]\n";
          } else {
             msg << "this->m3x3_char[" << row << "][" << col << "] (" << (int)this->m3x3_char[row][col]
-                << ") != (" << (int)data.m3x3_char[row][col] << ") data.m3x3_char[" << row << "][" << col << "]" << endl;
+                << ") != (" << (int)data.m3x3_char[row][col] << ") data.m3x3_char[" << row << "][" << col << "]\n";
             equal_values = false;
          }
       }
    }
 
-   size_t data1_ptr_char_size = strlen( this->ptr_char ); // flawfinder: ignore
-   size_t data2_ptr_char_size = strlen( data.ptr_char );  // flawfinder: ignore
-   size_t min_ptr_char_size   = ( data1_ptr_char_size <= data2_ptr_char_size )
-                                   ? data1_ptr_char_size
-                                   : data2_ptr_char_size;
+   size_t const data1_ptr_char_size = strlen( this->ptr_char ); // flawfinder: ignore
+   size_t const data2_ptr_char_size = strlen( data.ptr_char );  // flawfinder: ignore
+   size_t const min_ptr_char_size   = ( data1_ptr_char_size <= data2_ptr_char_size )
+                                         ? data1_ptr_char_size
+                                         : data2_ptr_char_size;
    if ( data1_ptr_char_size != data2_ptr_char_size ) {
       msg << "this->ptr_char size (" << data1_ptr_char_size
-          << ") != (" << data2_ptr_char_size << ") data.ptr_char size" << endl;
+          << ") != (" << data2_ptr_char_size << ") data.ptr_char size\n";
       equal_values = false;
    } else {
       msg << "this->ptr_char size (" << data1_ptr_char_size
-          << ") == (" << data2_ptr_char_size << ") data.ptr_char size" << endl;
+          << ") == (" << data2_ptr_char_size << ") data.ptr_char size\n";
    }
    for ( size_t i = 0; i < min_ptr_char_size; ++i ) {
       if ( this->ptr_char[i] == data.ptr_char[i] ) {
@@ -152,13 +152,13 @@ bool CharData::compare(
              << ( std::isprint( this->ptr_char[i] ) ? this->ptr_char[i] : ' ' )
              << ") == ("
              << ( std::isprint( data.ptr_char[i] ) ? data.ptr_char[i] : ' ' )
-             << ") data.ptr_char[" << i << "]" << endl;
+             << ") data.ptr_char[" << i << "]\n";
       } else {
          msg << "this->ptr_char[" << i << "] ("
              << ( std::isprint( this->ptr_char[i] ) ? this->ptr_char[i] : ' ' )
              << ") != ("
              << ( std::isprint( data.ptr_char[i] ) ? data.ptr_char[i] : ' ' )
-             << ") data.ptr_char[" << i << "]" << endl;
+             << ") data.ptr_char[" << i << "]\n";
          equal_values = false;
       }
    }
@@ -171,27 +171,27 @@ bool CharData::compare(
 string CharData::to_string()
 {
    ostringstream msg;
-   msg << "CharData::to_string():" << __LINE__ << endl
-       << "char:" << (int)_char << endl;
+   msg << "CharData::to_string():" << __LINE__ << "\n"
+       << "char:" << (int)_char << "\n";
 
    for ( int i = 0; i < 3; ++i ) {
       msg << "vec3_char[" << i << "]:" << (int)vec3_char[i] << " ";
    }
-   msg << endl;
+   msg << "\n";
 
    for ( int row = 0; row < 3; ++row ) {
       for ( int col = 0; col < 3; ++col ) {
          msg << "m3x3_char[" << row << "][" << col << "]:" << (int)m3x3_char[row][col] << " ";
       }
    }
-   msg << endl;
+   msg << "\n";
 
-   int ptr_char_size = get_size( ptr_char );
-   msg << "ptr_char size:" << ptr_char_size << endl;
+   int const ptr_char_size = get_size( ptr_char );
+   msg << "ptr_char size:" << ptr_char_size << "\n";
    for ( int i = 0; i < ptr_char_size; ++i ) {
       msg << "ptr_char[" << i << "]:" << (int)ptr_char[i] << " ";
    }
-   msg << endl;
+   msg << "\n";
 
    return msg.str();
 }

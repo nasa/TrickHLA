@@ -14,8 +14,21 @@
 #    (((Edwin Z. Crues) (NASA/ER7) (Jan 2019) (--) (SpaceFOM support and testing.))
 #     ((Dan Dexter) (NASA/ER6) (Mar 2024) (--) (SpaceFOM sine example.)))
 ##############################################################################
+import os
 import sys
-sys.path.append( '../../../' )
+
+# Find the TrickHLA home location and append the path.
+trickhla_home = os.environ.get( "TRICKHLA_HOME" )
+if trickhla_home is None:
+   sys.exit( '\033[91m'+'Environment variable TRICKHLA_HOME is not defined!'+'\033[0m\n' )
+else:
+   if os.path.isdir( trickhla_home ) is False:
+      sys.exit( '\033[91m'+'TRICKHLA_HOME not found: '+trickhla_home+'\033[0m\n' )
+
+# Append the path to the top level of the top level TrickHLA directory.
+# We need this to locate the TrickHLA_data Python data directory.
+if trickhla_home not in sys.path :
+   sys.path.append( trickhla_home )
 
 # Load the SpaceFOM specific federate configuration object.
 from TrickHLA_data.SpaceFOM.SpaceFOMFederateConfig2 import *
@@ -34,9 +47,10 @@ def print_usage_message():
    print( '  -h --help             : Print this help message.' )
    print( '  -f --fed_name [name]  : Name of the Federate, default is P-side-Federate.' )
    print( '  -fe --fex_name [name] : Name of the Federation Execution, default is SpaceFOM_sine.' )
+   print( '  --log-time-stats      : Log TrickHLA time statistics.' )
    print( '  --nostop              : Set no stop time on simulation.' )
    print( '  -s --stop [time]      : Time to stop simulation, default is 10.0 seconds.' )
-   print( '  --verbose [on|off]    : on: Show verbose messages, off: disable messages (Default).' )
+   print( '  --verbose             : Show verbose messages.' )
    print( ' ' )
 
    trick.exec_terminate_with_return( -1,
@@ -53,6 +67,7 @@ def parse_command_line():
    global verbose
    global federate_name
    global federation_name
+   global log_time_stats
 
    # Get the Trick command line arguments.
    argc = trick.command_line_args_get_argc()
@@ -82,6 +97,9 @@ def parse_command_line():
             print( 'ERROR: Missing --fex_name [name] argument.' )
             print_usage = True
 
+      elif ( str( argv[index] ) == '--log-time-stats' ):
+         log_time_stats = True
+
       elif ( str( argv[index] ) == '-nostop' ):
          run_duration = None
 
@@ -94,18 +112,7 @@ def parse_command_line():
             print_usage = True
 
       elif ( str( argv[index] ) == '--verbose' ):
-         index = index + 1
-         if ( index < argc ):
-            if ( str( argv[index] ) == 'on' ):
-               verbose = True
-            elif ( str( argv[index] ) == 'off' ):
-               verbose = False
-            else:
-               print( 'ERROR: Unknown --verbose argument: ' + str( argv[index] ) )
-               print_usage = True
-         else:
-            print( 'ERROR: Missing --verbose [on|off] argument.' )
-            print_usage = True
+         verbose = True
 
       elif ( ( str( argv[index] ) == '-d' ) ):
          # Pass this on to Trick.
@@ -128,6 +135,9 @@ run_duration = 10.0
 # Default is to NOT show verbose messages.
 verbose = False
 
+# Default is to NOT log TrickHLA time statistics.
+log_time_stats = False
+
 # Set the default Federate name.
 federate_name = 'P-side-Federate'
 
@@ -140,28 +150,47 @@ if ( print_usage == True ):
    print_usage_message()
 
 #---------------------------------------------
+# Set up the core simulation parameters.
+#---------------------------------------------
+core_frame_time = 0.250
+
+
+#---------------------------------------------
 # Set up Trick executive parameters.
 #---------------------------------------------
 # instruments.echo_jobs.echo_jobs_on()
-trick.exec_set_trap_sigfpe( True )
 # trick.checkpoint_pre_init( 1 )
 # trick.checkpoint_post_init( 1 )
 # trick.add_read( 0.0 , '''trick.checkpoint('chkpnt_point')''' )
 # trick.checkpoint_end( 1 )
 
-trick.exec_set_stack_trace( False )
-
-trick.exec_set_enable_freeze( False )
-trick.exec_set_freeze_command( False )
-trick.sim_control_panel_set_enabled( False )
+# Import and configure the TrickHLA base Simulation Configuration class.
+from TrickHLA_data.TrickHLA.TrickHLASimConfig import *
+sine_sim_config = TrickHLASimConfig( 'sine' )
+sine_sim_config.set_software_and_freeze_frame_time( software_frame_time = core_frame_time )
+sine_sim_config.start_in_freeze( False )
 
 
 #---------------------------------------------
 # Set up data to record.
 #---------------------------------------------
 exec( open( "Log_data/log_sine_states.py" ).read() )
-log_sine_states( 'A', 0.250 )
-log_sine_states( 'P', 0.250 )
+log_sine_states( 'A', core_frame_time )
+log_sine_states( 'P', core_frame_time )
+
+if log_time_stats:
+   # Import the TrickHLA Time Statistics Data Recording Group class.
+   from TrickHLA_data.TrickHLA.TrickHLATimeStatsDRG import TrickDataRecordingGroup, TrickHLATimeStatsDRG
+
+   # Create the TrickHLA Time Statistics Data Recording Group.
+   thla_time_drg = TrickHLATimeStatsDRG( core_frame_time )
+
+   # Initialize all the Data Recording Groups.
+   TrickDataRecordingGroup.initialize_groups()
+
+   # Enable the collection of TrickHLA time statistics.
+   THLA.federate.enable_time_statistics( True )
+
 
 # =========================================================================
 # Set up the HLA interfaces.
@@ -215,7 +244,7 @@ federate.add_multiphase_init_sync_point( 'Propagated_init_phase' )
 # Configure the CRC.
 #--------------------------------------------------------------------------
 # Pitch specific local settings designator:
-THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8989'
+THLA.federate.local_settings = 'crcHost = localhost:8989'
 
 #--------------------------------------------------------------------------
 # Set up federate related time related parameters.
@@ -231,12 +260,12 @@ THLA.execution_control.scenario_timeline = THLA_INIT.scenario_timeline
 federate.set_HLA_base_time_unit_and_scale_trick_tics( trick.HLA_BASE_TIME_MICROSECONDS )
 
 # Must specify a federate HLA lookahead value in seconds.
-federate.set_lookahead_time( 0.250 )
+federate.set_lookahead_time( core_frame_time )
 
 # Must specify a Trick software frame that meets the time constraints
 # for the Least Common Time Step (LCTS) value set in the ExCO by the
 # Master federate. (LCTS >= RT) && (LCTS % RT = 0)
-trick.exec_set_software_frame( 0.250 )
+trick.exec_set_software_frame( core_frame_time )
 
 # Setup Time Management parameters.
 federate.set_time_regulating( True )
@@ -273,29 +302,32 @@ P.interaction_handler.message = 'P-side: P.interaction_hdlr.message'
 # Even though we don't create the object instance, set the attributes to
 # publish so that we can take ownership of this object.
 sine_A = SineObject(
-   sine_create_object      = False,
-   sine_obj_instance_name  = 'A-side-Federate.Sine',
-   sine_trick_sim_obj_name = 'A',
-   sine_packing            = A.packing,
-   sine_conditional        = A.conditional,
-   sine_lag_comp           = A.lag_compensation,
-   sine_lag_comp_type      = trick.TrickHLA.LAG_COMPENSATION_NONE,
-   sine_ownership          = A.ownership_handler,
-   sine_deleted            = A.obj_deleted,
-   sine_attribute_publish  = True )
+   sine_create_object       = False,
+   sine_obj_instance_name   = 'A-side-Federate.Sine',
+   sine_trick_sim_obj_name  = 'A',
+   sine_packing             = A.packing,
+   sine_conditional         = A.conditional,
+   sine_lag_comp            = A.lag_compensation,
+   sine_lag_comp_type       = trick.TrickHLA.LAG_COMPENSATION_NONE,
+   sine_ownership           = A.ownership_handler,
+   sine_deleted             = A.obj_deleted,
+   sine_attribute_publish   = True,
+   sine_attribute_subscribe = True )
 
 # Add this sine object to the list of managed objects.
 federate.add_fed_object( sine_A )
 
 sine_P = SineObject(
-   sine_create_object      = True,
-   sine_obj_instance_name  = 'P-side-Federate.Sine',
-   sine_trick_sim_obj_name = 'P',
-   sine_packing            = P.packing,
-   sine_conditional        = P.conditional,
-   sine_lag_comp           = P.lag_compensation,
-   sine_lag_comp_type      = trick.TrickHLA.LAG_COMPENSATION_NONE,
-   sine_deleted            = P.obj_deleted )
+   sine_create_object       = True,
+   sine_obj_instance_name   = 'P-side-Federate.Sine',
+   sine_trick_sim_obj_name  = 'P',
+   sine_packing             = P.packing,
+   sine_conditional         = P.conditional,
+   sine_lag_comp            = P.lag_compensation,
+   sine_lag_comp_type       = trick.TrickHLA.LAG_COMPENSATION_NONE,
+   sine_deleted             = P.obj_deleted,
+   sine_attribute_publish   = True,
+   sine_attribute_subscribe = True )
 
 # Add this sine object to the list of managed objects.
 federate.add_fed_object( sine_P )

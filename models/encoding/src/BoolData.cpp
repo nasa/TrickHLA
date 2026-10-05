@@ -87,22 +87,22 @@ bool BoolData::compare(
    bool equal_values = true;
 
    ostringstream msg;
-   msg << "BoolData::compare():" << __LINE__ << endl;
+   msg << "BoolData::compare():" << __LINE__ << "\n";
 
    if ( this->_bool == data._bool ) {
-      msg << "this->bool (" << this->_bool << ") == (" << data._bool << ") data.bool" << endl;
+      msg << "this->bool (" << this->_bool << ") == (" << data._bool << ") data.bool\n";
    } else {
-      msg << "this->bool (" << this->_bool << ") != (" << data._bool << ") data.bool" << endl;
+      msg << "this->bool (" << this->_bool << ") != (" << data._bool << ") data.bool\n";
       equal_values = false;
    }
 
    for ( int i = 0; i < 3; ++i ) {
       if ( this->vec3_bool[i] == data.vec3_bool[i] ) {
          msg << "this->vec3_bool[" << i << "] (" << this->vec3_bool[i]
-             << ") == (" << data.vec3_bool[i] << ") data.vec3_bool[" << i << "]" << endl;
+             << ") == (" << data.vec3_bool[i] << ") data.vec3_bool[" << i << "]\n";
       } else {
          msg << "this->vec3_bool[" << i << "] (" << this->vec3_bool[i]
-             << ") != (" << data.vec3_bool[i] << ") data.vec3_bool[" << i << "]" << endl;
+             << ") != (" << data.vec3_bool[i] << ") data.vec3_bool[" << i << "]\n";
          equal_values = false;
       }
    }
@@ -111,32 +111,32 @@ bool BoolData::compare(
       for ( int col = 0; col < 3; ++col ) {
          if ( this->m3x3_bool[row][col] == data.m3x3_bool[row][col] ) {
             msg << "this->m3x3_bool[" << row << "][" << col << "] (" << this->m3x3_bool[row][col]
-                << ") == (" << data.m3x3_bool[row][col] << ") data.m3x3_bool[" << row << "][" << col << "]" << endl;
+                << ") == (" << data.m3x3_bool[row][col] << ") data.m3x3_bool[" << row << "][" << col << "]\n";
          } else {
             msg << "this->m3x3_bool[" << row << "][" << col << "] (" << this->m3x3_bool[row][col]
-                << ") != (" << data.m3x3_bool[row][col] << ") data.m3x3_bool[" << row << "][" << col << "]" << endl;
+                << ") != (" << data.m3x3_bool[row][col] << ") data.m3x3_bool[" << row << "][" << col << "]\n";
             equal_values = false;
          }
       }
    }
 
-   int data1_ptr_bool_size = get_size( this->ptr_bool );
-   int data2_ptr_bool_size = get_size( data.ptr_bool );
+   int const data1_ptr_bool_size = get_size( this->ptr_bool );
+   int const data2_ptr_bool_size = get_size( data.ptr_bool );
    if ( data1_ptr_bool_size != data2_ptr_bool_size ) {
       msg << "this->ptr_bool size (" << data1_ptr_bool_size
-          << ") != (" << data2_ptr_bool_size << ") data.ptr_bool size" << endl;
+          << ") != (" << data2_ptr_bool_size << ") data.ptr_bool size\n";
       equal_values = false;
    } else {
       msg << "this->ptr_bool size (" << data1_ptr_bool_size
-          << ") == (" << data2_ptr_bool_size << ") data.ptr_bool size" << endl;
+          << ") == (" << data2_ptr_bool_size << ") data.ptr_bool size\n";
 
       for ( int i = 0; i < data1_ptr_bool_size; ++i ) {
          if ( this->ptr_bool[i] == data.ptr_bool[i] ) {
             msg << "this->ptr_bool[" << i << "] (" << this->ptr_bool[i]
-                << ") == (" << data.ptr_bool[i] << ") data.ptr_bool[" << i << "]" << endl;
+                << ") == (" << data.ptr_bool[i] << ") data.ptr_bool[" << i << "]\n";
          } else {
             msg << "this->ptr_bool[" << i << "] (" << this->ptr_bool[i]
-                << ") != (" << data.ptr_bool[i] << ") data.ptr_bool[" << i << "]" << endl;
+                << ") != (" << data.ptr_bool[i] << ") data.ptr_bool[" << i << "]\n";
             equal_values = false;
          }
       }
@@ -150,27 +150,27 @@ bool BoolData::compare(
 string BoolData::to_string()
 {
    ostringstream msg;
-   msg << "BoolData::to_string():" << __LINE__ << endl
-       << "bool:" << _bool << endl;
+   msg << "BoolData::to_string():" << __LINE__ << "\n"
+       << "bool:" << _bool << "\n";
 
    for ( int i = 0; i < 3; ++i ) {
       msg << "vec3_bool[" << i << "]:" << vec3_bool[i] << " ";
    }
-   msg << endl;
+   msg << "\n";
 
    for ( int row = 0; row < 3; ++row ) {
       for ( int col = 0; col < 3; ++col ) {
          msg << "m3x3_bool[" << row << "][" << col << "]:" << m3x3_bool[row][col] << " ";
       }
    }
-   msg << endl;
+   msg << "\n";
 
-   int ptr_bool_size = get_size( ptr_bool );
-   msg << "ptr_bool size:" << ptr_bool_size << endl;
+   int const ptr_bool_size = get_size( ptr_bool );
+   msg << "ptr_bool size:" << ptr_bool_size << "\n";
    for ( int i = 0; i < ptr_bool_size; ++i ) {
       msg << "ptr_bool[" << i << "]:" << ptr_bool[i] << " ";
    }
-   msg << endl;
+   msg << "\n";
 
    return msg.str();
 }

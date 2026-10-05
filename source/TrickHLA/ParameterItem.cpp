@@ -39,6 +39,7 @@ NASA, Johnson Space Center\n
 
 // TrickHLA includes.
 #include "TrickHLA/HLAStandardSupport.hh"
+#include "TrickHLA/Item.hh"
 #include "TrickHLA/ParameterItem.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
@@ -66,7 +67,8 @@ using namespace TrickHLA;
 ParameterItem::ParameterItem(
    size_t const              parameter_index,
    VariableLengthData const *param_value )
-   : index( parameter_index ),
+   : Item(),
+     index( parameter_index ),
      size( 0 ),
      data( NULL )
 {
@@ -84,7 +86,8 @@ ParameterItem::ParameterItem(
 */
 ParameterItem::ParameterItem(
    ParameterItem const &rhs )
-   : index( rhs.index ),
+   : Item(),
+     index( rhs.index ),
      size( ( rhs.data != NULL ) ? rhs.size : 0 ),
      data( NULL )
 {

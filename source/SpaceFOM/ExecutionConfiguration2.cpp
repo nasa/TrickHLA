@@ -135,7 +135,7 @@ void ExecutionConfiguration2::configure_attributes()
       ostringstream errmsg;
       errmsg << "SpaceFOM::ExecutionConfiguration2::configure_attributes():" << __LINE__
              << " ERROR: Unexpected empty S_define_name." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
       return;
    }
 

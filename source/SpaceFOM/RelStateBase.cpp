@@ -157,7 +157,7 @@ bool RelStateBase::compute_state(
                            current frame (subject) but expressed in the desired
                            target frame. */
 
-   QuaternionData q_s_t; /* The transformation quaternion from subject into target frame. */
+   QuaternionData q_s_t; /* The transformation quaternion from subject into target frame. */ /* NOLINT(misc-const-correctness) */
 
    // Working variables.
    // Translation

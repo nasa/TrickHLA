@@ -109,7 +109,7 @@ void PhysicalEntityLagComp::initialize()
       errmsg << "SpaceFOM::PhysicalEntityLagComp::initialize():" << __LINE__
              << " ERROR: Unexpected NULL Trick integrator!" << endl;
       // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Call the base class initialize function.l
@@ -133,7 +133,7 @@ void PhysicalEntityLagComp::update_time()
  */
 void PhysicalEntityLagComp::load()
 {
-   int istep = integrator->intermediate_step;
+   int const istep = integrator->intermediate_step;
 
    // Load state array: position and velocity.
    for ( int iinc = 0; iinc < 13; ++iinc ) {

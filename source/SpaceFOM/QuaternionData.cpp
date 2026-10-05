@@ -30,6 +30,7 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cmath>
+#include <cstddef>
 #include <math.h>
 #include <ostream>
 
@@ -44,6 +45,7 @@ NASA, Johnson Space Center\n
 
 using namespace std;
 using namespace SpaceFOM;
+using namespace TrickHLA;
 
 /*!
  * @job_class{initialization}
@@ -128,13 +130,13 @@ void QuaternionData::print_data( std::ostream &stream ) const
    // Set the print precision.
    stream.precision( 15 );
 
-   stream << "\tattitude (s,v): "
-          << "\t\t" << scalar << "; "
+   stream << "      attitude (s,v): "
+          << "\t" << scalar << "; "
           << "\t\t" << vector[0] << ", "
           << "\t\t" << vector[1] << ", "
-          << "\t\t" << vector[2] << endl;
-   stream << "\tattitude (RPY){deg}: "
-          << "\t\t" << euler_angles[0] << ", "
+          << "\t\t" << vector[2] << endl
+          << " attitude (RPY){deg}: "
+          << "\t" << euler_angles[0] << ", "
           << "\t\t" << euler_angles[1] << ", "
           << "\t\t" << euler_angles[2] << endl;
 
@@ -275,12 +277,12 @@ void QuaternionData::set_from_transfrom(
 
    } /* Use method 0,1, or 2 based on the dominant diagonal element. */
    else {
-      ii     = method;
-      int jj = ( ii + 1 ) % 3;
-      int kk = ( jj + 1 ) % 3;
+      ii           = method;
+      int const jj = ( ii + 1 ) % 3;
+      int const kk = ( jj + 1 ) % 3;
 
-      double di = T[kk][jj] - T[jj][kk]; /* T_kj - T_jk */
-      qix2      = sqrt( 1.0 + T[ii][ii] - ( T[jj][jj] + T[kk][kk] ) );
+      double const di = T[kk][jj] - T[jj][kk]; /* T_kj - T_jk */
+      qix2            = sqrt( 1.0 + T[ii][ii] - ( T[jj][jj] + T[kk][kk] ) );
       if ( di < 0.0 ) {
          qix2 = -qix2;
       }
@@ -299,7 +301,7 @@ void QuaternionData::set_from_transfrom(
 void QuaternionData::get_transfrom(
    double T[3][3] ) const
 {
-   double qsx2_2 = 2.0 * scalar * scalar;
+   double const qsx2_2 = 2.0 * scalar * scalar;
 
    T[0][0] = qsx2_2 + ( 2.0 * vector[0] * vector[0] ) - 1.0;
    T[0][1] = 2.0 * ( ( vector[0] * vector[1] ) - ( scalar * vector[2] ) );
@@ -658,9 +660,9 @@ void QuaternionData::normalize(
 
    // Compute and compare the magnitude of the quaternion wrt. one.
    if ( fabs( *qs ) > GSL_SQRT_DBL_MIN ) {
-      double qv_mag_sq = qv[0] * qv[0] + qv[1] * qv[1] + qv[2] * qv[2];
-      q_mag_sq         = ( *qs * *qs ) + qv_mag_sq;
-      diff1            = 1.0 - q_mag_sq;
+      double const qv_mag_sq = qv[0] * qv[0] + qv[1] * qv[1] + qv[2] * qv[2];
+      q_mag_sq               = ( *qs * *qs ) + qv_mag_sq;
+      diff1                  = 1.0 - q_mag_sq;
    } else {
       q_mag_sq = 0.0;
       diff1    = 1.0;

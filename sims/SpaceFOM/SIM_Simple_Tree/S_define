@@ -1,0 +1,279 @@
+//==========================================================================
+// SpaceFOM: Simulation to test the SpaceFOM simple example test reference
+// frame tree implementation.
+//==========================================================================
+// Description:
+// This is a simulation definition file (S_define) that provides an example
+// and test of a simple SpaceFOM reference frame tree.  This test tree
+// can be used in most SpaceFOM simulation that do not require a specific
+// reference frame tree implementation.
+//==========================================================================
+
+//==========================================================================
+// Define the Trick executive and services simulation object instances:
+// Use the "standard" Trick executive simulation object. This simulation
+// object provides the traditional Trick executive capabilities but can be
+// tailored to provide facility or project unique executive behavior. See
+// the Trick documentation for more on usage and available options.
+//==========================================================================
+#include "sim_objects/default_trick_sys.sm"
+
+//==========================================================================
+// Define the Dynamics job cycle times.
+//==========================================================================
+#define INTEG_STEP_TIME 0.025 // State integration time step.
+
+//==========================================================================
+// Define the TrickHLA job cycle times.
+//==========================================================================
+#define THLA_DATA_CYCLE_TIME        0.250 // HLA data communication cycle time.
+#define THLA_INTERACTION_CYCLE_TIME 0.050 // HLA Interaction cycle time.
+
+//==========================================================================
+// Define the HLA phase initialization priorities.
+//==========================================================================
+#define P_HLA_EARLY         1     // HLA early job phase.
+#define P_SF_INIT_EPOCH_RRF 55    // SpaceFOM ExCO epoch and root reference frame phase.
+#define P_HLA_INIT          60    // HLA initialization phase.
+#define P_SF_INIT_PRE_MPI   65    // SpaceFOM Pre-Multi Phase initialization phase.
+#define P_SF_INIT_POST_MPI  500   // SpaceFOM Post-Multi Phase initialization phase.
+#define P_HLA_LATE          65534 // HLA late job phase.
+
+
+//==========================================================================
+// TrickHLA and SpaceFOM include files used in SimObject definitions or
+// for inputfile instantiations.
+//==========================================================================
+// This is needed for CTE timeline instantiation in the input file.
+##include "TrickHLA/time/TimeOfDayCTETimeline.hh"
+
+%header{
+ using namespace TrickHLA;
+ using namespace SpaceFOM;
+%}
+
+
+//==========================================================================
+// SIM_OBJECT: THLA - Generalized TrickHLA interface routines.
+//==========================================================================
+#include "SpaceFOM/SpaceFOM.sm"
+
+
+//==========================================================================
+// Simple 6DOF dynamics for reference frame propagation.
+//==========================================================================
+##include "../../../models/FrameDynamics/include/FrameDynamics.hh"
+class FrameDynamicsSimObject : public Trick::SimObject {
+
+  public:
+   FrameDynamics frame;
+
+   bool debug_frame_state;
+
+  public:
+   FrameDynamicsSimObject( ExecutionControlBase & exec_cntrl,
+                           unsigned int           _INIT = P_HLA_INIT )
+   : debug_frame_state( false ),
+     execution_control(exec_cntrl)
+   {
+      ("default_data")            frame.default_data();
+      P_INIT ("initialization")   frame.initialize();
+      ("derivative")              frame.derivative();
+      ("integration") trick_ret = frame.integrate();
+
+      (THLA_DATA_CYCLE_TIME, "scheduled") print_frame_state();
+   }
+
+   // Print state job.
+   void print_frame_state()
+   {
+      if( !debug_frame_state ) { return; }
+      std::cout << "----------------------------------------------------------------------\n";
+      std::cout << " Simulation Time: " << exec_get_sim_time() << "\n";
+      std::cout << " Sim Timeline: " << execution_control.sim_timeline->get_time() << "\n";
+      std::cout << " Scenario Timeline: " << execution_control.scenario_timeline->get_time() << "\n";
+      frame.data.print_data();
+      std::cout << "----------------------------------------------------------------------\n";
+      return;
+   }
+
+  private:
+   // Private internal references to external object instances.
+   // These MUST be assigned in the constructor at instantiation.
+   ExecutionControlBase & execution_control;
+
+   // This object is not copyable.
+   FrameDynamicsSimObject( FrameDynamicsSimObject const & rhs );
+   FrameDynamicsSimObject & operator=( FrameDynamicsSimObject const & rhs );
+};
+
+
+//==========================================================================
+// Simple 6DOF dynamics for a Physical/Dynamical Entity.
+//==========================================================================
+##include "../../../models/EntityDynamics/include/EntityDynamics.hh"
+class EntityDynamicsSimObject : public Trick::SimObject {
+
+  public:
+   EntityDynamics entity;
+
+   bool debug_entity_state;
+
+  public:
+   EntityDynamicsSimObject( ExecutionControlBase & exec_cntrl )
+   : debug_entity_state( false ),
+     execution_control(exec_cntrl)
+
+   {
+      ("default_data")            entity.default_data();
+      ("initialization")          entity.initialize();
+      ("derivative")              entity.derivative();
+      ("integration") trick_ret = entity.integrate();
+
+      (THLA_DATA_CYCLE_TIME, "scheduled") print_entity_state();
+   }
+
+   // Print state job.
+   void print_entity_state()
+   {
+      if( !debug_entity_state ) { return; }
+      std::cout << "----------------------------------------------------------------------\n";
+      std::cout << " Simulation Time: " << exec_get_sim_time() << "\n";
+      std::cout << " Sim Timeline: " << execution_control.sim_timeline->get_time() << "\n";
+      std::cout << " Scenario Timeline: " << execution_control.scenario_timeline->get_time() << "\n";
+      entity.pe_data.print_data();
+      std::cout << "----------------------------------------------------------------------\n";
+      return;
+   }
+
+  private:
+   // Private internal references to external object instances.
+   // These MUST be assigned in the constructor at instantiation.
+   ExecutionControlBase & execution_control;
+
+   // This object is not copyable.
+   EntityDynamicsSimObject( EntityDynamicsSimObject const & rhs );
+   EntityDynamicsSimObject & operator=( EntityDynamicsSimObject const & rhs );
+};
+
+
+//==========================================================================
+// SIM_OBJECT: SpaceFOMTestRefFrameTreeSimObject - An example reference
+// frame tree simulation object definition.  This simulation module also
+// intantiates two additional reference frames to populate the tree:
+// root_ref_frame and leaf_ref_frame.
+//==========================================================================
+#include "SpaceFOM/TestRefFrameTree.sm"
+
+
+//==========================================================================
+// SIM_OBJECT: THLA_INIT - An example of a TrickHLA multi-phase
+// initialization SimObject.
+//==========================================================================
+class THLAInitSimObject : public Trick::SimObject {
+
+ public:
+
+   bool config_with_default_data;
+
+   THLAInitSimObject( TrickHLA::Manager  & thla_mngr,
+                      TrickHLA::Federate & thla_fed,
+                      unsigned int         _MPI_1   = 100,
+                      unsigned int         _MPI_END = P_SF_INIT_POST_MPI   )
+      : config_with_default_data( false ),
+        thla_manager( thla_mngr ),
+        thla_federate( thla_fed )
+   {
+      //--------------------------------------------------------------------
+      // NOTE: Initialization phase numbers must be greater than P60
+      // (i.e. P_HLA_INIT) so that the initialization jobs run after the
+      // P60 THLA.manager->initialize() job.
+      //--------------------------------------------------------------------
+
+      // Alternative method: Send and receive all the initialization data.
+
+      // Send all the initialization data.
+      P_MPI_1 ("initialization") thla_manager.send_init_data();
+
+      // Wait to receive all the initialization data.
+      P_MPI_1 ("initialization") thla_manager.receive_init_data();
+
+      // Do some processing here if needed...
+
+      // Clear remaining initialization sync-points.
+      P_MPI_END ("initialization") thla_manager.clear_init_sync_points();
+   }
+
+ private:
+   // Private internal references to external object instances.
+   // These MUST be assigned in the constructor at instantiation.
+   TrickHLA::Manager  & thla_manager;
+   TrickHLA::Federate & thla_federate;
+
+   // Do not allow the implicit copy constructor or assignment operator.
+   THLAInitSimObject( THLAInitSimObject const & rhs );
+   THLAInitSimObject & operator=( THLAInitSimObject const & rhs );
+
+   // Do not allow the default constructor.
+   THLAInitSimObject();
+
+};
+
+// Main TrickHLA SimObject.
+SpaceFOMSimObject THLA( THLA_DATA_CYCLE_TIME,
+                        THLA_INTERACTION_CYCLE_TIME,
+                        P_HLA_EARLY,
+                        P_HLA_INIT,
+                        P_HLA_LATE );
+
+// SimObject used capture simulation specific initialization.
+THLAInitSimObject THLA_INIT( THLA.manager, THLA.federate );
+
+
+// FIXME: Need a FrameManager to simplify and coordinate frame propagation.
+// Place the frames in associated integration loops.
+IntegLoop leaf_loop (INTEG_STEP_TIME) leaf_ref_frame;
+
+// Make the command line argument available to create_connections.
+##include "trick/command_line_protos.h"
+
+//==========================================================================
+// Create the THLA connections for the SpaceFOM Reference Frame Tree.
+//==========================================================================
+void create_connections() {
+
+   int     argc = command_line_args_get_argc();
+   char ** argv = command_line_args_get_argv();
+
+   // Choose to configure with default data or not.  The default is 'false'.
+   THLA_INIT.config_with_default_data = false;
+
+   // Let's check for default data configurations with command line arguments.
+   for ( int iinc = 0 ; iinc < argc ; iinc++ ){
+      if ( !strcmp( argv[iinc], "--default_data_config" ) ) {
+         THLA_INIT.config_with_default_data = true;
+      }
+   }
+
+   // NOTE: The frame connections are already handled in the TestRefFrameTree.sm
+   // connection section.
+
+   // Allocate THLA objects and interactions here if using default_data
+   // to configure the TrickHLA objects and interactions.
+   if ( THLA_INIT.config_with_default_data ) {
+
+      //
+      // This code will only be executed when we want to configure the reference
+      // frame tree using default data instead of in the input file.
+      //
+      // Allocate the HLA objects for the Reference Frame tree.
+      THLA.manager.obj_count = 2;
+      THLA.manager.objects = (TrickHLA::Object*)trick_MM->declare_var( "TrickHLA::Object",
+                                                                       THLA.manager.obj_count );
+      // Assign the HLA objects to the associated frame.
+      root_ref_frame.set_object( &(THLA.manager.objects[0]) );
+      leaf_ref_frame.set_object( &(THLA.manager.objects[1]) );
+
+   }
+
+}

@@ -29,13 +29,13 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_COMPILE_CONFIG_HH
 #define TRICKHLA_COMPILE_CONFIG_HH
 
-// Trick does not support the std::wstring type in the Memory Manager for now.
-// Default: NO_TRICK_WSTRING_MM_SUPPORT
-#define NO_TRICK_WSTRING_MM_SUPPORT
+// TEMP
+#define DONT_USE_SPACEFOM_ENCODERS
 
-// Collect statistics on the wait times for the Time Advance Grant (TAG).
-// Default: NO_TRICKHLA_COLLECT_TAG_STATS
-#define NO_TRICKHLA_COLLECT_TAG_STATS
+// Print an error and terminate if the Conditional, Packing or LagCompenstion
+// user code is not initialized before use.
+// Default: TRICKHLA_ERROR_IF_NOT_INITIALIZED
+#define NO_TRICKHLA_ERROR_IF_NOT_INITIALIZED
 
 // For blocking cyclic reads, do a check on the send and received data counts.
 // Default: NO_TRICKHLA_CHECK_SEND_AND_RECEIVE_COUNTS
@@ -45,26 +45,31 @@ NASA, Johnson Space Center\n
 // Default: NO_TRICKHLA_CYCLIC_READ_TIME_STATS
 #define NO_TRICKHLA_CYCLIC_READ_TIME_STATS
 
-// Insert a compile time error if an unsupported version of Trick 19 is used.
-// Minimum supported Trick 19 version: 19.0.0
-#define MIN_TRICK_VER 19  // Set to the minimum supported Trick Major version.
-#define MIN_TRICK_MINOR 0 // Set to the minimum supported Trick Minor version.
+// Insert a compile time error if an unsupported version of Trick is used.
+// Minimum supported Trick version: 25.1.0
+#define MIN_TRICK_VER 25  // Set to the minimum supported Trick Major version.
+#define MIN_TRICK_MINOR 1 // Set to the minimum supported Trick Minor version.
 #define MIN_TRICK_PATCH 0 // Set to the minimum supported Trick Patch version.
 // Make sure the TRICK_VER compiler define is set.
 #if ( !defined( TRICK_VER ) )
-#   error "The Trick version variable TRICK_VER is not set!"
-#   error "The minimum acceptable version of Trick is 19.0.0!"
+#   error The Trick version variable TRICK_VER is not set!
+#   error The minimum acceptable version of Trick is 25.1.0!
 #endif
 // Check for the minimum major version of Trick.
 #if ( TRICK_VER < MIN_TRICK_VER )
-#   error "The minimum acceptable version of Trick is 19.0.0!"
+#   error The minimum acceptable version of Trick is 25.1.0!
 #else // Check the minor version if set.
-#   if ( TRICK_VER == MIN_TRICK_VER )
-#      if ( defined( TRICK_MINOR ) && ( TRICK_MINOR < MIN_TRICK_MINOR ) )
-#         error "The minimum acceptable version of Trick is 19.0.0!"
+#   if ( ( TRICK_VER == MIN_TRICK_VER ) && defined( TRICK_MINOR ) )
+#      if ( TRICK_MINOR < MIN_TRICK_MINOR )
+#         error The minimum acceptable version of Trick is 25.1.0!
 #      else // Check the patch version if set.
-#         if ( TRICK_MINOR == MIN_TRICK_MINOR ) && ( defined( TRICK_PATCH ) && ( TRICK_PATCH < MIN_TRICK_PATCH ) )
-#            error "The minimum acceptable version of Trick is 19.0.0!"
+#         if ( TRICK_MINOR == MIN_TRICK_MINOR )
+#            if ( defined( TRICK_PATCH ) && ( TRICK_PATCH < MIN_TRICK_PATCH ) )
+#               error The minimum acceptable version of Trick is 25.1.0!
+#            endif
+#            if ( defined( TRICK_TINY ) && ( TRICK_TINY < MIN_TRICK_PATCH ) )
+#               error The minimum acceptable version of Trick is 25.1.0!
+#            endif
 #         endif
 #      endif
 #   endif
@@ -80,6 +85,11 @@ NASA, Johnson Space Center\n
 // This is only supported for Intel CPU's.
 #if ( !defined( FPU_CW_PROTECTION ) && ( defined( __i386__ ) || defined( __x86_64__ ) ) )
 #   define FPU_CW_PROTECTION
+#endif
+
+// The FPU code word protection is only supported for i386/x86 CPUs.
+#if ( defined( FPU_CW_PROTECTION ) && !defined( __i386__ ) && !defined( __x86_64__ ) )
+#   undef FPU_CW_PROTECTION
 #endif
 
 // Define TRICKHLA_ENABLE_FPU_CONTROL_WORD_VALIDATION to enabled FPU control

@@ -121,7 +121,7 @@ void Parameter::initialize(
              << interaction_index << "].parameters[" << parameter_index
              << "].FOM_name' in either your input.py file or modified-data files"
              << " is correctly specified." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    if ( rti_encoding != ENCODING_FIXED_RECORD ) {
@@ -135,7 +135,7 @@ void Parameter::initialize(
                 << interaction_index << "].parameters[" << parameter_index
                 << "].trick_name' in either your input.py file or modified-data files"
                 << " is correctly specified." << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
       }
    }
 
@@ -150,7 +150,7 @@ void Parameter::initialize(
              << ENCODING_FIRST_VALUE << " to " << ENCODING_LAST_VALUE
              << ". Please check your input or modified-data files to make sure"
              << " the value for the 'rti_encoding' is correctly specified." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Initialize the element encoders including a fixed record encoder.
@@ -162,7 +162,7 @@ void Parameter::initialize(
              << " ERROR: Unexpected NULL encoder for Trick variable '"
              << get_trick_name() << "' with an 'rti_encoding' value of "
              << rti_encoding << "." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Make a copy.
@@ -198,14 +198,14 @@ void Parameter::initialize(
       errmsg << "Parameter::initialize(char const *, void *, ATTRIBUTES *):" << __LINE__
              << " ERROR: For FOM Interaction Parameter '" << interaction_fom_name
              << "'. Unexpected NULL trick variable address." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
    if ( attr == NULL ) {
       ostringstream errmsg;
       errmsg << "Parameter::initialize(char const *, void *, ATTRIBUTES *):" << __LINE__
              << " ERROR: For FOM Interaction Parameter '" << interaction_fom_name
              << "'. Unexpected NULL ATTRIBUTES pointer." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Make a copy.
@@ -220,7 +220,7 @@ void Parameter::initialize(
              << " ERROR: Unexpected NULL encoder for Trick variable '"
              << attr->name << "' with an 'rti_encoding' value of "
              << rti_encoding << "." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_PARAMETER ) ) {
@@ -254,7 +254,7 @@ VariableLengthData &Parameter::encode()
              << " ERROR: Unexpected error encoding HLA data for Trick variable '"
              << get_trick_name() << "' and FOM name '"
              << get_FOM_name() << "' with error: " << err_details << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    return encoder->data;
@@ -273,7 +273,7 @@ bool Parameter::decode(
              << " ERROR: Unexpected error decoding HLA data for Trick variable '"
              << get_trick_name() << "' and FOM name '"
              << get_FOM_name() << "' with error: " << err_details << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    update_after_decode();

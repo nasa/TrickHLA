@@ -20,21 +20,21 @@ In the SIM_hla_time directory:
 
 ```
 cd $TRICKHLA_HOME/sims/SpaceFOM/SIM_hla_time
-./S_main_*.exe RUN_test/input.py --fex_name SpaceFOM_sine --cte off --verbose on
+./S_main_*.exe RUN_test/input.py --fex_name SpaceFOM_sine --cte off --verbose
 ```
 
 From another terminal, in the SIM_sine directory:
 
 ```
 cd $TRICKHLA_HOME/sims/SpaceFOM/SIM_sine
-./S_main_*.exe RUN_a_side_mpr/input.py --fex_name SpaceFOM_sine --verbose on
+./S_main_*.exe RUN_a_side_mpr/input.py --fex_name SpaceFOM_sine --verbose
 ```
 
 From another terminal, in the SIM_sine directory:
 
 ```
 cd $TRICKHLA_HOME/sims/SpaceFOM/SIM_sine
-./S_main_*.exe RUN_p_side/input.py --fex_name SpaceFOM_sine --verbose on
+./S_main_*.exe RUN_p_side/input.py --fex_name SpaceFOM_sine --verbose
 ```
 
 #### Example using a CTE timeline.
@@ -43,19 +43,19 @@ In the SIM_hla_time directory:
 
 ```
 cd $TRICKHLA_HOME/sims/SpaceFOM/SIM_hla_time
-./S_main_*.exe RUN_test/input.py --fex_name SpaceFOM_sine --cte on --verbose on
+./S_main_*.exe RUN_test/input.py --fex_name SpaceFOM_sine --cte on --verbose
 ```
 
 From another terminal, in the SIM_sine_cte directory:
 
 ```
 cd $TRICKHLA_HOME/sims/SpaceFOM/SIM_sine_cte
-./S_main_*.exe RUN_a_side_mpr/input.py --fex_name SpaceFOM_sine --verbose on
+./S_main_*.exe RUN_a_side_mpr/input.py --fex_name SpaceFOM_sine --verbose
 ```
 
 From another terminal, in the SIM_sine_cte directory:
 
 ```
 cd $TRICKHLA_HOME/sims/SpaceFOM/SIM_sine_cte
-./S_main_*.exe RUN_p_side/input.py --fex_name SpaceFOM_sine --verbose on
+./S_main_*.exe RUN_p_side/input.py --fex_name SpaceFOM_sine --verbose
 ```

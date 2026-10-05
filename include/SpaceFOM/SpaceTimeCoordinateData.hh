@@ -22,6 +22,7 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{../../source/SpaceFOM/SpaceTimeCoordinateData.cpp}
 @trick_link_dependency{../../source/SpaceFOM/QuaternionData.cpp}
+@trick_link_dependency{../../source/TrickHLA/Types.cpp}
 
 @revs_begin
 @rev_entry{ Edwin Z. Crues, NASA ER7, NExSyS, Jan 2019, --, SpaceFOM support and testing. }
@@ -35,6 +36,9 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <iostream>
+
+// TrickHLA includes.
+#include "TrickHLA/Types.hh"
 
 // SpaceFOM includes.
 #include "SpaceFOM/QuaternionData.hh"

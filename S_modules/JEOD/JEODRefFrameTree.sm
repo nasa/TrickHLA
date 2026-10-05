@@ -103,7 +103,7 @@ class JEODRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObject {
          errmsg << "JEODRefFrameTreeSimObject::subscribe_to_frames():" << __LINE__
                 << " ERROR: Unexpected NULL reference frame: SSBary.inertial\n";
          // Print message and terminate.
-         TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+         TrickHLA::DebugHandler::terminate( errmsg.str() );
       }
       embary_ptr = dyn_manager.find_ref_frame ("EMBary.inertial");
       if ( embary_ptr == NULL ) {
@@ -111,7 +111,7 @@ class JEODRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObject {
          errmsg << "JEODRefFrameTreeSimObject::subscribe_to_frames():" << __LINE__
                 << " ERROR: Unexpected NULL reference frame: EMBary.inertial\n";
          // Print message and terminate.
-         TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+         TrickHLA::DebugHandler::terminate( errmsg.str() );
       }
 
       // Subscribe to the barycenter frames.
@@ -164,7 +164,7 @@ class JEODRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObject {
          errmsg << "JEODRefFrameTreeSimObject::initialize():" << __LINE__
                 << " ERROR: The TrickHLAManager Object array has not been allocated!\n";
          // Print message and terminate.
-         TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+         TrickHLA::DebugHandler::terminate( errmsg.str() );
       }
 
       // Check to see if the root reference frame is actualy being configured.

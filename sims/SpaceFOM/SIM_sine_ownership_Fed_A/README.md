@@ -12,7 +12,8 @@ We will show how to layout multiphase initialization to support ownership
 transfer at initialization and how to coordinate initialization data exchanges.
 
 ---
-###Multiphase Initialization Steps
+
+### Multiphase Initialization Steps
 
 |Federate "A"                 |Federate "P"                 |Federate "Other"             |
 |:---------------------------:|:---------------------------:|:---------------------------:|
@@ -25,8 +26,8 @@ transfer at initialization and how to coordinate initialization data exchanges.
 |receive_init_data:<br>P-side-Federate.Sine|send_init_data:<br>P-side-Federate.Sine|receive_init_data:<br>P-side-Federate.Sine|
 |wait_for_init_sync_point:<br>"Propagated_init_phase"|wait_for_init_sync_point:<br>"Propagated_init_phase"|wait_for_init_sync_point:<br>"Propagated_init_phase"|
 
-
 ---
+
 ### Building the Simulation
 In the SIM_sine_ownership_Fed_A, SIM_sine_ownership_Fed_P, or 
 SIM_sine_ownership_Fed_other directory, type **trick-CP** to build the
@@ -37,12 +38,13 @@ Trick Build Process Complete
 ```
 
 ---
+
 ### Running the Simulation
 Run the following simulations to run the Ownership Transfers at Initialization
 with split ownership multiphase initialization data updates.
 1. ``cd $TRICKHLA_HOME/sims/SpaceFOM/SIM_sine_ownership_Fed_A``
-2. ``./S_main*.exe RUN_a_side_mpr/input.py --verbose on``
+2. ``./S_main*.exe RUN_a_side_mpr/input.py --verbose``
 3. ``cd $TRICKHLA_HOME/sims/SpaceFOM/SIM_sine_ownership_Fed_P``
-4. ``./S_main*.exe RUN_p_side/input.py --verbose on``
+4. ``./S_main*.exe RUN_p_side/input.py --verbose``
 5. ``cd $TRICKHLA_HOME/sims/SpaceFOM/SIM_sine_ownership_Fed_other``
-6. ``./S_main*.exe RUN_other/input.py --verbose on``
+6. ``./S_main*.exe RUN_other/input.py --verbose``

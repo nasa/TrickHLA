@@ -114,7 +114,7 @@ void RecordElement::initialize_element_encoder()
                 << " but no 'elements' are specified. Please check your input.py"
                 << " or modified-data files to make sure the attributes are"
                 << " correctly specified." << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
          return;
       }
 
@@ -128,7 +128,7 @@ void RecordElement::initialize_element_encoder()
                 << " but 'elements' are specified. Please check your input.py"
                 << " or modified-data files to make sure the elements are"
                 << " correctly specified." << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
          return;
       }
 
@@ -140,7 +140,7 @@ void RecordElement::initialize_element_encoder()
                 << " and is unexpectantly >= " << INT_MAX
                 << ". Please check your input.py or modified-data files to make"
                 << " sure the elements are correctly specified." << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
          return;
       }
 
@@ -151,7 +151,7 @@ void RecordElement::initialize_element_encoder()
                 << "', no 'elements' have been specified. Please check your"
                 << " input.py or modified-data files to make sure the elements"
                 << " are correctly specified." << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
          return;
       }
 
@@ -170,7 +170,7 @@ void RecordElement::initialize_element_encoder()
                 << " Make sure the trick_name is set in either your input.py"
                 << " file or modified-data files is correctly specified."
                 << endl;
-         DebugHandler::terminate_with_message( errmsg.str() );
+         DebugHandler::terminate( errmsg.str() );
          return;
       }
 
@@ -188,7 +188,7 @@ void RecordElement::initialize_element_encoder(
              << " ERROR: For element with trick_name '" << get_trick_name()
              << "', this function does not support the ENCODING_FIXED_RECORD"
              << " encoding for a given address and ATTRIBUTES." << endl;
-      DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    this->encoder = EncoderFactory::create( address, attr, rti_encoding, "" );

@@ -44,6 +44,7 @@ NASA, Johnson Space Center\n
 
 // Trick includes.
 #include "TrickHLA/Attribute.hh"
+#include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/LagCompensationInteg.hh"
 #include "TrickHLA/Types.hh"
@@ -83,7 +84,7 @@ void RefFrameLagCompInteg::initialize()
              << " ERROR: Tolerance must be less that the dt!: dt = "
              << this->integ_dt << "; tolerance = " << this->integ_tol << endl;
       // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      DebugHandler::terminate( errmsg.str() );
    }
 
    // Call the base class initialize routine.
@@ -97,12 +98,22 @@ void RefFrameLagCompInteg::initialize()
  *  TrickHLALagCompensation class. */
 void RefFrameLagCompInteg::send_lag_compensation()
 {
-   double begin_t = get_scenario_time();
-   double end_t;
+   if ( !initialized ) {
+      ostringstream errmsg;
+      errmsg << "RefFrameLagCompInteg::send_lag_compensation():" << __LINE__
+#if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
+             << " ERROR: The initialize() function has not been called!" << endl;
+      DebugHandler::terminate( errmsg.str() );
+#else
+             << " WARNING: The initialize() function has not been called!" << endl;
+      message_publish( MSG_WARNING, errmsg.str().c_str() );
+#endif
+   }
 
    // Save the compensation time step.
-   this->compensate_dt = get_lookahead().get_time_in_seconds();
-   end_t               = begin_t + this->compensate_dt;
+   this->compensate_dt  = get_lookahead().get_time_in_seconds();
+   double const begin_t = get_scenario_time();
+   double const end_t   = begin_t + this->compensate_dt;
 
    // Use the inherited debug-handler to allow debug comments to be turned
    // on and off from a setting in the input file.
@@ -150,8 +161,20 @@ void RefFrameLagCompInteg::send_lag_compensation()
  *  TrickHLALagCompensation class. */
 void RefFrameLagCompInteg::receive_lag_compensation()
 {
-   double end_t  = get_scenario_time();
-   double data_t = ref_frame.get_time();
+   if ( !initialized ) {
+      ostringstream errmsg;
+      errmsg << "RefFrameLagCompInteg::receive_lag_compensation():" << __LINE__
+#if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
+             << " ERROR: The initialize() function has not been called!" << endl;
+      DebugHandler::terminate( errmsg.str() );
+#else
+             << " WARNING: The initialize() function has not been called!" << endl;
+      message_publish( MSG_WARNING, errmsg.str().c_str() );
+#endif
+   }
+
+   double const end_t  = get_scenario_time();
+   double const data_t = ref_frame.get_time();
 
    // Save the compensation time step.
    this->compensate_dt = end_t - data_t;

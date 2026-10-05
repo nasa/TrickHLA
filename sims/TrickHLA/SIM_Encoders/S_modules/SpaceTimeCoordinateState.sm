@@ -5,7 +5,6 @@
 
 // SpaceFOM include files.
 ##include "SpaceFOM/SpaceTimeCoordinateData.hh"
-##include "SpaceFOM/SpaceTimeCoordinateEncoder.hh"
 
 // SpaceFOM include files.
 ##include "models/include/SpaceTimeCoordinatePacking.hh"

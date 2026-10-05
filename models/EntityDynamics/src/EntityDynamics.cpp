@@ -93,7 +93,7 @@ void EntityDynamics::initialize()
       errmsg << "SpaceFOM::PhysicalEntityBase::set_object():" << __LINE__
              << " ERROR: The initialize() function has already been called\n";
       // Print message and terminate.
-      TrickHLA::DebugHandler::terminate_with_message( errmsg.str() );
+      TrickHLA::DebugHandler::terminate( errmsg.str() );
    }
 
    return;
@@ -186,7 +186,7 @@ int EntityDynamics::integrate()
  */
 void EntityDynamics::load()
 {
-   int istep = trick_curr_integ->intermediate_step;
+   int const istep = trick_curr_integ->intermediate_step;
 
    // Load state array: position and velocity.
    // Translational position
@@ -235,7 +235,7 @@ void EntityDynamics::load()
  */
 void EntityDynamics::unload()
 {
-   int istep = trick_curr_integ->intermediate_step;
+   int const istep = trick_curr_integ->intermediate_step;
 
    // Translational position
    pe_data.state.pos[0] = trick_curr_integ->state_ws[istep][0];

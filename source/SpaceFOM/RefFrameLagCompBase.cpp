@@ -126,7 +126,7 @@ void RefFrameLagCompBase::initialize_states()
 void RefFrameLagCompBase::bypass_send_lag_compensation()
 {
    // When lag compensation is present but disabled, we still need to copy
-   // the working data into the packing data.  This makes sure that the
+   // the working data into the packing data. This makes sure that the
    // current working state is packed.
    ref_frame.pack_from_working_data();
    return;
@@ -138,7 +138,7 @@ void RefFrameLagCompBase::bypass_send_lag_compensation()
 void RefFrameLagCompBase::bypass_receive_lag_compensation()
 {
    // When lag compensation is present but disabled, we still need to copy
-   // the packing data back into the working data.  This makes sure that the
+   // the packing data back into the working data. This makes sure that the
    // working state is updated from the received packing data.
    ref_frame.unpack_into_working_data();
    return;
