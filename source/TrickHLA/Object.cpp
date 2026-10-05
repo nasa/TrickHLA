@@ -4204,20 +4204,25 @@ void Object::restore_data_after_checkpoint()
    // the ReflectedAttributesQueue.
 
    if ( lag_comp != nullptr ) {
+      lag_comp->initialize_callback( this );
       lag_comp->restore_data_after_checkpoint();
    }
    // Free the Packing data as long as this isn't the same and this object.
    // This coveres a special case where the ExCO is both Object and Packing.
    if ( packing != nullptr && this->packing != dynamic_cast< Packing * >( this ) ) {
+      packing->initialize_callback( this );
       packing->restore_data_after_checkpoint();
    }
    if ( ownership != nullptr ) {
+      ownership->initialize_callback( this );
       ownership->restore_data_after_checkpoint();
    }
    if ( deleted != nullptr ) {
+      deleted->initialize_callback( this );
       deleted->restore_data_after_checkpoint();
    }
    if ( conditional != nullptr ) {
+      conditional->initialize_callback( this );
       conditional->restore_data_after_checkpoint();
    }
 }
