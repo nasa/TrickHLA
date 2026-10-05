@@ -1543,7 +1543,7 @@ void SaveRestoreServices::restore_initiated(
    //
    // We need to do this because the Trick checkpoint process is not thread safe.
    // This routine is triggered from the FedAmbassador call back on a separate
-   // thread.  Once the checkpoint file name is set below,  Trick will
+   // thread.  Once the checkpoint file name is set above,  Trick will
    // automatically start the load checkpoint process at the top of the next Run
    // or Freeze frame.  The checkpoint preload routine will transition the state
    // to RESTORE_CHECKPOINT while Trick is loading the checkpoint file.

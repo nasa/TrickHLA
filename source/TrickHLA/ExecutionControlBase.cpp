@@ -1648,7 +1648,7 @@ void ExecutionControlBase::free_converted_data_for_checkpoint()
       DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Freeing data allocated for checkpointing.\n" );
    }
 
-   // TODO: Do the Timelines converted data need to be free.
+   // TODO: Do the Timelines converted data need to be free?
 
    // Free the converted federate services data for checkpoint.
    time_management_service->free_converted_data_for_checkpoint();

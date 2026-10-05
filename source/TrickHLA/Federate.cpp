@@ -3397,8 +3397,6 @@ void Federate::free_converted_data_for_checkpoint()
       execution_control->free_converted_data_for_checkpoint();
    }
 
-   // TODO: Free other Federate checkpoint converted data.
-
    return;
 }
 
