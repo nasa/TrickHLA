@@ -19,7 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
-- Added checks to the S_hla.mk makefle to verify the bc, cut, grep, and which system commands are found before using them.
+- Added checks to the S_hla.mk makefle to verify the cut, grep, and which system commands are found before using them.
 - Added checks to the Packing and Lag Compensation implementations to verify initialization and will terminate with an error message if not initialized before use.
 - Added support for Trick variable server security that disables the variable server by default. Any Trick simulation that uses the simulation control panel will need to enable the Trick variable server and the TrickHLA example simulations do that.
 - Added a check to verify an attribute is not already owned and is configured to be published before executing a pull ownership request. Otherwise an error message is displayed and the simulation is terminated.
@@ -41,6 +41,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Fixed Python exception handling based on pull request #185.
 - Simulations using the --verbose command-line setting no longer need 'on' to be specified to enable verbose messages.
 - Fixed the use of the Trick wall clock, which is always an integer in microseconds regardless of the Trick time tic resolution.
+- Fixed the dependency on the bc system command in the S_hla.mk makefle (issue #187).
 - Fixed Trick freeze at problem (issue #188).
 
 
