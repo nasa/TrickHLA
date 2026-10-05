@@ -24,15 +24,21 @@ NASA, Johnson Space Center\n
 
 */
 
+// TrickHLA includes.
+#include "TrickHLA/CompileConfig.hh"
+#include "TrickHLA/utils/SleepTimeout.hh"
+
 // System includes.
 #include <cstdint>
-#include <time.h>
+#if defined( TRICKHLA_USE_THREAD_YIELD )
+#   include <chrono>
+#   include <thread>
+#else
+#   include <time.h>
+#endif // TRICKHLA_USE_THREAD_YIELD
 
 // Trick includes.
 #include "trick/clock_proto.h"
-
-// TrickHLA includes.
-#include "TrickHLA/utils/SleepTimeout.hh"
 
 using namespace TrickHLA;
 
@@ -73,14 +79,11 @@ void SleepTimeout::set(
    long const   sleep_micros )
 {
    // Do a bounds check on the timeout in seconds and convert it to microseconds.
-   if ( timeout_seconds <= 0.0 ) {
-      this->timeout_time = 0;
-   } else if ( timeout_seconds >= ( INT64_MAX / 1000000 ) ) {
-      this->timeout_time = INT64_MAX;
-   } else {
-      this->timeout_time = timeout_seconds * 1000000; // in microseconds
-   }
+   this->timeout_time = ( timeout_seconds > 0.0 ) ? ( timeout_seconds * 1000000 ) : 0;
 
+#if defined( TRICKHLA_USE_THREAD_YIELD )
+   this->sleep_time = std::chrono::microseconds( ( sleep_micros > 0 ) ? sleep_micros : 0 );
+#else
    // Calculate the requested sleep-time.
    if ( sleep_micros >= 1000000 ) {
       sleep_time.tv_sec  = ( sleep_micros / 1000000 );
@@ -92,6 +95,7 @@ void SleepTimeout::set(
       sleep_time.tv_sec  = 0;
       sleep_time.tv_nsec = 0;
    }
+#endif // TRICKHLA_USE_THREAD_YIELD
 
    // Make sure we do a reset now that the timeout and sleep values are set.
    reset();
@@ -99,7 +103,15 @@ void SleepTimeout::set(
 
 int SleepTimeout::sleep() const
 {
+#if defined( TRICKHLA_USE_THREAD_YIELD )
+   auto const end_time = std::chrono::high_resolution_clock::now() + sleep_time;
+   do {
+      std::this_thread::yield();
+   } while ( std::chrono::high_resolution_clock::now() < end_time );
+   return 0;
+#else
    return nanosleep( &sleep_time, nullptr ); // NOLINT
+#endif // TRICKHLA_USE_THREAD_YIELD
 }
 
 // Current time as an integer in microseconds.

@@ -36,6 +36,11 @@ NASA, Johnson Space Center\n
 // Default: NO_TRICKHLA_PRINT_HLA_TIME_STATS
 #define NO_TRICKHLA_PRINT_HLA_TIME_STATS
 
+// Use the tread API to explicitly yield the processor in tight wait loops
+// waiting on an asynchronous callback. Otherwise use nanosleep.
+// Default: NO_TRICKHLA_USE_THREAD_YIELD
+#define NO_TRICKHLA_USE_THREAD_YIELD
+
 // Either use encoding into opaque buffer (old way) or the EncoderFactory (preferred).
 // Default: DONT_USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS
 #define DONT_USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS

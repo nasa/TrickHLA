@@ -58,6 +58,6 @@ MutexProtection::~MutexProtection()
    // could be recursive and we must only unlock once per constructor call.
    mutex->unlock();
 
-   // Make sure to nullptr the pointer so this class can be reclaimed.
+   // Make sure to clear the pointer so this class can be reclaimed.
    this->mutex = nullptr;
 }

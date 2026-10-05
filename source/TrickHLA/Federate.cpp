@@ -334,10 +334,12 @@ void Federate::initialize_debug()
 
       if ( this->debug_level < DEBUG_LEVEL_NO_TRACE ) {
          this->debug_level = DEBUG_LEVEL_NO_TRACE;
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "No TrickHLA debug messages will be emitted.\n", MSG_WARNING );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      "No TrickHLA debug messages will be emitted.\n", MSG_WARNING );
       } else {
          this->debug_level = DEBUG_LEVEL_FULL_TRACE;
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "All TrickHLA debug messages will be emitted.\n", MSG_WARNING );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      "All TrickHLA debug messages will be emitted.\n", MSG_WARNING );
       }
    }
 
@@ -365,13 +367,15 @@ void Federate::initialize()
 
    // Check to make sure we have a reference to the TrickHLA::ExecutionControlBase.
    if ( execution_control == nullptr ) {
-      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr TrickHLA::ExecutionControlBase.\n" );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__,
+                               "Unexpected nullptr TrickHLA::ExecutionControlBase.\n" );
       return;
    }
 
    // Make sure the federate name has been specified.
    if ( name.empty() ) {
-      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Unexpected empty federate name.\n" );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__,
+                               "Unexpected empty federate name.\n" );
       return;
    }
 
@@ -382,7 +386,11 @@ void Federate::initialize()
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
-                                   string( "Federate:'" ).append( name ).append( "' Type:'" ).append( type ).append( "'\n" ) );
+                                   string( "Federate:'" )
+                                      .append( name )
+                                      .append( "' Type:'" )
+                                      .append( type )
+                                      .append( "'\n" ) );
    }
 
    object_service.verify_object_arrays();
@@ -449,7 +457,8 @@ void Federate::restart_initialization()
       // Only need to do anything if there are known federates.
       if ( known_federates.empty() ) {
          // If we are enabling known federates, then there probably should be some.
-         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "No Known Federates Specified for the Federation.\n" );
+         DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__,
+                                  "No Known Federates Specified for the Federation.\n" );
       }
 
       if ( known_federates.size() >= INT_MAX ) {
@@ -475,7 +484,8 @@ void Federate::restart_initialization()
    // Setup the Execution Control and Execution Configuration objects now that
    // we know if we are the "Master" federate or not.
    if ( this->execution_control == nullptr ) {
-      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr 'execution_control' pointer!\n" );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__,
+                               "Unexpected nullptr 'execution_control' pointer!\n" );
       return;
    }
 
@@ -497,7 +507,8 @@ void Federate::pre_multiphase_initialization()
    // again to catch the case where a user did not pick up the changes to
    // the THLABase.sm file.
    if ( !time_management_service.verify_time_constraints() ) {
-      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Time Constraints verification failed!\n" );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__,
+                               "Time Constraints verification failed!\n" );
    }
 
    // Perform the Execution Control specific pre-multi-phase initialization.
@@ -505,7 +516,8 @@ void Federate::pre_multiphase_initialization()
 
    // Debug printout.
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n     Completed pre-multiphase initialization...\n" );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   "\n     Completed pre-multiphase initialization...\n" );
    }
 }
 
@@ -522,7 +534,8 @@ void Federate::post_multiphase_initialization()
 
    // Debug printout.
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n     Simulation has started and is now running...\n" );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   "\n     Simulation has started and is now running...\n" );
    }
 }
 
@@ -1615,7 +1628,8 @@ void Federate::update_joined_federates()
 
       // Something went wrong.
       DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
-                                   "The federatesInFederation list is not consistent with the joined federates list!\n", MSG_ERROR );
+                                   "The federatesInFederation list is not consistent with the joined federates list!\n",
+                                   MSG_ERROR );
 
       // Mark the update process as failed.
       federate_update_state = THLAFederateUpdateProcessEnum::FEDERATE_UPDATE_FAILED;
@@ -1788,7 +1802,8 @@ string Federate::wait_for_required_federates_to_join()
    // If the known Federates list is disabled then just return.
    if ( !enable_known_feds ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Check for required Federates DISABLED.\n" );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      "Check for required Federates DISABLED.\n" );
       }
       return status_string;
    }
@@ -1833,7 +1848,8 @@ string Federate::wait_for_required_federates_to_join()
       DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, summary.str() );
 
       // Display a message that we are requesting the federate names.
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Requesting list of joined federates from CRC.\n" );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   "Requesting list of joined federates from CRC.\n" );
    }
 
    // Subscribe to Federate names using MOM interface and request an update.
@@ -3047,7 +3063,8 @@ void Federate::wait_for_init_sync_point(
    // initialization process so just return.
    if ( is_late_joining_federate() ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Late joining federate so this call will be ignored.\n" );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      "Late joining federate so this call will be ignored.\n" );
       }
       return;
    }
@@ -3351,7 +3368,8 @@ void Federate::restore( wstring const &label )
 void Federate::convert_data_before_checkpoint()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Converting the federate data for checkpointing.\n" );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   "Converting the federate data for checkpointing.\n" );
    }
 
    // Delegate to the Execution Control specific implementation.
@@ -3371,7 +3389,8 @@ void Federate::convert_data_before_checkpoint()
 void Federate::restore_data_after_checkpoint()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Restoring the federate data after loading a checkpoint.\n" );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   "Restoring the federate data after loading a checkpoint.\n" );
    }
 
    // Delegate to the Execution Control specific implementation.
@@ -3389,7 +3408,8 @@ void Federate::restore_data_after_checkpoint()
 void Federate::free_converted_data_for_checkpoint()
 {
    if ( DebugHandler::show( DEBUG_LEVEL_8_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Freeing federate data allocated for checkpointing.\n" );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   "Freeing federate data allocated for checkpointing.\n" );
    }
 
    // Delegate to the Execution Control specific implementation.
@@ -3424,7 +3444,9 @@ void Federate::checkpoint_preload()
 {
    // TrickHLA only supports a checkpoint load as part of an HLA Restore process.
    if ( save_restore_service.restore_state != THLARestoreProcessEnum::RESTORE_INITIATED ) {
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Checkpoint loading only supported as part of an HLA Restore process!\n", MSG_WARNING );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   "Checkpoint loading only supported as part of an HLA Restore process!\n",
+                                   MSG_WARNING );
 
       string restore_label_str;
       StringUtilities::to_string( restore_label_str, save_restore_service.restore_label );
@@ -3437,7 +3459,8 @@ void Federate::checkpoint_preload()
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Preparing to load checkpoint file as part of an HLA Restore process.\n" );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   "Preparing to load checkpoint file as part of an HLA Restore process.\n" );
    }
 
    // Delegate to the Execution Control specific implementation.
@@ -3475,7 +3498,8 @@ void Federate::checkpoint_restart()
    // TrickHLA only supports a checkpoint load as part of an HLA Restore process.
    if ( save_restore_service.restore_state != THLARestoreProcessEnum::RESTORE_CHECKPOINT ) {
       DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
-                                   "Checkpoint restart only supported as part of an HLA Restore process!\n", MSG_WARNING );
+                                   "Checkpoint restart only supported as part of an HLA Restore process!\n",
+                                   MSG_WARNING );
       return;
    }
 
@@ -3856,7 +3880,8 @@ bool Federate::check_for_shutdown()
 bool Federate::check_for_shutdown_with_termination()
 {
    if ( !connected ) {
-      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Lost the connection to the RTI. Terminating the simulation!\n" );
+      DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__,
+                               "Lost the connection to the RTI. Terminating the simulation!\n" );
    }
 
    return ( execution_control->check_for_shutdown_with_termination() );
@@ -4712,7 +4737,8 @@ void Federate::set_MOM_HLAfederation_instance_attributes(
    if ( !is_MOM_HLAfederation_instance_handle( instance_hndl ) ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
          DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
-                                      "Unknown object class, expected 'HLAmanager.HLAfederation'.\n", MSG_WARNING );
+                                      "Unknown object class, expected 'HLAmanager.HLAfederation'.\n",
+                                      MSG_WARNING );
       }
       return;
    }
@@ -4762,7 +4788,7 @@ void Federate::set_MOM_HLAfederation_instance_attributes(
             feds_list.decode( data );
 
             // Iterate through the decoded federate handle list to extract the handles.
-            for ( unsigned int iinc = 0; iinc < feds_list.size(); iinc++ ) {
+            for ( unsigned int iinc = 0; iinc < feds_list.size(); ++iinc ) {
 
                // Place the encoded federate handle data into a VariableLengthData.
                HLAopaqueData const     &opaqueData = dynamic_cast< HLAopaqueData const & >( feds_list.get( iinc ) );

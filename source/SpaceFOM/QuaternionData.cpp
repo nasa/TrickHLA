@@ -258,7 +258,7 @@ void QuaternionData::set_from_transfrom(
     * elements of 'T' (method = 0, 1, or 2). */
    method = -1;
    tr_max = tr;
-   for ( ii = 0; ii < 3; ii++ ) {
+   for ( ii = 0; ii < 3; ++ii ) {
       if ( T[ii][ii] > tr_max ) {
          method = ii;
          tr_max = T[ii][ii];
