@@ -15,16 +15,16 @@ RESET_TXT =[00m
 
 # Make sure the bc, cut, grep, and which system commands can be found.
 ifeq (,$(findstring which, $(shell which which)))
-   $(error ${RED_TXT}S_hla.mk:ERROR: Could not find the 'which' system command. Please ensure your PATH is correct or install the which command package.${RESET_TXT})
+   $(error ${RED_TXT}S_hla.mk:ERROR: Could not find the 'which' system command. Please ensure your PATH is correct or install the 'which' command package.${RESET_TXT})
 endif
 ifeq (,$(findstring bc, $(shell which bc)))
-   $(error ${RED_TXT}S_hla.mk:ERROR: Could not find the 'bc' system command. Please ensure your PATH is correct or install the bc arithmetic language processor command package.${RESET_TXT})
+   $(error ${RED_TXT}S_hla.mk:ERROR: Could not find the 'bc' system command. Please ensure your PATH is correct or install the 'bc' arithmetic language processor command package.${RESET_TXT})
 endif
 ifeq (,$(findstring cut, $(shell which cut)))
-   $(error ${RED_TXT}S_hla.mk:ERROR: Could not find the 'cut' system command. Please ensure your PATH is correct or install the cut command package.${RESET_TXT})
+   $(error ${RED_TXT}S_hla.mk:ERROR: Could not find the 'cut' system command. Please ensure your PATH is correct or install the 'cut' command package.${RESET_TXT})
 endif
 ifeq (,$(findstring grep, $(shell which grep)))
-   $(error ${RED_TXT}S_hla.mk:ERROR: Could not find the 'grep' system command. Please ensure your PATH is correct or install the grep command package.${RESET_TXT})
+   $(error ${RED_TXT}S_hla.mk:ERROR: Could not find the 'grep' system command. Please ensure your PATH is correct or install the 'grep' command package.${RESET_TXT})
 endif
 
 # Verify the TRICKHLA_HOME environment variables is set and the path is valid.
