@@ -397,7 +397,7 @@ else
          RTI_LIB_PATH = ${RTI_HOME}/lib/gcc73_64
       else ifeq ($(shell [ $(COMPILER_VERSION) -ge 5 ] && echo true),true)
          RTI_LIB_PATH = ${RTI_HOME}/lib/gcc52_64
-      else iifeq ($(shell [ $(COMPILER_VERSION) -ge 4 ] && echo true),true)
+      else ifeq ($(shell [ $(COMPILER_VERSION) -ge 4 ] && echo true),true)
          RTI_LIB_PATH = ${RTI_HOME}/lib/gcc41_64
       else
          RTI_LIB_PATH = ${RTI_HOME}/lib/gcc34_64
