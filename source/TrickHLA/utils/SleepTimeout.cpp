@@ -30,7 +30,6 @@ NASA, Johnson Space Center\n
 
 // Trick includes.
 #include "trick/clock_proto.h"
-#include "trick/exec_proto.h"
 
 // TrickHLA includes.
 #include "TrickHLA/utils/SleepTimeout.hh"
