@@ -31,9 +31,16 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_SLEEP_TIMEOUT_HH
 #define TRICKHLA_SLEEP_TIMEOUT_HH
 
+// TrickHLA includes.
+#include "TrickHLA/CompileConfig.hh"
+
 // System includes.
 #include <cstdint>
-#include <time.h>
+#if defined( TRICKHLA_USE_THREAD_YIELD )
+#   include <chrono>
+#else
+#   include <time.h>
+#endif // TRICKHLA_USE_THREAD_YIELD
 
 #define THLA_DEFAULT_SLEEP_TIMEOUT_IN_SEC ( (double)30.0 )
 #define THLA_DEFAULT_SLEEP_WAIT_IN_MICROS ( (long)1000 )
@@ -103,9 +110,14 @@ class SleepTimeout
    void reset();
 
   protected:
-   int64_t         timeout_time;       ///< @trick_io{**} Timeout elapsed time in microseconds.
-   int64_t         timeout_clock_time; ///< @trick_io{**} Clock timeout time in microseconds.
-   struct timespec sleep_time;         ///< @trick_io{**} Time-spec for the requested sleep time.
+   int64_t timeout_time;       ///< @trick_io{**} Timeout elapsed time in microseconds.
+   int64_t timeout_clock_time; ///< @trick_io{**} Clock timeout time in microseconds.
+
+#if defined( TRICKHLA_USE_THREAD_YIELD )
+   std::chrono::microseconds sleep_time; ///< @trick_io{**} Time to sleep in microseconds.
+#else
+   struct timespec sleep_time; ///< @trick_io{**} Time-spec for the requested sleep time.
+#endif // TRICKHLA_USE_THREAD_YIELD
 
   private:
    // Do not allow the copy constructor or assignment operator.
