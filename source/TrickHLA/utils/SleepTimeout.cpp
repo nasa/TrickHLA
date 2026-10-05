@@ -25,8 +25,8 @@ NASA, Johnson Space Center\n
 */
 
 // TrickHLA includes.
-#include "TrickHLA/CompileConfig.hh" // NOLINT
 #include "TrickHLA/utils/SleepTimeout.hh"
+#include "TrickHLA/CompileConfig.hh" // NOLINT
 
 // System includes.
 #include <cstdint>

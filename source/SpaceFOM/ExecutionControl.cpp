@@ -1073,11 +1073,11 @@ void ExecutionControl::pre_multi_phase_init_processes()
       DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr FOM-name for the THLA.federate.exec_config object.\n" );
       return;
    }
-   
+
    // Sanity check: Only a Master federate can initiate a Restore.
-   if(    !is_master()
-       && !save_restore_service->restore_get_label().empty()
-       && save_restore_service->restore_get_state() != THLARestoreProcessEnum::RESTORE_NONE ){
+   if ( !is_master()
+        && !save_restore_service->restore_get_label().empty()
+        && save_restore_service->restore_get_state() != THLARestoreProcessEnum::RESTORE_NONE ) {
 
       string restore_label;
       StringUtilities::to_string( restore_label, save_restore_service->restore_get_label() );
@@ -1085,7 +1085,6 @@ void ExecutionControl::pre_multi_phase_init_processes()
       errmsg << "Only a Master federate can initiate an HLA Restore.  Restore label specified: "
              << restore_label << "\n";
       DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
-
    }
 
    // The User Must specify a root reference frame.
@@ -1133,7 +1132,6 @@ void ExecutionControl::pre_multi_phase_init_processes()
       if ( !federate->verify_time_constraints() ) {
          DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Time constraints verification failed!\n" );
       }
-
    }
 
    // Set the ExCO current and next run modes.
