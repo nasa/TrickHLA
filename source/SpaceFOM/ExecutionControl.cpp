@@ -24,6 +24,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../TrickHLA/InteractionItem.cpp}
 @trick_link_dependency{../TrickHLA/ObjectServices.cpp}
 @trick_link_dependency{../TrickHLA/Parameter.cpp}
+@trick_link_dependency{../TrickHLA/SaveRestoreServices.cpp}
 @trick_link_dependency{../TrickHLA/Types.cpp}
 @trick_link_dependency{../TrickHLA/time/CTETimelineBase.cpp}
 @trick_link_dependency{../TrickHLA/time/Int64BaseTime.cpp}
@@ -75,6 +76,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/ObjectServices.hh"
 #include "TrickHLA/Parameter.hh"
+#include "TrickHLA/SaveRestoreServices.hh"
 #include "TrickHLA/SyncPointManagerBase.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/CTETimelineBase.hh"
