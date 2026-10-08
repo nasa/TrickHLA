@@ -90,8 +90,8 @@ NASA, Johnson Space Center\n
 #include "RTI/Typedefs.h"
 
 // Access the Trick global objects:
-extern Trick::MemoryManager * trick_MM;
-extern Trick::Clock         * the_clock;
+extern Trick::MemoryManager *trick_MM;
+extern Trick::Clock         *the_clock;
 
 using namespace RTI1516_NAMESPACE;
 using namespace std;
@@ -104,7 +104,7 @@ namespace TrickHLA
 {
 extern SimTimeline      def_sim_timeline;
 extern ScenarioTimeline def_scenario_timeline;
-}
+} // namespace TrickHLA
 
 /*!
  * @job_class{initialization}
@@ -173,7 +173,7 @@ ExecutionControlBase::ExecutionControlBase(
      object_service( nullptr ),
      interaction_service( nullptr ),
      save_restore_service( nullptr )
-{                           
+{
    return;
 }
 

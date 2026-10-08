@@ -17,6 +17,8 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{TimeManagementServices.cpp}
 @trick_link_dependency{Int64BaseTime.cpp}
+@trick_link_dependency{ScenarioTimeline.cpp}
+@trick_link_dependency{SimTimeline.cpp}
 @trick_link_dependency{TrickThreadCoordinator.cpp}
 @trick_link_dependency{../DebugHandler.cpp}
 @trick_link_dependency{../ExecutionControlBase.cpp}
@@ -52,10 +54,10 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // Trick includes.
+#include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
 #include "trick/message_type.h"
 #include "trick/sim_mode.h"
-#include "trick/MemoryManager.hh"
 
 // TrickHLA includes.
 #include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
@@ -67,6 +69,8 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/ObjectServices.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64BaseTime.hh"
+#include "TrickHLA/time/ScenarioTimeline.hh"
+#include "TrickHLA/time/SimTimeline.hh"
 #include "TrickHLA/time/TimeManagementServices.hh"
 #include "TrickHLA/time/TrickThreadCoordinator.hh"
 #include "TrickHLA/utils/ElapsedTimeStats.hh"
