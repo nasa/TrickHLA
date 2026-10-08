@@ -3246,14 +3246,22 @@ void Federate::save( string const &label )
  */
 void Federate::save( wstring const &label )
 {
+   string label_str;
+   StringUtilities::to_string( label_str, label );
+
+   // We only permit an HLA Save or Restore when Trick is in Freeze.
+   SIM_MODE const exec_mode = exec_get_mode();
+   if ( exec_mode != Freeze ) {
+      ostringstream msg;
+      msg << "Federate '" << name << "' is not in Freeze!  Save for label '" << label_str << "' rejected!\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_ERROR );
+      return;
+   }
 
    // Sanity checks.
    if ( execution_control == nullptr ) {
-      string label_str;
-      StringUtilities::to_string( label_str, label );
       ostringstream msg;
       msg << "No ExecutionControl for Saving '" << label_str << "'!\n";
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_ERROR );
       return;
    }
 
@@ -3343,10 +3351,20 @@ void Federate::restore( string const &label )
  */
 void Federate::restore( wstring const &label )
 {
+   string label_str;
+   StringUtilities::to_string( label_str, label );
+
+   // We only permit an HLA Save or Restore when Trick is in Freeze.
+   SIM_MODE const exec_mode = exec_get_mode();
+   if ( exec_mode != Freeze ) {
+      ostringstream msg;
+      msg << "Federate '" << name << "' is not in Freeze!  Restore for label '" << label_str << "' rejected!\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_ERROR );
+      return;
+   }
+
    // Sanity checks.
    if ( execution_control == nullptr ) {
-      string label_str;
-      StringUtilities::to_string( label_str, label );
       ostringstream msg;
       msg << "No ExecutionControl for Saving '" << label_str << "'!\n";
       DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_ERROR );

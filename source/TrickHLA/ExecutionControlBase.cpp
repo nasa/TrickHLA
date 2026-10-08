@@ -1029,6 +1029,9 @@ void ExecutionControlBase::save_process()
    // NOTE: The Save label is assumed to be set outside this function in the
    // SaveRestroreService.
 
+   // Get the current Trick execution mode.
+   SIM_MODE const exec_mode = exec_get_mode();
+
    // Convert the save label for use in messages.
    StringUtilities::to_string( save_label_str, save_restore_service->save_get_label() );
 
@@ -1047,6 +1050,21 @@ void ExecutionControlBase::save_process()
 
       case THLASaveProcessEnum::SAVE_REQUESTED:
          // This federate is responding to a Save Request from the Federation.
+
+         // We only permit an HLA Save or Restore when Trick is in Freeze.
+         if ( exec_mode != Freeze ) {
+
+            ostringstream msg;
+            msg << "Federate '" << federate->name << "' is not in Freeze!  Save for label '" << save_label_str << "' rejected!\n";
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_ERROR );
+
+            // Mark the Save as failed.
+            save_restore_service->save_state = THLASaveProcessEnum::SAVE_FAILED;
+            save_restore_service->save_failed();
+
+            // Break out of the save_state switch statement.
+            break;
+         }
 
          // Check the currency of the joined federates.
          if ( federate->verify_joined_federates() ) {
@@ -1131,7 +1149,7 @@ bool ExecutionControlBase::save( wstring const &label )
    if ( current_save_state == THLASaveProcessEnum::SAVE_UNSUPPORTED ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "HLA SaveRetore NOT supported!\n", MSG_WARNING );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "HLA SaveRestore NOT supported!\n", MSG_WARNING );
       }
 
       return ( false );
@@ -1193,7 +1211,7 @@ void ExecutionControlBase::save_at_SET(
          string label_str;
          StringUtilities::to_string( label_str, label );
          ostringstream errmsg;
-         errmsg << "SaveRetore NOT supported!\n"
+         errmsg << "SaveRestore NOT supported!\n"
                 << " Label:'" << label_str << "'\n"
                 << " sim_time:" << sim_time << "\n";
          DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
@@ -1219,7 +1237,7 @@ void ExecutionControlBase::save_at_SST(
          string label_str;
          StringUtilities::to_string( label_str, label );
          ostringstream errmsg;
-         errmsg << "SaveRetore NOT supported!\n"
+         errmsg << "SaveRestore NOT supported!\n"
                 << " Label:'" << label_str << "'\n"
                 << " scenario_time:" << scenario_time << "\n";
          DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
@@ -1247,7 +1265,7 @@ void ExecutionControlBase::save_at_HLT(
          string time_str;
          StringUtilities::to_string( time_str, time.toString() );
          ostringstream errmsg;
-         errmsg << "SaveRetore NOT supported!\n"
+         errmsg << "SaveRestore NOT supported!\n"
                 << " Label:'" << label_str << "'\n"
                 << " time:" << time_str << "\n";
          DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
@@ -1524,7 +1542,7 @@ bool ExecutionControlBase::restore( wstring const &label )
          string label_str;
          StringUtilities::to_string( label_str, label );
          ostringstream errmsg;
-         errmsg << "SaveRetore NOT supported!\n"
+         errmsg << "SaveRestore NOT supported!\n"
                 << " Label:'" << label_str << "'\n";
          DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
       }

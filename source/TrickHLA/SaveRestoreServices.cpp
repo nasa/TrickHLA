@@ -1485,6 +1485,27 @@ void SaveRestoreServices::restore_initiated(
       return;
    }
 
+   // We only permit an HLA Save or Restore when Trick is in Freeze.
+   SIM_MODE const exec_mode = exec_get_mode();
+   if ( exec_mode != Freeze ) {
+
+      // Mark this Restore as failed.
+      this->restore_state = THLARestoreProcessEnum::RESTORE_FAILED;
+
+      string label_str;
+      StringUtilities::to_string( label_str, restore_label );
+      string fed_name_str;
+      StringUtilities::to_string( fed_name_str, federate_name );
+      ostringstream errmsg;
+      errmsg << "Federate '" << fed_name_str << "' is not in Freeze!  Restore for label '" << label_str << "' rejected!\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_ERROR );
+
+      // Notify the Federation that we could not complete the Restore.
+      restore_failed_notification();
+
+      return;
+   }
+
    // Set the Restore label.
    this->restore_label = label;
 
@@ -1525,7 +1546,7 @@ void SaveRestoreServices::restore_initiated(
                                       .append( "'\n" ) );
    }
 
-   // Mark the Retore state as initiated.  We need to do this because the Trick checkpoint
+   // Mark the Restore state as initiated.  We need to do this because the Trick checkpoint
    // process is not thread safe.  This routine is triggered from the FedAmbassador call
    // back on a separate thread.  Once the checkpoint file name is set below,  Trick will
    // automatically start the load checkpoint process at the top of the next Run or Freeze
