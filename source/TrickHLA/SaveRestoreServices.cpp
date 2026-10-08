@@ -47,6 +47,7 @@ NASA, Johnson Space Center\n
 #include "trick/command_line_protos.h"
 #include "trick/exec_proto.h"
 #include "trick/message_type.h"
+#include "trick/sim_mode.h"
 
 // Global singleton pointer to the CheckPointRestart.
 extern Trick::CheckPointRestart *the_cpr;
