@@ -49,7 +49,6 @@ NASA, Johnson Space Center\n
 #include <vector>
 
 // Trick includes.
-#include "trick/CheckPointRestart.hh"
 #include "trick/Clock.hh"
 #include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
@@ -90,30 +89,30 @@ NASA, Johnson Space Center\n
 #include "RTI/RTIambassador.h"
 #include "RTI/Typedefs.h"
 
-// Access the Trick global objects for CheckPoint restart and the Clock.
-extern Trick::CheckPointRestart *the_cpr;
-
-// Access the Trick global objects the Clock.
-extern Trick::Clock *the_clock;
+// Access the Trick global objects:
+extern Trick::MemoryManager * trick_MM;
+extern Trick::Clock         * the_clock;
 
 using namespace RTI1516_NAMESPACE;
 using namespace std;
 using namespace TrickHLA;
 
-// Declare default time lines.
+// Access the default time lines.  These are used to provide working initial
+// timelines by default.  These can be reassigned in either the S_define,
+// default_data, or input file.
 namespace TrickHLA
 {
-SimTimeline      def_sim_timeline;
-ScenarioTimeline def_scenario_timeline( def_sim_timeline );
-} // namespace TrickHLA
+extern SimTimeline      def_sim_timeline;
+extern ScenarioTimeline def_scenario_timeline;
+}
 
 /*!
  * @job_class{initialization}
  */
 ExecutionControlBase::ExecutionControlBase()
    : SyncPointManagerBase(),
-     scenario_timeline( &def_scenario_timeline ),
-     sim_timeline( &def_sim_timeline ),
+     scenario_timeline( &TrickHLA::def_scenario_timeline ),
+     sim_timeline( &TrickHLA::def_sim_timeline ),
      cte_timeline( nullptr ),
      use_preset_master( false ),
      master( false ),
@@ -148,8 +147,8 @@ ExecutionControlBase::ExecutionControlBase()
 ExecutionControlBase::ExecutionControlBase(
    ExecutionConfigurationBase &exec_config )
    : SyncPointManagerBase(),
-     scenario_timeline( &def_scenario_timeline ),
-     sim_timeline( &def_sim_timeline ),
+     scenario_timeline( &TrickHLA::def_scenario_timeline ),
+     sim_timeline( &TrickHLA::def_sim_timeline ),
      cte_timeline( nullptr ),
      use_preset_master( false ),
      master( false ),
@@ -174,7 +173,7 @@ ExecutionControlBase::ExecutionControlBase(
      object_service( nullptr ),
      interaction_service( nullptr ),
      save_restore_service( nullptr )
-{
+{                           
    return;
 }
 

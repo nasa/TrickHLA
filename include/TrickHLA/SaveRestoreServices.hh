@@ -447,10 +447,10 @@ class SaveRestoreServices : public CheckpointConversionBase
    Int64Time           save_time;  ///< @trick_units{--} HLA Logical Time for Save.
 
    // Restore process variables.
-   THLARestoreProcessEnum            restore_state;  ///< @trick_io{*io} @trick_chkpnt_io{**} Where we are in the restore process
-   std::wstring                      restore_label;  ///< @trick_io{*io} @trick_chkpnt_io{**} Restore label.
-   std::wstring                      restore_name;   ///< @trick_io{*o} @trick_chkpnt_io{**} Restored federate name.
-   RTI1516_NAMESPACE::FederateHandle restore_handle; ///< @trick_io{*o} @trick_chkpnt_io{**} Restored federate handle.
+   THLARestoreProcessEnum            restore_state;  ///< @trick_units{1}  @trick_io{*io} @trick_chkpnt_io{**} Where we are in the restore process
+   std::wstring                      restore_label;  ///< @trick_units{--} @trick_io{*io} @trick_chkpnt_io{**} Restore label.
+   std::wstring                      restore_name;   ///< @trick_units{--} @trick_io{*o} @trick_chkpnt_io{**} Restored federate name.
+   RTI1516_NAMESPACE::FederateHandle restore_handle; ///< @trick_units{--} @trick_io{*o} @trick_chkpnt_io{**} Restored federate handle.
 
    RTI1516_NAMESPACE::FederateRestoreStatusVector restore_status_response; ///< @trick_io{**} Federation Restore status vector.
 

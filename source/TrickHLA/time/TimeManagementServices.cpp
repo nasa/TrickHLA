@@ -55,6 +55,7 @@ NASA, Johnson Space Center\n
 #include "trick/exec_proto.h"
 #include "trick/message_type.h"
 #include "trick/sim_mode.h"
+#include "trick/MemoryManager.hh"
 
 // TrickHLA includes.
 #include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
@@ -95,6 +96,13 @@ using namespace RTI1516_NAMESPACE;
 using namespace std;
 using namespace TrickHLA;
 
+// Declare default time lines.
+namespace TrickHLA
+{
+SimTimeline      def_sim_timeline;
+ScenarioTimeline def_scenario_timeline( def_sim_timeline );
+} // namespace TrickHLA
+
 /*!
  * @details NOTE: In most cases, we would allocate and set default names in
  * the constructor. However, since we want this class to be Input Processor
@@ -126,6 +134,36 @@ TimeManagementServices::TimeManagementServices(
      tar_tag_stats( false ),
      tara_tag_stats( false )
 {
+   // Register the default Simulation and Scenario Timelines with the
+   // Trick Memory Manager.  We need to do this for Trick checkpoint
+   // and load checkpoint work properly when using the default
+   // timelines.  These will be assigned to the ExecutionControlBase
+   // class in its constructors.  The ExecutionControl instance can
+   // override these if needed.
+
+   /* Ultimately Trick calls this routine.  It parses the type sepcification
+    * extracts the data that goes into this call.  This is left to show what
+    * to do if we did not want Trick to parse the type specification.
+   int cdims = 1;
+   trick_MM->declare_extern_var( &TrickHLA::def_sim_timeline,
+                                 TRICK_STRUCTURED,
+                                 "TrickHLA::SimTimeline",
+                                 0,
+                                 "TrickHLA__def_sim_timeline",
+                                 1,
+                                 &cdims );
+   trick_MM->declare_extern_var( &TrickHLA::def_scenario_timeline,
+                                 TRICK_STRUCTURED,
+                                 "TrickHLA::ScenarioTimeline",
+                                 0,
+                                 "TrickHLA__def_scenario_timeline",
+                                 1,
+                                 &cdims );
+   */
+   // Alternate declaration call.  This call relies on Trick to parse the type specification.
+   trick_MM->declare_extern_var( &TrickHLA::def_sim_timeline, "TrickHLA::SimTimeline TrickHLA__def_sim_timeline" );
+   trick_MM->declare_extern_var( &TrickHLA::def_scenario_timeline, "TrickHLA::ScenarioTimeline TrickHLA__def_scenario_timeline" );
+
    return;
 }
 

@@ -263,6 +263,7 @@ void Interaction::convert_data_before_checkpoint()
 void Interaction::restore_data_after_checkpoint()
 {
    if ( handler != nullptr ) {
+      handler->initialize_callback( this );
       handler->restore_data_after_checkpoint();
    }
 }
