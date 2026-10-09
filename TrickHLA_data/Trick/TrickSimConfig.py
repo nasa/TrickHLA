@@ -71,8 +71,23 @@ class TrickSimConfig( ABC ):
    # Set the Trick software and freeze frame times.
    def set_software_and_freeze_frame_time( self, software_frame_time ):
 
+      self.set_software_frame_time( software_frame_time )
+      self.set_freeze_frame_time( software_frame_time )
+
+      return
+
+   # Set the Trick software frame time.
+   def set_software_frame_time( self, software_frame_time ):
+
       trick.exec_set_software_frame( software_frame_time )
-      trick.exec_set_freeze_frame( software_frame_time )
+
+      return
+
+
+   # Set the Trick freeze frame time.
+   def set_freeze_frame_time( self, freeze_frame_time ):
+
+      trick.exec_set_freeze_frame( freeze_frame_time )
 
       return
 
