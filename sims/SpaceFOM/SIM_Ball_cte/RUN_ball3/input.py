@@ -88,9 +88,6 @@ trick.checkpoint_end(True)
 trick.TMM_reduced_checkpoint(False)
 trick.TMM_hexfloat_checkpoint(True)
 
-# Check point at 5 seconds.
-trick.checkpoint(5.0)
-
 
 #---------------------------------------------------------------------------
 # Set the Walls information.
@@ -180,6 +177,9 @@ if ball_fed_config.is_master:
 # Setup Time Management parameters.
 ball_fed_config.set_time_regulating( True )
 ball_fed_config.set_time_constrained( True )
+
+# Cause an overrun.
+sleep_task.sleep_micros = 0.10 * ( 2 * 1000000 )
 
 #
 # Add in known required federates.

@@ -41,6 +41,8 @@ NASA, Johnson Space Center\n
 
 */
 
+##include <cstdlib>
+
 #include "sim_objects/default_trick_sys.sm"
 
 //=============================================================================
@@ -95,6 +97,7 @@ NASA, Johnson Space Center\n
 #else
 ##include "TrickHLA/time/TimeOfDayCTETimeline.hh"
 #endif
+##include "TrickHLA/utils/Utilities.hh"
 
 //=============================================================================
 // SIM_OBJECT: ball
@@ -120,7 +123,7 @@ class ballSimObject : public Trick::SimObject {
       ("derivative") ball_state_deriv( &state );
 
       // SCHEDULED JOBS
-      (0.1 , "scheduled") ball_print( &state ) ;
+      (0.1 , "scheduled") ball_print( &state );
    }
 };
 
@@ -169,6 +172,40 @@ class ensembleSimObject : public Trick::SimObject {
    }
 };
 
+//=============================================================================
+// SIM_OBJECT: sleepballSimObject
+// This sim object will sleep to cause an overrun.
+//=============================================================================
+class sleepSimObject : public Trick::SimObject {
+
+  public:
+   long sleep_micros;
+
+   sleepSimObject( long sleep_time_micros = 0 )
+      : sleep_micros( sleep_time_micros )
+   {
+      // SCHEDULED JOBS
+      (0.1 , "scheduled") sleep();
+   }
+
+   bool sleep()
+   {
+      if ( sleep_micros > 0 ) {
+         Utilities::micro_sleep( sleep_micros );
+         return true;
+      }
+      return false;
+   }
+
+   void random_sleep()
+   {
+      if ( rand() < ( RAND_MAX / 3 ) ) {
+         if ( sleep() ) {
+            message_publish( MSG_INFO, "random_sleep()\n" );
+         }
+      }
+   }
+};
 
 //==========================================================================
 // SIM_OBJECT: THLA - Generalized TrickHLA interface routines.
@@ -383,6 +420,8 @@ SpaceFOMSimObject THLA( THLA_DATA_CYCLE_TIME,
 // Simulation specific multiphase initialization SimObject instance.
 THLAInitSimObj THLA_INIT( THLA.manager, THLA.federate );
 
+// Sleep object instantiation.
+sleepSimObject sleep_task( 0 );
 
 // Ball dynamics object instantiations
 ballSimObject ball1;

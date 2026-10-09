@@ -89,9 +89,6 @@ trick.checkpoint_end(True)
 trick.TMM_reduced_checkpoint(False)
 trick.TMM_hexfloat_checkpoint(True)
 
-# Check point at 5 seconds.
-trick.checkpoint(5.0)
-
 
 #---------------------------------------------------------------------------
 # Set the Walls information.
