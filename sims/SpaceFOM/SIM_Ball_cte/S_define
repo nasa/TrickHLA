@@ -179,30 +179,24 @@ class ensembleSimObject : public Trick::SimObject {
 class sleepSimObject : public Trick::SimObject {
 
   public:
+   bool enable;
+   bool random_sleep;
    long sleep_micros;
 
    sleepSimObject( long sleep_time_micros = 0 )
-      : sleep_micros( sleep_time_micros )
+      : enable( false ),
+        random_sleep( false ),
+        sleep_micros( sleep_time_micros )
    {
       // SCHEDULED JOBS
       (0.1 , "scheduled") sleep();
    }
 
-   bool sleep()
+   void sleep()
    {
-      if ( sleep_micros > 0 ) {
+      if ( enable && ( !random_sleep || ( rand() < ( RAND_MAX / 3 ) ) ) ) {
          Utilities::micro_sleep( sleep_micros );
-         return true;
-      }
-      return false;
-   }
-
-   void random_sleep()
-   {
-      if ( rand() < ( RAND_MAX / 3 ) ) {
-         if ( sleep() ) {
-            message_publish( MSG_INFO, "random_sleep()\n" );
-         }
+         message_publish( MSG_INFO, "sleep()\n" );
       }
    }
 };

@@ -74,7 +74,7 @@ run_duration = 10.0
 # Configure the Ball simulation.
 #---------------------------------------------------------------------------
 ball_sim_config = BallSimConfig( 'Ball 3 Sim' )
-ball_sim_config.set_software_and_freeze_frame_time( software_frame_time = 0.1 )
+ball_sim_config.set_software_and_freeze_frame_time( software_frame_time = 0.10 )
 ball_sim_config.start_in_freeze( False )
 
 
@@ -169,17 +169,19 @@ ball_fed_config.set_master_role( False )  # This is NOT the Master federate.
 ball_fed_config.set_pacing_role( False )  # This is NOT the Pacing federate.
 ball_fed_config.set_RRFP_role( False )    # This is NOT the Root Reference Frame Publisher.
 
-# Only the Master federate can set the LCTS in a SpaceFOM federate!
-# This call only sticks after the Master role is set!
-if ball_fed_config.is_master:
-   ball_fed_config.set_least_common_time_step( 0.10 )
-
 # Setup Time Management parameters.
 ball_fed_config.set_time_regulating( True )
 ball_fed_config.set_time_constrained( True )
 
-# Cause an overrun.
-sleep_task.sleep_micros = 0.10 * ( 2 * 1000000 )
+# Cause an overrun to test the CTE and HLA time management configuration.
+sleep_task.enable       = True
+sleep_task.random_sleep = False
+sleep_task.sleep_micros = 0.20 * 1000000
+
+# Only the Master federate can set the LCTS in a SpaceFOM federate!
+# This call only sticks after the Master role is set!
+if ball_fed_config.is_master:
+   ball_fed_config.set_least_common_time_step( 0.10 )
 
 #
 # Add in known required federates.
