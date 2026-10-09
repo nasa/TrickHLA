@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [Unreleased] - 2026-10-05
 
 ### Notable Additions
+- Fixed the issue for a federate not going into freeze if the freeze scenario time is in the past (issue #190).
 
 
 ### Breaking Changes
