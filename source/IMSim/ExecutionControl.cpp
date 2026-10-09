@@ -1634,7 +1634,19 @@ bool ExecutionControl::process_mode_transition_request()
             freeze_mode_announce();
 
             // Tell Trick to go into freeze at the appointed time.
-            the_exec->freeze( this->simulation_freeze_time );
+            // If the freeze time is in the past then we need to freeze now.
+            if ( get_simulation_freeze_time() > the_exec->get_sim_time() ) {
+               the_exec->freeze( get_simulation_freeze_time() );
+            } else {
+               if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+                  ostringstream errmsg;
+                  errmsg << "IMSim::ExecutionControl::process_mode_transition_request():" << __LINE__
+                         << " The freeze time " << setprecision( 18 ) << get_simulation_freeze_time()
+                         << " seconds, is unexpectedly in the past!\n";
+                  message_publish( MSG_WARNING, errmsg.str().c_str() );
+               }
+               the_exec->freeze();
+            }
 
             // The freeze transition logic will be done just before entering
             // Freeze. This is done in the TrickHLA::Federate::freeze_init()
@@ -1896,7 +1908,19 @@ bool ExecutionControl::process_execution_control_updates()
                freeze_mode_announce();
 
                // Tell Trick to go into freeze at the appointed time.
-               the_exec->freeze( this->simulation_freeze_time );
+               // If the freeze time is in the past then we need to freeze now.
+               if ( get_simulation_freeze_time() > the_exec->get_sim_time() ) {
+                  the_exec->freeze( get_simulation_freeze_time() );
+               } else {
+                  if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+                     ostringstream errmsg;
+                     errmsg << "IMSim::ExecutionControl::process_execution_control_updates():" << __LINE__
+                            << " The freeze time " << setprecision( 18 ) << get_simulation_freeze_time()
+                            << " seconds, is unexpectedly in the past!\n";
+                     message_publish( MSG_WARNING, errmsg.str().c_str() );
+                  }
+                  the_exec->freeze();
+               }
 
                // The freeze transition logic will be done just before entering
                // Freeze. This is done in the TrickHLA::Federate::freeze_init()
