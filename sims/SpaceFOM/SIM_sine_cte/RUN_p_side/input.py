@@ -153,7 +153,7 @@ if ( print_usage == True ):
 # Import and configure the TrickHLA base Simulation Configuration class.
 from TrickHLA_data.TrickHLA.TrickHLASimConfig import *
 sine_sim_config = TrickHLASimConfig( 'sine' )
-sine_sim_config.set_software_and_freeze_frame_time( software_frame_time = 0.250 )
+sine_sim_config.realtime( software_frame_time = 0.250 )
 sine_sim_config.start_in_freeze( False )
 
 
