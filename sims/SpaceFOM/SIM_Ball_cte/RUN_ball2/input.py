@@ -178,7 +178,7 @@ ball_fed_config.set_time_padding( 1.0 )
 
 # Setup Time Management parameters.
 ball_fed_config.set_time_regulating( False )
-ball_fed_config.set_time_constrained( True )
+ball_fed_config.set_time_constrained( False )
 
 # Only the Master federate can set the LCTS in a SpaceFOM federate!
 # This call only sticks after the Master role is set!
