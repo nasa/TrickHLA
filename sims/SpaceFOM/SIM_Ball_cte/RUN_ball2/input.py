@@ -193,6 +193,21 @@ ball_fed_config.add_known_federate( True, 'Ball 1 Sim' )
 ball_fed_config.add_known_federate( True, 'Ball 3 Sim' )
 
 #...........................................................................
+# Log the HLA Time Statistics.
+#...........................................................................
+# Import the TrickHLA Time Statistics Data Recording Group class.
+from TrickHLA_data.TrickHLA.TrickHLATimeStatsDRG import TrickDataRecordingGroup, TrickHLATimeStatsDRG
+
+# Create the TrickHLA Time Statistics Data Recording Group.
+thla_time_drg = TrickHLATimeStatsDRG( 0.10 )
+
+# Initialize all the Data Recording Groups.
+TrickDataRecordingGroup.initialize_groups()
+
+# Enable the collection of TrickHLA time statistics.
+THLA.federate.enable_time_statistics( True )
+
+#...........................................................................
 # Configure the Wall HLA data.
 #...........................................................................
 walls_config = WallsObject( 
