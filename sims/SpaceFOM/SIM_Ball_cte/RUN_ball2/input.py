@@ -74,7 +74,7 @@ run_duration = 10.0
 # Configure the Ball simulation.
 #---------------------------------------------------------------------------
 ball_sim_config = BallSimConfig( 'Ball 2 Sim' )
-ball_sim_config.realtime( software_frame_time = 0.1 )
+ball_sim_config.realtime( software_frame_time = 0.10 )
 ball_sim_config.start_in_freeze( False )
 
 
@@ -169,11 +169,6 @@ ball_fed_config.set_master_role( False )  # This is NOT the Master federate.
 ball_fed_config.set_pacing_role( False )  # This is NOT the Pacing federate.
 ball_fed_config.set_RRFP_role( False )    # This is NOT the Root Reference Frame Publisher.
 
-# Only the Master federate can set the LCTS in a SpaceFOM federate!
-# This call only sticks after the Master role is set!
-if ball_fed_config.is_master:
-   ball_fed_config.set_least_common_time_step( 0.10 )
-
 # Set the CTE timeline and change the Trick real time clock to use it.
 THLA.execution_control.cte_timeline = THLA_INIT.cte_timeline
 
@@ -184,6 +179,11 @@ ball_fed_config.set_time_padding( 1.0 )
 # Setup Time Management parameters.
 ball_fed_config.set_time_regulating( False )
 ball_fed_config.set_time_constrained( False )
+
+# Only the Master federate can set the LCTS in a SpaceFOM federate!
+# This call only sticks after the Master role is set!
+if ball_fed_config.is_master:
+   ball_fed_config.set_least_common_time_step( 0.10 )
 
 #
 # Add in known required federates.

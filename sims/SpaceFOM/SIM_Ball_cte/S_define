@@ -179,30 +179,24 @@ class ensembleSimObject : public Trick::SimObject {
 class sleepSimObject : public Trick::SimObject {
 
   public:
+   bool enable;
+   bool random_sleep;
    long sleep_micros;
 
    sleepSimObject( long sleep_time_micros = 0 )
-      : sleep_micros( sleep_time_micros )
+      : enable( false ),
+        random_sleep( false ),
+        sleep_micros( sleep_time_micros )
    {
       // SCHEDULED JOBS
       (0.1 , "scheduled") sleep();
    }
 
-   bool sleep()
+   void sleep()
    {
-      if ( sleep_micros > 0 ) {
+      if ( enable && ( !random_sleep || ( rand() < ( RAND_MAX / 3 ) ) ) ) {
          Utilities::micro_sleep( sleep_micros );
-         return true;
-      }
-      return false;
-   }
-
-   void random_sleep()
-   {
-      if ( rand() < ( RAND_MAX / 3 ) ) {
-         if ( sleep() ) {
-            message_publish( MSG_INFO, "random_sleep()\n" );
-         }
+         message_publish( MSG_INFO, "sleep()\n" );
       }
    }
 };
@@ -229,14 +223,12 @@ class THLAInitSimObj : public Trick::SimObject {
    TrickHLA::TimeOfDayCTETimeline   cte_timeline;
 #endif
 
-   THLAInitSimObj( TrickHLA::Manager  & thla_mngr,
-                   TrickHLA::Federate & thla_fed,
+   THLAInitSimObj( TrickHLA::Federate & thla_fed,
                    unsigned int         _MPI_1   = 100,
                    unsigned int         _MPI_END = P_SF_INIT_POST_MPI )
       : sim_timeline(),
         scenario_timeline( sim_timeline, 0.0, 0.0 ),
         cte_timeline(),
-        thla_manager( thla_mngr ),
         thla_federate( thla_fed )
    {
       // We aren't using synchronization points here to gate initialization.
@@ -245,19 +237,18 @@ class THLAInitSimObj : public Trick::SimObject {
       // the required federates list to insure the other federates participate.
 
       // Send all the initialization data.
-      P100 ("initialization") thla_manager.send_init_data();
+      P100 ("initialization") thla_federate.send_init_data();
 
       // Wait to receive all the initialization data.
-      P100 ("initialization") thla_manager.receive_init_data();
+      P100 ("initialization") thla_federate.receive_init_data();
 
       // Do some processing here if needed...
 
       // Clear remaining initialization sync-points.
-      P100 ("initialization") thla_manager.clear_init_sync_points();
+      P100 ("initialization") thla_federate.clear_init_sync_points();
    }
 
  private:
-   TrickHLA::Manager  & thla_manager;
    TrickHLA::Federate & thla_federate;
 
    // Do not allow the implicit copy constructor or assignment operator.
@@ -418,7 +409,7 @@ SpaceFOMSimObject THLA( THLA_DATA_CYCLE_TIME,
                         P_HLA_LATE );
 
 // Simulation specific multiphase initialization SimObject instance.
-THLAInitSimObj THLA_INIT( THLA.manager, THLA.federate );
+THLAInitSimObj THLA_INIT( THLA.federate );
 
 // Sleep object instantiation.
 sleepSimObject sleep_task( 0 );
