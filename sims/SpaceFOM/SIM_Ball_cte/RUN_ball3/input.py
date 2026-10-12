@@ -48,6 +48,9 @@ from Modified_data.BallSimConfig import TrickSimConfig, BallSimConfig
 # Import the Ball State Data Recording Group class.
 from Modified_data.BallStateDRG import TrickDataRecordingGroup, BallStateDRG
 
+# Import the TrickHLA Time Statistics Data Recording Group class.
+from TrickHLA_data.TrickHLA.TrickHLATimeStatsDRG import TrickDataRecordingGroup, TrickHLATimeStatsDRG
+
 # Import the Ball HLA Federate Configuration class.
 from Modified_data.BallFederateConfig import BallFederateConfig
 
@@ -133,17 +136,6 @@ ball3.state.input.elevation = trick.sim_services.attach_units("degree", 30.0)
 
 
 #---------------------------------------------------------------------------
-# Setup the Data Recording Groups.
-#---------------------------------------------------------------------------
-ball1_drg = BallStateDRG( 'ball1', 'Ball1', 0.1 )
-ball2_drg = BallStateDRG( 'ball2', 'Ball2', 0.1 )
-ball3_drg = BallStateDRG( 'ball3', 'Ball3', 0.1 )
-
-# Initialize all the Data Recording Groups.
-TrickDataRecordingGroup.initialize_groups()
-
-
-#---------------------------------------------------------------------------
 # Setup Ball graphics and add to the Trick external applications list.
 #---------------------------------------------------------------------------
 #ball_sim_config.ball_graphics()
@@ -175,7 +167,7 @@ ball_fed_config.set_time_constrained( True )
 
 # Cause an overrun to test the CTE and HLA time management configuration.
 sleep_task.enable       = True
-sleep_task.random_sleep = False
+sleep_task.random_sleep = True
 sleep_task.sleep_micros = 0.20 * 1000000
 
 # Only the Master federate can set the LCTS in a SpaceFOM federate!
@@ -190,11 +182,16 @@ ball_fed_config.add_known_federate( True, str( ball_fed_config.federate.name ) )
 ball_fed_config.add_known_federate( True, 'Ball 1 Sim' )
 ball_fed_config.add_known_federate( True, 'Ball 2 Sim' )
 
-#...........................................................................
-# Log the HLA Time Statistics.
-#...........................................................................
-# Import the TrickHLA Time Statistics Data Recording Group class.
-from TrickHLA_data.TrickHLA.TrickHLATimeStatsDRG import TrickDataRecordingGroup, TrickHLATimeStatsDRG
+
+#---------------------------------------------------------------------------
+# Setup the Data Recording Groups.
+#---------------------------------------------------------------------------
+ball1_drg = BallStateDRG( 'ball1', 'Ball1', 0.1 )
+ball2_drg = BallStateDRG( 'ball2', 'Ball2', 0.1 )
+ball3_drg = BallStateDRG( 'ball3', 'Ball3', 0.1 )
+
+# Enable the collection of TrickHLA time statistics.
+THLA.federate.enable_time_statistics( True )
 
 # Create the TrickHLA Time Statistics Data Recording Group.
 thla_time_drg = TrickHLATimeStatsDRG( 0.10 )
@@ -202,8 +199,6 @@ thla_time_drg = TrickHLATimeStatsDRG( 0.10 )
 # Initialize all the Data Recording Groups.
 TrickDataRecordingGroup.initialize_groups()
 
-# Enable the collection of TrickHLA time statistics.
-THLA.federate.enable_time_statistics( True )
 
 #...........................................................................
 # Configure the Wall HLA data.
