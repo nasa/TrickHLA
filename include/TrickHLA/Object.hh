@@ -52,7 +52,6 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Attribute.hh"
 #include "TrickHLA/CheckpointConversionBase.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
-#include "TrickHLA/ReflectedAttributesQueue.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/BasicClock.hh"
 #include "TrickHLA/utils/ElapsedTimeStats.hh"
@@ -770,7 +769,7 @@ class Object : public CheckpointConversionBase
 
    RTI1516_NAMESPACE::AttributeHandleValueMap *attribute_values_map; ///< @trick_io{**} Map of attributes that will be sent as an update to other federates.
 
-   ReflectedAttributesQueue reflected_attributes_queue; ///< @trick_io{**} Queue of reflected attributes.
+   HLAAttributeMapQueue reflected_attributes_queue; ///< @trick_io{**} Queue of reflected attributes.
 
    AttributeMap thla_attribute_map; ///< @trick_io{**} Map of the Attribute's, key is the AttributeHandle.
 
