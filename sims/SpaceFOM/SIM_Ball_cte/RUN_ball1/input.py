@@ -48,6 +48,9 @@ from Modified_data.BallSimConfig import TrickSimConfig, BallSimConfig
 # Import the Ball State Data Recording Group class.
 from Modified_data.BallStateDRG import TrickDataRecordingGroup, BallStateDRG
 
+# Import the Ball Packing Data Recording Group class.
+from Modified_data.BallPackingDRG import TrickDataRecordingGroup, BallPackingDRG
+
 # Import the TrickHLA Time Statistics Data Recording Group class.
 from TrickHLA_data.TrickHLA.TrickHLATimeStatsDRG import TrickDataRecordingGroup, TrickHLATimeStatsDRG
 
@@ -192,6 +195,10 @@ ball_fed_config.add_known_federate( True, 'Ball 3 Sim' )
 ball1_drg = BallStateDRG( 'ball1', 'Ball1', 0.1 )
 ball2_drg = BallStateDRG( 'ball2', 'Ball2', 0.1 )
 ball3_drg = BallStateDRG( 'ball3', 'Ball3', 0.1 )
+
+ball1_drg = BallPackingDRG( 'ball1_hla', 'HLABall1', 0.1 )
+ball2_drg = BallPackingDRG( 'ball2_hla', 'HLABall2', 0.1 )
+ball3_drg = BallPackingDRG( 'ball3_hla', 'HLABall3', 0.1 )
 
 # Enable the collection of TrickHLA time statistics.
 THLA.federate.enable_time_statistics( True )
