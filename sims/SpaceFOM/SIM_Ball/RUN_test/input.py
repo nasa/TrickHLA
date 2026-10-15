@@ -1,11 +1,11 @@
 ##############################################################################
 #
-# @file RUN_test/input.py
+# @file RUN_ball1/input.py
 # @ingroup SpaceFOM
-# @brief A configuration input class for SIM_Ball_HLA.
+# @brief A configuration input class for SpaceFOM SIM_Ball example.
 # 
 # This is a Trick Python input file class using the TrickHLA base
-# for configuring the Ball test simulation with HLA.
+# for configuring the Ball simulation with HLA.
 # 
 # @copyright Copyright 2026 United States Government as represented by the
 # Administrator of the National Aeronautics and Space Administration.
@@ -48,6 +48,12 @@ from Modified_data.BallSimConfig import TrickSimConfig, BallSimConfig
 # Import the Ball State Data Recording Group class.
 from Modified_data.BallStateDRG import TrickDataRecordingGroup, BallStateDRG
 
+# Import the Ball Packing Data Recording Group class.
+from Modified_data.BallPackingDRG import TrickDataRecordingGroup, BallPackingDRG
+
+# Import the TrickHLA Time Statistics Data Recording Group class.
+from TrickHLA_data.TrickHLA.TrickHLATimeStatsDRG import TrickDataRecordingGroup, TrickHLATimeStatsDRG
+
 # Import the Ball HLA Federate Configuration class.
 from Modified_data.BallFederateConfig import BallFederateConfig
 
@@ -88,9 +94,6 @@ trick.checkpoint_end(True)
 
 trick.TMM_reduced_checkpoint(False)
 trick.TMM_hexfloat_checkpoint(True)
-
-# Check point at 5 seconds.
-trick.checkpoint(5.0)
 
 
 #---------------------------------------------------------------------------
@@ -142,6 +145,16 @@ ball3.state.input.elevation = trick.sim_services.attach_units("degree", 30.0)
 ball1_drg = BallStateDRG( 'ball1', 'Ball1', 0.1 )
 ball2_drg = BallStateDRG( 'ball2', 'Ball2', 0.1 )
 ball3_drg = BallStateDRG( 'ball3', 'Ball3', 0.1 )
+
+ball1_drg = BallPackingDRG( 'ball1_hla', 'HLABall1', 0.1 )
+ball2_drg = BallPackingDRG( 'ball2_hla', 'HLABall2', 0.1 )
+ball3_drg = BallPackingDRG( 'ball3_hla', 'HLABall3', 0.1 )
+
+# Enable the collection of TrickHLA time statistics.
+THLA.federate.enable_time_statistics( True )
+
+# Create the TrickHLA Time Statistics Data Recording Group.
+thla_time_drg = TrickHLATimeStatsDRG( 0.10 )
 
 # Initialize all the Data Recording Groups.
 TrickDataRecordingGroup.initialize_groups()
