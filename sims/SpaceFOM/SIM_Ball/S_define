@@ -41,6 +41,8 @@ NASA, Johnson Space Center\n
 
 */
 
+##include <cstdlib>
+
 #include "sim_objects/default_trick_sys.sm"
 
 //=============================================================================
@@ -87,6 +89,16 @@ NASA, Johnson Space Center\n
 
 ##include "Ball/include/ball_proto.h"
 
+// TrickHLA includes.
+##include "TrickHLA/time/SimTimeline.hh"
+##include "TrickHLA/time/ScenarioTimeline.hh"
+#ifdef TSYNC_CTE
+##include "TrickHLA/time/TSyncCTETimeline.hh"
+#else
+##include "TrickHLA/time/TimeOfDayCTETimeline.hh"
+#endif
+##include "TrickHLA/utils/Utilities.hh"
+
 //=============================================================================
 // SIM_OBJECT: ball
 // This sim object models a ball.
@@ -111,9 +123,8 @@ class ballSimObject : public Trick::SimObject {
       ("derivative") ball_state_deriv( &state );
 
       // SCHEDULED JOBS
-      (0.1 , "scheduled") ball_print( &state ) ;
+      (0.1 , "scheduled") ball_print( &state );
    }
-
 };
 
 #define NUM_BALLS 3
@@ -126,10 +137,9 @@ class ensembleSimObject : public Trick::SimObject {
    unsigned int   num_balls;
    BallState    * states[NUM_BALLS];
 
-   ensembleSimObject ()
-   : num_balls( NUM_BALLS )
+   ensembleSimObject()
+      : num_balls( NUM_BALLS )
    {
-
       // DATA STRUCTURE DECLARATIONS
       ("default_data") ball_walls_default_data( &walls );
 
@@ -139,7 +149,6 @@ class ensembleSimObject : public Trick::SimObject {
       // EOM DERIVATIVE, STATE INTEGRATION, AND DYNAMIC EVENT JOBS
       ("integration") trick_ret = ball_ensemble_integ( num_balls, states );
       ("dynamic_event") ball_ensemble_collision( &walls, num_balls, states );
-
    }
 
    void ensemble_init()
@@ -161,9 +170,36 @@ class ensembleSimObject : public Trick::SimObject {
 
       return;
    }
-
 };
 
+//=============================================================================
+// SIM_OBJECT: sleepballSimObject
+// This sim object will sleep to cause an overrun.
+//=============================================================================
+class sleepSimObject : public Trick::SimObject {
+
+  public:
+   bool enable;
+   bool random_sleep;
+   long sleep_micros;
+
+   sleepSimObject( long sleep_time_micros = 0 )
+      : enable( false ),
+        random_sleep( false ),
+        sleep_micros( sleep_time_micros )
+   {
+      // SCHEDULED JOBS
+      (0.1 , "scheduled") sleep();
+   }
+
+   void sleep()
+   {
+      if ( enable && ( !random_sleep || ( rand() < ( RAND_MAX / 3 ) ) ) ) {
+         Utilities::micro_sleep( sleep_micros );
+         message_publish( MSG_INFO, "sleep()\n" );
+      }
+   }
+};
 
 //==========================================================================
 // SIM_OBJECT: THLA - Generalized TrickHLA interface routines.
@@ -181,16 +217,22 @@ class THLAInitSimObj : public Trick::SimObject {
    TrickHLA::SimTimeline      sim_timeline;
    TrickHLA::ScenarioTimeline scenario_timeline;
 
+#ifdef TSYNC_CTE
+   TrickHLA::TSyncCTETimeline       cte_timeline;
+#else
+   TrickHLA::TimeOfDayCTETimeline   cte_timeline;
+#endif
+
    THLAInitSimObj( TrickHLA::Manager  & thla_mngr,
                    TrickHLA::Federate & thla_fed,
                    unsigned int         _MPI_1   = 100,
                    unsigned int         _MPI_END = P_SF_INIT_POST_MPI )
       : sim_timeline(),
         scenario_timeline( sim_timeline, 0.0, 0.0 ),
+        cte_timeline(),
         thla_manager( thla_mngr ),
         thla_federate( thla_fed )
    {
-
       // We aren't using synchronization points here to gate initialization.
       // We're just going to send and receive all the initialization data
       // and assume that is enough to initialize the sims.  We'll wait on
@@ -218,7 +260,6 @@ class THLAInitSimObj : public Trick::SimObject {
 
    // Do not allow the default constructor.
    THLAInitSimObj();
-
 };
 
 // Ball include files.
@@ -261,7 +302,7 @@ class BallHLASimObject : public Trick::SimObject {
    // SimObject constructor.
    BallHLASimObject( BallState      & ball_state,
                      unsigned short   _INIT = P_HLA_INIT  )
-   : packing( ball_state )
+      : packing( ball_state )
    {
       //
       // Default data jobs.
@@ -328,7 +369,7 @@ class WallsHLASimObject : public Trick::SimObject {
    // SimObject constructor.
    WallsHLASimObject( BallWalls      & walls_ref,
                       unsigned short   _INIT = P_HLA_INIT  )
-   : packing( walls_ref )
+      : packing( walls_ref )
    {
       //
       // Default data jobs.
@@ -373,6 +414,8 @@ SpaceFOMSimObject THLA( THLA_DATA_CYCLE_TIME,
 // Simulation specific multiphase initialization SimObject instance.
 THLAInitSimObj THLA_INIT( THLA.manager, THLA.federate );
 
+// Sleep object instantiation.
+sleepSimObject sleep_task( 0 );
 
 // Ball dynamics object instantiations
 ballSimObject ball1;
@@ -402,7 +445,6 @@ IntegLoop my_integ_loop (DYN_RATE) ball1, ball2, ball3, ensemble;
 
 // Connect objects
 void create_connections() {
-
    // Place the balls in the ensemble integration array.
    ensemble.states[0] = &(ball1.state);
    ensemble.states[1] = &(ball2.state);
@@ -412,6 +454,5 @@ void create_connections() {
    my_integ_loop.getIntegrator( Runge_Kutta_4, ensemble.num_balls * 4 );
 
    exec_set_freeze_frame(0.10);
-
 }
 

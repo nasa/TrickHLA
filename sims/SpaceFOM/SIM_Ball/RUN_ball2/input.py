@@ -48,6 +48,12 @@ from Modified_data.BallSimConfig import TrickSimConfig, BallSimConfig
 # Import the Ball State Data Recording Group class.
 from Modified_data.BallStateDRG import TrickDataRecordingGroup, BallStateDRG
 
+# Import the Ball Packing Data Recording Group class.
+from Modified_data.BallPackingDRG import TrickDataRecordingGroup, BallPackingDRG
+
+# Import the TrickHLA Time Statistics Data Recording Group class.
+from TrickHLA_data.TrickHLA.TrickHLATimeStatsDRG import TrickDataRecordingGroup, TrickHLATimeStatsDRG
+
 # Import the Ball HLA Federate Configuration class.
 from Modified_data.BallFederateConfig import BallFederateConfig
 
@@ -74,7 +80,8 @@ run_duration = 10.0
 # Configure the Ball simulation.
 #---------------------------------------------------------------------------
 ball_sim_config = BallSimConfig( 'Ball 2 Sim' )
-ball_sim_config.realtime( software_frame_time = 0.1 )
+#ball_sim_config.realtime( software_frame_time = 0.10 )
+ball_sim_config.set_software_and_freeze_frame_time( software_frame_time = 0.10 )
 ball_sim_config.start_in_freeze( False )
 
 
@@ -87,9 +94,6 @@ trick.checkpoint_end(True)
 
 trick.TMM_reduced_checkpoint(False)
 trick.TMM_hexfloat_checkpoint(True)
-
-# Check point at 5 seconds.
-trick.checkpoint(5.0)
 
 
 #---------------------------------------------------------------------------
@@ -136,17 +140,6 @@ ball3.state.input.elevation = trick.sim_services.attach_units("degree", 30.0)
 
 
 #---------------------------------------------------------------------------
-# Setup the Data Recording Groups.
-#---------------------------------------------------------------------------
-ball1_drg = BallStateDRG( 'ball1', 'Ball1', 0.1 )
-ball2_drg = BallStateDRG( 'ball2', 'Ball2', 0.1 )
-ball3_drg = BallStateDRG( 'ball3', 'Ball3', 0.1 )
-
-# Initialize all the Data Recording Groups.
-TrickDataRecordingGroup.initialize_groups()
-
-
-#---------------------------------------------------------------------------
 # Setup Ball graphics and add to the Trick external applications list.
 #---------------------------------------------------------------------------
 #ball_sim_config.ball_graphics()
@@ -172,6 +165,17 @@ ball_fed_config.set_master_role( False )  # This is NOT the Master federate.
 ball_fed_config.set_pacing_role( False )  # This is NOT the Pacing federate.
 ball_fed_config.set_RRFP_role( False )    # This is NOT the Root Reference Frame Publisher.
 
+# Set the CTE timeline and change the Trick real time clock to use it.
+#THLA.execution_control.cte_timeline = THLA_INIT.cte_timeline
+
+# When using Central Timing Equiment, we need time for the Mode Transition
+# Request (MTR) to propagate to the other federates.
+ball_fed_config.set_time_padding( 1.0 )
+
+# Setup Time Management parameters.
+ball_fed_config.set_time_regulating( True )
+ball_fed_config.set_time_constrained( True )
+
 # Only the Master federate can set the LCTS in a SpaceFOM federate!
 # This call only sticks after the Master role is set!
 if ball_fed_config.is_master:
@@ -182,7 +186,29 @@ if ball_fed_config.is_master:
 #
 ball_fed_config.add_known_federate( True, str( ball_fed_config.federate.name ) )
 ball_fed_config.add_known_federate( True, 'Ball 1 Sim' )
-ball_fed_config.add_known_federate( True, 'Ball 3 Sim' )
+ball_fed_config.add_known_federate( False, 'Ball 3 Sim' )
+
+
+#---------------------------------------------------------------------------
+# Setup the Data Recording Groups.
+#---------------------------------------------------------------------------
+ball1_drg = BallStateDRG( 'ball1', 'Ball1', 0.1 )
+ball2_drg = BallStateDRG( 'ball2', 'Ball2', 0.1 )
+ball3_drg = BallStateDRG( 'ball3', 'Ball3', 0.1 )
+
+ball1_drg = BallPackingDRG( 'ball1_hla', 'HLABall1', 0.1 )
+ball2_drg = BallPackingDRG( 'ball2_hla', 'HLABall2', 0.1 )
+ball3_drg = BallPackingDRG( 'ball3_hla', 'HLABall3', 0.1 )
+
+# Enable the collection of TrickHLA time statistics.
+THLA.federate.enable_time_statistics( True )
+
+# Create the TrickHLA Time Statistics Data Recording Group.
+thla_time_drg = TrickHLATimeStatsDRG( 0.10 )
+
+# Initialize all the Data Recording Groups.
+TrickDataRecordingGroup.initialize_groups()
+
 
 #...........................................................................
 # Configure the Wall HLA data.
