@@ -46,11 +46,11 @@ NASA, Johnson Space Center\n
 typedef struct {
 
    /*=== Initial Ball States ===*/
-   bool   print_state; /**< (--)  Ball state print control flag. */
-   double mass;        /**< (kg)  Total mass. */
-   double position[2]; /**< (m)   X(horizontal),Y(vertical) position. */
-   double speed;       /**< (m/s) Linear speed. */
-   double elevation;   /**< (rad) Trajectory angle with respect to the horizontal. */
+   bool   print_state; /**< @trick_units{--}  Ball state print control flag. */
+   double mass;        /**< @trick_units{kg}  Total mass. */
+   double position[2]; /**< @trick_units{m}   X(horizontal),Y(vertical) position. */
+   double speed;       /**< @trick_units{m/s} Linear speed. */
+   double elevation;   /**< @trick_units{rad} Trajectory angle with respect to the horizontal. */
 
 } BallState_In;
 
@@ -59,10 +59,11 @@ typedef struct {
  */
 typedef struct {
 
-   double position[2];       /**< (m)    X(horizontal), Y(vertical) position. */
-   double velocity[2];       /**< (m/s)  X,Y velocity. */
-   double acceleration[2];   /**< (m/s2) X,Y acceleration. */
-   double external_force[2]; /**< (N)    Total external force on ball. */
+   double time;              /**< @trick_units{s}    Scenario Time. */
+   double position[2];       /**< @trick_units{m}    X(horizontal), Y(vertical) position. */
+   double velocity[2];       /**< @trick_units{m/s}  X,Y velocity. */
+   double acceleration[2];   /**< @trick_units{m/s2} X,Y acceleration. */
+   double external_force[2]; /**< @trick_units{N}    Total external force on ball. */
 
 } BallState_Out;
 
@@ -71,12 +72,12 @@ typedef struct {
  */
 typedef struct {
 
-   void **external_force; /**< ** (N) External forces, from 'collect'. */
+   void **external_force; /**< ** @trick_units{N} External forces, from 'collect'. */
 
-   REGULA_FALSI floor;      /**< (--) Dynamic event parameters for floor impact. */
-   REGULA_FALSI right_wall; /**< (--) Dynamic event parameters for right wall impact. */
-   REGULA_FALSI ceiling;    /**< (--) Dynamic event parameters for ceiling impact. */
-   REGULA_FALSI left_wall;  /**< (--) Dynamic event parameters for left wall impact. */
+   REGULA_FALSI floor;      /**< @trick_units{--} Dynamic event parameters for floor impact. */
+   REGULA_FALSI right_wall; /**< @trick_units{--} Dynamic event parameters for right wall impact. */
+   REGULA_FALSI ceiling;    /**< @trick_units{--} Dynamic event parameters for ceiling impact. */
+   REGULA_FALSI left_wall;  /**< @trick_units{--} Dynamic event parameters for left wall impact. */
 
 } BallState_Work;
 
@@ -85,11 +86,11 @@ typedef struct {
  */
 typedef struct {
 
-   char          *name;   /**< (--)    Name of ball. */
-   unsigned int   id;     /**< (count) Ball ID. */
-   BallState_In   input;  /**< (--)    User inputs. */
-   BallState_Out  output; /**< (--)    User outputs. */
-   BallState_Work work;   /**< (--)    EOM workspace. */
+   char          *name;   /**< @trick_units{--}    Name of ball. */
+   unsigned int   id;     /**< @trick_units{count} Ball ID. */
+   BallState_In   input;  /**< @trick_units{--}    User inputs. */
+   BallState_Out  output; /**< @trick_units{--}    User outputs. */
+   BallState_Work work;   /**< @trick_units{--}    EOM workspace. */
 
 } BallState;
 

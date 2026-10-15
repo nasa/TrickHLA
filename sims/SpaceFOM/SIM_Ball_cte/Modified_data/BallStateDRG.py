@@ -57,6 +57,7 @@ class BallStateDRG( TrickDataRecordingGroup ):
                                         enabled )
       
       # Add the state recording variables.
+      self.drg.add_variable( self.base_name + '.state.output.time' )
       self.drg.add_variable( self.base_name + '.state.output.position[0]' )
       self.drg.add_variable( self.base_name + '.state.output.position[1]' )
       self.drg.add_variable( self.base_name + '.state.output.velocity[0]' )

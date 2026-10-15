@@ -478,7 +478,7 @@ void BallPacking::unpack_into_working_data()
    if ( time_attr->is_received() ) {
       // Time tag for this state data.
       // For now, we dump the time tag.
-      // ball_state->time = time;
+      ball_state->output.time = time;
    }
 
    // Unpack the position data.
