@@ -46,7 +46,7 @@ int ball_ensemble_integ( int num_balls, BallState *states[] )
 {
 
    double integration_time;
-   int ipass;
+   int    ipass;
 
    /* LOAD THE POSITION AND VELOCITY STATES */
    for ( int iinc = 0; iinc < num_balls; ++iinc ) {
@@ -70,7 +70,7 @@ int ball_ensemble_integ( int num_balls, BallState *states[] )
    /* UNLOAD THE NEW POSITION AND VELOCITY STATES */
    integration_time = exec_get_sim_time();
    for ( int iinc = 0; iinc < num_balls; iinc++ ) {
-      states[iinc]->output.time = integration_time;
+      states[iinc]->output.time        = integration_time;
       states[iinc]->output.position[0] = unload_indexed_state( iinc * 4 );
       states[iinc]->output.position[1] = unload_indexed_state( ( iinc * 4 ) + 1 );
       states[iinc]->output.velocity[0] = unload_indexed_state( ( iinc * 4 ) + 2 );
