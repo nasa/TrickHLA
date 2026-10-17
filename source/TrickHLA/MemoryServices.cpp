@@ -122,37 +122,44 @@ char *MemoryServices::cstrdup( std::string const &input )
 
 wchar_t *MemoryServices::cwstrdup( char const *input )
 {
-   std::size_t const len  = strlen( input ) + 1;
+   std::size_t const len  = strlen( input ) + 1; // flawfinder: ignore
    std::size_t       size = ( len <= INT_MAX ) ? (int)len : INT_MAX;
 
    /** @li Allocate the duplicate character string */
-   wchar_t *addr = nullptr;
-   addr          = MemoryServices::declare_var( addr, "", 0, "", 1, &size );
+   wchar_t *destination = nullptr;
+   destination          = MemoryServices::declare_var( destination, "", 0, "", 1, &size );
 
-   /** @li Copy the contents of the original character string to the duplicate. */
-   std::size_t const ret = mbstowcs( addr, input, size );
-   if ( ret == static_cast< std::size_t >( -1 ) ) {
-      // Delete the allocated memory.
-      MemoryServices::delete_var( addr );
-      addr = nullptr;
+   if ( destination != nullptr ) {
+      /** @li Copy the contents of the original character string to the duplicate. */
+      std::size_t const ret = mbstowcs( destination, input, size );
+      if ( ret == static_cast< std::size_t >( -1 ) ) {
+         // Delete the allocated memory.
+         MemoryServices::delete_var( destination );
+         destination = nullptr;
+      }
    }
 
    /** @li Return the address of the new allocation.*/
-   return ( addr );
+   return ( destination );
 }
 
 wchar_t *MemoryServices::cwstrdup( wchar_t const *input )
 {
-   std::size_t const len  = wcslen( input ) + 1;
+   std::size_t const len  = wcslen( input ) + 1; // flawfinder: ignore
    std::size_t       size = ( len <= INT_MAX ) ? (int)len : INT_MAX;
 
    /** @li Allocate the duplicate character string */
-   wchar_t *addr = nullptr;
-   addr          = MemoryServices::declare_var( addr, "", 0, "", 1, &size );
+   wchar_t *destination = nullptr;
+   destination          = MemoryServices::declare_var( destination, "", 0, "", 1, &size );
 
-   /** @li Copy the contents of the original character string to the duplicate. */
-   /** @li Return the address of the new allocation.*/
-   return ( wcscpy( addr, input ) );
+   if ( destination != nullptr ) {
+      /** @li Copy the contents of the original character string to the duplicate. */
+      /** @li Return the address of the new allocation.*/
+      /** Protect against possible buffer overflow. */
+      wcsncpy( destination, input, size - 1 ); // flawfinder: ignore
+      destination[size - 1] = L'\0';
+   }
+   return ( destination );
 }
 
 wchar_t *MemoryServices::cwstrdup( std::wstring const &input )
