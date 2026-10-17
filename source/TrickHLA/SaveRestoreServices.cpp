@@ -689,17 +689,10 @@ bool SaveRestoreServices::write_joined_federates_to_file(
       file << federate->joined_federates_map.size() << "\n";
 
       // Write the contents of running_feds into file...
-      KnownFederateMap::iterator map_iter;
-      for ( map_iter = federate->joined_federates_map.begin();
-            map_iter != federate->joined_federates_map.end(); ++map_iter ) {
-
-         // Get the associate joined federate reference.
-         KnownFederate const *joined_federate = static_cast< KnownFederate * >( &( map_iter->second ) );
-
-         // Write the federate information out to file.
-         file << joined_federate->name << "\n";
-         file << joined_federate->type << "\n";
-         file << joined_federate->required << "\n";
+      for ( auto const &joined_fed_item : federate->joined_federates_map ) {
+         file << joined_fed_item.second.name << "\n";
+         file << joined_fed_item.second.type << "\n";
+         file << joined_fed_item.second.required << "\n";
       }
 
       // Close the joined federates file.
@@ -1125,7 +1118,7 @@ void SaveRestoreServices::restore_waiting_for_request_status()
    } else {
 
       // Iterate through the response vector to check for ongoing restores.
-      for ( FederateRestoreStatus const &status : restore_status_response ) {
+      for ( auto const &status : restore_status_response ) {
          if ( status.status != NO_RESTORE_IN_PROGRESS ) { // cppcheck-suppress [useStlAlgorithm]
             restore_conflict = true;
             break;
@@ -1237,7 +1230,7 @@ std::string SaveRestoreServices::to_string( FederateRestoreStatusVector const &r
    ostringstream response_msg;
 
    // Iterate through the response vector to check for ongoing restores.
-   for ( FederateRestoreStatus const &status : response ) {
+   for ( auto const &status : response ) {
 
       // Get the individual federate status string.
       response_msg << to_string( status ) << "\n";

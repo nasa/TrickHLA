@@ -173,12 +173,11 @@ bool LRTreeBase::build_tree()
 
                // Iterate through the path to build out the matrix.
                // Note that the upper triangle of matrix is the reverse of the lower.
-               LRTreeNodeVector::iterator path_iter;
-               for ( path_iter = path->begin(); path_iter < path->end(); ++path_iter ) {
-                  // Set the lower diaganol values.
-                  paths[iinc][jinc].push_back( *path_iter );
-                  // Set the upper diaganol values.
-                  paths[jinc][iinc].insert( paths[jinc][iinc].begin(), *path_iter );
+               for ( auto const &path_item : *path ) {
+                  // Set the lower diagonal values.
+                  paths[iinc][jinc].push_back( path_item );
+                  // Set the upper diagonal values.
+                  paths[jinc][iinc].insert( paths[jinc][iinc].begin(), path_item );
                }
 
                // Clean up the path vector.
@@ -344,15 +343,12 @@ bool LRTreeBase::has_node( string const &name )
  */
 bool LRTreeBase::has_node( LRTreeNodeBase const *node )
 {
-   vector< LRTreeNodeBase * >::iterator node_iter;
-
-   // Find the node in the vector.
-   for ( node_iter = nodes.begin(); node_iter < nodes.end(); ++node_iter ) {
-      if ( *node_iter == node ) { // cppcheck-suppress [useStlAlgorithm]
-         return ( true );
+   for ( auto const *node_item : nodes ) { // cppcheck-suppress [useStlAlgorithm]
+      if ( node_item == node ) {
+         return true;
       }
    }
-   return ( false );
+   return false;
 }
 
 /*!
@@ -921,9 +917,7 @@ LRTreeNodeBase *LRTreeBase::find_common_node( size_t const local,
 LRTreeNodeBase *LRTreeBase::find_common_node( LRTreeNodeVector *up_path,
                                               LRTreeNodeVector *down_path )
 {
-   LRTreeNodeVector::iterator up_iter;
-   LRTreeNodeVector::iterator down_iter;
-   LRTreeNodeBase            *common_node_ptr = nullptr;
+   LRTreeNodeBase *common_node_ptr = nullptr;
 
    // Protect against nullptr pointers.
    if ( ( up_path == nullptr ) || ( down_path == nullptr ) ) {
@@ -936,13 +930,10 @@ LRTreeNodeBase *LRTreeBase::find_common_node( LRTreeNodeVector *up_path,
       return ( nullptr );
    }
 
-   // Climb up the paths looking for a common node.
-   for ( up_iter = up_path->begin(); up_iter != up_path->end(); ++up_iter ) {
-      // See if we can find this node in the down_set.
-      // The first one that we find should be the closest common node.
-      for ( down_iter = down_path->begin(); down_iter != down_path->end(); ++down_iter ) {
-         if ( *down_iter == *up_iter ) {
-            common_node_ptr = *up_iter;
+   for ( auto const &up_path_node : *up_path ) {
+      for ( auto const &down_path_node : *down_path ) {
+         if ( down_path_node == up_path_node ) { // cppcheck-suppress [useStlAlgorithm]
+            common_node_ptr = up_path_node;
             break;
          }
       }

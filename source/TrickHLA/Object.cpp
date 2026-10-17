@@ -50,7 +50,6 @@ NASA, Johnson Space Center\n
 #include <iomanip>
 #include <ostream>
 #include <pthread.h>
-#include <set>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -2774,24 +2773,22 @@ bool Object::decode(
 
    bool any_attr_received = false;
 
-   AttributeHandleValueMap::iterator iter;
-
-   for ( iter = theAttributes.begin(); iter != theAttributes.end(); ++iter ) {
+   for ( auto const &attribute_item : theAttributes ) {
 
       // Get the TrickHLA Attribute for the given AttributeHandle from the
       // attribute-handle-value map.
-      // NOTE: The value of iter->first is of type AttributeHandle.
-      Attribute *attr = get_attribute( iter->first );
+      // NOTE: The value of attribute_item.first is of type AttributeHandle.
+      Attribute *attr = get_attribute( attribute_item.first );
 
       // Determine if this object has this attribute.
       if ( attr != nullptr ) {
-         if ( attr->decode( iter->second ) ) {
+         if ( attr->decode( attribute_item.second ) ) {
             any_attr_received = true;
          }
       } else {
          if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
             string id_str;
-            StringUtilities::to_string( id_str, iter->first );
+            StringUtilities::to_string( id_str, attribute_item.first );
             ostringstream msg;
             msg << "Object '" << get_name() << "', with FOM name '"
                 << get_FOM_name() << "', data was received for Attribute-Handle:"
@@ -2853,7 +2850,7 @@ void Object::release_ownership()
                                    .append( "'.\n" ) );
 #endif
 
-   AttributeHandleSet attrs;
+   AttributeHandleSet divest_attrs;
 
    // Now do one last check of the divist_requested flag with thread safety and
    // use braces to create scope for the mutex-protection to auto unlock the mutex.
@@ -2889,7 +2886,7 @@ void Object::release_ownership()
       for ( int i = 0; i < attr_count; ++i ) {
          // Only release ownership of the attributes we locally own.
          if ( attributes[i].is_divest_requested() && attributes[i].is_locally_owned() ) {
-            attrs.insert( attributes[i].get_attribute_handle() );
+            divest_attrs.insert( attributes[i].get_attribute_handle() );
          }
 
          // Clear the flag now that the attribute has been handled.
@@ -2909,17 +2906,15 @@ void Object::release_ownership()
    try {
       // IEEE 1516.1-2010 section 7.6
       rti_amb->confirmDivestiture( this->instance_handle,
-                                   attrs,
+                                   divest_attrs,
                                    TrickHLA::EMPTY_USER_SUPPLIED_TAG );
-
-      AttributeHandleSet::iterator divest_iter;
 
       MutexProtection const auto_unlock_mutex( &ownership_mutex );
 
       // For the attributes we just divested, mark them as being remotely owned.
-      for ( divest_iter = attrs.begin(); divest_iter != attrs.end(); ++divest_iter ) {
+      for ( auto const &divest_attr_handle : divest_attrs ) {
 
-         Attribute *trick_hla_attr = get_attribute( *divest_iter );
+         Attribute *trick_hla_attr = get_attribute( divest_attr_handle );
 
          if ( trick_hla_attr != nullptr ) {
 
@@ -2996,8 +2991,6 @@ void Object::pull_ownership()
    // Use the simulation elapsed time for the current time.
    double const current_time = federate->get_execution_control()->get_sim_time();
 
-   THLAAttributeMap                     *attr_map;
-   THLAAttributeMap::const_iterator      attr_map_iter;
    AttributeOwnershipMap::const_iterator pull_ownership_iter;
 
    // The Set of attribute handle to pull ownership of.
@@ -3020,13 +3013,11 @@ void Object::pull_ownership()
          if ( current_time >= pull_time ) {
 
             // Make the iterator value easier to understand what it is.
-            attr_map = pull_ownership_iter->second;
+            THLAAttributeMap *attr_map = pull_ownership_iter->second;
 
-            // Process the map of attributes we desire to pull ownership for.
-            for ( attr_map_iter = attr_map->begin();
-                  attr_map_iter != attr_map->end(); ++attr_map_iter ) {
+            for ( auto const &attribut_item : *attr_map ) {
 
-               Attribute const *attr = attr_map_iter->second;
+               Attribute const *attr = attribut_item.second;
 
                // Determine if attribute ownership can be pulled.
                if ( attr->is_remotely_owned() ) {
@@ -3071,8 +3062,8 @@ void Object::pull_ownership()
             // Point to the start of the iterator since we just erased an entry.
             pull_ownership_iter = ownership->pull_requests.begin();
 
-            // We are done with the Attribute Map for the given pull-time so clear
-            // it and delete it.
+            // We are done with the Attribute Map for the given pull-time so
+            // clear it and delete it.
             attr_map->clear();
             delete attr_map;
          } else {
@@ -3467,14 +3458,12 @@ void Object::grant_pull_request()
          } else {
             MutexProtection const auto_unlock_mutex( &ownership_mutex );
 
-            // Process the list of attributes that were divisted by the RTI
+            // Process the list of attributes that were divested by the RTI
             // and set the state of the ownership.
-            AttributeHandleSet::iterator divested_iter;
-            for ( divested_iter = divested_attrs->begin();
-                  divested_iter != divested_attrs->end(); ++divested_iter ) {
+            for ( auto const &divest_attr_handle : *divested_attrs ) {
 
                // Get the attribute associated with the Attribute Handle.
-               Attribute *trick_hla_attr = get_attribute( *divested_iter );
+               Attribute *trick_hla_attr = get_attribute( divest_attr_handle );
 
                // Mark the attribute as remotely owned since it was divested.
                if ( trick_hla_attr != nullptr ) {
@@ -3776,8 +3765,6 @@ void Object::push_ownership()
    // Use the simulation elapsed time for the current time.
    double const current_time = federate->get_execution_control()->get_sim_time();
 
-   THLAAttributeMap                     *attr_map;
-   THLAAttributeMap::const_iterator      attr_map_iter;
    AttributeOwnershipMap::const_iterator push_ownership_iter;
 
    // The Set of attribute handle to push ownership of.
@@ -3802,13 +3789,12 @@ void Object::push_ownership()
          if ( current_time >= push_time ) {
 
             // Make the iterator value easier to understand what it is.
-            attr_map = push_ownership_iter->second;
+            THLAAttributeMap *attr_map = push_ownership_iter->second;
 
             // Process the map of attributes we desire to push ownership for.
-            for ( attr_map_iter = attr_map->begin();
-                  attr_map_iter != attr_map->end(); ++attr_map_iter ) {
+            for ( auto const &attr_map_item : *attr_map ) {
 
-               Attribute const *attr = attr_map_iter->second;
+               Attribute const *attr = attr_map_item.second;
 
                // Determine if attribute ownership can be pushed.
                if ( attr->is_locally_owned() ) {

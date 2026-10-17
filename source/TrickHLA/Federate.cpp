@@ -1040,7 +1040,7 @@ void Federate::set_MOM_HLAfederate_instance_attributes(
    //
    // Let's determine if this is a required federate.
    //
-   for ( KnownFederate const &known_fed : known_federates ) {
+   for ( auto const &known_fed : known_federates ) {
       if ( joined_federate.name == known_fed.name ) {
          joined_federate.required = known_fed.required;
       }
@@ -1395,10 +1395,10 @@ bool Federate::check_joined_federates_match()
 
          // Iterate through the federates in Federation list.
          bool found = false;
-         for ( FederateHandle const &federate_handle : federate_handles ) {
+         for ( auto const &fed_handle : federate_handles ) {
 
             // Check for matching federate handle.
-            if ( federate_handle == joined_federate.federate_handle ) { // cppcheck-suppress [useStlAlgorithm]
+            if ( fed_handle == joined_federate.federate_handle ) { // cppcheck-suppress [useStlAlgorithm]
                found = true;
                break;
             }
@@ -1481,7 +1481,7 @@ bool Federate::verify_joined_federates()
       }
 
       // Iterate through the federates in Federation list.
-      for ( FederateHandle const &federate_handle : federate_handles ) {
+      for ( auto const &fed_handle : federate_handles ) {
 
          bool found = false;
 
@@ -1494,7 +1494,7 @@ bool Federate::verify_joined_federates()
             // Only check against completely determined joined federates.
             if ( joined_federate.is_complete() ) {
                // Check for matching federate handle.
-               if ( federate_handle == joined_federate.federate_handle ) {
+               if ( fed_handle == joined_federate.federate_handle ) {
                   found = true;
                   break;
                }
@@ -1668,7 +1668,7 @@ void Federate::update_joined_federates()
 
       // Iterate through the federates in Federation set to see if they have a
       // counterpart in the joined federates map.
-      for ( FederateHandle const &fed_handle : federate_handles ) { // NOLINT(misc-const-correctness)
+      for ( auto const &fed_handle : federate_handles ) { // NOLINT(misc-const-correctness)
          if ( !is_joined_federate_by_federate_handle( fed_handle ) ) {
             all_found = false;
          }
@@ -1884,12 +1884,12 @@ string Federate::wait_for_required_federates_to_join()
          MutexProtection const auto_unlock_mutex( &joined_federate_mutex );
 
          // Check for the possibility that a matched federate may have resigned.
-         for ( RTI1516_NAMESPACE::ObjectInstanceHandle const &oih : matched_federates ) {
+         for ( auto const &fed_obj_instance_handle : matched_federates ) {
             KnownFederateMap::const_iterator map_iter;
-            map_iter = joined_federates_map.find( oih );
+            map_iter = joined_federates_map.find( fed_obj_instance_handle );
             if ( map_iter == joined_federates_map.end() ) {
                // The matched federate is no longer joined.  Remove it.
-               matched_federates.erase( oih );
+               matched_federates.erase( fed_obj_instance_handle );
                joined_federate_change = true;
             }
          }
@@ -1974,7 +1974,7 @@ string Federate::wait_for_required_federates_to_join()
 
             // Summarize the required federates first.
             int cnt = 0;
-            for ( KnownFederate const &known_fed : known_federates ) {
+            for ( auto const &known_fed : known_federates ) {
                ++cnt;
                std::string know_fed_str;
                StringUtilities::to_string( know_fed_str, known_fed.name );

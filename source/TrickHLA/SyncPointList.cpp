@@ -120,7 +120,7 @@ void SyncPointList::clear()
 SyncPoint *SyncPointList::get(
    wstring const &label )
 {
-   for ( SyncPoint *sp : list ) {
+   for ( auto const &sp : list ) {
       if ( label.compare( sp->get_label() ) == 0 ) { // cppcheck-suppress [useStlAlgorithm]
          return sp;
       }
@@ -211,7 +211,7 @@ bool SyncPointList::add(
 bool SyncPointList::contains(
    wstring const &label )
 {
-   for ( SyncPoint const *sp : list ) { // cppcheck-suppress [useStlAlgorithm]
+   for ( auto const *sp : list ) { // cppcheck-suppress [useStlAlgorithm]
       if ( label.compare( sp->get_label() ) == 0 ) {
          return true;
       }
@@ -278,7 +278,7 @@ bool SyncPointList::is_synchronized(
 
 bool SyncPointList::is_all_synchronized()
 {
-   for ( SyncPoint const *sp : list ) { // cppcheck-suppress [useStlAlgorithm]
+   for ( auto const *sp : list ) { // cppcheck-suppress [useStlAlgorithm]
       if ( !sp->is_synchronized() ) {
          return false;
       }
@@ -314,7 +314,7 @@ string SyncPointList::to_string()
 
    msg << StringUtilities::format( __PRETTY_FUNCTION__, __LINE__ )
        << " List:'" << get_list_name() << "' List-size:" << list.size() << "\n";
-   for ( SyncPoint *sp : list ) {
+   for ( auto const &sp : list ) {
       msg << list_index++ << ":'" << get_list_name() << "' Sync-point:"
           << sp->to_string() << "\n";
    }
@@ -340,7 +340,7 @@ string SyncPointList::to_string(
 /*! @brief Encode the variables to a form Trick can checkpoint. */
 void SyncPointList::convert_data_before_checkpoint()
 {
-   for ( SyncPoint *sp : list ) {
+   for ( auto const &sp : list ) {
       sp->convert_data_before_checkpoint();
    }
 }
@@ -348,7 +348,7 @@ void SyncPointList::convert_data_before_checkpoint()
 /*! @brief Decode the state of this class from the Trick checkpoint. */
 void SyncPointList::restore_data_after_checkpoint()
 {
-   for ( SyncPoint *sp : list ) {
+   for ( auto const &sp : list ) {
       sp->restore_data_after_checkpoint();
    }
 }
@@ -356,7 +356,7 @@ void SyncPointList::restore_data_after_checkpoint()
 /*! @brief Free/release the memory used for the checkpoint data structures. */
 void SyncPointList::free_converted_data_for_checkpoint()
 {
-   for ( SyncPoint *sp : list ) {
+   for ( auto const &sp : list ) {
       sp->free_converted_data_for_checkpoint();
    }
 }

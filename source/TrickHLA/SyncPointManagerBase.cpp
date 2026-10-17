@@ -278,8 +278,8 @@ bool SyncPointManagerBase::contains_sync_point(
 {
    MutexProtection const auto_unlock_mutex( &mutex );
 
-   for ( SyncPointList *sync_pnt_list : sync_pnt_lists ) {
-      if ( sync_pnt_list->contains( label ) ) { // cppcheck-suppress [useStlAlgorithm]
+   for ( auto const &sync_pnt_list : sync_pnt_lists ) { // cppcheck-suppress [useStlAlgorithm]
+      if ( sync_pnt_list->contains( label ) ) {
          return true;
       }
    }
@@ -506,7 +506,7 @@ bool SyncPointManagerBase::register_all_sync_points(
    SyncPointList const *sp_list = get_sync_point_list( list_name );
 
    if ( sp_list != nullptr ) {
-      for ( SyncPoint *sp : sp_list->list ) {
+      for ( auto const &sp : sp_list->list ) {
          if ( register_sync_point( sp ) ) {
             status = true;
          }
@@ -525,7 +525,7 @@ bool SyncPointManagerBase::register_all_sync_points(
    SyncPointList const *sp_list = get_sync_point_list( list_name );
 
    if ( sp_list != nullptr ) {
-      for ( SyncPoint *sp : sp_list->list ) {
+      for ( auto const &sp : sp_list->list ) {
          if ( register_sync_point( sp, handle_set ) ) {
             status = true;
          }
@@ -689,7 +689,7 @@ bool SyncPointManagerBase::wait_for_all_sync_points_announced(
    SyncPointList const *sp_list = get_sync_point_list( list_name );
 
    if ( sp_list != nullptr ) {
-      for ( SyncPoint *sp : sp_list->list ) {
+      for ( auto const &sp : sp_list->list ) {
          if ( wait_for_announced( sp ) ) {
             status = true;
          }
@@ -885,7 +885,7 @@ bool SyncPointManagerBase::achieve_all_sync_points(
    SyncPointList const *sp_list = get_sync_point_list( list_name );
 
    if ( sp_list != nullptr ) {
-      for ( SyncPoint *sp : sp_list->list ) {
+      for ( auto const &sp : sp_list->list ) {
          if ( achieve_sync_point( sp ) ) {
             status = true;
          }
@@ -969,7 +969,7 @@ bool SyncPointManagerBase::wait_for_all_sync_points_synchronized(
    // First check to insure that the list exists.
    if ( sp_list != nullptr ) {
       // The list exists; so, wait for all the sync points to synchronize.
-      for ( SyncPoint const *sp : sp_list->list ) {
+      for ( auto const *sp : sp_list->list ) {
          if ( wait_for_synchronized( sp ) ) {
             status = true;
          }
@@ -1095,7 +1095,7 @@ string SyncPointManagerBase::to_string()
       msg << StringUtilities::format( __PRETTY_FUNCTION__, __LINE__ )
           << " Number of Sync-Point Lists:" << sync_pnt_lists.size() << "\n";
 
-      for ( SyncPointList *sync_pnt_list : sync_pnt_lists ) {
+      for ( auto const &sync_pnt_list : sync_pnt_lists ) {
          msg << sync_pnt_list->to_string();
       }
    }
@@ -1284,7 +1284,7 @@ void SyncPointManagerBase::sync_point_federation_synchronized(
 SyncPoint *SyncPointManagerBase::get_sync_point(
    wstring const &label )
 {
-   for ( SyncPointList *sp_list : sync_pnt_lists ) {
+   for ( auto const &sp_list : sync_pnt_lists ) {
       if ( sp_list != nullptr ) {
          SyncPoint *sp = sp_list->get( label );
          if ( sp != nullptr ) {
@@ -1298,7 +1298,7 @@ SyncPoint *SyncPointManagerBase::get_sync_point(
 SyncPointList *SyncPointManagerBase::get_sync_point_list(
    string const &list_name )
 {
-   for ( SyncPointList *sp_list : sync_pnt_lists ) {
+   for ( auto const &sp_list : sync_pnt_lists ) {
       if ( ( sp_list != nullptr ) && list_name.compare( sp_list->get_list_name() ) == 0 ) { // cppcheck-suppress [useStlAlgorithm]
          return sp_list;
       }
@@ -1313,7 +1313,7 @@ SyncPointList *SyncPointManagerBase::get_sync_point_list(
 /*! @brief Encode the variables to a form Trick can checkpoint. */
 void SyncPointManagerBase::convert_data_before_checkpoint()
 {
-   for ( SyncPointList *sync_pnt_list : sync_pnt_lists ) {
+   for ( auto const &sync_pnt_list : sync_pnt_lists ) {
       sync_pnt_list->convert_data_before_checkpoint();
    }
 }
@@ -1321,7 +1321,7 @@ void SyncPointManagerBase::convert_data_before_checkpoint()
 /*! @brief Decode the state of this class from the Trick checkpoint. */
 void SyncPointManagerBase::restore_data_after_checkpoint()
 {
-   for ( SyncPointList *sync_pnt_list : sync_pnt_lists ) {
+   for ( auto const &sync_pnt_list : sync_pnt_lists ) {
       sync_pnt_list->restore_data_after_checkpoint();
    }
 }
@@ -1329,7 +1329,7 @@ void SyncPointManagerBase::restore_data_after_checkpoint()
 /*! @brief Free/release the memory used for the checkpoint data structures. */
 void SyncPointManagerBase::free_converted_data_for_checkpoint()
 {
-   for ( SyncPointList *sync_pnt_list : sync_pnt_lists ) {
+   for ( auto const &sync_pnt_list : sync_pnt_lists ) {
       sync_pnt_list->free_converted_data_for_checkpoint();
    }
 }

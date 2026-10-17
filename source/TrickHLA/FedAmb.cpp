@@ -48,7 +48,6 @@ NASA, Johnson Space Center\n
 #include <cstring>
 #include <iomanip>
 #include <iostream>
-#include <map>
 #include <ostream>
 #include <set>
 #include <sstream>
@@ -271,14 +270,12 @@ void FedAmb::federationSynchronized(
       errmsg << "These federate handles failed to synchronize for sync-point '"
              << label_str << "': ";
 
-      FederateHandleSet::const_iterator iter;
-      for ( iter = failedToSyncSet.begin(); iter != failedToSyncSet.end(); ++iter ) {
-         string id;
-         StringUtilities::to_string( id, *iter );
-         errmsg << "'" << id << "' ";
+      for ( auto const &fed_handle : failedToSyncSet ) {
+         string fed_handle_str;
+         StringUtilities::to_string( fed_handle_str, fed_handle );
+         errmsg << "'" << fed_handle_str << "' ";
       }
       errmsg << "\n";
-
       DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
    }
 }
@@ -527,7 +524,7 @@ void FedAmb::federationRestoreStatusResponse(
 
    // Clear the existing response vector and copy response.
    save_restore_service->restore_status_response.clear();
-   for ( FederateRestoreStatus const &status : response ) {
+   for ( auto const &status : response ) {
       save_restore_service->restore_status_response.push_back( status );
    }
 
@@ -641,18 +638,15 @@ void FedAmb::multipleObjectInstanceNameReservationSucceeded(
 #endif // IEEE_1516_2010
 {
    if ( object_service != nullptr ) {
-
-      set< wstring >::const_iterator iter;
-      for ( iter = objectInstanceNames.begin();
-            iter != objectInstanceNames.end(); ++iter ) {
+      for ( auto const &obj_instance_name : objectInstanceNames ) {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-            string instance_name;
-            StringUtilities::to_string( instance_name, *iter );
+            string instance_name_str;
+            StringUtilities::to_string( instance_name_str, obj_instance_name );
             DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
-                                         string( "'" ).append( instance_name ).append( "'" ) );
+                                         string( "'" ).append( instance_name_str ).append( "'" ) );
          }
 
-         object_service->object_instance_name_reservation_succeeded( *iter );
+         object_service->object_instance_name_reservation_succeeded( obj_instance_name );
       }
    }
 }
@@ -664,20 +658,17 @@ void FedAmb::multipleObjectInstanceNameReservationFailed(
 #endif // IEEE_1516_2010
 {
    if ( object_service != nullptr ) {
-
-      set< wstring >::const_iterator iter;
-      for ( iter = objectInstanceNames.begin();
-            iter != objectInstanceNames.end(); ++iter ) {
+      for ( auto const &obj_instance_name : objectInstanceNames ) {
          if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-            string instance_name;
-            StringUtilities::to_string( instance_name, *iter );
+            string instance_name_str;
+            StringUtilities::to_string( instance_name_str, obj_instance_name );
 
             ostringstream msg;
-            msg << "FAILED '" << instance_name << "'\n";
+            msg << "FAILED '" << instance_name_str << "'\n";
             DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_WARNING );
          }
 
-         object_service->object_instance_name_reservation_failed( *iter );
+         object_service->object_instance_name_reservation_failed( obj_instance_name );
       }
    }
 }
@@ -872,13 +863,11 @@ void FedAmb::reflectAttributeValues(
       summary << "Received update to Unknown Object Instance:"
               << handle_str << "\n";
 
-      AttributeHandleValueMap::const_iterator attr_iter;
-      for ( attr_iter = attributeValues.begin();
-            attr_iter != attributeValues.end();
-            ++attr_iter ) {
-         StringUtilities::to_string( handle_str, attr_iter->first );
+      for ( auto const &attr_handle_value : attributeValues ) {
+         StringUtilities::to_string( handle_str, attr_handle_value.first );
          summary << "   + Attribute-Handle:" << handle_str << "\n";
       }
+
       DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, summary.str() );
    }
 
@@ -1458,8 +1447,6 @@ void FedAmb::requestAttributeOwnershipAssumption(
       bool any_attribute_already_owned  = false;
       bool any_attribute_not_published  = false;
 
-      AttributeHandleSet::const_iterator iter;
-
       // To make the state of the attribute push_requested flag thread safe lock
       // the mutex now. This allows us to handle multiple simultaneous requests
       // to push attributes to our federate.
@@ -1468,11 +1455,10 @@ void FedAmb::requestAttributeOwnershipAssumption(
          // mutex even if there is an exception.
          MutexProtection const auto_unlock_mutex( &trickhla_obj->push_mutex );
 
-         // Mark which attributes we can accept ownership of.
-         for ( iter = offeredAttributes.begin(); iter != offeredAttributes.end(); ++iter ) {
+         for ( auto const &attr_handle : offeredAttributes ) {
 
             // Get the attribute object for the given attribute handle.
-            Attribute *trick_hla_attr = trickhla_obj->get_attribute( *iter );
+            Attribute *trick_hla_attr = trickhla_obj->get_attribute( attr_handle );
 
             // We can accept ownership of the attribute if our object contains it
             // as an attribute, is remotely owned, and we are setup to publish it.
@@ -1592,13 +1578,11 @@ void FedAmb::requestDivestitureConfirmation(
    bool any_attribute_not_recognized = false;
    bool any_attribute_not_owned      = false;
 
-   AttributeHandleSet::const_iterator iter;
-
    // Mark which attributes we need mark for divestiture of ownership.
-   for ( iter = releasedAttributes.begin(); iter != releasedAttributes.end(); ++iter ) {
+   for ( auto const &attr_handle : releasedAttributes ) {
 
       // Get the attribute object for the given attribute handle.
-      Attribute *trick_hla_attr = trickhla_obj->get_attribute( *iter );
+      Attribute *trick_hla_attr = trickhla_obj->get_attribute( attr_handle );
 
       // We want to divest ownership of the attribute if our object
       // contains it and it is locally owned.
@@ -1687,13 +1671,11 @@ void FedAmb::attributeOwnershipAcquisitionNotification(
       bool any_attribute_already_owned  = false;
       bool any_attribute_not_published  = false;
 
-      AttributeHandleSet::const_iterator iter;
-
       // Mark which attributes we now locally own.
-      for ( iter = securedAttributes.begin(); iter != securedAttributes.end(); ++iter ) {
+      for ( auto const &attr_handle : securedAttributes ) {
 
          // Get the attribute for the given attribute handle.
-         Attribute *trick_hla_attr = trickhla_obj->get_attribute( *iter );
+         Attribute *trick_hla_attr = trickhla_obj->get_attribute( attr_handle );
 
          // Mark the attribute as locally owned if the object has it as an
          // attribute and is remotely owned, and we are setup to publish it.
@@ -1822,13 +1804,11 @@ void FedAmb::requestAttributeOwnershipRelease(
       bool any_attribute_not_recognized = false;
       bool any_attribute_not_owned      = false;
 
-      AttributeHandleSet::const_iterator iter;
-
       // Mark which attributes we now locally own.
-      for ( iter = candidateAttributes.begin(); iter != candidateAttributes.end(); ++iter ) {
+      for ( auto const &attr_handle : candidateAttributes ) {
 
          // Get the attribute for the given attribute handle.
-         Attribute *trick_hla_attr = trickhla_obj->get_attribute( *iter );
+         Attribute *trick_hla_attr = trickhla_obj->get_attribute( attr_handle );
 
          // Set the attribute for a pull request if the object contains the
          // specified attribute and is locally owned.

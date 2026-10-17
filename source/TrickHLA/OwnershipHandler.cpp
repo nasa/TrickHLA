@@ -96,18 +96,14 @@ void OwnershipHandler::convert_data_before_checkpoint()
    // mutex even if there is an exception.
    MutexProtection const auto_unlock_mutex( &object->ownership_mutex );
 
-   AttributeOwnershipMap::const_iterator owner_map_iter;
-   THLAAttributeMap::const_iterator      attrib_iter;
-
    pull_items_cnt = 0;
    push_items_cnt = 0;
 
    // Count the # of pull_request elements that need to be checkpointed
    if ( !pull_requests.empty() ) {
-
       // Count the number of elements to allocate
-      for ( owner_map_iter = pull_requests.begin(); owner_map_iter != pull_requests.end(); ++owner_map_iter ) {
-         pull_items_cnt += owner_map_iter->second->size();
+      for ( auto const &attr_ownership : pull_requests ) {
+         pull_items_cnt += attr_ownership.second->size(); // cppcheck-suppress [useStlAlgorithm]
       }
    }
 
@@ -126,13 +122,14 @@ void OwnershipHandler::convert_data_before_checkpoint()
       // FIXME: Is this needed anymore?
       // Now, encode them to get checkpointed.
       int count = 0;
-      for ( owner_map_iter = pull_requests.begin(); owner_map_iter != pull_requests.end(); ++owner_map_iter ) {
-         double const      curr_time = owner_map_iter->first;
-         THLAAttributeMap *tMap      = owner_map_iter->second;
-         for ( attrib_iter = tMap->begin(); attrib_iter != tMap->end(); ++attrib_iter ) {
-            pull_items[count].time     = curr_time;
-            pull_items[count].FOM_name = MemoryServices::cstrdup( attrib_iter->first.c_str() );
-            ++count;
+      for ( auto const &attr_ownership : pull_requests ) {
+         double const curr_time = attr_ownership.first;
+         if ( attr_ownership.second != nullptr ) {
+            for ( auto const &attr_map_element : *attr_ownership.second ) {
+               pull_items[count].time     = curr_time;
+               pull_items[count].FOM_name = attr_map_element.first;
+               ++count;
+            }
          }
       }
    }
@@ -141,8 +138,8 @@ void OwnershipHandler::convert_data_before_checkpoint()
    if ( !push_requests.empty() ) {
 
       // count the number of elements to allocate
-      for ( owner_map_iter = push_requests.begin(); owner_map_iter != push_requests.end(); ++owner_map_iter ) {
-         push_items_cnt += owner_map_iter->second->size();
+      for ( auto const &attr_ownership : push_requests ) {
+         push_items_cnt += attr_ownership.second->size(); // cppcheck-suppress [useStlAlgorithm]
       }
    }
 
@@ -160,13 +157,14 @@ void OwnershipHandler::convert_data_before_checkpoint()
 
       // Now, encode them to get checkpointed.
       int count = 0;
-      for ( owner_map_iter = push_requests.begin(); owner_map_iter != push_requests.end(); ++owner_map_iter ) {
-         double const      curr_time = owner_map_iter->first;
-         THLAAttributeMap *tMap      = owner_map_iter->second;
-         for ( attrib_iter = tMap->begin(); attrib_iter != tMap->end(); ++attrib_iter ) {
-            push_items[count].time     = curr_time;
-            push_items[count].FOM_name = MemoryServices::cstrdup( attrib_iter->first.c_str() );
-            ++count;
+      for ( auto const &attr_ownership : push_requests ) {
+         double const curr_time = attr_ownership.first;
+         if ( attr_ownership.second != nullptr ) {
+            for ( auto const &attr_map_element : *attr_ownership.second ) {
+               push_items[count].time     = curr_time;
+               push_items[count].FOM_name = attr_map_element.first;
+               ++count;
+            }
          }
       }
    }
