@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## [Unreleased] - 2026-10-05
+## [Unreleased] - 2026-10-18
 
 ### Notable Additions
 - Fixed the issue for a federate not going into freeze if the freeze scenario time is in the past (issue #190).
@@ -58,7 +58,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 
 ### Changed
-
+- Improved performance by removing the reflected attribute queue internal mutex because of unnecessary multiple mutex locking.
 
 
 ## [v3.3.0] - 2026-10-05
