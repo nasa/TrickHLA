@@ -32,7 +32,6 @@ NASA, Johnson Space Center\n
 
 // System include files.
 #include <cstddef>
-#include <cstdlib>
 #include <sstream>
 #include <string>
 
@@ -56,6 +55,7 @@ NASA, Johnson Space Center\n
 
 // HLA include files.
 #include "RTI/encoding/BasicDataElements.h"
+#include "RTI/encoding/DataElement.h" // NOLINT(misc-include-cleaner)
 #include "RTI/encoding/HLAfixedArray.h"
 
 #if defined( IEEE_1516_2010 )

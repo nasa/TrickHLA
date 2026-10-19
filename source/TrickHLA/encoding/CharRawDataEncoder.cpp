@@ -38,10 +38,11 @@ NASA, Johnson Space Center\n
 
 // System include files.
 #include <cstddef>
-#include <cstring>
 #include <sstream>
 #include <string>
-#include <vector>
+#include <string.h> // IWYU pragma: keep
+#include <vector> // IWYU pragma: keep
+// IWYU pragma: no_include <_string.h>
 
 // Trick include files.
 #include "trick/attributes.h"
@@ -54,9 +55,10 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/encoding/VariableArrayEncoderBase.hh"
 
 // HLA include files.
-#include "RTI/encoding/BasicDataElements.h"
-#include "RTI/encoding/DataElement.h"
+#include "RTI/VariableLengthData.h"
+#include "RTI/encoding/DataElement.h" // IWYU pragma: keep
 #include "RTI/encoding/EncodingConfig.h"
+#include "RTI/encoding/EncodingExceptions.h" // NOLINT(misc-include-cleaner)
 #if defined( IEEE_1516_2025 )
 #   include "RTI/encoding/HLAfixedArray.h"
 #endif

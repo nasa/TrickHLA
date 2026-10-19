@@ -29,13 +29,18 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <string>
-#include <time.h>
+#if defined( __APPLE__ )
+#   include <_time.h> // for CLOCK_MONOTONIC
+#   include <ctime>   // for timespec
+#else
+#   include <time.h>
+#endif // __APPLE__
 
 // Trick includes.
 #include "trick/trick_byteswap.h"
 
 // TrickHLA includes.
-#include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
+#include "TrickHLA/CompileConfig.hh" // IWYU pragma: keep
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/Version.hh"
@@ -43,7 +48,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/utils/Utilities.hh"
 
 // HLA include files.
-#include "RTI/RTI1516.h"
+#include "RTI/RTI1516.h" // IWYU pragma: keep
 
 // For a Mac, add support for the FPU control word value at program start.
 #if defined( FPU_CW_PROTECTION ) && defined( __APPLE__ ) && ( defined( __i386__ ) || defined( __x86_64__ ) )

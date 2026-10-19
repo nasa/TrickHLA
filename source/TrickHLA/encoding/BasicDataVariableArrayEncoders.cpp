@@ -31,14 +31,13 @@ NASA, Johnson Space Center\n
 
 // System include files.
 #include <cstddef>
-#include <cstdlib>
 #include <string>
 
 // Trick include files.
 #include "trick/attributes.h"
 
 // TrickHLA include files.
-#include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
+#include "TrickHLA/CompileConfig.hh" // IWYU pragma: keep
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/encoding/BasicDataVariableArrayEncoders.hh"
 #include "TrickHLA/encoding/VariableArrayEncoderBase.hh"
@@ -53,6 +52,7 @@ NASA, Johnson Space Center\n
 
 // HLA include files.
 #include "RTI/encoding/BasicDataElements.h"
+#include "RTI/encoding/DataElement.h" // NOLINT(misc-include-cleaner)
 #include "RTI/encoding/EncodingConfig.h"
 #include "RTI/encoding/HLAvariableArray.h"
 

@@ -25,6 +25,9 @@ NASA, Johnson Space Center\n
 @revs_end
 */
 
+// System includes.
+#include <string>
+
 // Trick includes.
 #include "trick/message_type.h"
 

@@ -42,7 +42,6 @@ NASA, Johnson Space Center\n
 
 // System include files.
 #include <cstdlib>
-#include <ostream>
 #include <sstream>
 #include <string>
 
@@ -54,7 +53,7 @@ NASA, Johnson Space Center\n
 #include "trick/reference.h"
 
 // TrickHLA include files.
-#include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
+#include "TrickHLA/CompileConfig.hh" // IWYU pragma: keep
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Types.hh"
@@ -65,12 +64,17 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/encoding/CharOpaqueDataEncoder.hh"
 #include "TrickHLA/encoding/CharRawDataEncoder.hh"
 #include "TrickHLA/encoding/CharUnicodeStringEncoder.hh"
-#include "TrickHLA/encoding/EncoderBase.hh"
 #include "TrickHLA/encoding/EncoderFactory.hh"
 #include "TrickHLA/encoding/Float64ToLogicalTimeEncoder.hh"
 #include "TrickHLA/encoding/StringUnicodeEncoder.hh"
 #include "TrickHLA/encoding/StringUnicodeFixedArrayEncoder.hh"
 #include "TrickHLA/encoding/StringUnicodeVariableArrayEncoder.hh"
+
+// Forward declarations.
+namespace TrickHLA
+{
+class EncoderBase;
+}
 
 using namespace RTI1516_NAMESPACE;
 using namespace std;

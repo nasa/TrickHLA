@@ -32,14 +32,14 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_SLEEP_TIMEOUT_HH
 
 // TrickHLA includes.
-#include "TrickHLA/CompileConfig.hh"
+#include "TrickHLA/CompileConfig.hh" // IWYU pragma: keep
 
 // System includes.
 #include <cstdint>
 #if defined( TRICKHLA_USE_THREAD_YIELD )
 #   include <chrono>
 #else
-#   include <time.h>
+#   include <ctime>
 #endif // TRICKHLA_USE_THREAD_YIELD
 
 #define THLA_DEFAULT_SLEEP_TIMEOUT_IN_SEC ( (double)30.0 )

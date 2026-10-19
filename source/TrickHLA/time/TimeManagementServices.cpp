@@ -44,12 +44,9 @@ NASA, Johnson Space Center\n
 
 // System include files.
 #include <cstdint>
-#include <cstdlib>
-#include <cstring>
 #include <iomanip>
-#include <iostream>
 #include <limits>
-#include <ostream>
+#include <memory>
 #include <sstream>
 #include <string>
 
@@ -60,7 +57,6 @@ NASA, Johnson Space Center\n
 #include "trick/sim_mode.h"
 
 // TrickHLA includes.
-#include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
@@ -69,11 +65,14 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/ObjectServices.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64BaseTime.hh"
+#include "TrickHLA/time/Int64Interval.hh"
+#include "TrickHLA/time/Int64Time.hh"
 #include "TrickHLA/time/ScenarioTimeline.hh"
 #include "TrickHLA/time/SimTimeline.hh"
 #include "TrickHLA/time/TimeManagementServices.hh"
 #include "TrickHLA/time/TrickThreadCoordinator.hh"
 #include "TrickHLA/utils/ElapsedTimeStats.hh"
+#include "TrickHLA/utils/MutexLock.hh"
 #include "TrickHLA/utils/MutexProtection.hh"
 #include "TrickHLA/utils/SleepTimeout.hh"
 #include "TrickHLA/utils/Utilities.hh"
@@ -89,7 +88,7 @@ NASA, Johnson Space Center\n
 // HLA include files.
 #include "RTI/Exception.h"
 #include "RTI/RTIambassador.h"
-#include "RTI/RTIambassadorFactory.h"
+#include "RTI/time/HLAinteger64Interval.h" // NOLINT(misc-include-cleaner)
 #include "RTI/time/HLAinteger64Time.h"
 
 #if defined( IEEE_1516_2010 )

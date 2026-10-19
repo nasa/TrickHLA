@@ -41,8 +41,11 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
+#include <ctime> // for timespec
 #include <string>
-#include <time.h>
+#include <time.h> // IWYU pragma: keep
+// IWYU pragma: no_include <_time.h>
+// IWYU pragma: no_include <sys/types.h>
 
 // Trick includes.
 #include "trick/exec_proto.h"

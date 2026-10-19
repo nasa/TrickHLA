@@ -31,7 +31,6 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstdint>
-#include <cstring>
 #include <iomanip>
 #include <sstream>
 #include <string>
@@ -55,7 +54,6 @@ NASA, Johnson Space Center\n
 #   include "RTI/LogicalTime.h"
 #endif // IEEE_1516_2025
 #include "RTI/VariableLengthData.h"
-#include "RTI/encoding/BasicDataElements.h"
 #include "RTI/time/HLAinteger64Time.h"
 
 #if defined( IEEE_1516_2010 )

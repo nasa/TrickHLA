@@ -30,6 +30,7 @@ NASA, Johnson Space Center\n
 
 // System include files.
 #include <cstddef>
+#include <string>
 #include <typeinfo>
 
 // TrickHLA include files.

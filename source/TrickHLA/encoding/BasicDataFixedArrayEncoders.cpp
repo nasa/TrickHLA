@@ -30,7 +30,6 @@ NASA, Johnson Space Center\n
 
 // System include files.
 #include <cstddef>
-#include <cstdlib>
 #include <string>
 #include <typeinfo>
 
@@ -38,7 +37,7 @@ NASA, Johnson Space Center\n
 #include "trick/attributes.h"
 
 // TrickHLA include files.
-#include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
+#include "TrickHLA/CompileConfig.hh" // IWYU pragma: keep
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/encoding/BasicDataFixedArrayEncoders.hh"
@@ -54,6 +53,7 @@ NASA, Johnson Space Center\n
 
 // HLA include files.
 #include "RTI/encoding/BasicDataElements.h"
+#include "RTI/encoding/DataElement.h" // NOLINT(misc-include-cleaner)
 #include "RTI/encoding/EncodingConfig.h"
 #include "RTI/encoding/HLAfixedArray.h"
 

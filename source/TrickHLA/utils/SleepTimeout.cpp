@@ -26,7 +26,7 @@ NASA, Johnson Space Center\n
 
 // TrickHLA includes.
 #include "TrickHLA/utils/SleepTimeout.hh"
-#include "TrickHLA/CompileConfig.hh" // NOLINT
+#include "TrickHLA/CompileConfig.hh" // IWYU pragma: keep
 
 // System includes.
 #include <cstdint>
@@ -34,8 +34,13 @@ NASA, Johnson Space Center\n
 #   include <chrono>
 #   include <thread>
 #else
-#   include <time.h>
-#endif // TRICKHLA_USE_THREAD_YIELD
+#   if defined( __APPLE__ )
+#      include <_time.h> // for CLOCK_MONOTONIC
+#      include <ctime>   // for timespec
+#   else
+#      include <time.h>
+#   endif // __APPLE__
+#endif    // TRICKHLA_USE_THREAD_YIELD
 
 // Trick includes.
 #include "trick/clock_proto.h"

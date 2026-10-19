@@ -27,7 +27,9 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
-#include <time.h>
+#include <ctime>
+#include <time.h> // IWYU pragma: keep
+// IWYU pragma: no_include <_time.h>
 
 // TrickHLA includes.
 #include "TrickHLA/time/TimeOfDayTimeline.hh"

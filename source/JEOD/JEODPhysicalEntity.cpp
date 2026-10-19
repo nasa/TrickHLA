@@ -28,8 +28,8 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
-#include <cstdlib>
 #include <sstream>
+#include <string>
 
 // JEOD model includes.
 #include "dynamics/dyn_body/include/body_ref_frame.hh"

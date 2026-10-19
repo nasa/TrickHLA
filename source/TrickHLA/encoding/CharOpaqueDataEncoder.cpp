@@ -30,9 +30,10 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
-#include <cstring>
 #include <sstream>
 #include <string>
+#include <string.h> // IWYU pragma: keep
+// IWYU pragma: no_include <_string.h>
 
 // Trick include files.
 #include "trick/attributes.h"
@@ -42,6 +43,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/MemoryServices.hh"
+#include "TrickHLA/MemoryServices_impl.hh" // NOLINT(misc-include-cleaner)
 #include "TrickHLA/encoding/CharOpaqueDataEncoder.hh"
 #include "TrickHLA/encoding/VariableArrayEncoderBase.hh"
 
@@ -54,6 +56,7 @@ NASA, Johnson Space Center\n
 #endif
 
 // HLA include files.
+#include "RTI/encoding/DataElement.h" // NOLINT(misc-include-cleaner)
 #include "RTI/encoding/EncodingConfig.h"
 #include "RTI/encoding/HLAopaqueData.h"
 

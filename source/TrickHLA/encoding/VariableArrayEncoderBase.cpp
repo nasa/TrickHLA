@@ -31,11 +31,9 @@ NASA, Johnson Space Center\n
 
 // System include files.
 #include <cstddef>
-#include <iostream>
-#include <ostream>
 #include <sstream>
-#include <stddef.h>
 #include <string>
+#include <vector>
 
 // Trick include files.
 #include "trick/attributes.h"
@@ -45,8 +43,12 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/MemoryServices.hh"
+#include "TrickHLA/MemoryServices_impl.hh" // NOLINT(misc-include-cleaner)
 #include "TrickHLA/encoding/EncoderBase.hh"
 #include "TrickHLA/encoding/VariableArrayEncoderBase.hh"
+
+// HLA include files.
+#include "RTI/encoding/DataElement.h" // NOLINT(misc-include-cleaner)
 
 using namespace RTI1516_NAMESPACE;
 using namespace std;
