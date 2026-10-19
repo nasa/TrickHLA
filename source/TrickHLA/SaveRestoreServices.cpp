@@ -564,13 +564,16 @@ bool SaveRestoreServices::save_in_progress_check()
 
    if ( save_state == THLASaveProcessEnum::SAVE_IN_PROGRESS ) {
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
-         std::string label_str;
-         StringUtilities::to_string( label_str, save_label );
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
-                                      string( "HLA Save for label '" )
-                                         .append( label_str )
-                                         .append( "' in progress!\n" ),
-                                      MSG_WARNING );
+         if ( execution_control->process_timer.timeout( execution_control->process_timer.time() ) ) {
+            execution_control->process_timer.reset();
+            std::string label_str;
+            StringUtilities::to_string( label_str, save_label );
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                         string( "HLA Save for label '" )
+                                            .append( label_str )
+                                            .append( "' in progress!\n" ),
+                                         MSG_WARNING );
+         }
       }
       return ( true );
    }
