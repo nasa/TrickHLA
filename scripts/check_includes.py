@@ -327,8 +327,8 @@ Examples:\n  check_includes --TrickHLA --SpaceFOM -v --hla4''' ) )
    if os.path.isdir( '/usr/local/include' ):
       include_dirs.extend( ['-I/usr/local/include'] )
 
-   iwyu_args.append( '-std=c++11' )
-   #iwyu_args.append( '-DTRICK_VER=25' )
+   # IWYU args
+   iwyu_args.append( '-std=c++14' )
 
 
    # Echo check the data if verbose is selected.

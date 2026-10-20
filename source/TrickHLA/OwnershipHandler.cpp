@@ -39,9 +39,9 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
-#include <cstddef>
 #include <iomanip>
 #include <limits>
+#include <map>
 #include <sstream>
 #include <string>
 #include <utility>
@@ -55,6 +55,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/MemoryServices.hh"
+#include "TrickHLA/MemoryServices_impl.hh" // NOLINT(misc-include-cleaner)
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/OwnershipHandler.hh"
 #include "TrickHLA/OwnershipItem.hh"

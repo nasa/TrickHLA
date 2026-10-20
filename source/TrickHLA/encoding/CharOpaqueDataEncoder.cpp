@@ -30,9 +30,9 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
+#include <cstring>
 #include <sstream>
 #include <string>
-#include <string.h> // IWYU pragma: keep
 // IWYU pragma: no_include <_string.h>
 
 // Trick include files.
@@ -117,6 +117,6 @@ void CharOpaqueDataEncoder::update_after_decode()
 
    Octet *byte_data = *static_cast< Octet ** >( address );
    if ( byte_data != nullptr ) {
-      memcpy( byte_data, opaque_encoder->get(), opaque_encoder->dataLength() ); // flawfinder: ignore
+      std::memcpy( byte_data, opaque_encoder->get(), opaque_encoder->dataLength() ); // flawfinder: ignore
    }
 }

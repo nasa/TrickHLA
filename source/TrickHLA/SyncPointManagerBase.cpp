@@ -37,7 +37,6 @@ NASA, Johnson Space Center\n
 // System includes.
 #include <cstddef>
 #include <cstdint>
-#include <ostream>
 #include <sstream>
 #include <string>
 
@@ -49,15 +48,21 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/MemoryServices.hh"
+#include "TrickHLA/MemoryServices_impl.hh" // NOLINT(misc-include-cleaner)
 #include "TrickHLA/SyncPoint.hh"
 #include "TrickHLA/SyncPointList.hh"
 #include "TrickHLA/SyncPointManagerBase.hh"
 #include "TrickHLA/Types.hh"
-#include "TrickHLA/time/Int64Time.hh"
+#include "TrickHLA/utils/MutexLock.hh"
 #include "TrickHLA/utils/MutexProtection.hh"
 #include "TrickHLA/utils/SleepTimeout.hh"
 #include "TrickHLA/utils/StringUtilities.hh"
 #include "TrickHLA/utils/Utilities.hh"
+
+namespace TrickHLA
+{
+class Int64Time;
+}
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -72,7 +77,11 @@ NASA, Johnson Space Center\n
 #include "RTI/Exception.h"
 #include "RTI/RTIambassador.h"
 #include "RTI/Typedefs.h"
-#include "RTI/VariableLengthData.h"
+
+namespace RTI1516_NAMESPACE
+{
+class VariableLengthData;
+}
 
 #if defined( IEEE_1516_2010 )
 #   pragma GCC diagnostic pop

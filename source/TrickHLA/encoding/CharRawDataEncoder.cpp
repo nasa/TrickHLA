@@ -37,10 +37,9 @@ NASA, Johnson Space Center\n
 #endif
 
 // System include files.
-#include <cstddef>
+#include <cstring>
 #include <sstream>
 #include <string>
-#include <string.h> // IWYU pragma: keep
 #include <vector> // IWYU pragma: keep
 // IWYU pragma: no_include <_string.h>
 
@@ -58,9 +57,8 @@ NASA, Johnson Space Center\n
 #include "RTI/VariableLengthData.h"
 #include "RTI/encoding/DataElement.h" // IWYU pragma: keep
 #include "RTI/encoding/EncodingConfig.h"
-#include "RTI/encoding/EncodingExceptions.h" // NOLINT(misc-include-cleaner)
-#if defined( IEEE_1516_2025 )
-#   include "RTI/encoding/HLAfixedArray.h"
+#if defined( IEEE_1516_2010 )
+#   include "RTI/encoding/EncodingExceptions.h"
 #endif
 
 using namespace RTI1516_NAMESPACE;
@@ -118,7 +116,7 @@ DataElement &CharRawDataEncoder::decode( VariableLengthData const &inData )
 {
    // Resize Trick array variable to match the decoded data size.
    resize_trick_var( inData.size() );
-   memcpy( *static_cast< void ** >( address ), inData.data(), inData.size() ); // flawfinder: ignore
+   std::memcpy( *static_cast< void ** >( address ), inData.data(), inData.size() ); // flawfinder: ignore
 
    return *this;
 }
@@ -127,7 +125,7 @@ void CharRawDataEncoder::decode( VariableLengthData const &inData ) throw( Encod
 {
    // Resize Trick array variable to match the decoded data size.
    resize_trick_var( inData.size() );
-   memcpy( *static_cast< void ** >( address ), inData.data(), inData.size() ); // flawfinder: ignore
+   std::memcpy( *static_cast< void ** >( address ), inData.data(), inData.size() ); // flawfinder: ignore
 }
 #endif // IEEE_1516_2025
 

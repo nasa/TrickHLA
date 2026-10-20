@@ -29,8 +29,9 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
-#include <cstdlib>
 #include <cstring>
+#include <string>
+// IWYU pragma: no_include <_string.h>
 
 // Trick includes.
 #include "trick/message_type.h"
@@ -40,6 +41,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Item.hh"
 #include "TrickHLA/MemoryServices.hh"
+#include "TrickHLA/MemoryServices_impl.hh" // IWYU pragma: keep
 #include "TrickHLA/ParameterItem.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
@@ -76,7 +78,7 @@ ParameterItem::ParameterItem(
       size = param_value->size();
       if ( size > 0 ) {
          data = MemoryServices::declare_var( data, size );
-         memcpy( data, param_value->data(), size ); // flawfinder: ignore
+         std::memcpy( data, param_value->data(), size ); // flawfinder: ignore
       }
    }
 }
@@ -93,7 +95,7 @@ ParameterItem::ParameterItem(
 {
    if ( ( size > 0 ) && ( rhs.data != nullptr ) ) {
       data = MemoryServices::declare_var( data, size );
-      memcpy( data, rhs.data, size ); // flawfinder: ignore
+      std::memcpy( data, rhs.data, size ); // flawfinder: ignore
    }
 }
 

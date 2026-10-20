@@ -53,7 +53,6 @@ NASA, Johnson Space Center\n
 #include <ostream>
 #include <set>
 #include <sstream>
-#include <string.h> // NOLINT
 #include <string>
 
 // Trick includes.
@@ -1062,18 +1061,18 @@ void ExecutionControl::setup_interaction_ref_attributes()
    // loop until the current ATTRIBUTES name is a nullptr string
    while ( strcmp( attrIMSim__FreezeInteractionHandler[attr_index].name, "" ) != 0 ) {
       if ( strcmp( attrIMSim__FreezeInteractionHandler[attr_index].name, "time" ) == 0 ) {
-         memcpy( &time_attr[0], // flawfinder: ignore
-                 &attrIMSim__FreezeInteractionHandler[attr_index],
-                 sizeof( ATTRIBUTES ) );
+         std::memcpy( &time_attr[0], // flawfinder: ignore
+                      &attrIMSim__FreezeInteractionHandler[attr_index],
+                      sizeof( ATTRIBUTES ) );
       }
       ++attr_index;
    }
 
    // Now that we have hit the end of the ATTRIBUTES array, copy the last
    // entry into my time_attr array to make it a valid ATTRIBUTE array.
-   memcpy( &time_attr[1], // flawfinder: ignore
-           &attrIMSim__FreezeInteractionHandler[attr_index],
-           sizeof( ATTRIBUTES ) );
+   std::memcpy( &time_attr[1], // flawfinder: ignore
+                &attrIMSim__FreezeInteractionHandler[attr_index],
+                sizeof( ATTRIBUTES ) );
 
    if ( DebugHandler::show( DEBUG_LEVEL_9_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       ostringstream msg2;

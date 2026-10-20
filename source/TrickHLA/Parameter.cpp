@@ -36,8 +36,6 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
-#include <cstddef>
-#include <ostream>
 #include <sstream>
 #include <string>
 
@@ -63,8 +61,12 @@ NASA, Johnson Space Center\n
 #endif
 
 // HLA include files.
-#include "RTI/VariableLengthData.h"
 #include "RTI/encoding/EncodingExceptions.h"
+
+namespace RTI1516_NAMESPACE
+{
+class VariableLengthData;
+}
 
 #if defined( IEEE_1516_2010 )
 #   pragma GCC diagnostic pop

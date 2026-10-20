@@ -32,11 +32,8 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
-#include <cstdlib>
-#include <cstring>
 #include <fstream>
 #include <iostream>
-#include <ostream>
 #include <sstream>
 #include <stdexcept>
 #include <string>
@@ -53,15 +50,18 @@ NASA, Johnson Space Center\n
 extern Trick::CheckPointRestart *the_cpr;
 
 // TrickHLA includes.
-#include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
+#include "TrickHLA/CompileConfig.hh" // IWYU pragma: keep
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
+#include "TrickHLA/InteractionServices.hh"
 #include "TrickHLA/KnownFederate.hh"
+#include "TrickHLA/ObjectServices.hh"
 #include "TrickHLA/SaveRestoreServices.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64Time.hh"
+#include "TrickHLA/time/TimeManagementServices.hh"
 #include "TrickHLA/utils/SleepTimeout.hh"
 #include "TrickHLA/utils/StringUtilities.hh"
 #include "TrickHLA/utils/Utilities.hh"
@@ -79,7 +79,6 @@ extern Trick::CheckPointRestart *the_cpr;
 #include "RTI/Exception.h"
 #include "RTI/Handle.h"
 #include "RTI/RTIambassador.h"
-#include "RTI/RTIambassadorFactory.h"
 #include "RTI/Typedefs.h"
 #include "RTI/time/HLAinteger64Time.h"
 

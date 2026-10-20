@@ -32,6 +32,7 @@ NASA, Johnson Space Center\n
 // System includes.
 #include <cstdlib>
 #include <string>
+// IWYU pragma: no_include <_stdlib.h>
 
 // Trick includes.
 #include "trick/exec_proto.h"
@@ -150,7 +151,7 @@ void DebugHandler::terminate(
 {
    message_publish( MSG_ERROR, message.c_str() );
    exec_terminate( __FILE__, message.c_str() );
-   exit( exit_code );
+   std::exit( exit_code );
 }
 
 void DebugHandler::terminate(

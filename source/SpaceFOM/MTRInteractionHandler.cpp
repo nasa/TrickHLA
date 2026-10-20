@@ -223,7 +223,7 @@ void MTRInteractionHandler::receive_interaction(
    SpaceFOM::ExecutionControl *exco = dynamic_cast< ExecutionControl * >( interaction->get_federate()->get_execution_control() );
    if ( exco == nullptr ) {
       DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, "Unexpected nullptr SpaceFOM::ExecutionControl!\n" );
-      exit( 1 );
+      std::exit( 1 );
    }
 
    // Set MTR.

@@ -35,13 +35,11 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
-#include <cstddef>
-#include <cstdlib>
 #include <cstring>
 #include <map>
-#include <ostream>
 #include <sstream>
-#include <time.h>
+#include <string>
+// IWYU pragma: no_include <_string.h>
 
 // Trick includes.
 #include "trick/message_type.h"
@@ -51,10 +49,13 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/InteractionItem.hh"
 #include "TrickHLA/Item.hh"
+#include "TrickHLA/ItemQueue.hh"
 #include "TrickHLA/MemoryServices.hh"
+#include "TrickHLA/MemoryServices_impl.hh" // NOLINT(misc-include-cleaner)
 #include "TrickHLA/Parameter.hh"
 #include "TrickHLA/ParameterItem.hh"
 #include "TrickHLA/Types.hh"
+#include "TrickHLA/time/Int64Time.hh"
 #include "TrickHLA/utils/MutexProtection.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
@@ -66,13 +67,14 @@ NASA, Johnson Space Center\n
 #endif
 
 // HLA include files.
-#if defined( IEEE_1516_2025 )
-#   include "RTI/time/LogicalTime.h"
-#else
-#   include "RTI/LogicalTime.h"
-#endif // IEEE_1516_2025
+#include "RTI/Handle.h"
 #include "RTI/Typedefs.h"
 #include "RTI/VariableLengthData.h"
+
+namespace RTI1516_NAMESPACE
+{
+class LogicalTime;
+}
 
 #if defined( IEEE_1516_2010 )
 #   pragma GCC diagnostic pop
@@ -146,7 +148,7 @@ InteractionItem::InteractionItem(
 {
    if ( ( user_supplied_tag_size > 0 ) && ( rhs.user_supplied_tag != nullptr ) ) {
       user_supplied_tag = MemoryServices::declare_var( user_supplied_tag, user_supplied_tag_size );
-      memcpy( user_supplied_tag, rhs.user_supplied_tag, user_supplied_tag_size ); // flawfinder: ignore
+      std::memcpy( user_supplied_tag, rhs.user_supplied_tag, user_supplied_tag_size ); // flawfinder: ignore
    }
 
    // When auto_unlock_mutex goes out of scope it automatically unlocks the
@@ -222,7 +224,7 @@ void InteractionItem::initialize(
    user_supplied_tag_size = theUserSuppliedTag.size();
    if ( user_supplied_tag_size > 0 ) {
       user_supplied_tag = MemoryServices::declare_var( user_supplied_tag, user_supplied_tag_size );
-      memcpy( user_supplied_tag, theUserSuppliedTag.data(), user_supplied_tag_size ); // flawfinder: ignore
+      std::memcpy( user_supplied_tag, theUserSuppliedTag.data(), user_supplied_tag_size ); // flawfinder: ignore
    }
 }
 
@@ -257,7 +259,7 @@ void InteractionItem::checkpoint_queue()
          if ( item->size > 0 ) {
             parm_items[i].data = MemoryServices::declare_var( parm_items[i].data, item->size );
 
-            memcpy( parm_items[i].data, item->data, item->size ); // flawfinder: ignore
+            std::memcpy( parm_items[i].data, item->data, item->size ); // flawfinder: ignore
          } else {
             parm_items[i].data = nullptr;
          }

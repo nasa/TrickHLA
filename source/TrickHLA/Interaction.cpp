@@ -41,10 +41,9 @@ NASA, Johnson Space Center\n
 // System includes.
 #include <cstring>
 #include <iomanip>
-#include <map>
-#include <ostream>
 #include <sstream>
 #include <string>
+// IWYU pragma: no_include <_string.h>
 
 // Trick includes.
 #include "trick/message_type.h"
@@ -58,10 +57,14 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/InteractionItem.hh"
 #include "TrickHLA/ItemQueue.hh"
 #include "TrickHLA/MemoryServices.hh"
+#include "TrickHLA/MemoryServices_impl.hh" // NOLINT(misc-include-cleaner)
 #include "TrickHLA/Parameter.hh"
 #include "TrickHLA/ParameterItem.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64BaseTime.hh"
+#include "TrickHLA/time/Int64Time.hh"
+#include "TrickHLA/time/TimeManagementServices.hh"
+#include "TrickHLA/utils/MutexLock.hh"
 #include "TrickHLA/utils/MutexProtection.hh"
 #include "TrickHLA/utils/StringUtilities.hh"
 #include "TrickHLA/utils/Utilities.hh"
@@ -75,13 +78,14 @@ NASA, Johnson Space Center\n
 #endif
 
 // HLA include files.
-#include "RTI/Enums.h"
 #include "RTI/Exception.h"
 #include "RTI/RTIambassador.h"
 #include "RTI/Typedefs.h"
 #include "RTI/VariableLengthData.h"
+#include "RTI/time/HLAinteger64Time.h"
 
 #if defined( IEEE_1516_2010 )
+#   include "RTI/Handle.h"
 #   pragma GCC diagnostic pop
 #endif
 
@@ -292,9 +296,9 @@ void Interaction::set_user_supplied_tag(
    }
    user_supplied_tag_size = tag_size;
    if ( tag != nullptr ) {
-      memcpy( user_supplied_tag, tag, user_supplied_tag_size ); // flawfinder: ignore
+      std::memcpy( user_supplied_tag, tag, user_supplied_tag_size ); // flawfinder: ignore
    } else {
-      memset( user_supplied_tag, 0, user_supplied_tag_size );
+      std::memset( user_supplied_tag, 0, user_supplied_tag_size );
    }
 }
 

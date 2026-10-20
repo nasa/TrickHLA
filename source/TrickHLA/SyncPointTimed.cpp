@@ -48,7 +48,6 @@ NASA, Johnson Space Center\n
 #endif
 
 #include "RTI/VariableLengthData.h"
-#include "RTI/encoding/BasicDataElements.h"
 
 #if defined( IEEE_1516_2010 )
 #   pragma GCC diagnostic pop

@@ -34,8 +34,9 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstring>
-#include <ostream>
 #include <sstream>
+#include <string>
+// IWYU pragma: no_include <_string.h>
 
 // Trick includes.
 #include "trick/message_type.h"
@@ -43,6 +44,7 @@ NASA, Johnson Space Center\n
 // TrickHLA includes.
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/MemoryServices.hh"
+#include "TrickHLA/MemoryServices_impl.hh" // NOLINT(misc-include-cleaner)
 #include "TrickHLA/OpaqueBuffer.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/utils/Utilities.hh"
@@ -264,7 +266,7 @@ void OpaqueBuffer::push_pad_to_buffer(
    }
 
    // Add the pad bytes to the buffer.
-   memset( &buffer[push_pos], '\0', pad_size );
+   std::memset( &buffer[push_pos], '\0', pad_size );
 
    // Update buffer position where we push new data to next.
    push_pos += pad_size;
@@ -307,7 +309,7 @@ void OpaqueBuffer::byteswap_buffer_copy(
       // Do a byte-swap based on the size of the data.
       switch ( size ) {
          case 1: {
-            memcpy( dest, src, 1 ); // flawfinder: ignore
+            std::memcpy( dest, src, 1 ); // flawfinder: ignore
             break;
          }
          case 2: {
@@ -353,6 +355,6 @@ void OpaqueBuffer::byteswap_buffer_copy(
       }
    } else {
       // No byte-swap needed so just copy the data.
-      memcpy( dest, src, size ); // flawfinder: ignore
+      std::memcpy( dest, src, size ); // flawfinder: ignore
    }
 }

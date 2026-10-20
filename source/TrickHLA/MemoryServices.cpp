@@ -34,11 +34,11 @@ NASA, Johnson Space Center\n
 // System includes.
 #include <climits>
 #include <cstddef>
-#include <cstdlib>
-#include <cstring>
-#include <cwchar>
 #include <sstream>
 #include <string>
+// IWYU pragma: no_include <_stdlib.h>
+// IWYU pragma: no_include <_string.h>
+// IWYU pragma: no_include <_wchar.h>
 
 // Trick includes.
 #include "trick/MemoryManager.hh"
@@ -48,6 +48,7 @@ NASA, Johnson Space Center\n
 // TrickHLA includes.
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/MemoryServices.hh"
+#include "TrickHLA/MemoryServices_impl.hh" // NOLINT(misc-include-cleaner)
 #include "TrickHLA/Types.hh"
 
 using namespace std;

@@ -41,31 +41,33 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstdint>
-#include <cstring>
 #include <limits>
-#include <ostream>
 #include <sstream>
 #include <string>
 #include <vector>
 
 // Trick includes.
-#include "trick/Clock.hh"
 #include "trick/MemoryManager.hh"
 #include "trick/exec_proto.h"
 #include "trick/message_type.h"
 #include "trick/sim_mode.h"
 
+namespace Trick
+{
+class Clock;
+}
+
 // TrickHLA includes.
-#include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
+#include "TrickHLA/CompileConfig.hh" // IWYU pragma: keep
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionConfigurationBase.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
+#include "TrickHLA/InteractionServices.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/ObjectServices.hh"
 #include "TrickHLA/SaveRestoreServices.hh"
-#include "TrickHLA/SyncPointList.hh"
 #include "TrickHLA/SyncPointManagerBase.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/CTETimelineBase.hh"
@@ -73,6 +75,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/time/Int64Time.hh"
 #include "TrickHLA/time/ScenarioTimeline.hh"
 #include "TrickHLA/time/SimTimeline.hh"
+#include "TrickHLA/time/TimeManagementServices.hh"
 #include "TrickHLA/utils/SleepTimeout.hh"
 #include "TrickHLA/utils/StringUtilities.hh"
 
@@ -86,8 +89,12 @@ NASA, Johnson Space Center\n
 
 // HLA include files.
 #include "RTI/Handle.h"
-#include "RTI/RTIambassador.h"
 #include "RTI/Typedefs.h"
+#if defined( IEEE_1516_2025 )
+#   include "RTI/time/LogicalTime.h"
+#else
+#   include "RTI/LogicalTime.h"
+#endif
 
 // Access the Trick global objects:
 extern Trick::MemoryManager *trick_MM;

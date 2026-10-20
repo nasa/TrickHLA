@@ -46,15 +46,12 @@ NASA, Johnson Space Center\n
 #include <climits>
 #include <cstdint>
 #include <cstdlib>
-#include <cstring>
-#include <iostream>
-#include <ostream>
+#include <map>
+#include <memory>
 #include <set>
 #include <sstream>
 #include <string>
-#if defined( IEEE_1516_2025 )
-#   include <memory>
-#endif // IEEE_1516_2025
+// IWYU pragma: no_include <_stdlib.h>
 
 // Trick includes.
 #include "trick/exec_proto.h"
@@ -62,7 +59,7 @@ NASA, Johnson Space Center\n
 #include "trick/sim_mode.h"
 
 // TrickHLA includes.
-#include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
+#include "TrickHLA/CompileConfig.hh" // IWYU pragma: keep
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
@@ -75,6 +72,8 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/SaveRestoreServices.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/TimeManagementServices.hh"
+#include "TrickHLA/utils/ElapsedTimeStats.hh"
+#include "TrickHLA/utils/MutexLock.hh"
 #include "TrickHLA/utils/MutexProtection.hh"
 #include "TrickHLA/utils/SleepTimeout.hh"
 #include "TrickHLA/utils/StringUtilities.hh"
@@ -85,6 +84,11 @@ NASA, Johnson Space Center\n
 #else
 #   include "TrickHLA/FedAmbHLA3.hh"
 #endif // IEEE_1516_2025
+
+namespace TrickHLA
+{
+class ExecutionConfigurationBase;
+}
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -103,13 +107,16 @@ NASA, Johnson Space Center\n
 #include "RTI/Typedefs.h"
 #include "RTI/VariableLengthData.h"
 #include "RTI/encoding/BasicDataElements.h"
+#include "RTI/encoding/DataElement.h"
 #include "RTI/encoding/EncodingExceptions.h"
 #include "RTI/encoding/HLAopaqueData.h"
 #include "RTI/encoding/HLAvariableArray.h"
 
 #if defined( IEEE_1516_2025 )
 #   include "RTI/RtiConfiguration.h"
+#   include "RTI/time/LogicalTime.h"
 #else
+#   include "RTI/LogicalTime.h"
 #   pragma GCC diagnostic pop
 #endif // IEEE_1516_2025
 
@@ -901,7 +908,7 @@ FederateHandle Federate::decode_federate_handle(
              << " Encoded FederateHandle because the byte count is "
              << enc_handle.size() << ", but expected 4 or more bytes!\n";
       DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
-      exit( 1 );
+      std::exit( 1 );
    }
 
    FederateHandle fed_handle;

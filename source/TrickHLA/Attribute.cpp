@@ -41,10 +41,9 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cmath>
-#include <cstddef>
 #include <limits>
-#include <ostream>
 #include <sstream>
+#include <string>
 
 // Trick includes.
 #include "trick/message_type.h"
@@ -55,6 +54,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/RecordElement.hh"
 #include "TrickHLA/Types.hh"
+#include "TrickHLA/encoding/EncoderBase.hh"
 #include "TrickHLA/utils/StringUtilities.hh"
 #include "TrickHLA/utils/Utilities.hh"
 
@@ -67,8 +67,12 @@ NASA, Johnson Space Center\n
 #endif
 
 // HLA include files.
-#include "RTI/VariableLengthData.h"
 #include "RTI/encoding/EncodingExceptions.h"
+
+namespace RTI1516_NAMESPACE
+{
+class VariableLengthData;
+}
 
 #if defined( IEEE_1516_2010 )
 #   pragma GCC diagnostic pop

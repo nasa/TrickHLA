@@ -45,21 +45,22 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstdint>
-#include <cstdlib>
-#include <cstring>
+#include <cstdlib> // IWYU pragma: keep
 #include <iomanip>
-#include <ostream>
+#include <map>
 #include <pthread.h>
 #include <sstream>
 #include <string>
 #include <vector>
+// IWYU pragma: no_include <_stdlib.h>
 
 // Trick includes.
 #include "trick/exec_proto.h"
 #include "trick/message_type.h"
 
 // TrickHLA includes.
-#include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
+#include "TrickHLA/Attribute.hh"
+#include "TrickHLA/CompileConfig.hh" // IWYU pragma: keep
 #include "TrickHLA/Conditional.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
@@ -67,9 +68,9 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/LagCompensation.hh"
 #include "TrickHLA/MemoryServices.hh"
+#include "TrickHLA/MemoryServices_impl.hh" // NOLINT(misc-include-cleaner)
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/ObjectDeletedHandler.hh"
-#include "TrickHLA/ObjectServices.hh"
 #include "TrickHLA/OwnershipHandler.hh"
 #include "TrickHLA/Packing.hh"
 #include "TrickHLA/Types.hh"
@@ -77,6 +78,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/time/Int64Interval.hh"
 #include "TrickHLA/time/Int64Time.hh"
 #include "TrickHLA/time/TimeManagementServices.hh"
+#include "TrickHLA/utils/MutexLock.hh"
 #include "TrickHLA/utils/MutexProtection.hh"
 #include "TrickHLA/utils/SleepTimeout.hh"
 #include "TrickHLA/utils/StringUtilities.hh"
@@ -91,12 +93,12 @@ NASA, Johnson Space Center\n
 #endif
 
 // HLA include files.
-#include "RTI/Enums.h"
 #include "RTI/Exception.h"
 #include "RTI/Handle.h"
 #include "RTI/RTIambassador.h"
 #include "RTI/Typedefs.h"
 #include "RTI/VariableLengthData.h"
+#include "RTI/time/HLAinteger64Time.h"
 
 #if defined( IEEE_1516_2010 )
 #   pragma GCC diagnostic pop
@@ -3531,7 +3533,7 @@ void Object::grant_push_request_pthread()
       ostringstream msg;
       msg << "Object '" << get_name() << "', Failed to create thread!\n";
       DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_ERROR );
-      exit( 0 );
+      std::exit( 0 );
    }
 }
 

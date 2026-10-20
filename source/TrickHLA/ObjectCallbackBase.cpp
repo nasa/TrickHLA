@@ -30,20 +30,23 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
-#include <cstring>
 #include <limits>
 #include <sstream>
 #include <string>
 
 // TrickHLA includes.
-#include "TrickHLA/Attribute.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/ObjectCallbackBase.hh"
-#include "TrickHLA/time/Int64Interval.hh"
-#include "TrickHLA/time/Int64Time.hh"
+
+namespace TrickHLA
+{
+class Attribute;
+class Int64Interval;
+class Int64Time;
+} // namespace TrickHLA
 
 using namespace std;
 using namespace TrickHLA;

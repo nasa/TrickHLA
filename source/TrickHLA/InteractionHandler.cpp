@@ -33,8 +33,6 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
-#include <cstdlib>
-#include <cstring>
 #include <limits>
 #include <sstream>
 #include <string>
@@ -46,13 +44,20 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Interaction.hh"
 #include "TrickHLA/InteractionHandler.hh"
-#include "TrickHLA/Parameter.hh"
 #include "TrickHLA/Types.hh"
-#include "TrickHLA/time/Int64Interval.hh"
-#include "TrickHLA/time/Int64Time.hh"
+
+namespace TrickHLA
+{
+class Int64Interval;
+class Int64Time;
+class Parameter;
+} // namespace TrickHLA
 
 // HLA includes.
-#include "RTI/VariableLengthData.h"
+namespace RTI1516_NAMESPACE
+{
+class VariableLengthData;
+}
 
 using namespace std;
 using namespace TrickHLA;

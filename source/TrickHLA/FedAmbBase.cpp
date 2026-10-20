@@ -31,9 +31,6 @@ NASA, Johnson Space Center\n
 // TrickHLA includes.
 #include "TrickHLA/FedAmbBase.hh"
 #include "TrickHLA/Federate.hh"
-#include "TrickHLA/InteractionServices.hh"
-#include "TrickHLA/ObjectServices.hh"
-#include "TrickHLA/SaveRestoreServices.hh"
 
 using namespace TrickHLA;
 

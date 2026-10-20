@@ -30,11 +30,14 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
-#include <cstddef>
+#include <iosfwd>
 
 // TrickHLA includes.
-#include "TrickHLA/Object.hh"
 #include "TrickHLA/ObjectDeletedHandler.hh"
+namespace TrickHLA
+{
+class Object;
+}
 
 using namespace std;
 using namespace TrickHLA;

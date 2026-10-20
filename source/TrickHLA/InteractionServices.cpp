@@ -38,21 +38,24 @@ NASA, Johnson Space Center\n
 #include <climits>
 #include <cstring>
 #include <iomanip>
-#include <ostream>
 #include <sstream>
 #include <string>
+// IWYU pragma: no_include <_string.h>
 
 // Trick includes.
 #include "trick/message_type.h"
 
 // TrickHLA includes.
 #include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Interaction.hh"
 #include "TrickHLA/InteractionItem.hh"
 #include "TrickHLA/InteractionServices.hh"
+#include "TrickHLA/ItemQueue.hh"
 #include "TrickHLA/MemoryServices.hh"
+#include "TrickHLA/MemoryServices_impl.hh"
 #include "TrickHLA/Parameter.hh"
 #include "TrickHLA/ParameterItem.hh"
 #include "TrickHLA/Types.hh"
@@ -74,7 +77,12 @@ NASA, Johnson Space Center\n
 #include "RTI/Handle.h"
 #include "RTI/RTIambassador.h"
 #include "RTI/Typedefs.h"
-#include "RTI/VariableLengthData.h"
+
+namespace RTI1516_NAMESPACE
+{
+class LogicalTime;
+class VariableLengthData;
+} // namespace RTI1516_NAMESPACE
 
 #if defined( IEEE_1516_2010 )
 #   pragma GCC diagnostic pop
@@ -749,9 +757,9 @@ void InteractionServices::convert_data_before_checkpoint()
                MemoryServices::declare_var( check_interactions[i].user_supplied_tag,
                                             item->user_supplied_tag_size );
 
-            memcpy( check_interactions[i].user_supplied_tag, // flawfinder: ignore
-                    item->user_supplied_tag,
-                    item->user_supplied_tag_size );
+            std::memcpy( check_interactions[i].user_supplied_tag, // flawfinder: ignore
+                         item->user_supplied_tag,
+                         item->user_supplied_tag_size );
          } else {
             check_interactions[i].user_supplied_tag = nullptr;
          }

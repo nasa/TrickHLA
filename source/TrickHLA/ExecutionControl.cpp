@@ -34,9 +34,7 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
-#include <cstddef>
 #include <cstdint>
-#include <ostream>
 #include <sstream>
 #include <string>
 
@@ -47,10 +45,12 @@ NASA, Johnson Space Center\n
 
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionConfiguration.hh"
+#include "TrickHLA/ExecutionConfigurationBase.hh"
 #include "TrickHLA/ExecutionControl.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
+#include "TrickHLA/InteractionServices.hh"
 #include "TrickHLA/ObjectServices.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64BaseTime.hh"
@@ -64,14 +64,7 @@ NASA, Johnson Space Center\n
 #endif
 
 // HLA include files.
-#include "RTI/Handle.h"
-#if defined( IEEE_1516_2025 )
-#   include "RTI/time/LogicalTime.h"
-#else
-#   include "RTI/LogicalTime.h"
-#endif // IEEE_1516_2025
 #include "RTI/Typedefs.h"
-#include "RTI/VariableLengthData.h"
 
 #if defined( IEEE_1516_2010 )
 #   pragma GCC diagnostic pop

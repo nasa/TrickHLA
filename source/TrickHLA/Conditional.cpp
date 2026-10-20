@@ -34,9 +34,13 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // TrickHLA includes.
-#include "TrickHLA/Attribute.hh"
 #include "TrickHLA/Conditional.hh"
 #include "TrickHLA/ObjectCallbackBase.hh"
+
+namespace TrickHLA
+{
+class Attribute;
+}
 
 using namespace std;
 using namespace TrickHLA;

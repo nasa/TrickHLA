@@ -48,11 +48,10 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <climits>
+#include <cstddef>
 #include <cstdint>
-#include <cstring>
 #include <iomanip>
 #include <map>
-#include <ostream>
 #include <sstream>
 #include <string>
 
@@ -65,14 +64,17 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Attribute.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/ExecutionConfigurationBase.hh"
+#include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
+#include "TrickHLA/Object.hh"
 #include "TrickHLA/ObjectServices.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64BaseTime.hh"
 #include "TrickHLA/time/Int64Interval.hh"
 #include "TrickHLA/time/Int64Time.hh"
 #include "TrickHLA/time/TimeManagementServices.hh"
+#include "TrickHLA/utils/MutexLock.hh"
 #include "TrickHLA/utils/MutexProtection.hh"
 #include "TrickHLA/utils/SleepTimeout.hh"
 #include "TrickHLA/utils/StringUtilities.hh"

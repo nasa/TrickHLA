@@ -543,18 +543,18 @@ void ExecutionConfiguration::setup_ref_attributes(
    // Loop until the current ATTRIBUTES name is a nullptr string
    while ( strcmp( attrSpaceFOM__ExecutionConfiguration[attr_index].name, "" ) != 0 ) {
       if ( strcmp( attrSpaceFOM__ExecutionConfiguration[attr_index].name, "root_frame_name" ) == 0 ) {
-         memcpy( &exco_attr[0], // flawfinder: ignore
-                 &attrSpaceFOM__ExecutionConfiguration[attr_index],
-                 sizeof( ATTRIBUTES ) );
+         std::memcpy( &exco_attr[0], // flawfinder: ignore
+                      &attrSpaceFOM__ExecutionConfiguration[attr_index],
+                      sizeof( ATTRIBUTES ) );
       }
       ++attr_index;
    }
 
    // Now that we have hit the end of the ATTRIBUTES array, copy the last
    // entry into my exco_attr array to make it a valid ATTRIBUTE array.
-   memcpy( &exco_attr[1], // flawfinder: ignore
-           &attrSpaceFOM__ExecutionConfiguration[attr_index],
-           sizeof( ATTRIBUTES ) );
+   std::memcpy( &exco_attr[1], // flawfinder: ignore
+                &attrSpaceFOM__ExecutionConfiguration[attr_index],
+                sizeof( ATTRIBUTES ) );
 
    // Initialize the attribute.
    attributes[0].initialize( get_FOM_name(), 0, 0 ); // NOLINT

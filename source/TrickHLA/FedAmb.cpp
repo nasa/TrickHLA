@@ -45,29 +45,30 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstdlib>
-#include <cstring>
 #include <iomanip>
-#include <iostream>
-#include <ostream>
 #include <set>
 #include <sstream>
 #include <string>
+// IWYU pragma: no_include <_stdlib.h>
 
 // Trick includes.
 #include "trick/message_type.h"
 
 // TrickHLA includes.
 #include "TrickHLA/Attribute.hh"
-#include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
+#include "TrickHLA/CompileConfig.hh" // IWYU pragma: keep
 #include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/FedAmbBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
+#include "TrickHLA/InteractionServices.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/ObjectServices.hh"
 #include "TrickHLA/SaveRestoreServices.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64Time.hh"
+#include "TrickHLA/time/TimeManagementServices.hh"
 #include "TrickHLA/utils/MutexProtection.hh"
 #include "TrickHLA/utils/StringUtilities.hh"
 
@@ -88,13 +89,10 @@ NASA, Johnson Space Center\n
 // HLA include files.
 #include "RTI/Enums.h"
 #include "RTI/Exception.h"
-#include "RTI/FederateAmbassador.h"
 #include "RTI/Handle.h"
 #include "RTI/Typedefs.h"
 #include "RTI/VariableLengthData.h"
-#if defined( IEEE_1516_2025 )
-#   include "RTI/time/LogicalTime.h"
-#endif // IEEE_1516_2025
+#include "RTI/time/HLAinteger64Time.h"
 
 using namespace RTI1516_NAMESPACE;
 using namespace std;
@@ -152,7 +150,7 @@ void FedAmb::connectionLost(
       errmsg << "Lost the connection to the RTI. Reason:'"
              << fault_msg << "' Terminating the simulation!\n";
       DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
-      exit( -1 );
+      std::exit( -1 );
    }
 }
 

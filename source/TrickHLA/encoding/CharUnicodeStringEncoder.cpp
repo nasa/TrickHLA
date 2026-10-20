@@ -30,9 +30,9 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
+#include <cstring>
 #include <sstream>
 #include <string>
-#include <string.h> // IWYU pragma: keep
 // IWYU pragma: no_include <_string.h>
 
 // Trick include files.
@@ -120,9 +120,9 @@ void CharUnicodeStringEncoder::update_after_decode()
 
       // Copy value to existing Trick variable char* memory and include
       // the null terminating character in the c_str().
-      memcpy( *static_cast< void ** >( address ), // flawfinder: ignore
-              str_data.c_str(),
-              str_data.size() + 1 );
+      std::memcpy( *static_cast< void ** >( address ), // flawfinder: ignore
+                   str_data.c_str(),
+                   str_data.size() + 1 );
    } else {
       // Need to make the Trick variable char* bigger by reallocating.
 

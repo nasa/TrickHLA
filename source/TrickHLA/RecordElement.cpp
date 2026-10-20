@@ -35,8 +35,6 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <climits>
-#include <cstddef>
-#include <ostream>
 #include <sstream>
 #include <string>
 
@@ -48,6 +46,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/RecordElement.hh"
 #include "TrickHLA/Types.hh"
+#include "TrickHLA/encoding/EncoderBase.hh"
 #include "TrickHLA/encoding/EncoderFactory.hh"
 #include "TrickHLA/encoding/FixedRecordEncoder.hh"
 
@@ -60,6 +59,7 @@ NASA, Johnson Space Center\n
 #endif
 
 // HLA include files.
+#include "RTI/encoding/DataElement.h"
 #include "RTI/encoding/HLAfixedRecord.h"
 
 #if defined( IEEE_1516_2010 )

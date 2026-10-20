@@ -32,7 +32,6 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstddef>
-#include <ostream>
 #include <sstream>
 #include <string>
 
@@ -40,6 +39,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Item.hh"
 #include "TrickHLA/ItemQueue.hh"
+#include "TrickHLA/utils/MutexLock.hh"
 #include "TrickHLA/utils/MutexProtection.hh"
 
 using namespace std;

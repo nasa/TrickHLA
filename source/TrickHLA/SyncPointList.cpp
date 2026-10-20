@@ -33,7 +33,6 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstddef>
-#include <ostream>
 #include <sstream>
 #include <string>
 
@@ -41,6 +40,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/MemoryServices.hh"
+#include "TrickHLA/MemoryServices_impl.hh" // NOLINT(misc-include-cleaner)
 #include "TrickHLA/SyncPoint.hh"
 #include "TrickHLA/SyncPointList.hh"
 #include "TrickHLA/SyncPointTimed.hh"
@@ -55,8 +55,11 @@ NASA, Johnson Space Center\n
 #   pragma GCC diagnostic ignored "-Wdeprecated"
 #endif
 
-// HLA include files.
-#include "RTI/VariableLengthData.h"
+// HLA forward declarations.
+namespace RTI1516_NAMESPACE
+{
+class VariableLengthData;
+}
 
 #if defined( IEEE_1516_2010 )
 #   pragma GCC diagnostic pop
