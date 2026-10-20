@@ -34,6 +34,7 @@ NASA, Johnson Space Center\n
 // System includes.
 #include <climits>
 #include <cstddef>
+#include <cstring>
 #include <sstream>
 #include <string>
 // IWYU pragma: no_include <_stdlib.h>
@@ -123,7 +124,7 @@ char *MemoryServices::cstrdup( std::string const &input )
 
 wchar_t *MemoryServices::cwstrdup( char const *input )
 {
-   std::size_t const len  = strlen( input ) + 1; // flawfinder: ignore
+   std::size_t const len  = std::strlen( input ) + 1; // flawfinder: ignore
    std::size_t       size = ( len <= INT_MAX ) ? (int)len : INT_MAX;
 
    /** @li Allocate the duplicate character string */
