@@ -55,28 +55,31 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64BaseTime.hh"
 
+#if defined( IEEE_1516_2010 )
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
 // This should work for both GCC and Clang.
-#if defined( IEEE_1516_2010 )
 #   pragma GCC diagnostic push
 #   pragma GCC diagnostic ignored "-Wdeprecated"
-#endif
+#endif // IEEE_1516_2025
 
 // HLA include files.
+#include "RTI/Handle.h" // IWYU pragma: keep
 #include "RTI/Typedefs.h"
+#include "RTI/VariableLengthData.h" // IWYU pragma: keep
 
-#if defined( IEEE_1516_2010 )
+#if defined( IEEE_1516_2025 )
+#   include "RTI/time/LogicalTime.h" // IWYU pragma: keep
+#else
+#   include "RTI/LogicalTime.h" // IWYU pragma: keep
 #   pragma GCC diagnostic pop
-#endif
+#endif // IEEE_1516_2025
 
 // Simple TrickHL::ExecutionControl file level declarations.
 namespace TrickHLA
 {
-
 // ExecutionControl type string.
 std::string const ExecutionControl::type = "Simple";
-
 } // namespace TrickHLA
 
 // Create the Trick ATTRIBUTES arrays needed for local allocations.

@@ -29,9 +29,6 @@ NASA, Johnson Space Center\n
 
 */
 
-// System includes.
-#include <iosfwd>
-
 // TrickHLA includes.
 #include "TrickHLA/ObjectDeletedHandler.hh"
 namespace TrickHLA
@@ -39,7 +36,6 @@ namespace TrickHLA
 class Object;
 }
 
-using namespace std;
 using namespace TrickHLA;
 
 /*!

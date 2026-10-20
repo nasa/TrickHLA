@@ -33,7 +33,9 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <climits>
+#include <cstdlib>
 #include <cstring>
+#include <cwchar>
 #include <sstream>
 #include <string>
 // IWYU pragma: no_include <_stdlib.h>
@@ -132,7 +134,7 @@ wchar_t *MemoryServices::cwstrdup( char const *input )
 
    if ( destination != nullptr ) {
       /** @li Copy the contents of the original character string to the duplicate. */
-      std::size_t const ret = mbstowcs( destination, input, size );
+      std::size_t const ret = std::mbstowcs( destination, input, size );
       if ( ret == static_cast< std::size_t >( -1 ) ) {
          // Delete the allocated memory.
          MemoryServices::delete_var( destination );
@@ -146,7 +148,7 @@ wchar_t *MemoryServices::cwstrdup( char const *input )
 
 wchar_t *MemoryServices::cwstrdup( wchar_t const *input )
 {
-   std::size_t const len  = wcslen( input ) + 1; // flawfinder: ignore
+   std::size_t const len  = std::wcslen( input ) + 1; // flawfinder: ignore
    std::size_t       size = ( len <= INT_MAX ) ? (int)len : INT_MAX;
 
    /** @li Allocate the duplicate character string */
@@ -157,7 +159,7 @@ wchar_t *MemoryServices::cwstrdup( wchar_t const *input )
       /** @li Copy the contents of the original character string to the duplicate. */
       /** @li Return the address of the new allocation.*/
       /** Protect against possible buffer overflow. */
-      wcsncpy( destination, input, size - 1 ); // flawfinder: ignore
+      std::wcsncpy( destination, input, size - 1 ); // flawfinder: ignore
       destination[size - 1] = L'\0';
    }
    return ( destination );

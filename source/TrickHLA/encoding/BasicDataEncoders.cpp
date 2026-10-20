@@ -44,6 +44,7 @@ NASA, Johnson Space Center\n
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-parameter"
+
 #if defined( IEEE_1516_2010 )
 // C++11 deprecated dynamic exception specifications for a function so we
 // need to silence the warnings coming from the IEEE 1516 declared functions.

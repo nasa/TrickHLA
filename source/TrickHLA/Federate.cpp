@@ -46,6 +46,7 @@ NASA, Johnson Space Center\n
 #include <climits>
 #include <cstdint>
 #include <cstdlib>
+#include <ios> // IWYU pragma: keep
 #include <map>
 #include <memory>
 #include <set>

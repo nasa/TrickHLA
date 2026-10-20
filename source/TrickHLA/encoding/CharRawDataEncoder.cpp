@@ -57,8 +57,9 @@ NASA, Johnson Space Center\n
 #include "RTI/VariableLengthData.h"
 #include "RTI/encoding/DataElement.h" // IWYU pragma: keep
 #include "RTI/encoding/EncodingConfig.h"
+
 #if defined( IEEE_1516_2010 )
-#   include "RTI/encoding/EncodingExceptions.h"
+#   include "RTI/encoding/EncodingExceptions.h" // NOLINT(misc-include-cleaner)
 #endif
 
 using namespace RTI1516_NAMESPACE;

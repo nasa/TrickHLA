@@ -67,7 +67,7 @@ NASA, Johnson Space Center\n
 #endif
 
 // HLA include files.
-#include "RTI/Handle.h"
+#include "RTI/Handle.h" // NOLINT(misc-include-cleaner)
 #include "RTI/Typedefs.h"
 #include "RTI/VariableLengthData.h"
 

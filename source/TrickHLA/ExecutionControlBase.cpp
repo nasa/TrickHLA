@@ -90,6 +90,7 @@ class Clock;
 // HLA include files.
 #include "RTI/Handle.h"
 #include "RTI/Typedefs.h"
+
 #if defined( IEEE_1516_2025 )
 #   include "RTI/time/LogicalTime.h"
 #else

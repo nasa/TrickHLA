@@ -34,13 +34,9 @@ NASA, Johnson Space Center\n
 #   include <chrono>
 #   include <thread>
 #else
-#   if defined( __APPLE__ )
-#      include <_time.h> // for CLOCK_MONOTONIC
-#      include <ctime>   // for timespec
-#   else
-#      include <time.h>
-#   endif // __APPLE__
-#endif    // TRICKHLA_USE_THREAD_YIELD
+#   include <time.h> // IWYU pragma: keep
+// IWYU pragma: no_include <_time.h>
+#endif               // TRICKHLA_USE_THREAD_YIELD
 
 // Trick includes.
 #include "trick/clock_proto.h"

@@ -78,11 +78,12 @@ NASA, Johnson Space Center\n
 #endif
 
 // HLA include files.
+#include "RTI/Enums.h" // IWYU pragma: keep
 #include "RTI/Exception.h"
 #include "RTI/RTIambassador.h"
 #include "RTI/Typedefs.h"
 #include "RTI/VariableLengthData.h"
-#include "RTI/time/HLAinteger64Time.h"
+#include "RTI/time/HLAinteger64Time.h" // NOLINT(misc-include-cleaner)
 
 #if defined( IEEE_1516_2010 )
 #   include "RTI/Handle.h"

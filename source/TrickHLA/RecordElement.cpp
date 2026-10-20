@@ -59,7 +59,7 @@ NASA, Johnson Space Center\n
 #endif
 
 // HLA include files.
-#include "RTI/encoding/DataElement.h"
+#include "RTI/encoding/DataElement.h" // NOLINT(misc-include-cleaner)
 #include "RTI/encoding/HLAfixedRecord.h"
 
 #if defined( IEEE_1516_2010 )

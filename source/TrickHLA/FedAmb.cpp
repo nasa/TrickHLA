@@ -72,6 +72,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/utils/MutexProtection.hh"
 #include "TrickHLA/utils/StringUtilities.hh"
 
+// Ignore unused parameter warnings.
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 
@@ -92,7 +93,13 @@ NASA, Johnson Space Center\n
 #include "RTI/Handle.h"
 #include "RTI/Typedefs.h"
 #include "RTI/VariableLengthData.h"
-#include "RTI/time/HLAinteger64Time.h"
+#include "RTI/time/HLAinteger64Time.h" // NOLINT(misc-include-cleaner)
+
+#if defined( IEEE_1516_2025 )
+#   include "RTI/time/LogicalTime.h" // IWYU pragma: keep
+#else
+#   include "RTI/LogicalTime.h" // IWYU pragma: keep
+#endif                          // IEEE_1516_2025
 
 using namespace RTI1516_NAMESPACE;
 using namespace std;

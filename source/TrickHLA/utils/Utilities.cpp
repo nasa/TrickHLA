@@ -28,13 +28,10 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
+#include <ctime>
 #include <string>
-#if defined( __APPLE__ )
-#   include <_time.h> // for CLOCK_MONOTONIC
-#   include <ctime>   // for timespec
-#else
-#   include <time.h>
-#endif // __APPLE__
+#include <time.h> // IWYU pragma: keep
+// IWYU pragma: no_include <_time.h>
 
 // Trick includes.
 #include "trick/trick_byteswap.h"
