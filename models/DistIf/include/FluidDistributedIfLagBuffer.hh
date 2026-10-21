@@ -47,8 +47,6 @@ NASA, Johnson Space Center\n
 @{
 */
 
-#include <string>
-
 #include "Distributed2WayBusFluid.hh"
 
 namespace DistIf

@@ -36,9 +36,9 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstring>
-#include <ostream>
 #include <sstream>
 #include <string>
+// IWYU pragma: no_include <_string.h>
 
 // Trick includes.
 #include "trick/MemoryManager.hh"
@@ -50,6 +50,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/InteractionHandler.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64BaseTime.hh"
+#include "TrickHLA/time/Int64Interval.hh"
 #include "TrickHLA/time/Int64Time.hh"
 #include "TrickHLA/utils/StringUtilities.hh"
 
@@ -154,7 +155,7 @@ void SineInteractionHandler::send_sine_interaction(
 #endif
               << "  name:'" << ( ( name != nullptr ) ? name : "nullptr" ) << "'" << "\n"
               << "  message:'" << ( ( message != nullptr ) ? message : "nullptr" ) << "'" << "\n"
-              << "  message length:" << ( ( message != nullptr ) ? strlen( message ) : 0 ) << "\n" // flawfinder: ignore
+              << "  message length:" << ( ( message != nullptr ) ? std::strlen( message ) : 0 ) << "\n" // flawfinder: ignore
               << "  user-supplied-tag:'" << user_supplied_tag_string << "'" << "\n"
               << "  user-supplied-tag-size:" << user_supplied_tag.size() << "\n"
               << "  hla_granted_time:" << send_time << " ("
@@ -202,7 +203,7 @@ void SineInteractionHandler::receive_interaction(
       msg << "++++RECEIVING++++\n"
           << "  name:'" << ( ( name != nullptr ) ? name : "nullptr" ) << "'" << "\n"
           << "  message:'" << ( ( message != nullptr ) ? message : "nullptr" ) << "'" << "\n"
-          << "  message length:" << ( ( message != nullptr ) ? strlen( message ) : 0 ) << "\n" // flawfinder: ignore
+          << "  message length:" << ( ( message != nullptr ) ? std::strlen( message ) : 0 ) << "\n" // flawfinder: ignore
           << "  user-supplied-tag:'" << user_tag_string << "'" << "\n"
           << "  user-supplied-tag-size:" << the_user_supplied_tag.size() << "\n"
           << "  scenario_time:" << get_scenario_time() << "\n"

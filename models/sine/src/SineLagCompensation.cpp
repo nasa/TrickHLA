@@ -32,16 +32,16 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
-#include <cstddef>
 #include <iomanip>
-#include <ostream>
 #include <sstream>
 
 // TrickHLA includes.
+#include "TrickHLA/Attribute.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/LagCompensation.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Types.hh"
+#include "TrickHLA/time/Int64Interval.hh"
 
 // sine model includes.
 #include "sine/include/SineData.hh"

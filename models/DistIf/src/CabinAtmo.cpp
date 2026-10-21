@@ -28,10 +28,15 @@ NASA, Johnson Space Center\n
 #include <algorithm>
 #include <cfloat>
 #include <cmath>
+#include <cstdlib>
 #include <iostream>
 #include <string>
 
 #include "DistIf/include/CabinAtmo.hh"
+#include "DistIf/include/CabinAtmoConserveChecks.hh"
+#include "DistIf/include/CabinAtmoMixture.hh"
+#include "DistIf/include/CabinAtmoVolume.hh"
+#include "DistIf/include/Distributed2WayBusFluid.hh"
 
 using namespace DistIf;
 

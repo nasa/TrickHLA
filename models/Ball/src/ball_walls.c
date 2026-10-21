@@ -27,9 +27,6 @@ NASA, Johnson Space Center\n
 
 */
 
-/* System include files. */
-#include <stdio.h>
-
 /* Trick include files. */
 #include "trick/integrator_c_intf.h"
 #include "trick/message_proto.h"

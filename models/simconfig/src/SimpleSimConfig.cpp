@@ -35,10 +35,7 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
-#include <iostream>
-#include <ostream>
 #include <sstream>
-#include <stdlib.h>
 #include <string>
 
 // Trick include files.
@@ -52,6 +49,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64BaseTime.hh"
+#include "TrickHLA/time/Int64Time.hh"
 #include "TrickHLA/utils/StringUtilities.hh"
 
 // Model include files.

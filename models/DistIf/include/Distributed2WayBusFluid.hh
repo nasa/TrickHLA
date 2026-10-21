@@ -37,6 +37,8 @@ NASA, Johnson Space Center\n
 @{
 */
 
+#include <string>
+
 #include "Distributed2WayBusBase.hh"
 
 namespace DistIf

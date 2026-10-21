@@ -29,16 +29,16 @@ NASA, Johnson Space Center\n
 
 // System include files.
 #include <cmath>
-#include <iostream>
 #include <sstream>
+#include <string>
 
 // TrickHLA include files.
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Types.hh"
 
 // SpaceFOM includes.
-#include "SpaceFOM/PhysicalEntityBase.hh"
 #include "SpaceFOM/PhysicalEntityLagCompBase.hh"
+#include "SpaceFOM/QuaternionData.hh"
 
 // SAIntegrator includes.
 #include "SAIntegrator/include/PhysicalEntityLagCompSA2.hh"

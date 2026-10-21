@@ -42,10 +42,13 @@ NASA, Johnson Space Center\n
 #include <string>
 
 // TrickHLA include files.
-#include "TrickHLA/Attribute.hh"
 #include "TrickHLA/LagCompensation.hh"
-#include "TrickHLA/Object.hh"
-#include "TrickHLA/Types.hh"
+#include "TrickHLA/Object.hh" // IWYU pragma: keep
+
+namespace TrickHLA
+{
+class Attribute;
+}
 
 // Model include files.
 #include "SineData.hh"

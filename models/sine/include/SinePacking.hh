@@ -37,9 +37,13 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_MODEL_SINE_PACKING_HH
 
 // TrickHLA include files.
-#include "TrickHLA/Attribute.hh"
-#include "TrickHLA/Object.hh"
+#include "TrickHLA/Object.hh" // IWYU pragma: keep
 #include "TrickHLA/Packing.hh"
+
+namespace TrickHLA
+{
+class Attribute;
+}
 
 // Model include files.
 #include "SineData.hh"

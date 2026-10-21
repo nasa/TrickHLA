@@ -33,9 +33,8 @@ NASA, Johnson Space Center\n
 */
 
 /* System include files. */
-#include <math.h>
-
-/* Trick include files. */
+#include <math.h> // IWYU pragma: keep
+// IWYU pragma: no_include <cmath>
 
 /* Model include files. */
 #include "Ball/include/ball_proto.h"

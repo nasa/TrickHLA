@@ -29,10 +29,10 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
-#include <cmath>
-#include <cstdlib>
-#include <math.h>
+#include <math.h> // IWYU pragma: keep
 #include <sstream>
+#include <string>
+// IWYU pragma: no_include <cmath>
 
 // Trick include files.
 #include "trick/MemoryManager.hh"

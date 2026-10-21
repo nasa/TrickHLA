@@ -45,7 +45,13 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/LagCompensationIntegBase.hh"
 
 // SpaceFOM include files.
-#include "SpaceFOM/PhysicalEntityLagCompInteg.hh"
+#include "SpaceFOM/PhysicalEntityLagCompBase.hh"
+#include "SpaceFOM/SpaceTimeCoordinateData.hh"
+
+namespace SpaceFOM
+{
+class PhysicalEntityBase;
+}
 
 namespace SpaceFOM
 {

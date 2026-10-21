@@ -32,7 +32,7 @@ NASA, Johnson Space Center\n
 #define MODELS_TRICKHLA_BALL_WALLS_H_
 
 /* System include files. */
-#include <stdbool.h>
+#include <stdbool.h> // IWYU pragma: keep
 
 /** @struct BallWalls
     @brief Ball walls parameters

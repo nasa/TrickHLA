@@ -54,38 +54,39 @@ NASA, Johnson Space Center\n
 // System includes.
 #include <string>
 
-// Trick includes.
-#include "trick/MemoryManager.hh"
-#include "trick/exec_proto.h"
-
 // TrickHLA includes.
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Types.hh"
 
 // SpaceFOM includes.
-#include "SpaceFOM/SpaceTimeCoordinateData.hh"
+namespace SpaceFOM
+{
+class SpaceTimeCoordinateData;
+}
 
-#include "BoolData.hh"
-#include "CharData.hh"
-#include "Enum16Data.hh"
-#include "Enum32Data.hh"
-#include "Enum64Data.hh"
-#include "Enum8Data.hh"
-#include "Float32Data.hh"
-#include "Float64Data.hh"
-#include "Int16Data.hh"
-#include "Int32Data.hh"
-#include "Int64Data.hh"
-#include "LongData.hh"
-#include "StringData.hh"
-#include "UInt16Data.hh"
-#include "UInt32Data.hh"
-#include "UInt64Data.hh"
-#include "ULongData.hh"
-#include "WCharData.hh"
-#include "WStringData.hh"
-
-#include "../../FixedRecord/include/FixedRecData.hh"
+namespace TrickHLAModel
+{
+class BoolData;
+class CharData;
+class Enum16Data;
+class Enum32Data;
+class Enum64Data;
+class Enum8Data;
+class FixedRecData;
+class Float32Data;
+class Float64Data;
+class Int16Data;
+class Int32Data;
+class Int64Data;
+class LongData;
+class StringData;
+class UInt16Data;
+class UInt32Data;
+class UInt64Data;
+class ULongData;
+class WCharData;
+class WStringData;
+} // namespace TrickHLAModel
 
 namespace TrickHLAModel
 {

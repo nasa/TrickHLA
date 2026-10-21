@@ -30,9 +30,15 @@ NASA, Johnson Space Center\n
 
 */
 
+// System includes.
+#include <iosfwd> // NOLINT(misc-include-cleaner)
+
 // Trick includes.
 #include "trick/Integrator.hh"
 #include "trick/vector_macros.h"
+
+// SpaceFOM includes.
+#include "SpaceFOM/SpaceTimeCoordinateData.hh"
 
 // Model includes.
 #include "FrameDynamics/include/FrameDynamics.hh"

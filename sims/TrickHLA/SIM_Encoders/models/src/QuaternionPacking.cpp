@@ -32,11 +32,10 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
+#include <cmath>
 #include <cstdlib>
-#include <cstring>
 #include <limits>
-#include <math.h>
-#include <ostream>
+#include <ostream> // IWYU pragma: keep
 #include <sstream>
 #include <string>
 
@@ -47,7 +46,7 @@ NASA, Johnson Space Center\n
 
 // TrickHLA model include files.
 #include "TrickHLA/Attribute.hh"
-#include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
+#include "TrickHLA/CompileConfig.hh" // IWYU pragma: keep
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Packing.hh"

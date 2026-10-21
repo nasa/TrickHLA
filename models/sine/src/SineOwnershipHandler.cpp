@@ -29,11 +29,10 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
-#include <stdlib.h>
 #include <string>
 
 // TrickHLA include files.
-#include "TrickHLA/Object.hh"
+#include "TrickHLA/Object.hh" // IWYU pragma: keep
 #include "TrickHLA/OwnershipHandler.hh"
 #include "TrickHLA/Types.hh"
 

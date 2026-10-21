@@ -36,6 +36,7 @@ NASA, Johnson Space Center\n
 // SpaceFOM includes.
 #include "SpaceFOM/DynamicalEntityData.hh"
 #include "SpaceFOM/PhysicalEntityData.hh"
+#include "SpaceFOM/QuaternionData.hh"
 
 namespace SpaceFOM
 {

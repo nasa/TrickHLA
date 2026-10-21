@@ -30,9 +30,9 @@ NASA, Johnson Space Center\n
 // System includes.
 #include <cmath>
 #include <sstream>
+#include <string>
 
 // SpaceFOM includes.
-#include "SpaceFOM/PhysicalEntityBase.hh"
 #include "SpaceFOM/PhysicalEntityLagCompBase.hh"
 #include "SpaceFOM/QuaternionData.hh"
 #include "SpaceFOM/SpaceTimeCoordinateData.hh"

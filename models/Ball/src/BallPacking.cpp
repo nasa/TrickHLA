@@ -31,12 +31,11 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
-#include <cstdlib>
 #include <cstring>
 #include <iostream>
-#include <math.h>
 #include <sstream>
 #include <string>
+// IWYU pragma: no_include <_string.h>
 
 // Trick include files.
 #include "trick/MemoryManager.hh"
@@ -376,7 +375,7 @@ void BallPacking::pack_from_working_data()
       if ( name != nullptr ) {
 
          // Compare names.
-         if ( strcmp( ball_state->name, name ) ) {
+         if ( std::strcmp( ball_state->name, name ) ) {
             if ( trick_MM->delete_var( static_cast< void * >( name ) ) ) {
                DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Failed to delete Trick Memory for 'pe_packing_data.name'\n", MSG_WARNING );
             }
@@ -438,7 +437,7 @@ void BallPacking::unpack_into_working_data()
    // Set the entity name.
    if ( name_attr->is_received() ) {
       if ( ball_state->name != nullptr ) {
-         if ( !strcmp( ball_state->name, name ) ) {
+         if ( !std::strcmp( ball_state->name, name ) ) {
             if ( trick_MM->delete_var( static_cast< void * >( ball_state->name ) ) ) {
                DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Failed to delete Trick Memory for 'ball_state->name'\n", MSG_WARNING );
             }

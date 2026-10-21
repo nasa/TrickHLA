@@ -31,12 +31,11 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
-#include <cstddef>
 #include <iomanip>
-#include <math.h>
-#include <ostream>
+#include <math.h> // IWYU pragma: keep
 #include <sstream>
 #include <string>
+// IWYU pragma: no_include <cmath>
 
 // Sine model includes.
 #include "sine/include/SineData.hh"
@@ -47,6 +46,7 @@ NASA, Johnson Space Center\n
 #include "trick/message_type.h"
 
 // TrickHLA includes.
+#include "TrickHLA/Attribute.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/Types.hh"

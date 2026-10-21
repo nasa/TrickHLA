@@ -28,9 +28,10 @@ NASA, Johnson Space Center\n
 // System include files.
 #include <cctype>
 #include <cstring>
-#include <ostream>
 #include <sstream>
 #include <string>
+// IWYU pragma: no_include <_ctype.h>
+// IWYU pragma: no_include <_string.h>
 
 // Trick include files.
 #include "trick/memorymanager_c_intf.h"
@@ -133,8 +134,8 @@ bool CharData::compare(
       }
    }
 
-   size_t const data1_ptr_char_size = strlen( this->ptr_char ); // flawfinder: ignore
-   size_t const data2_ptr_char_size = strlen( data.ptr_char );  // flawfinder: ignore
+   size_t const data1_ptr_char_size = std::strlen( this->ptr_char ); // flawfinder: ignore
+   size_t const data2_ptr_char_size = std::strlen( data.ptr_char );  // flawfinder: ignore
    size_t const min_ptr_char_size   = ( data1_ptr_char_size <= data2_ptr_char_size )
                                          ? data1_ptr_char_size
                                          : data2_ptr_char_size;

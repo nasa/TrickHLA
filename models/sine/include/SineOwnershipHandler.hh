@@ -35,7 +35,7 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_MODEL_SINE_OWNERSHIP_HANDLER_HH
 
 // TrickHLA include files.
-#include "TrickHLA/Object.hh"
+#include "TrickHLA/Object.hh" // IWYU pragma: keep
 #include "TrickHLA/OwnershipHandler.hh"
 
 namespace TrickHLAModel

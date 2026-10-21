@@ -39,10 +39,14 @@ NASA, Johnson Space Center\n
 #include <iostream>
 
 // TrickHLA include files.
-#include "TrickHLA/Attribute.hh"
-#include "TrickHLA/Object.hh"
 #include "TrickHLA/OpaqueBuffer.hh"
 #include "TrickHLA/Packing.hh"
+
+namespace TrickHLA
+{
+class Attribute;
+class Object;
+} // namespace TrickHLA
 
 // Walls model include files.
 #include "Ball/include/ball_walls.h"

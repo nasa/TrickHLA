@@ -34,6 +34,7 @@ NASA, Johnson Space Center\n
 #define SPACEFOM_FRAME_DYNAMICS_HH
 
 // SpaceFOM includes.
+#include "SpaceFOM/QuaternionData.hh"
 #include "SpaceFOM/RefFrameData.hh"
 
 namespace SpaceFOM

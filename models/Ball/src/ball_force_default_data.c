@@ -32,8 +32,6 @@ NASA, Johnson Space Center\n
 
 */
 
-/* System include files. */
-
 /* Model include files. */
 #include "Ball/include/ball_force.h"
 

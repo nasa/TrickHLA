@@ -36,7 +36,6 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_MODLE_SINE_OBJECT_DELETED_HH
 
 // Trick include files.
-#include "TrickHLA/Object.hh"
 #include "TrickHLA/ObjectDeletedHandler.hh"
 
 namespace TrickHLAModel

@@ -38,7 +38,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/InteractionHandler.hh"
 
 // HLA includes.
-#include "RTI/VariableLengthData.h"
+#include "RTI/VariableLengthData.h" // IWYU pragma: keep
 
 #define SINE_MSG_SIZE 2
 

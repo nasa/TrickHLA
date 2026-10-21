@@ -38,10 +38,9 @@ NASA, Johnson Space Center\n
 
 // System include files.
 #include <iostream>
-#include <string>
 
 // TrickHLA include files.
-#include "TrickHLA/CompileConfig.hh"
+#include "TrickHLA/CompileConfig.hh" // IWYU pragma: keep
 #include "TrickHLA/Packing.hh"
 
 // SpaceFOM include files.

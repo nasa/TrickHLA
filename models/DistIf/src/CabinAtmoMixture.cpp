@@ -27,6 +27,7 @@ NASA, Johnson Space Center\n
 #include <algorithm>
 #include <cfloat>
 #include <cmath>
+#include <cstdlib>
 #include <iostream>
 
 #include "DistIf/include/CabinAtmoMixture.hh"

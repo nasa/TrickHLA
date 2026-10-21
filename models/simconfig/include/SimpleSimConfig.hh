@@ -37,8 +37,12 @@ NASA, Johnson Space Center\n
 #include <cstdint>
 
 // TrickHLA include files.
-#include "TrickHLA/KnownFederate.hh"
 #include "TrickHLA/Packing.hh"
+
+namespace TrickHLA
+{
+class KnownFederate;
+}
 
 namespace TrickHLAModel
 {

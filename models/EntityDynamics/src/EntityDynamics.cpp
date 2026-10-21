@@ -30,6 +30,9 @@ NASA, Johnson Space Center\n
 
 */
 
+// System inlcudes.
+#include <string>
+
 // Trick includes.
 #include "trick/Integrator.hh"
 #include "trick/matrix_macros.h"
@@ -39,6 +42,9 @@ NASA, Johnson Space Center\n
 
 // TrickHLA includes.
 #include "TrickHLA/DebugHandler.hh"
+
+// SpaceFOM includes.
+#include "SpaceFOM/SpaceTimeCoordinateData.hh"
 
 // Model includes.
 #include "EntityDynamics/include/EntityDynamics.hh"

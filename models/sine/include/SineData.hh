@@ -33,10 +33,6 @@ NASA, Johnson Space Center\n
 #ifndef TRICKHLA_MODEL_SINE_DATA_HH
 #define TRICKHLA_MODEL_SINE_DATA_HH
 
-// Trick includes.
-#include "trick/MemoryManager.hh"
-#include "trick/exec_proto.h"
-
 namespace TrickHLAModel
 {
 

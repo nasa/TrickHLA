@@ -30,8 +30,6 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
-#include <cstddef>
-#include <cstdlib>
 #include <sstream>
 #include <string>
 
@@ -39,7 +37,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Attribute.hh"
 #include "TrickHLA/Conditional.hh"
 #include "TrickHLA/DebugHandler.hh"
-#include "TrickHLA/Object.hh"
+#include "TrickHLA/Object.hh" // IWYU pragma: keep
 #include "TrickHLA/Types.hh"
 
 // Model include files.

@@ -41,9 +41,11 @@ NASA, Johnson Space Center\n
 @{
 */
 
+#include <algorithm>
 #include <string>
 
 #include "CabinAtmoConserveChecks.hh"
+#include "CabinAtmoMixture.hh"
 #include "CabinAtmoVolume.hh"
 
 namespace DistIf

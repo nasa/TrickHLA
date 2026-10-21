@@ -29,12 +29,14 @@ NASA, Johnson Space Center\n
 #include <algorithm>
 #include <cfloat>
 #include <cmath>
+#include <cstdlib>
 #include <iostream>
 #include <string>
 
 #include "DistIf/include/CabinAtmoMixture.hh"
 #include "DistIf/include/CabinAtmoVolume.hh"
 #include "DistIf/include/Distributed2WayBusBase.hh"
+#include "DistIf/include/Distributed2WayBusFluid.hh"
 
 // Trick include for TMM
 #include "trick/memorymanager_c_intf.h"

@@ -55,7 +55,6 @@ NASA, Johnson Space Center\n
 
 // System include files.
 #include <cstddef>
-#include <ostream>
 #include <sstream>
 #include <string>
 
@@ -75,6 +74,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/utils/StringUtilities.hh"
 
 // SpaceFOM includes.
+#include "SpaceFOM/QuaternionData.hh"
 #include "SpaceFOM/SpaceTimeCoordinateConfig.hh"
 #include "SpaceFOM/SpaceTimeCoordinateData.hh"
 
@@ -111,9 +111,7 @@ NASA, Johnson Space Center\n
 
 // HLA include files.
 #include "RTI/VariableLengthData.h"
-#include "RTI/encoding/BasicDataElements.h"
 #include "RTI/encoding/DataElement.h"
-#include "RTI/encoding/HLAfixedArray.h"
 #include "RTI/encoding/HLAfixedRecord.h"
 
 #if defined( IEEE_1516_2010 )
