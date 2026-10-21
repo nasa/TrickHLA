@@ -29,11 +29,13 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
-#include <cstddef>
 #include <ostream>
+#include <string>
 
 // SpaceFOM includes.
 #include "SpaceFOM/PhysicalEntityData.hh"
+#include "SpaceFOM/QuaternionData.hh"
+#include "SpaceFOM/SpaceTimeCoordinateData.hh"
 
 using namespace std;
 using namespace SpaceFOM;

@@ -48,9 +48,9 @@ NASA, Johnson Space Center\n
 #include <cstdlib>
 #include <cstring>
 #include <limits>
-#include <ostream>
 #include <sstream>
 #include <string>
+// IWYU pragma: no_include <_string.h>
 
 // Trick includes.
 #include "trick/Executive.hh"
@@ -65,18 +65,26 @@ NASA, Johnson Space Center\n
 // TrickHLA includes.
 #include "TrickHLA/Attribute.hh"
 #include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/ExecutionConfigurationBase.hh"
 #include "TrickHLA/ExecutionControlBase.hh"
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/MemoryServices.hh"
-#include "TrickHLA/Object.hh"
-#include "TrickHLA/Packing.hh"
+#include "TrickHLA/MemoryServices_impl.hh" // NOLINT(misc-include-cleaner)
+#include "TrickHLA/Packing.hh"             // IWYU pragma: keep
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/CTETimelineBase.hh"
 #include "TrickHLA/time/Int64BaseTime.hh"
 #include "TrickHLA/time/ScenarioTimeline.hh"
 #include "TrickHLA/utils/SleepTimeout.hh"
 #include "TrickHLA/utils/StringUtilities.hh"
+
+namespace TrickHLA
+{
+class LagCompensation;
+class ObjectDeletedHandler;
+class OwnershipHandler;
+} // namespace TrickHLA
 
 using namespace RTI1516_NAMESPACE;
 using namespace std;

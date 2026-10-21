@@ -30,15 +30,16 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
-#include <cstddef>
+#include <string>
 
 // Trick includes.
 #include "trick/message_type.h"
 
 // TrickHLA includes.
-#include "TrickHLA/Attribute.hh"
-#include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
-#include "TrickHLA/Object.hh"
+#include "TrickHLA/Attribute.hh"     // IWYU pragma: keep
+#include "TrickHLA/CompileConfig.hh" // IWYU pragma: keep
+#include "TrickHLA/DebugHandler.hh"
+#include "TrickHLA/Object.hh" // IWYU pragma: keep
 #if defined( TRICKHLA_ERROR_IF_NOT_INITIALIZED )
 #   include "TrickHLA/DebugHandler.hh"
 #endif
@@ -46,6 +47,7 @@ NASA, Johnson Space Center\n
 // SpaceFOM includes.
 #include "SpaceFOM/DynamicalEntityBase.hh"
 #include "SpaceFOM/DynamicalEntityConditionalBase.hh"
+#include "SpaceFOM/DynamicalEntityData.hh"
 #include "SpaceFOM/PhysicalEntityConditionalBase.hh"
 
 using namespace std;

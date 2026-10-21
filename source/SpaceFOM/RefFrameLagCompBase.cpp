@@ -30,8 +30,8 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
-#include <cstddef>
 #include <ostream>
+#include <string>
 
 // Trick includes.
 #include "trick/reference_frame.h"
@@ -39,12 +39,14 @@ NASA, Johnson Space Center\n
 
 // TrickHLA includes.
 #include "TrickHLA/LagCompensation.hh"
-#include "TrickHLA/Object.hh"
+#include "TrickHLA/Object.hh" // IWYU pragma: keep
 
 // SpaceFOM includes.
+#include "SpaceFOM/QuaternionData.hh"
 #include "SpaceFOM/RefFrameBase.hh"
 #include "SpaceFOM/RefFrameData.hh"
 #include "SpaceFOM/RefFrameLagCompBase.hh"
+#include "SpaceFOM/SpaceTimeCoordinateData.hh"
 
 using namespace std;
 using namespace TrickHLA;

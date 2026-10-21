@@ -32,8 +32,8 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
-#include <cstdlib>
 #include <sstream>
+#include <string>
 
 // Trick includes.
 #include "SpaceFOM/DynamicalEntity.hh"

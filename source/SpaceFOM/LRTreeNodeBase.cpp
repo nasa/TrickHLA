@@ -41,8 +41,6 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
-#include <cstddef>
-#include <cstring>
 #include <ostream>
 #include <string>
 

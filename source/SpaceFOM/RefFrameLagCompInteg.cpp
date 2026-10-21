@@ -31,22 +31,26 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
-#include <ostream>
 #include <sstream>
+#include <string>
 
 // Trick includes.
 #include "trick/message_type.h"
 
 // SpaceFOM includes.
+#include "SpaceFOM/QuaternionData.hh"
 #include "SpaceFOM/RefFrameBase.hh"
+#include "SpaceFOM/RefFrameLagCompBase.hh"
 #include "SpaceFOM/RefFrameLagCompInteg.hh"
+#include "SpaceFOM/SpaceTimeCoordinateData.hh"
 
 // Trick includes.
 #include "TrickHLA/Attribute.hh"
-#include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
+#include "TrickHLA/CompileConfig.hh" // IWYU pragma: keep
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/LagCompensationInteg.hh"
 #include "TrickHLA/Types.hh"
+#include "TrickHLA/time/Int64Interval.hh"
 
 using namespace std;
 using namespace TrickHLA;

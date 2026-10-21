@@ -28,8 +28,7 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
-#include <cstddef>
-#include <ostream>
+#include <ostream> // IWYU pragma: keep
 #include <sstream>
 #include <string>
 
@@ -41,6 +40,7 @@ NASA, Johnson Space Center\n
 #include "SpaceFOM/PhysicalEntityData.hh"
 #include "SpaceFOM/QuaternionData.hh"
 #include "SpaceFOM/RefFrameBase.hh"
+#include "SpaceFOM/RefFrameData.hh"
 #include "SpaceFOM/RefFrameTree.hh"
 #include "SpaceFOM/RelStateBase.hh"
 #include "SpaceFOM/SpaceTimeCoordinateData.hh"

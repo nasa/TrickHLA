@@ -44,16 +44,16 @@ NASA, Johnson Space Center\n
 
 */
 
-// System includes.
+// System includes
+#include <cmath>
 #include <cstdint>
 #include <cstdlib>
 #include <cstring>
 #include <iomanip>
 #include <limits>
-#include <math.h>
-#include <ostream>
 #include <sstream>
 #include <string>
+// IWYU pragma: no_include <_string.h>
 
 // Trick includes.
 #include "trick/Clock.hh"
@@ -72,7 +72,9 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Interaction.hh"
 #include "TrickHLA/InteractionItem.hh"
+#include "TrickHLA/InteractionServices.hh"
 #include "TrickHLA/MemoryServices.hh"
+#include "TrickHLA/MemoryServices_impl.hh" // NOLINT(misc-include-cleaner)
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/ObjectServices.hh"
 #include "TrickHLA/Parameter.hh"
@@ -84,6 +86,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/time/Int64Time.hh"
 #include "TrickHLA/time/ScenarioTimeline.hh"
 #include "TrickHLA/time/SimTimeline.hh"
+#include "TrickHLA/time/TimeManagementServices.hh"
 #include "TrickHLA/utils/SleepTimeout.hh"
 #include "TrickHLA/utils/StringUtilities.hh"
 #include "TrickHLA/utils/Utilities.hh"
@@ -91,6 +94,8 @@ NASA, Johnson Space Center\n
 // SpaceFOM includes.
 #include "SpaceFOM/ExecutionConfiguration.hh"
 #include "SpaceFOM/ExecutionControl.hh"
+#include "SpaceFOM/MTRInteractionHandler.hh"
+#include "SpaceFOM/RefFrameBase.hh"
 #include "SpaceFOM/Types.hh"
 
 // C++11 deprecated dynamic exception specifications for a function so we need
@@ -104,12 +109,12 @@ NASA, Johnson Space Center\n
 // HLA include files.
 #include "RTI/Handle.h"
 #include "RTI/Typedefs.h"
-#include "RTI/VariableLengthData.h"
+#include "RTI/VariableLengthData.h" // IWYU pragma: keep
 #if defined( IEEE_1516_2025 )
-#   include "RTI/time/LogicalTime.h"
+#   include "RTI/time/LogicalTime.h" // IWYU pragma: keep
 #else
-#   include "RTI/LogicalTime.h"
-#endif // IEEE_1516_2025
+#   include "RTI/LogicalTime.h" // IWYU pragma: keep
+#endif                          // IEEE_1516_2025
 
 #if defined( IEEE_1516_2010 )
 #   pragma GCC diagnostic pop

@@ -28,8 +28,11 @@ NASA, Johnson Space Center\n
 
 */
 
+// System includes.
+#include <iosfwd> // NOLINT(misc-include-cleaner)
+
 // TrickHLA includes.
-#include "TrickHLA/Object.hh"
+#include "TrickHLA/Object.hh" // IWYU pragma: keep
 #include "TrickHLA/OwnershipHandler.hh"
 
 // SpaceFOM includes.

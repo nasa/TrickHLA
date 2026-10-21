@@ -46,9 +46,6 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstdint>
-#include <cstdlib>
-#include <cstring>
-#include <ostream>
 #include <sstream>
 #include <string>
 
@@ -67,10 +64,11 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Federate.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/MemoryServices.hh"
-#include "TrickHLA/Object.hh"
+#include "TrickHLA/MemoryServices_impl.hh" // NOLINT(misc-include-cleaner)
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/CTETimelineBase.hh"
 #include "TrickHLA/time/Int64BaseTime.hh"
+#include "TrickHLA/time/TimeManagementServices.hh"
 #include "TrickHLA/utils/StringUtilities.hh"
 
 using namespace RTI1516_NAMESPACE;

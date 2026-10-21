@@ -29,6 +29,7 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <sstream>
+#include <string>
 
 // SpaceFOM includes.
 #include "SpaceFOM/DynamicalEntityDeleted.hh"

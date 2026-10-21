@@ -36,10 +36,9 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cstdlib>
-#include <cstring>
-#include <ostream>
 #include <sstream>
 #include <string>
+// IWYU pragma: no_include <_stdlib.h>
 
 // SpaceFOM includes.
 #include "SpaceFOM/ExecutionControl.hh"

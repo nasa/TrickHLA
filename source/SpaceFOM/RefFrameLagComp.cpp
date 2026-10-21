@@ -30,7 +30,7 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
-#include <cstddef>
+#include <string>
 
 // Trick includes.
 #include "trick/Integrator.hh"
@@ -38,14 +38,19 @@ NASA, Johnson Space Center\n
 
 // SpaceFOM includes.
 #include "SpaceFOM/QuaternionData.hh"
-#include "SpaceFOM/RefFrameBase.hh"
 #include "SpaceFOM/RefFrameLagComp.hh"
 #include "SpaceFOM/RefFrameLagCompInteg.hh"
 #include "SpaceFOM/SpaceTimeCoordinateData.hh"
 
+namespace SpaceFOM
+{
+class RefFrameBase;
+}
+
 // TrickHLA includes.
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/MemoryServices.hh"
+#include "TrickHLA/MemoryServices_impl.hh" // NOLINT(misc-include-cleaner)
 
 using namespace std;
 using namespace TrickHLA;

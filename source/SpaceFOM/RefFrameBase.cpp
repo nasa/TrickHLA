@@ -36,8 +36,7 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
-#include <cstddef>
-#include <ostream>
+#include <ostream> // IWYU pragma: keep
 #include <sstream>
 #include <string>
 
@@ -46,14 +45,17 @@ NASA, Johnson Space Center\n
 
 // TrickHLA includes.
 #include "TrickHLA/Attribute.hh"
-#include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
+#include "TrickHLA/CompileConfig.hh" // IWYU pragma: keep
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/MemoryServices.hh"
+#include "TrickHLA/MemoryServices_impl.hh" // NOLINT(misc-include-cleaner)
 #include "TrickHLA/Object.hh"
+#include "TrickHLA/Packing.hh"
 #include "TrickHLA/Types.hh"
 
 // SpaceFOM includes.
 #include "SpaceFOM/RefFrameBase.hh"
+#include "SpaceFOM/RefFrameData.hh"
 #include "SpaceFOM/SpaceTimeCoordinateConfig.hh"
 #include "SpaceFOM/SpaceTimeCoordinateData.hh"
 

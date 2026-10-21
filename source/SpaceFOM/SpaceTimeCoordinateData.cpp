@@ -30,13 +30,13 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
-#include <cstddef>
 #include <ostream>
 
 // Trick includes.
 #include "trick/vector_macros.h"
 
 // SpaceFOM includes.
+#include "SpaceFOM/QuaternionData.hh"
 #include "SpaceFOM/SpaceTimeCoordinateData.hh"
 
 using namespace std;

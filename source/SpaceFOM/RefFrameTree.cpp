@@ -30,11 +30,9 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
-#include <cstddef>
-#include <ostream>
+#include <ostream> // IWYU pragma: keep
 #include <sstream>
 #include <string>
-#include <vector>
 
 // Trick includes.
 #include "trick/message_type.h"

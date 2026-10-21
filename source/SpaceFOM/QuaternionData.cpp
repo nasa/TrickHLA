@@ -30,8 +30,6 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <cmath>
-#include <cstddef>
-#include <math.h>
 #include <ostream>
 
 // Trick includes.

@@ -26,15 +26,13 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
-#include <cstring>
 #include <string>
-
-// Trick includes.
 
 // TrickHLA includes.
 #include "TrickHLA/Attribute.hh"
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/MemoryServices.hh"
+#include "TrickHLA/MemoryServices_impl.hh" // NOLINT(misc-include-cleaner)
 #include "TrickHLA/RecordElement.hh"
 #include "TrickHLA/Types.hh"
 

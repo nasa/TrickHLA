@@ -44,11 +44,10 @@ NASA, Johnson Space Center\n
 // System includes.
 #include <cstddef>
 #include <map>
-#include <ostream>
+#include <ostream> // IWYU pragma: keep
 #include <sstream>
 #include <string>
 #include <utility>
-#include <vector>
 
 // Trick includes.
 #include "trick/message_type.h"

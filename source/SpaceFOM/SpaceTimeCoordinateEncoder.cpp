@@ -23,7 +23,7 @@ NASA, Johnson Space Center\n
 @revs_end
 */
 
-#include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
+#include "TrickHLA/CompileConfig.hh" // IWYU pragma: keep
 #if defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
 
 // System includes.
@@ -36,7 +36,6 @@ NASA, Johnson Space Center\n
 #   include "trick/message_type.h"
 
 // TrickHLA includes.
-#   include "TrickHLA/CompileConfig.hh" // NOLINT(misc-include-cleaner)
 #   include "TrickHLA/DebugHandler.hh"
 #   include "TrickHLA/HLAStandardSupport.hh"
 #   include "TrickHLA/utils/StringUtilities.hh"

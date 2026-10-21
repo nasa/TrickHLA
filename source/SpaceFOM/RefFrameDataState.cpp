@@ -29,8 +29,8 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
-#include <cstddef>
 #include <ostream>
+#include <string>
 
 // Trick includes.
 #include "trick/message_type.h"
@@ -42,6 +42,7 @@ NASA, Johnson Space Center\n
 // SpaceFOM includes.
 #include "SpaceFOM/QuaternionData.hh"
 #include "SpaceFOM/RefFrameDataState.hh"
+#include "SpaceFOM/SpaceTimeCoordinateData.hh"
 
 using namespace std;
 using namespace SpaceFOM;

@@ -31,10 +31,8 @@ NASA, Johnson Space Center\n
 */
 
 // System includes.
-#include <cstddef>
-#include <cstdlib>
-#include <cstring>
 #include <sstream>
+#include <string>
 
 // SpaceFOM includes.
 #include "SpaceFOM/PhysicalInterface.hh"

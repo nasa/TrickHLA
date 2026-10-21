@@ -29,6 +29,7 @@ NASA, Johnson Space Center\n
 
 // System includes.
 #include <sstream>
+#include <string>
 
 // SpaceFOM includes.
 #include "SpaceFOM/RefFrameDeleted.hh"
@@ -36,6 +37,7 @@ NASA, Johnson Space Center\n
 // TrickHLA includes.
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Object.hh"
+#include "TrickHLA/ObjectDeletedHandler.hh"
 
 using namespace std;
 using namespace TrickHLA;
