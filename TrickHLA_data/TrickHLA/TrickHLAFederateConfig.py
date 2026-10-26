@@ -447,7 +447,7 @@ class TrickHLAFederateConfig( object ):
 
       # Turn on all the HLA sim objects associated with this HLA federate.
       for sim_object in self.sim_objects:
-         trick.exec_set_sim_object_onoff( sim_object, True )
+         trick.exec_set_sim_object_onoff( sim_object.name, True )
 
       return
 
@@ -458,7 +458,7 @@ class TrickHLAFederateConfig( object ):
 
       # Turn off all the HLA sim objects associated with this HLA federate.
       for sim_object in self.sim_objects:
-         trick.exec_set_sim_object_onoff( sim_object, False )
+         trick.exec_set_sim_object_onoff( sim_object.name, False )
 
       return
 
