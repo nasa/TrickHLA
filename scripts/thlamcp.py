@@ -95,6 +95,8 @@ class MasterControl( Frame ):
    prev_sim_time = -0.1
    scenario_time = 0.0
    hla_logical_time = 0
+   # Would like this to be boolean but Trick does not like that.
+   master_role = 0
 
    # The Connect button activation function
    def connectToSim( self ):
@@ -182,6 +184,19 @@ class MasterControl( Frame ):
 
       # Update the variable server information.
       self.updateVariableServerInfo()
+
+      # This interface is only designed to work with a Master Federate.
+      # If this isn't a Master federate then disconnect from the sim.
+      if ( self.master_role ):
+         print( 'MasterControl::connectToSim:', 
+                inspect.currentframe().f_lineno,
+                ': This is a Master federate!' )
+      else:
+         print( 'MasterControl::connectToSim:', 
+                inspect.currentframe().f_lineno,
+                ': This is NOT a Master federate!' )
+         self.disconnectFromSim()
+         return
 
       # Let users know how we connected.
       print( 'MasterControl::connectToSim:',
@@ -303,7 +318,7 @@ class MasterControl( Frame ):
       
       # Get the host and port information from the variable server.
       try:
-         self.variable_server.get_values( self.hostname_vs_var, self.port_vs_var)
+         self.variable_server.get_values( self.hostname_vs_var, self.port_vs_var, self.master_role_vs_var )
       except VariableServerError as vse:
          root.bell()
          print( 'MasterControl::updateVariableServerInfo: ',
@@ -330,7 +345,7 @@ class MasterControl( Frame ):
          root.bell()
          print( 'MasterControl::updateVariableServerInfo: ',
                 inspect.currentframe().f_lineno, ': ', e )
-      
+
       # Compare specified host name to Trick VS host name.
       if ( self.hostname_vs_var.value != self.hostname ) :
          self.hostname = self.hostname_vs_var.value
@@ -343,6 +358,9 @@ class MasterControl( Frame ):
       elif ( self.port != self.port_vs_var.value ):
          self.port = self.port_vs_var.value
          self.port_var.set( str(self.port) )
+
+      # Get the Master role state.
+      self.master_role = self.master_role_vs_var.value
       
       return
 
@@ -590,6 +608,11 @@ class MasterControl( Frame ):
       # Simulation execution state variables.
       self.sim_mode_vs_var = Variable( 'trick_sys.sched.mode', type_=int )
 
+      # Federation execution variables.
+      # NOTE: You would think this shoudl be type_=bool.  However, the Trick
+      # documentation has a specific warning about booleans.  Use 'int' not 'bool'.
+      self.master_role_vs_var = Variable( 'THLA.execution_control.master', type_=int )
+
       # Time variable server variables.
       self.time_tic_value_vs_var = Variable( 'trick_sys.sched.time_tic_value', type_=int )
       self.time_tics_vs_var = Variable( 'trick_sys.sched.time_tics', type_=int )
@@ -818,6 +841,8 @@ root = Tk()
 app = MasterControl( master = root )
 app.grid( sticky = (N,S,E,W) )
 app.master.title( 'TrickHLA Master Control' )
+app.hostname = inputArgs.host
+app.port = inputArgs.port
 root.grid_columnconfigure( 0, weight=1 )
 root.grid_rowconfigure( 0, weight=1 )
 root.resizable( True, True )

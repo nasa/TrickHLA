@@ -51,7 +51,8 @@ class BallSimConfig( TrickSimConfig ):
       self.sim_name = sim_name
 
       # Get the variable server port.
-      self.variable_server_port = trick.var_server_get_port();
+      self.variable_server_host = trick.var_server_get_hostname()
+      self.variable_server_port = trick.var_server_get_port()
       
       # Call the TrickDataRecordingGroup constructor.
       TrickSimConfig.__init__( self, sim_name )
@@ -96,8 +97,8 @@ class BallSimConfig( TrickSimConfig ):
          # Set this up as a Trick external application.
          self.thlamcpApp = trick.ExternalApplication()
          self.thlamcpApp.set_startup_command( self.thlamcp_command )
-         self.thlamcpApp.set_arguments( '--auto' )
-         #self.thlamcpApp.set_arguments( str( self.variable_server_port ) )
+         #self.thlamcpApp.set_arguments( '--auto' )
+         self.thlamcpApp.set_arguments( '--auto -c ' + str( self.variable_server_host ) + ' -p ' + str( self.variable_server_port ) )
          #self.thlamcpApp.set_port( self.variable_server_port )
          trick.add_external_application( self.thlamcpApp )
                                        

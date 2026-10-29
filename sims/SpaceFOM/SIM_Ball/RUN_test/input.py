@@ -185,7 +185,7 @@ ball_fed_config = BallFederateConfig(
    enabled         = True )
 
 # Override the default CRC settings.
-#THLA.federate.local_settings = 'crcHost = localhost\n crcPort = 8988'
+#THLA.federate.local_settings = 'crcHost = localhost:8989'
 
 # Set the TrickHLA debug reporting level.
 #federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )

@@ -307,6 +307,11 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
 
    //-------------------------------------------------------------------------
    // Save and Restore
+   //-------------------------------------------------------------------------
+
+   //..........................................................................
+   // Save functions.
+   //..........................................................................
    /* @brief Determines if Save and Restore is supported by this ExecutionControl method.
     * @return True if Save and Restore is supported by this ExecutionControl method. */
    virtual bool is_save_and_restore_supported() override
@@ -314,11 +319,20 @@ class ExecutionControl : public TrickHLA::ExecutionControlBase
       return ( true );
    }
 
+   /*! @brief Federate commmand to initiate a Federation wide save.
+    *  @return The success or failure of initiating the Federation Save.
+    *  @param label The Save label for the HLA save process. */
+   virtual bool save( std::wstring const &label ) override;
+
    /*! @brief Start the Federation save at the specified scenario time.
     *  @param freeze_sst Simulation scenario time to freeze.
     *  @param save_label Save label for HLA Federation Save. */
    virtual void start_federation_save_at_SST( double              freeze_sst,
                                               std::wstring const &save_label ) override;
+
+   //..........................................................................
+   // Restore functions.
+   //..........................................................................
 
   protected:
    static std::string const type; ///< @trick_units{--} ExecutionControl type string.

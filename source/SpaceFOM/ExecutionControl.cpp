@@ -3047,6 +3047,35 @@ bool ExecutionControl::is_designated_late_joiner()
    return ( federate->get_join_constraint() == TrickHLA::FEDERATE_JOIN_LATE );
 }
 
+/*!
+ *  @job_class{freeze}
+ */
+bool ExecutionControl::save( wstring const &label )
+{
+   THLASaveProcessEnum current_save_state;
+   std::string         label_str;
+
+   // Get the current Save state.
+   current_save_state = save_restore_service->save_get_state();
+
+   // Convert the Save label to string.
+   StringUtilities::to_string( label_str, label );
+
+   // Check to see if we are initiating the Save.
+   if ( current_save_state == THLASaveProcessEnum::SAVE_NONE ) {
+      // Only the Master federate can initiate a Save.
+      if ( !master ){
+         ostringstream msg;
+         msg << "Can only initiate Save from a Master federate!  Save for label '" << label_str << "' failed!\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_ERROR );
+         return( false );
+      }
+   }
+
+   // Call the base class method and pass on its return.
+   return( ExecutionControlBase::save( label ) );
+}
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 void ExecutionControl::start_federation_save_at_SST(
