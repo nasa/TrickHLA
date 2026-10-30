@@ -158,6 +158,8 @@ class THLABaseSimObject : public Trick::SimObject {
       // that we are ready to start running the simulation.
       P_LAST ("initialization") federate.post_multiphase_initialization();
 
+      P_LAST ("initialization") federate.generate_CSV();
+
       //------------------------------
       //-- FREEZE / CHECKPOINT JOBS --
       //------------------------------
