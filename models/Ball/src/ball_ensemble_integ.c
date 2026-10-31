@@ -33,8 +33,8 @@ NASA, Johnson Space Center\n
 */
 
 /* Trick include files. */
-#include "trick/exec_proto.h"
 #include "sim_services/Integrator/include/integrator_c_intf.h"
+#include "trick/exec_proto.h"
 
 /* Model include files. */
 #include "../include/ball_state.h"
@@ -44,12 +44,8 @@ NASA, Johnson Space Center\n
  */
 int ball_ensemble_integ( int num_balls, BallState *states[] )
 {
-
-   double integration_time;
-   int ipass;
-
    /* LOAD THE POSITION AND VELOCITY STATES */
-   for ( int iinc = 0; iinc < num_balls; iinc++ ) {
+   for ( int iinc = 0; iinc < num_balls; ++iinc ) {
       load_indexed_state( ( iinc * 4 ), states[iinc]->output.position[0] );
       load_indexed_state( ( iinc * 4 ) + 1, states[iinc]->output.position[1] );
       load_indexed_state( ( iinc * 4 ) + 2, states[iinc]->output.velocity[0] );
@@ -57,7 +53,7 @@ int ball_ensemble_integ( int num_balls, BallState *states[] )
    }
 
    /* LOAD THE POSITION AND VELOCITY STATE DERIVATIVES */
-   for ( int iinc = 0; iinc < num_balls; iinc++ ) {
+   for ( int iinc = 0; iinc < num_balls; ++iinc ) {
       load_indexed_deriv( ( iinc * 4 ), states[iinc]->output.velocity[0] );
       load_indexed_deriv( ( iinc * 4 ) + 1, states[iinc]->output.velocity[1] );
       load_indexed_deriv( ( iinc * 4 ) + 2, states[iinc]->output.acceleration[0] );
@@ -65,12 +61,12 @@ int ball_ensemble_integ( int num_balls, BallState *states[] )
    }
 
    /* CALL THE TRICK INTEGRATION SERVICE */
-   ipass = integrate();
+   int const ipass = integrate();
 
    /* UNLOAD THE NEW POSITION AND VELOCITY STATES */
-   integration_time = exec_get_sim_time();
-   for ( int iinc = 0; iinc < num_balls; iinc++ ) {
-      states[iinc]->output.time = integration_time;
+   double const integration_time = exec_get_sim_time();
+   for ( int iinc = 0; iinc < num_balls; ++iinc ) {
+      states[iinc]->output.time        = integration_time;
       states[iinc]->output.position[0] = unload_indexed_state( iinc * 4 );
       states[iinc]->output.position[1] = unload_indexed_state( ( iinc * 4 ) + 1 );
       states[iinc]->output.velocity[0] = unload_indexed_state( ( iinc * 4 ) + 2 );

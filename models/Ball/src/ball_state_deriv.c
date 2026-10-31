@@ -57,7 +57,7 @@ int ball_state_deriv(
    collected_forces      = (double **)( SW->external_force );
    SO->external_force[0] = 0.0;
    SO->external_force[1] = 0.0;
-   for ( int iinc = 0; iinc < NUM_COLLECT( collected_forces ); iinc++ ) { // cppcheck-suppress [invalidPointerCast]
+   for ( int iinc = 0; iinc < NUM_COLLECT( collected_forces ); ++iinc ) { // cppcheck-suppress [invalidPointerCast]
       SO->external_force[0] += collected_forces[iinc][0];
       SO->external_force[1] += collected_forces[iinc][1];
    }
