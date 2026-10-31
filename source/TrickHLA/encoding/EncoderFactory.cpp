@@ -53,7 +53,6 @@ NASA, Johnson Space Center\n
 #include "trick/reference.h"
 
 // TrickHLA include files.
-#include "TrickHLA/CompileConfig.hh" // IWYU pragma: keep
 #include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/HLAStandardSupport.hh"
 #include "TrickHLA/Types.hh"
