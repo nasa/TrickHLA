@@ -45,9 +45,13 @@ NASA, Johnson Space Center\n
 #include <cstdlib>
 #include <cstring>
 #include <ostream>
+#include <iostream>
+#include <fstream>
+#include <filesystem>
 #include <set>
 #include <sstream>
 #include <string>
+#include <regex>
 #if defined( IEEE_1516_2025 )
 #   include <memory>
 #endif // IEEE_1516_2025
@@ -391,6 +395,93 @@ void Federate::initialize()
    restart_initialization();
 
    TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+}
+
+/*!
+ * @job_class{initialization}
+ */
+void Federate::generate_CSV()
+{
+   ostringstream msg;
+
+   msg << endl << "Known Federates:" << endl;
+   if ( enable_known_feds ) {
+      if ( known_feds_count == 0 ) {
+         msg << "\tNo Known Federates" << endl;
+      } else {
+         for ( int i = 0; i < known_feds_count; ++i ) {
+            msg << "\t" << known_feds[i].name << endl;
+         }
+      }
+   } else {
+      msg << "\tDisabled" << endl;
+   }
+
+   msg << endl << "FOM Modules:" << endl;
+   if ( FOM_modules.empty() ) {
+      msg << "\tNo FOM Modules" << endl;
+   } else {
+      msg << "\t" << regex_replace(FOM_modules, regex(", "), "\n\t") << endl;
+   }
+
+   msg << endl << "Objects:" << endl;
+   if ( manager->obj_count == 0 ) {
+      msg << "\tNo Objects" << endl;
+   } else {
+      for ( int i = 0; i < manager->obj_count; ++i ) {
+         msg << "\t" << manager->objects[i].get_FOM_name() << endl;
+         msg << "\t" << manager->objects[i].get_name() << endl;
+
+         unsigned short int padding_width = 0;
+         for ( int j = 0; j < manager->objects[i].get_attribute_count(); ++j ) {
+            if ( manager->objects[i].get_attributes()[j].get_FOM_name().length() > padding_width ) {
+               padding_width = manager->objects[i].get_attributes()[j].get_FOM_name().length();
+            }
+         }
+
+         for ( int j = 0; j < manager->objects[i].get_attribute_count(); ++j ) {
+            msg << "\t\t";
+            if ( manager->objects[i].get_attributes()[j].is_publish() ) {
+               msg << "p";
+            }
+            if ( manager->objects[i].get_attributes()[j].is_subscribe() ) {
+               msg << "s";
+            }
+
+            string att_FOM_name = manager->objects[i].get_attributes()[j].get_FOM_name();
+            msg << "\t" << att_FOM_name.append(padding_width - att_FOM_name.length(), ' ');
+            msg << "\t" << manager->objects[i].get_attributes()[j].get_trick_name() << endl;
+         }
+      }
+   }
+
+   message_publish( MSG_NORMAL, msg.str().c_str() );
+
+   string file_name = filesystem::current_path().string() + "/" + get_federation_name() + "__" + get_federate_name() + ".csv";
+   ofstream file(file_name);
+
+   file << "Object FOM Name,";
+   file << "Object Name,";
+   file << "Attribute FOM Name,";
+   file << get_federate_name() << " Publish"   << ",";
+   file << get_federate_name() << " Subscribe" << ",";
+   file << get_federate_name()                 << endl;
+
+   for ( int i = 0; i < manager->obj_count; ++i ) {
+      for ( int j = 0; j < manager->objects[i].get_attribute_count(); ++j ) {
+         file << manager->objects[i].get_FOM_name() << "." << manager->objects[i].get_name() << "." << manager->objects[i].get_attributes()[j].get_FOM_name() << ",";
+         file << manager->objects[i].get_FOM_name()                                          << ",";
+         file << manager->objects[i].get_name()                                              << ",";
+         file << manager->objects[i].get_attributes()[j].get_FOM_name()                      << ",";
+         file <<(manager->objects[i].get_attributes()[j].is_publish()    ? "True" : "False") << ",";
+         file <<(manager->objects[i].get_attributes()[j].is_subscribe()  ? "True" : "False") << ",";
+         file << manager->objects[i].get_attributes()[j].get_trick_name()                    << endl;
+      }
+   }
+
+   file.close();
+
+   message_publish( MSG_NORMAL, ("List of objects written to " + file_name + "\n").c_str() );
 }
 
 /*!

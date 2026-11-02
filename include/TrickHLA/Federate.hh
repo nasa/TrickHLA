@@ -195,6 +195,9 @@ class Federate : public TimeManagementServices, public SaveRestoreServices
    /*! @brief Composite initialization routine for an object instance of a Federate class. */
    void initialize();
 
+/*! @brief Generate CSV file listing all the objects and attributes in the federate. */
+   void generate_CSV();
+
    FederateJoinConstraintsEnum get_join_constraint()
    {
       return this->join_constraint;
