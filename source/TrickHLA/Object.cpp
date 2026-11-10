@@ -4159,8 +4159,7 @@ void Object::convert_data_before_checkpoint()
       set_required( true );
    }
 
-   // TODO: Convert other data structures to checkpoint form such as
-   // the ReflectedAttributesQueue.
+   // TODO: Convert other data structures to checkpoint form.
 
    if ( lag_comp != nullptr ) {
       lag_comp->convert_data_before_checkpoint();
@@ -4189,8 +4188,7 @@ void Object::restore_data_after_checkpoint()
       DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
-   // TODO: Restore other data structures from checkpoint form such as
-   // the ReflectedAttributesQueue.
+   // TODO: Restore other data structures from checkpoint form.
 
    if ( lag_comp != nullptr ) {
       lag_comp->initialize_callback( this );
@@ -4224,8 +4222,7 @@ void Object::free_converted_data_for_checkpoint()
       DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 
-   // TODO: Free other data structures in checkpoint form such as
-   // the ReflectedAttributesQueue.
+   // TODO: Free other data structures in checkpoint form.
 
    if ( lag_comp != nullptr ) {
       lag_comp->free_converted_data_for_checkpoint();

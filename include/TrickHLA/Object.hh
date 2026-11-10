@@ -28,7 +28,6 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../source/TrickHLA/ObjectDeletedHandler.cpp}
 @trick_link_dependency{../../source/TrickHLA/OwnershipHandler.cpp}
 @trick_link_dependency{../../source/TrickHLA/Packing.cpp}
-@trick_link_dependency{../../source/TrickHLA/ReflectedAttributesQueue.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
 @trick_link_dependency{../../source/TrickHLA/time/Int64Interval.cpp}
 @trick_link_dependency{../../source/TrickHLA/time/Int64Time.cpp}
