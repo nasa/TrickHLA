@@ -4228,7 +4228,7 @@ void Object::free_converted_data_for_checkpoint()
       lag_comp->free_converted_data_for_checkpoint();
    }
    // Free the Packing data as long as this isn't the same and this object.
-   // This coveres a special case where the ExCO is both Object and Packing.
+   // This covers a special case where the ExCO is both Object and Packing.
    if ( packing != nullptr && this->packing != dynamic_cast< Packing * >( this ) ) {
       packing->free_converted_data_for_checkpoint();
    }
