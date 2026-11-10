@@ -3489,13 +3489,14 @@ void Federate::checkpoint_preload()
  */
 void Federate::checkpoint_after()
 {
-   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Cleaning up after a checkpoint.\n" );
-   }
 
    // Delegate to the Execution Control specific implementation.
    if ( execution_control != nullptr ) {
       execution_control->checkpoint_after();
+   }
+   
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Cleaning up after a checkpoint.\n" );
    }
 
    return;

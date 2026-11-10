@@ -92,7 +92,7 @@ PDF_DIR  = .
 # Platform specific behavior. #
 ###############################
 ifeq ($(shell uname -s), Darwin)
-LATEX_BIN ?= /usr/local/texlive/2024/bin/universal-darwin/
+LATEX_BIN ?= /usr/local/texlive/2025/bin/universal-darwin/
 else
 LATEX_BIN ?= /usr/local/bin/
 endif

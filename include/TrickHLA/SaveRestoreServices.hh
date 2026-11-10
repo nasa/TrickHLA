@@ -70,13 +70,15 @@ namespace TrickHLA
  * Enumerated type used to step through the Save process.
  */
 enum class THLASaveProcessEnum : uint8_t {
-   SAVE_NONE        = 0,
-   SAVE_INITIATED   = 1,
-   SAVE_REQUESTED   = 2,
-   SAVE_IN_PROGRESS = 3,
-   SAVE_COMPLETE    = 4,
-   SAVE_FAILED      = 5,
-   SAVE_UNSUPPORTED = 0xff
+   SAVE_NONE              = 0,
+   SAVE_INITIATED         = 1,
+   SAVE_REQUESTED         = 2,
+   SAVE_CHECKPOINT        = 3,
+   SAVE_IN_PROGRESS       = 4,
+   SAVE_COMPLETE          = 5,
+   SAVE_FAILED            = 6,
+   SAVE_FEDERATION_FAILED = 7,
+   SAVE_UNSUPPORTED       = 0xff
 };
 
 /*! @brief Convert a THLASaveProcessEnum value into a string representation.
@@ -249,6 +251,11 @@ class SaveRestoreServices : public CheckpointConversionBase
     *  @param label The HLA Save label. */
    void save( std::wstring const &label );
 
+   /*! @brief Check if a Save checkpoint succeeds.
+    *  @return Returns true if checkpoint succeeds.  Otherwise, it
+    *  returns false. */
+   bool save_check_checkpoint();
+
    /*! @brief Check if a Save is in progress and report.
     *  @return Returns true is the Save is in progress.  Otherwise, it
     *  returns false. */
@@ -259,6 +266,14 @@ class SaveRestoreServices : public CheckpointConversionBase
 
    /*! @brief The Federation Save process did NOT complete successfully. */
    void save_failed();
+
+   /*! @brief Function called to inform the Federation that this federate has
+    *  successfully completed a Trick checkpoint Save. */
+   void save_success_notification();
+
+   /*! @brief Function called to inform the Federation that this federate has
+    *  failed to complete a Trick checkpoint Save. */
+   void save_failed_notification();
 
    /*! @brief Write the joined federates file as part of the Save process.
     *  @detail This routine uses the ExecutionControl class call to map the
@@ -282,6 +297,14 @@ class SaveRestoreServices : public CheckpointConversionBase
 
    /*! @brief Requests the status of the Federation Save. */
    void request_federation_save_status();
+
+   /*! @brief Set the flag to ignore a checkpoint error on Save.
+    *  @param state Set the flag to ingore a checkpoint error during Save. */
+   void save_ignore_checkpoint_error( bool state = false )
+   {
+      save_ignore_checkpoint_fail = state;
+      return;
+   }
 
    //..........................................................................
    // Restore functions.
@@ -445,6 +468,7 @@ class SaveRestoreServices : public CheckpointConversionBase
    THLASaveProcessEnum save_state; ///< @trick_units{1} Where we are in the Save process.
    std::wstring        save_label; ///< @trick_units{--} Save label.
    Int64Time           save_time;  ///< @trick_units{--} HLA Logical Time for Save.
+   bool                save_ignore_checkpoint_fail; ///< @trick_units{1} Ignore error if a checkpoint fails.
 
    // Restore process variables.
    THLARestoreProcessEnum            restore_state;  ///< @trick_units{1}  @trick_io{*io} @trick_chkpnt_io{**} Where we are in the restore process

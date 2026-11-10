@@ -105,6 +105,9 @@ std::string TrickHLA::to_string( THLASaveProcessEnum save_state )
       case THLASaveProcessEnum::SAVE_REQUESTED:
          return ( "SAVE_REQUESTED" );
          break;
+      case THLASaveProcessEnum::SAVE_CHECKPOINT:
+         return ( "SAVE_CHECKPOINT" );
+         break;
       case THLASaveProcessEnum::SAVE_IN_PROGRESS:
          return ( "SAVE_IN_PROGRESS" );
          break;
@@ -113,6 +116,9 @@ std::string TrickHLA::to_string( THLASaveProcessEnum save_state )
          break;
       case THLASaveProcessEnum::SAVE_FAILED:
          return ( "SAVE_FAILED" );
+         break;
+      case THLASaveProcessEnum::SAVE_FEDERATION_FAILED:
+         return ( "SAVE_FEDERATION_FAILED" );
          break;
       case THLASaveProcessEnum::SAVE_UNSUPPORTED:
          return ( "SAVE_UNSUPPORTED" );
@@ -188,6 +194,7 @@ SaveRestoreServices::SaveRestoreServices( Federate &fed )
      HLA_save_directory( "" ),
      save_state( THLASaveProcessEnum::SAVE_UNSUPPORTED ),
      save_label( L"" ),
+     save_ignore_checkpoint_fail( false ),
      restore_state( THLARestoreProcessEnum::RESTORE_UNSUPPORTED ),
      restore_label( L"" ),
      restore_name( L"" )
@@ -504,47 +511,72 @@ void SaveRestoreServices::save( wstring const &label )
    // Tell the object_service to setup the checkpoint data structures.
    object_service->convert_data_before_checkpoint();
 
-   // Mark that the Save state is SAVE_IN_PROGRESS
-   save_state = THLASaveProcessEnum::SAVE_IN_PROGRESS;
-
    // Map the save label to the associated Trick checkpoint file names.
    checkpoint_file_name = execution_control->map_label_to_checkpoint_file_name( this->save_label );
 
    // Save the federate state using the Trick checkpoint mechanism.
    the_cpr->checkpoint( checkpoint_file_name );
 
-   //
-   // Let the Federation know that our Save process is finished.
-   //
-   try {
-
-      // Make the call to the RTI Ambassador to mark our Save as complete.
-      federate->get_RTI_ambassador()->federateSaveComplete();
-
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
-         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Federate Save Completed.\n" );
-      }
-
-   } catch ( FederateHasNotBegunSave const &e ) {
-      DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
-   } catch ( FederateNotExecutionMember const &e ) {
-      DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
-   } catch ( RestoreInProgress const &e ) {
-      DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
-   } catch ( NotConnected const &e ) {
-      DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
-      federate->set_connection_lost();
-   } catch ( RTIinternalError const &e ) {
-      DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
-   }
-
-   // FIXME: We probably need to better handle the Save state for exceptions.
-
-   // Macro to restore the saved FPU Control Word register value.
-   TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-   TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+   // Mark that the Save state is SAVE_CHECKPOINT
+   save_state = THLASaveProcessEnum::SAVE_CHECKPOINT;
 
    return;
+}
+
+/*!
+ *  @job_class{scheduled}
+ */
+bool SaveRestoreServices::save_check_checkpoint()
+{
+
+   // Get the Trick checkpoint write status.
+   bool checkpoint_write_state = trick_MM->get_checkpoint_write_state();
+
+   // Check to see if the checkpoint succeded.
+   if ( checkpoint_write_state == true ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
+         std::string label_str;
+         StringUtilities::to_string( label_str, save_label );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      string( "Checkpoint Save label '" )
+                                         .append( label_str )
+                                         .append( "' succeeded!\n" ),
+                                      MSG_NORMAL );
+      }
+      save_state = THLASaveProcessEnum::SAVE_IN_PROGRESS;
+      save_success_notification();
+   }
+   else if ( save_ignore_checkpoint_fail == true ) {
+      if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
+         std::string label_str;
+         StringUtilities::to_string( label_str, save_label );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      string( "Ignoring checkpoint fail for Save label '" )
+                                         .append( label_str )
+                                         .append( "'!\n" ),
+                                      MSG_WARNING );
+      }
+      save_state = THLASaveProcessEnum::SAVE_IN_PROGRESS;
+      save_success_notification();
+   }
+   else {
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
+         std::string label_str;
+         StringUtilities::to_string( label_str, save_label );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      string( "Checkpoint Save label '" )
+                                         .append( label_str )
+                                         .append( "' failed!\n" ),
+                                      MSG_ERROR );
+      }
+
+      // Set the Save state to Failed!
+      save_state = THLASaveProcessEnum::SAVE_FAILED;
+
+      return( false );
+   }
+
+   return( true );
 }
 
 /*!
@@ -561,23 +593,24 @@ bool SaveRestoreServices::save_in_progress_check()
       return ( false );
    }
 
-   if ( save_state == THLASaveProcessEnum::SAVE_IN_PROGRESS ) {
-      if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
-         if ( execution_control->process_timer.timeout( execution_control->process_timer.time() ) ) {
-            execution_control->process_timer.reset();
-            std::string label_str;
-            StringUtilities::to_string( label_str, save_label );
-            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
-                                         string( "HLA Save for label '" )
-                                            .append( label_str )
-                                            .append( "' in progress!\n" ),
-                                         MSG_WARNING );
-         }
-      }
-      return ( true );
+   if ( save_state != THLASaveProcessEnum::SAVE_IN_PROGRESS ) {
+      return( false );
    }
 
-   return ( false );
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
+      if ( execution_control->process_timer.timeout( execution_control->process_timer.time() ) ) {
+         execution_control->process_timer.reset();
+         std::string label_str;
+         StringUtilities::to_string( label_str, save_label );
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                      string( "HLA Save for label '" )
+                                         .append( label_str )
+                                         .append( "' in progress!\n" ),
+                                      MSG_WARNING );
+      }
+   }
+
+   return ( true );
 }
 
 /*!
@@ -634,23 +667,118 @@ void SaveRestoreServices::save_failed()
    StringUtilities::to_string( label_str, save_label );
 
    // Do a little sanity checking.
-   if ( save_state != THLASaveProcessEnum::SAVE_FAILED ) {
+   if (    (save_state != THLASaveProcessEnum::SAVE_FAILED)
+        && (save_state != THLASaveProcessEnum::SAVE_FEDERATION_FAILED) ) {
       ostringstream errmsg;
       errmsg << "Save state mismatch: "
              << TrickHLA::to_string( save_state ) << "!\n";
       DebugHandler::terminate( __PRETTY_FUNCTION__, __LINE__, errmsg.str() );
    }
 
-   // Print out an error message.
-   if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
-      ostringstream errmsg;
-      errmsg << "Save for label '" << label_str << "' failed!\n";
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_ERROR );
+   if ( save_state == THLASaveProcessEnum::SAVE_FAILED ) {
+      // Print out an error message.
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
+         ostringstream errmsg;
+         errmsg << "Save for label '" << label_str << "' failed!\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_ERROR );
+      }
+
+      // Send a Save failed notification to the Federation.
+      save_failed_notification();
+   }
+   else {
+      // Print out an error message.
+      if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
+         ostringstream errmsg;
+         errmsg << "Federation Save for label '" << label_str << "' failed!\n";
+         DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_ERROR );
+      }
    }
 
    // Restore the base Save state.
    this->save_label = L"";
    this->save_state = THLASaveProcessEnum::SAVE_NONE;
+
+   return;
+}
+
+/*!
+ *  @job_class{freeze}
+ */
+void SaveRestoreServices::save_success_notification()
+{
+   if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
+      string save_label_str;
+      StringUtilities::to_string( save_label_str, save_label );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   string( "Save succeeded for label: '" )
+                                      .append( save_label_str )
+                                      .append( "'\n" ) );
+   }
+
+   // Macro to save the FPU Control Word register value.
+   TRICKHLA_SAVE_FPU_CONTROL_WORD;
+
+   // Tell the Federation that this federate completed the Restore.
+   try {
+      federate->get_RTI_ambassador()->federateSaveComplete();
+   } catch ( FederateHasNotBegunSave const &e ) {
+      DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
+   } catch ( FederateNotExecutionMember const &e ) {
+      DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
+   } catch ( RestoreInProgress const &e ) {
+      DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
+   } catch ( NotConnected const &e ) {
+      DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
+      federate->set_connection_lost();
+   } catch ( RTIinternalError const &e ) {
+      DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
+   }
+
+   // Macro to restore the saved FPU Control Word register value.
+   TRICKHLA_RESTORE_FPU_CONTROL_WORD;
+   TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+
+   return;
+}
+
+/*!
+ *  @job_class{freeze}
+ */
+void SaveRestoreServices::save_failed_notification()
+{
+   if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
+      string save_label_str;
+      StringUtilities::to_string( save_label_str, save_label );
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
+                                   string( "Save failed for label: '" )
+                                      .append( save_label_str )
+                                      .append( "'\n" ),
+                                   MSG_ERROR );
+   }
+
+   // Macro to save the FPU Control Word register value.
+   TRICKHLA_SAVE_FPU_CONTROL_WORD;
+
+   // Tell the Federation that this federate could not complete the Save.
+   try {
+      federate->get_RTI_ambassador()->federateSaveNotComplete();
+   } catch ( FederateHasNotBegunSave const &e ) {
+      DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
+   } catch ( RestoreInProgress const &e ) {
+      DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
+   } catch ( FederateNotExecutionMember const &e ) {
+      DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
+   } catch ( NotConnected const &e ) {
+      DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
+      federate->set_connection_lost();
+   } catch ( RTIinternalError const &e ) {
+      DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
+   }
+
+   // Macro to restore the saved FPU Control Word register value.
+   TRICKHLA_RESTORE_FPU_CONTROL_WORD;
+   TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
 
    return;
 }

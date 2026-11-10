@@ -371,8 +371,15 @@ void FedAmb::federationNotSaved(
       DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
-   // Mark the Save process as failed.
-   save_restore_service->save_set_state( THLASaveProcessEnum::SAVE_FAILED );
+   // Check the state of the local Save process.
+   THLASaveProcessEnum save_state = save_restore_service->save_get_state();
+   if (    (save_state != THLASaveProcessEnum::SAVE_UNSUPPORTED)
+        && (save_state != THLASaveProcessEnum::SAVE_NONE)        ) {
+      // Mark the Save process as failed.
+      save_restore_service->save_set_state( THLASaveProcessEnum::SAVE_FEDERATION_FAILED );
+   }
+
+   // Print out the reason for the failed save.
    save_restore_service->print_save_failure_reason( reason );
 
    return;

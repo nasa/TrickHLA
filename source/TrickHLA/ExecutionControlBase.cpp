@@ -1068,7 +1068,6 @@ void ExecutionControlBase::save_process()
 
             // Mark the Save as failed.
             save_restore_service->save_state = THLASaveProcessEnum::SAVE_FAILED;
-            save_restore_service->save_failed();
 
             // Break out of the save_state switch statement.
             break;
@@ -1090,9 +1089,14 @@ void ExecutionControlBase::save_process()
             }
             // Save actions when Save failed.
             save_restore_service->save_state = THLASaveProcessEnum::SAVE_FAILED;
-            save_restore_service->save_failed();
          }
 
+         break;
+
+      case THLASaveProcessEnum::SAVE_CHECKPOINT:
+         // THe save call initiates the Trick check point.  This routine will
+         // check to see if the checkpoint succeeds of fails.
+         save_restore_service->save_check_checkpoint();
          break;
 
       case THLASaveProcessEnum::SAVE_IN_PROGRESS:
@@ -1120,6 +1124,17 @@ void ExecutionControlBase::save_process()
          if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
             ostringstream errmsg;
             errmsg << "Save failed for label '" << save_label_str << "'\n";
+            DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_ERROR );
+         }
+         // Save actions when Save failed.
+         save_restore_service->save_failed();
+         break;
+
+      case THLASaveProcessEnum::SAVE_FEDERATION_FAILED:
+         // The Save failed.
+         if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
+            ostringstream errmsg;
+            errmsg << "Federation Save failed for label '" << save_label_str << "'\n";
             DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_ERROR );
          }
          // Save actions when Save failed.
@@ -1183,8 +1198,10 @@ bool ExecutionControlBase::save( wstring const &label )
    if ( current_save_state == THLASaveProcessEnum::SAVE_NONE ) {
 
       if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+         string label_str;
+         StringUtilities::to_string( label_str, label );
          ostringstream msg;
-         msg << "Initiating Save for '" << current_save_state_str << "'\n";
+         msg << "Initiating Save for '" << label_str << "'\n";
          DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
       }
 
@@ -1717,6 +1734,7 @@ void ExecutionControlBase::checkpoint_before()
  */
 void ExecutionControlBase::checkpoint_after()
 {
+
    if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
       DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Cleaning up after a checkpoint.\n" );
    }
