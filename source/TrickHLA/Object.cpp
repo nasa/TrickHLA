@@ -4165,7 +4165,7 @@ void Object::convert_data_before_checkpoint()
       lag_comp->convert_data_before_checkpoint();
    }
    // Free the Packing data as long as this isn't the same and this object.
-   // This coveres a special case where the ExCO is both Object and Packing.
+   // This covers a special case where the ExCO is both Object and Packing.
    if ( packing != nullptr && this->packing != dynamic_cast< Packing * >( this ) ) {
       packing->convert_data_before_checkpoint();
    }
@@ -4195,7 +4195,7 @@ void Object::restore_data_after_checkpoint()
       lag_comp->restore_data_after_checkpoint();
    }
    // Free the Packing data as long as this isn't the same and this object.
-   // This coveres a special case where the ExCO is both Object and Packing.
+   // This covers a special case where the ExCO is both Object and Packing.
    if ( packing != nullptr && this->packing != dynamic_cast< Packing * >( this ) ) {
       packing->initialize_callback( this );
       packing->restore_data_after_checkpoint();
