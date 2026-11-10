@@ -42,7 +42,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/RecordElement.hh"
 
 #if !defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
-#   error SpaceTimeCoordinateEncoder is not supported!
+#   error "SpaceTimeCoordinateEncoder is not supported!"
 #else
 
 // SpaceFOM includes.

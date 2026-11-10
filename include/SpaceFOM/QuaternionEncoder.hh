@@ -39,7 +39,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/OpaqueBuffer.hh"
 
 #if !defined( USE_SPACEFOM_OPAQUE_BUFFER_ENCODERS )
-#   error QuaternionEncoder is not supported!
+#   error "QuaternionEncoder is not supported!"
 #else
 
 // SpaceFOM includes.
