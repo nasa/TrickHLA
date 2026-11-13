@@ -236,8 +236,15 @@ class MemoryServices
    static int get_trick_type( T type );
 };
 
+// Disable the unused variable warning that occurs for some compilers.
+// This should work for both GCC and Clang.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-variable"
+
 // Allow external access to the TrickHLA::MemoryServices instance.
 static MemoryServices *memory_services;
+
+#pragma GCC diagnostic pop
 
 } // namespace TrickHLA
 
