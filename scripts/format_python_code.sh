@@ -17,13 +17,5 @@ echo "Sorting Python imports..."
 isort ${TRICKHLA_HOME}
 
 echo "----------------------------------------------------------"
-echo "Formatting script files..."
-black --line-length 90 ${TRICKHLA_HOME}/scripts
-
-echo "----------------------------------------------------------"
-echo "Formatting sims input files..."
-black --line-length 90 ${TRICKHLA_HOME}/sims
-
-echo "----------------------------------------------------------"
-echo "Formatting TrickHLA_data files..."
-black --line-length 90 ${TRICKHLA_HOME}/TrickHLA_data
+echo "Formatting Python code..."
+black --line-length 90 ${TRICKHLA_HOME}
