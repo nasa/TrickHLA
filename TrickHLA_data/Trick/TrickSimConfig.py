@@ -18,7 +18,7 @@
 # Simulation and Graphics Branch, Mail Code ER7\n
 # Software, Robotics & Simulation Division\n
 # NASA, Johnson Space Center\n
-# # 2101 NASA Parkway, Houston, TX  77058
+# 2101 NASA Parkway, Houston, TX  77058
 # 
 # @python_module{Trick}
 #
