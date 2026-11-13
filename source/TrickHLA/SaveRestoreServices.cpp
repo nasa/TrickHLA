@@ -41,6 +41,7 @@ NASA, Johnson Space Center\n
 
 // Trick includes.
 #include "trick/CheckPointRestart.hh"
+#include "trick/MemoryManager.hh"
 #include "trick/command_line_protos.h"
 #include "trick/exec_proto.h"
 #include "trick/message_type.h"
@@ -530,7 +531,7 @@ bool SaveRestoreServices::save_check_checkpoint()
 {
 
    // Get the Trick checkpoint write status.
-   bool checkpoint_write_state = trick_MM->get_checkpoint_write_state();
+   bool const checkpoint_write_state = trick_MM->get_checkpoint_write_state();
 
    // Check to see if the checkpoint succeded.
    if ( checkpoint_write_state == true ) {
@@ -545,8 +546,7 @@ bool SaveRestoreServices::save_check_checkpoint()
       }
       save_state = THLASaveProcessEnum::SAVE_IN_PROGRESS;
       save_success_notification();
-   }
-   else if ( save_ignore_checkpoint_fail == true ) {
+   } else if ( save_ignore_checkpoint_fail == true ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
          std::string label_str;
          StringUtilities::to_string( label_str, save_label );
@@ -558,8 +558,7 @@ bool SaveRestoreServices::save_check_checkpoint()
       }
       save_state = THLASaveProcessEnum::SAVE_IN_PROGRESS;
       save_success_notification();
-   }
-   else {
+   } else {
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
          std::string label_str;
          StringUtilities::to_string( label_str, save_label );
@@ -573,10 +572,10 @@ bool SaveRestoreServices::save_check_checkpoint()
       // Set the Save state to Failed!
       save_state = THLASaveProcessEnum::SAVE_FAILED;
 
-      return( false );
+      return ( false );
    }
 
-   return( true );
+   return ( true );
 }
 
 /*!
@@ -594,7 +593,7 @@ bool SaveRestoreServices::save_in_progress_check()
    }
 
    if ( save_state != THLASaveProcessEnum::SAVE_IN_PROGRESS ) {
-      return( false );
+      return ( false );
    }
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
@@ -667,8 +666,8 @@ void SaveRestoreServices::save_failed()
    StringUtilities::to_string( label_str, save_label );
 
    // Do a little sanity checking.
-   if (    (save_state != THLASaveProcessEnum::SAVE_FAILED)
-        && (save_state != THLASaveProcessEnum::SAVE_FEDERATION_FAILED) ) {
+   if ( ( save_state != THLASaveProcessEnum::SAVE_FAILED )
+        && ( save_state != THLASaveProcessEnum::SAVE_FEDERATION_FAILED ) ) {
       ostringstream errmsg;
       errmsg << "Save state mismatch: "
              << TrickHLA::to_string( save_state ) << "!\n";
@@ -685,8 +684,7 @@ void SaveRestoreServices::save_failed()
 
       // Send a Save failed notification to the Federation.
       save_failed_notification();
-   }
-   else {
+   } else {
       // Print out an error message.
       if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
          ostringstream errmsg;

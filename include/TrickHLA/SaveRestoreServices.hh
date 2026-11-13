@@ -465,9 +465,9 @@ class SaveRestoreServices : public CheckpointConversionBase
    std::string HLA_save_directory; ///< @trick_units{--} HLA Save directory.
 
    // Save process variables.
-   THLASaveProcessEnum save_state; ///< @trick_units{1} Where we are in the Save process.
-   std::wstring        save_label; ///< @trick_units{--} Save label.
-   Int64Time           save_time;  ///< @trick_units{--} HLA Logical Time for Save.
+   THLASaveProcessEnum save_state;                  ///< @trick_units{1} Where we are in the Save process.
+   std::wstring        save_label;                  ///< @trick_units{--} Save label.
+   Int64Time           save_time;                   ///< @trick_units{--} HLA Logical Time for Save.
    bool                save_ignore_checkpoint_fail; ///< @trick_units{1} Ignore error if a checkpoint fails.
 
    // Restore process variables.

@@ -372,9 +372,9 @@ void FedAmb::federationNotSaved(
    }
 
    // Check the state of the local Save process.
-   THLASaveProcessEnum save_state = save_restore_service->save_get_state();
-   if (    (save_state != THLASaveProcessEnum::SAVE_UNSUPPORTED)
-        && (save_state != THLASaveProcessEnum::SAVE_NONE)        ) {
+   THLASaveProcessEnum const save_state = save_restore_service->save_get_state();
+   if ( ( save_state != THLASaveProcessEnum::SAVE_UNSUPPORTED )
+        && ( save_state != THLASaveProcessEnum::SAVE_NONE ) ) {
       // Mark the Save process as failed.
       save_restore_service->save_set_state( THLASaveProcessEnum::SAVE_FEDERATION_FAILED );
    }
