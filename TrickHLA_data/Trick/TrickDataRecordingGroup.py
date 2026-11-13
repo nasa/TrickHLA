@@ -28,11 +28,12 @@
 # @revs_end
 #
 ##############################################################################
+from abc import ABC, abstractmethod
+from enum import IntEnum
 
 import trick
-from enum import IntEnum
-from abc import ABC, abstractmethod
-   
+
+
 class TrickDRFormat( IntEnum ):
    ASCII  = 0
    BINARY = 1

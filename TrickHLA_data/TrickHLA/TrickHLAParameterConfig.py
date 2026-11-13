@@ -14,6 +14,7 @@
 #     ((Dan Dexter) (NASA/ER6) (June 2025) (--) (Added fixed record support.)))
 ##############################################################################
 import trick
+
 from ..TrickHLA.TrickHLARecordElementConfig import *
 
 

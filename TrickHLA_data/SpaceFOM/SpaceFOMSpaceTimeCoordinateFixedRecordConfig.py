@@ -13,8 +13,9 @@
 #    (((Dan Dexter) (NASA/ER6) (May 2026) (--) (Initial implementation.)))
 ##############################################################################
 import trick
-from ..TrickHLA.TrickHLARecordElementConfig import *
+
 from ..SpaceFOM.SpaceFOMQuaternionFixedRecordConfig import *
+from ..TrickHLA.TrickHLARecordElementConfig import *
 
 
 class SpaceFOMSpaceTimeCoordinateFixedRecordConfig( TrickHLARecordElementConfig ):

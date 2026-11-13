@@ -16,6 +16,7 @@
 ##############################################################################
 import trick
 from trick.top import *
+
 from ..TrickHLA.TrickHLAFederateConfig import *
 
 

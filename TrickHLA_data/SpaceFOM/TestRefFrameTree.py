@@ -30,6 +30,7 @@
 #
 ##############################################################################
 import trick
+
 from TrickHLA_data.SpaceFOM.SpaceFOMRefFrameObject import *
 
 

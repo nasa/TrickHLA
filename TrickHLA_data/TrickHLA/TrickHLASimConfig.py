@@ -26,12 +26,13 @@
 # @revs_end
 #
 ##############################################################################
-
 import os
+
 import trick
 
 # Import the TrickHLA base Trick Simulation Configuration class.
 from TrickHLA_data.Trick.TrickSimConfig import *
+
 
 class TrickHLASimConfig( TrickSimConfig ):
 

@@ -20,8 +20,10 @@
 #    (((Jason Harvey) (CACI) (October 2024) (--) (Initial)))
 ####################################################################################################
 import trick
-from TrickHLA_data.TrickHLA.TrickHLAObjectConfig import *
+
 from TrickHLA_data.TrickHLA.TrickHLAAttributeConfig import *
+from TrickHLA_data.TrickHLA.TrickHLAObjectConfig import *
+
 
 # NOTE this object shouldn't be instantiated directly; use the derived types below.
 class FluidDistIfObjectConfig( TrickHLAObjectConfig ):

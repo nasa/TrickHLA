@@ -15,8 +15,10 @@
 # PROGRAMMERS:
 #    (((Edwin Z. Crues) (NASA) (June 2016) (--) (Space FOM development)))
 ##############################################################################
-import trick
 import sys
+
+import trick
+
 from ..TrickHLA.TrickHLAInteractionConfig import *
 from ..TrickHLA.TrickHLAParameterConfig import *
 

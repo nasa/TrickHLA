@@ -14,8 +14,8 @@
 # default text color for Status messages.}
 # @revs_end
 ############################################################################
-import sys
 import os
+import sys
 
 
 class TrickHLAMessage():

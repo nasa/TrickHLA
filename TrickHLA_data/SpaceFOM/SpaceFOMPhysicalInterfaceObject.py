@@ -14,9 +14,10 @@
 #    (((Edwin Z. Crues) (NASA) (September 2023) (--) (Space FOM development)))
 ##############################################################################
 import trick
-from ..TrickHLA.TrickHLAObjectConfig import *
-from ..TrickHLA.TrickHLAAttributeConfig import *
+
 from ..SpaceFOM.SpaceFOMQuaternionAttributeConfig import *
+from ..TrickHLA.TrickHLAAttributeConfig import *
+from ..TrickHLA.TrickHLAObjectConfig import *
 
 
 class SpaceFOMPhysicalInterfaceObject( TrickHLAObjectConfig ):

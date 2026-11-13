@@ -15,6 +15,7 @@
 #     ((Dan Dexter) (NASA/ER6) (Sept 2025) (--) (Added preferred order support.)))
 ##############################################################################
 import trick
+
 from ..TrickHLA.TrickHLARecordElementConfig import *
 
 

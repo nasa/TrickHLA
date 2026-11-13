@@ -17,7 +17,9 @@
 ##############################################################################
 import trick
 from trick.top import *
+
 from ..SpaceFOM.SpaceFOMFederateConfig import *
+
 
 class SpaceFOMFederateConfig2( SpaceFOMFederateConfig ):
 

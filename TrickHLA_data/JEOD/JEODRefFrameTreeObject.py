@@ -14,6 +14,7 @@
 #    (((Edwin Z. Crues) (NASA) (July 2023) (--) (Space FOM development)))
 ##############################################################################
 import trick
+
 from ..SpaceFOM.SpaceFOMFederateConfig import *
 from ..SpaceFOM.SpaceFOMRefFrameObject import *
 

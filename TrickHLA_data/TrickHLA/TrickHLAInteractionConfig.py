@@ -13,6 +13,7 @@
 #    (((Edwin Z. Crues) (NASA/ER7) (Jan 2019) (--) (SpaceFOM support and testing.)))
 ##############################################################################
 import sys
+
 import trick
 
 

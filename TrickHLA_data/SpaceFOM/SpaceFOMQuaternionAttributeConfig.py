@@ -13,8 +13,9 @@
 #    (((Dan Dexter) (NASA/ER6) (May 2026) (--) (Initial implementation.)))
 ##############################################################################
 import trick
-from ..TrickHLA.TrickHLAAttributeConfig import *
+
 from ..SpaceFOM.SpaceFOMQuaternionFixedRecordConfig import *
+from ..TrickHLA.TrickHLAAttributeConfig import *
 
 
 class SpaceFOMQuaternionAttributeConfig( TrickHLAAttributeConfig, SpaceFOMQuaternionFixedRecordConfig ):

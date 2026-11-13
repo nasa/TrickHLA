@@ -14,9 +14,11 @@
 #    (((Dan Dexter) (NASA) (June 2025) (--) (SpaceFOM sine fixed record example)))
 ###############################################################################
 import trick
-from ..TrickHLA.TrickHLAObjectConfig import *
+
 from ..TrickHLA.TrickHLAAttributeConfig import *
+from ..TrickHLA.TrickHLAObjectConfig import *
 from ..TrickHLA.TrickHLARecordElementConfig import *
+
 
 class FixedRecordTestObject( TrickHLAObjectConfig ):
 

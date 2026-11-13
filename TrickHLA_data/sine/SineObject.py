@@ -15,8 +15,10 @@
 #     ((Dan Dexter) (NASA) (Mar 2024) (--) (Sine SpaceFOM example)))
 ##############################################################################
 import trick
-from ..TrickHLA.TrickHLAObjectConfig import *
+
 from ..TrickHLA.TrickHLAAttributeConfig import *
+from ..TrickHLA.TrickHLAObjectConfig import *
+
 
 class SineObject( TrickHLAObjectConfig ):
 

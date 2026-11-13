@@ -14,9 +14,10 @@
 #    (((Edwin Z. Crues) (NASA) (June 2016) (--) (Space FOM development)))
 ##############################################################################
 import trick
-from ..TrickHLA.TrickHLAObjectConfig import *
-from ..TrickHLA.TrickHLAAttributeConfig import *
+
 from ..SpaceFOM.SpaceFOMSpaceTimeCoordinateAttributeConfig import *
+from ..TrickHLA.TrickHLAAttributeConfig import *
+from ..TrickHLA.TrickHLAObjectConfig import *
 
 
 class SpaceFOMRefFrameObject( TrickHLAObjectConfig ):

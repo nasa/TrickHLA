@@ -28,13 +28,14 @@
 # @revs_end
 #
 ##############################################################################
-
 import socket
 import subprocess
 import sys
-import trick
-from enum import IntEnum
 from abc import ABC, abstractmethod
+from enum import IntEnum
+
+import trick
+
 
 class TrickSimConfig( ABC ):
 
