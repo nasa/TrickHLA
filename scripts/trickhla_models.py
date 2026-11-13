@@ -13,14 +13,14 @@
 
 # Create dictionary of registered TrickHLA models
 trickhla_models_includes = {
-   'TrickHLA':'include/TrickHLA',
-   'SpaceFOM':'include/SpaceFOM',
-   'JEOD':'include/JEOD',
-   'IMSim':'include/IMSim'
+    "TrickHLA": "include/TrickHLA",
+    "SpaceFOM": "include/SpaceFOM",
+    "JEOD": "include/JEOD",
+    "IMSim": "include/IMSim",
 }
 trickhla_models_source = {
-   'TrickHLA':'source/TrickHLA',
-   'SpaceFOM':'source/SpaceFOM',
-   'JEOD':'source/JEOD',
-   'IMSim':'source/IMSim'
+    "TrickHLA": "source/TrickHLA",
+    "SpaceFOM": "source/SpaceFOM",
+    "JEOD": "source/JEOD",
+    "IMSim": "source/IMSim",
 }

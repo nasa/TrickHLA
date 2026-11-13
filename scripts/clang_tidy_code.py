@@ -25,485 +25,612 @@ from trickhla_environment import *
 # Main routine.
 def main():
 
-   # Set defaults for TrickHLA, TRICK_HOME and JEOD_HOME
-   trickhla_home = '.'
-   trick_home = None
-   jeod_home = None
-   tsync_home = None
+    # Set defaults for TrickHLA, TRICK_HOME and JEOD_HOME
+    trickhla_home = "."
+    trick_home = None
+    jeod_home = None
+    tsync_home = None
 
-   # Initialize the lists that go into the clang-tidy command argument list.
-   system_includes = []
-   trickhla_defines = []
-   include_dirs = []
-   source_dirs = []
-   trickhla_ignore = []
-   clang_tidy_args = []
-   clang_tidy_extra_args = []
+    # Initialize the lists that go into the clang-tidy command argument list.
+    system_includes = []
+    trickhla_defines = []
+    include_dirs = []
+    source_dirs = []
+    trickhla_ignore = []
+    clang_tidy_args = []
+    clang_tidy_extra_args = []
 
-   #
-   # Setup command line argument parsing.
-   #
-   parser = argparse.ArgumentParser( prog = 'clang_tidy_code', \
-                                     formatter_class = argparse.RawDescriptionHelpFormatter, \
-                                     description = 'Scan the TrickHLA source code using clang-tidy.', \
-                                     epilog = textwrap.dedent( '''\n
-Examples:\n  clang_tidy_code --TrickHLA --SpaceFOM -v --check-includes --check-const-correctness --hla4\n  clang_tidy_code --TrickHLA --SpaceFOM -v --check-includes --check-recommended --hla4''' ) )
+    #
+    # Setup command line argument parsing.
+    #
+    parser = argparse.ArgumentParser(
+        prog="clang_tidy_code",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        description="Scan the TrickHLA source code using clang-tidy.",
+        epilog=textwrap.dedent("""\nExamples:
+clang_tidy_code --TrickHLA --SpaceFOM -v --check-includes --check-const-correctness --hla4
+clang_tidy_code --TrickHLA --SpaceFOM -v --check-includes --check-recommended --hla4"""),
+    )
 
-   parser.add_argument( '--apply-fixes', \
-                        help = 'Apply fixes.', \
-                        action = 'store_true', dest = 'apply_fixes' )
-   parser.add_argument( '-a', '--all', \
-                        help = 'Process all the source code.', \
-                        action = 'store_true', dest = 'process_all' )
-   parser.add_argument( '--TrickHLA', \
-                        help = 'Process the core TrickHLA source code.', \
-                        action = 'store_true', dest = 'process_TrickHLA' )
-   parser.add_argument( '--Encoding', \
-                        help = 'Process the TrickHLA/encoding source code.', \
-                        action = 'store_true', dest = 'process_TrickHLA_encoding' )
-   parser.add_argument( '--Time', \
-                        help = 'Process the TrickHLA/time source code.', \
-                        action = 'store_true', dest = 'process_TrickHLA_time' )
-   parser.add_argument( '--Utils', \
-                        help = 'Process the TrickHLA/utils source code.', \
-                        action = 'store_true', dest = 'process_TrickHLA_utils' )
-   parser.add_argument( '--SpaceFOM', \
-                        help = 'Process the SpaceFOM source code.', \
-                        action = 'store_true', dest = 'process_SpaceFOM' )
-   parser.add_argument( '--IMSim', \
-                        help = 'Process the IMSim source code.', \
-                        action = 'store_true', dest = 'process_IMSim' )
-   parser.add_argument( '--JEOD', \
-                        help = 'Process the JEOD source code.', \
-                        action = 'store_true', dest = 'process_JEOD' )
-   parser.add_argument( '--models', \
-                        help = 'Process the models source code.', \
-                        action = 'store_true', dest = 'process_models' )
-   parser.add_argument( '--check-all', \
-                        help = 'Run all code checks.', \
-                        action = 'store_true', dest = 'check_all' )
-   parser.add_argument( '--check-bugprone', \
-                        help = 'Check for bugprone.', \
-                        action = 'store_true', dest = 'check_bugprone' )
-   parser.add_argument( '--check-const-correctness', \
-                        help = 'Check for const-correctness.', \
-                        action = 'store_true', dest = 'check_const_correctness' )
-   parser.add_argument( '--check-cppcoreguidelines', \
-                        help = 'Check for cppcoreguidelines.', \
-                        action = 'store_true', dest = 'check_cppcoreguidelines' )
-   parser.add_argument( '--check-default', \
-                        help = 'Default: Check for clang static code analyzer and performance.', \
-                        action = 'store_true', dest = 'check_default' )
-   parser.add_argument( '--check-includes', \
-                        help = 'Check for includes.', \
-                        action = 'store_true', dest = 'check_includes' )
-   parser.add_argument( '--check-misc', \
-                        help = 'Check for misc.', \
-                        action = 'store_true', dest = 'check_misc' )
-   parser.add_argument( '--check-portability', \
-                        help = 'Check for portability.', \
-                        action = 'store_true', dest = 'check_portability' )
-   parser.add_argument( '--check-recommended', \
-                        help = 'Check recommended: Full performance and subset of misc, readability and bugprone.', \
-                        action = 'store_true', dest = 'check_recommended' )
-   parser.add_argument( '--disable-performance-avoid-endl', \
-                        help = 'Disable the performance-avoid-endl check.', \
-                        action = 'store_true', dest = 'disable_performance_avoid_endl' )
-   parser.add_argument( '-b', '--bin', \
-                        help = 'Path to clang-tidy binaries directory.', \
-                        dest = 'bin_path' )
-   parser.add_argument( '--hla3', \
-                        help = 'Check against HLA 3 (default), IEEE 1516-2010', \
-                        action = 'store_true', dest = 'hla3' )
-   parser.add_argument( '--hla4', \
-                        help = 'Check against HLA 4, IEEE 1516-2025', \
-                        action = 'store_true', dest = 'hla4' )
-   parser.add_argument( '--file-start', \
-                        help = 'File count to start scanning from (default: 1).', \
-                        dest = 'file_start_cnt' )
-   parser.add_argument( '--file-limit', \
-                        help = 'Maximum number of files to scan (default: Unlimited).', \
-                        dest = 'file_cnt_limit' )
-   parser.add_argument( '--jeod-home', \
-                        help = 'Provide a path to the JEOD installation directory.', \
-                        dest = 'jeod_home' )
-   parser.add_argument( '-p', '--path', help = 'Path to TrickHLA directory.', \
-                        dest = 'trickhla_home' )
-   parser.add_argument( '--rti-home', \
-                        help = 'Provide a path to the RTI installation directory.', \
-                        dest = 'rti_home' )
-   parser.add_argument( '-t', '--test', \
-                        help = 'Do not run clang-tidy just show what would be done.', \
-                        action = 'store_true', dest = 'test_only' )
-   parser.add_argument( '--trick-home', \
-                        help = 'Provide a path to the Trick installation directory.', \
-                        dest = 'trick_home' )
-   parser.add_argument( '--tsync-home', \
-                        help = 'Provide a path to the TSync driver installation directory.', \
-                        dest = 'tsync_home' )
-   parser.add_argument( '-v', '--verbose', \
-                        help = 'Check source code with verbose detailed error information.', \
-                        action = 'store_true', dest = 'verbose' )
-   parser.add_argument( '-vv', '--very_verbose', \
-                        help = 'Run with both clang-tidy verbose output and script verbose output.', \
-                        action = 'store_true', dest = 'very_verbose' )
+    parser.add_argument(
+        "--apply-fixes", help="Apply fixes.", action="store_true", dest="apply_fixes"
+    )
+    parser.add_argument(
+        "-a",
+        "--all",
+        help="Process all the source code.",
+        action="store_true",
+        dest="process_all",
+    )
+    parser.add_argument(
+        "--TrickHLA",
+        help="Process the core TrickHLA source code.",
+        action="store_true",
+        dest="process_TrickHLA",
+    )
+    parser.add_argument(
+        "--Encoding",
+        help="Process the TrickHLA/encoding source code.",
+        action="store_true",
+        dest="process_TrickHLA_encoding",
+    )
+    parser.add_argument(
+        "--Time",
+        help="Process the TrickHLA/time source code.",
+        action="store_true",
+        dest="process_TrickHLA_time",
+    )
+    parser.add_argument(
+        "--Utils",
+        help="Process the TrickHLA/utils source code.",
+        action="store_true",
+        dest="process_TrickHLA_utils",
+    )
+    parser.add_argument(
+        "--SpaceFOM",
+        help="Process the SpaceFOM source code.",
+        action="store_true",
+        dest="process_SpaceFOM",
+    )
+    parser.add_argument(
+        "--IMSim",
+        help="Process the IMSim source code.",
+        action="store_true",
+        dest="process_IMSim",
+    )
+    parser.add_argument(
+        "--JEOD",
+        help="Process the JEOD source code.",
+        action="store_true",
+        dest="process_JEOD",
+    )
+    parser.add_argument(
+        "--models",
+        help="Process the models source code.",
+        action="store_true",
+        dest="process_models",
+    )
+    parser.add_argument(
+        "--check-all", help="Run all code checks.", action="store_true", dest="check_all"
+    )
+    parser.add_argument(
+        "--check-bugprone",
+        help="Check for bugprone.",
+        action="store_true",
+        dest="check_bugprone",
+    )
+    parser.add_argument(
+        "--check-const-correctness",
+        help="Check for const-correctness.",
+        action="store_true",
+        dest="check_const_correctness",
+    )
+    parser.add_argument(
+        "--check-cppcoreguidelines",
+        help="Check for cppcoreguidelines.",
+        action="store_true",
+        dest="check_cppcoreguidelines",
+    )
+    parser.add_argument(
+        "--check-default",
+        help="Default: Check for clang static code analyzer and performance.",
+        action="store_true",
+        dest="check_default",
+    )
+    parser.add_argument(
+        "--check-includes",
+        help="Check for includes.",
+        action="store_true",
+        dest="check_includes",
+    )
+    parser.add_argument(
+        "--check-misc", help="Check for misc.", action="store_true", dest="check_misc"
+    )
+    parser.add_argument(
+        "--check-portability",
+        help="Check for portability.",
+        action="store_true",
+        dest="check_portability",
+    )
+    parser.add_argument(
+        "--check-recommended",
+        help="Check recommended: Full performance and subset of misc, readability and bugprone.",
+        action="store_true",
+        dest="check_recommended",
+    )
+    parser.add_argument(
+        "--disable-performance-avoid-endl",
+        help="Disable the performance-avoid-endl check.",
+        action="store_true",
+        dest="disable_performance_avoid_endl",
+    )
+    parser.add_argument(
+        "-b", "--bin", help="Path to clang-tidy binaries directory.", dest="bin_path"
+    )
+    parser.add_argument(
+        "--hla3",
+        help="Check against HLA 3 (default), IEEE 1516-2010",
+        action="store_true",
+        dest="hla3",
+    )
+    parser.add_argument(
+        "--hla4",
+        help="Check against HLA 4, IEEE 1516-2025",
+        action="store_true",
+        dest="hla4",
+    )
+    parser.add_argument(
+        "--file-start",
+        help="File count to start scanning from (default: 1).",
+        dest="file_start_cnt",
+    )
+    parser.add_argument(
+        "--file-limit",
+        help="Maximum number of files to scan (default: Unlimited).",
+        dest="file_cnt_limit",
+    )
+    parser.add_argument(
+        "--jeod-home",
+        help="Provide a path to the JEOD installation directory.",
+        dest="jeod_home",
+    )
+    parser.add_argument(
+        "-p", "--path", help="Path to TrickHLA directory.", dest="trickhla_home"
+    )
+    parser.add_argument(
+        "--rti-home",
+        help="Provide a path to the RTI installation directory.",
+        dest="rti_home",
+    )
+    parser.add_argument(
+        "-t",
+        "--test",
+        help="Do not run clang-tidy just show what would be done.",
+        action="store_true",
+        dest="test_only",
+    )
+    parser.add_argument(
+        "--trick-home",
+        help="Provide a path to the Trick installation directory.",
+        dest="trick_home",
+    )
+    parser.add_argument(
+        "--tsync-home",
+        help="Provide a path to the TSync driver installation directory.",
+        dest="tsync_home",
+    )
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        help="Check source code with verbose detailed error information.",
+        action="store_true",
+        dest="verbose",
+    )
+    parser.add_argument(
+        "-vv",
+        "--very_verbose",
+        help="Run with both clang-tidy verbose output and script verbose output.",
+        action="store_true",
+        dest="very_verbose",
+    )
 
-   # Parse the command line arguments.
-   args = parser.parse_args()
-   arg_error = False
+    # Parse the command line arguments.
+    args = parser.parse_args()
+    arg_error = False
 
-   # User must specify one of --all, --TrickHLA, --SpaceFOM, --IMSim, --JEOD, or --models
-   required_arg_cnt = 0
-   if args.process_all:
-      # -a, --all
-      required_arg_cnt += 1
-   if args.process_TrickHLA:
-      # --TrickHLA
-      required_arg_cnt += 1
-   if args.process_TrickHLA_encoding:
-      # --Encoding
-      required_arg_cnt += 1
-   if args.process_TrickHLA_time:
-      # --Time
-      required_arg_cnt += 1
-   if args.process_TrickHLA_utils:
-      # --Utils
-      required_arg_cnt += 1
-   if args.process_SpaceFOM:
-      # --SpaceFOM
-      required_arg_cnt += 1
-   if args.process_IMSim:
-      # --IMSim
-      required_arg_cnt += 1
-   if args.process_JEOD:
-      # --JEOD
-      required_arg_cnt += 1
-   if args.process_models:
-      # --models
-      required_arg_cnt += 1
+    # User must specify one of --all, --TrickHLA, --SpaceFOM, --IMSim, --JEOD, or --models
+    required_arg_cnt = 0
+    if args.process_all:
+        # -a, --all
+        required_arg_cnt += 1
+    if args.process_TrickHLA:
+        # --TrickHLA
+        required_arg_cnt += 1
+    if args.process_TrickHLA_encoding:
+        # --Encoding
+        required_arg_cnt += 1
+    if args.process_TrickHLA_time:
+        # --Time
+        required_arg_cnt += 1
+    if args.process_TrickHLA_utils:
+        # --Utils
+        required_arg_cnt += 1
+    if args.process_SpaceFOM:
+        # --SpaceFOM
+        required_arg_cnt += 1
+    if args.process_IMSim:
+        # --IMSim
+        required_arg_cnt += 1
+    if args.process_JEOD:
+        # --JEOD
+        required_arg_cnt += 1
+    if args.process_models:
+        # --models
+        required_arg_cnt += 1
 
-   if required_arg_cnt == 0:
-      arg_error = True
-      TrickHLAMessage.warning( 'You must specify at least one of \'-a\', \'--TrickHLA\', \'--SpaceFOM\', \'--IMSim\', \'--JEOD\', \'--models\'!' )
+    if required_arg_cnt == 0:
+        arg_error = True
+        TrickHLAMessage.warning(
+            "You must specify at least one of '-a', '--TrickHLA', '--SpaceFOM', '--IMSim', '--JEOD', '--models'!"
+        )
 
-   # Can only specify one of --hla3 or --hla4.
-   if args.hla3 and args.hla4:
-      arg_error = True
-      TrickHLAMessage.warning( 'Only specify one of \'--hla3\' or \'--hla4\'!' )
+    # Can only specify one of --hla3 or --hla4.
+    if args.hla3 and args.hla4:
+        arg_error = True
+        TrickHLAMessage.warning("Only specify one of '--hla3' or '--hla4'!")
 
-   if arg_error:
-      TrickHLAMessage.failure( 'Error detected in parsing command arguments!' )
+    if arg_error:
+        TrickHLAMessage.failure("Error detected in parsing command arguments!")
 
-   # If we selected very verbose, then we also need to set verbose in the clang-tidy output.
-   if args.very_verbose:
-      args.verbose = True
+    # If we selected very verbose, then we also need to set verbose in the clang-tidy output.
+    if args.very_verbose:
+        args.verbose = True
 
-   # The file count to start scanning from, default is 1.
-   file_start_cnt = 1
-   if args.file_start_cnt:
-      file_start_cnt = int( args.file_start_cnt )
+    # The file count to start scanning from, default is 1.
+    file_start_cnt = 1
+    if args.file_start_cnt:
+        file_start_cnt = int(args.file_start_cnt)
 
-   # Default is unlimited files to scan (<= 0), otherwise a fixed number of files.
-   file_cnt_limit = -1
-   if args.file_cnt_limit:
-      file_cnt_limit = int( args.file_cnt_limit )
+    # Default is unlimited files to scan (<= 0), otherwise a fixed number of files.
+    file_cnt_limit = -1
+    if args.file_cnt_limit:
+        file_cnt_limit = int(args.file_cnt_limit)
 
-   #
-   # Now let's check for paths to commands and directories.
-   #
-   # Check for TrickHLA.
-   if args.trickhla_home:
-      trickhla_home = args.trickhla_home
-   else:
-      trickhla_home = os.environ.get( 'TRICKHLA_HOME' )
-      if trickhla_home is None:
-         trickhla_home = os.environ.get( 'TRICK_HLA_HOME' )
-         if trickhla_home is None:
-            TrickHLAMessage.failure( 'TRICKHLA_HOME environment variable not set!' )
+    #
+    # Now let's check for paths to commands and directories.
+    #
+    # Check for TrickHLA.
+    if args.trickhla_home:
+        trickhla_home = args.trickhla_home
+    else:
+        trickhla_home = os.environ.get("TRICKHLA_HOME")
+        if trickhla_home is None:
+            trickhla_home = os.environ.get("TRICK_HLA_HOME")
+            if trickhla_home is None:
+                TrickHLAMessage.failure("TRICKHLA_HOME environment variable not set!")
 
-   # Move into the TrickHLA home directory.
-   # But first make sure that the directory actually exists before moving there.
-   if os.path.isdir( trickhla_home ):
-      if args.very_verbose:
-         TrickHLAMessage.status( 'Moving to TRICKHLA_HOME: ' + trickhla_home )
-      os.chdir( trickhla_home )
-   else:
-      TrickHLAMessage.failure( 'TrickHLA Home directory not found!' )
+    # Move into the TrickHLA home directory.
+    # But first make sure that the directory actually exists before moving there.
+    if os.path.isdir(trickhla_home):
+        if args.very_verbose:
+            TrickHLAMessage.status("Moving to TRICKHLA_HOME: " + trickhla_home)
+        os.chdir(trickhla_home)
+    else:
+        TrickHLAMessage.failure("TrickHLA Home directory not found!")
 
-   # Now let's check to make sure that the include, source and script directories exist.
-   if not os.path.isdir( 'include' ):
-      TrickHLAMessage.failure( 'Could not find the \'include\' directory!' )
-   if not os.path.isdir( 'source' ):
-      TrickHLAMessage.failure( 'Could not find the \'source\' directory!' )
-   if not os.path.isdir( 'scripts' ):
-      TrickHLAMessage.failure( 'Could not find the \'scripts\' directory!' )
+    # Now let's check to make sure that the include, source and script directories exist.
+    if not os.path.isdir("include"):
+        TrickHLAMessage.failure("Could not find the 'include' directory!")
+    if not os.path.isdir("source"):
+        TrickHLAMessage.failure("Could not find the 'source' directory!")
+    if not os.path.isdir("scripts"):
+        TrickHLAMessage.failure("Could not find the 'scripts' directory!")
 
-   # Find the clang-tidy command and get the cland-tidy version ID.
-   clang_tidy_cmd, clang_tidy_ver = find_clang_tidy( args.bin_path, args.very_verbose )
-   if clang_tidy_cmd is None:
-      TrickHLAMessage.failure( 'No clang-tidy command found!' )
+    # Find the clang-tidy command and get the cland-tidy version ID.
+    clang_tidy_cmd, clang_tidy_ver = find_clang_tidy(args.bin_path, args.very_verbose)
+    if clang_tidy_cmd is None:
+        TrickHLAMessage.failure("No clang-tidy command found!")
 
-   # Determine the path to Trick HOME and the Trick version ID.
-   trick_home, trick_ver, trick_ver_year = find_trick( args.trick_home, args.very_verbose )
-   if args.very_verbose:
-      TrickHLAMessage.status( 'Path to Trick: ' + trick_home )
-      TrickHLAMessage.status( 'Trick Version: ' + trick_ver )
-      TrickHLAMessage.status( 'Trick Version Year: ' + trick_ver_year )
+    # Determine the path to Trick HOME and the Trick version ID.
+    trick_home, trick_ver, trick_ver_year = find_trick(args.trick_home, args.very_verbose)
+    if args.very_verbose:
+        TrickHLAMessage.status("Path to Trick: " + trick_home)
+        TrickHLAMessage.status("Trick Version: " + trick_ver)
+        TrickHLAMessage.status("Trick Version Year: " + trick_ver_year)
 
-   # Determine the path to HLA RTI home directory.
-   rti_home = find_hla_rti( args.rti_home, args.very_verbose )
-   if args.very_verbose:
-      TrickHLAMessage.status( 'Path to HLA RTI: ' + rti_home )
+    # Determine the path to HLA RTI home directory.
+    rti_home = find_hla_rti(args.rti_home, args.very_verbose)
+    if args.very_verbose:
+        TrickHLAMessage.status("Path to HLA RTI: " + rti_home)
 
-   # Determine the path to the HLA RTI include directory.
-   if args.hla4:
-      rti_include = rti_home + '/api/cpp/HLA_1516-2025'
-      if os.path.isdir( rti_include ) is False:
-         TrickHLAMessage.failure( 'Could not find the HLA 4 RTI include directory: ' + rti_include )
-   else:
-      rti_include = rti_home + '/api/cpp/HLA_1516-2010'
-      if os.path.isdir( rti_include ) is False:
-         # Try the include directory for older Pitch RTI versions.
-         rti_include = rti_home + '/include'
-         if os.path.isdir( rti_include ) is False:
-            TrickHLAMessage.failure( 'Could not find the HLA Evolved RTI include directory: ' + rti_include )
-   if args.very_verbose:
-      TrickHLAMessage.status( 'Path to HLA RTI include directory: ' + rti_include )
+    # Determine the path to the HLA RTI include directory.
+    if args.hla4:
+        rti_include = rti_home + "/api/cpp/HLA_1516-2025"
+        if os.path.isdir(rti_include) is False:
+            TrickHLAMessage.failure(
+                "Could not find the HLA 4 RTI include directory: " + rti_include
+            )
+    else:
+        rti_include = rti_home + "/api/cpp/HLA_1516-2010"
+        if os.path.isdir(rti_include) is False:
+            # Try the include directory for older Pitch RTI versions.
+            rti_include = rti_home + "/include"
+            if os.path.isdir(rti_include) is False:
+                TrickHLAMessage.failure(
+                    "Could not find the HLA Evolved RTI include directory: " + rti_include
+                )
+    if args.very_verbose:
+        TrickHLAMessage.status("Path to HLA RTI include directory: " + rti_include)
 
-   # Determine the path to JEOD home directory.
-   jeod_home = find_jeod( args.jeod_home, args.very_verbose )
-   if args.very_verbose and jeod_home:
-      TrickHLAMessage.status( 'Path to JEOD: ' + jeod_home )
+    # Determine the path to JEOD home directory.
+    jeod_home = find_jeod(args.jeod_home, args.very_verbose)
+    if args.very_verbose and jeod_home:
+        TrickHLAMessage.status("Path to JEOD: " + jeod_home)
 
-   # Check for TSync Central Timing Equipment (CTE) driver home directory.
-   if args.tsync_home:
-      tsync_home = args.tsync_home
-   else:
-      tsync_home = os.environ.get( 'TSYNC_HOME' )
-   if tsync_home and not os.path.isdir( tsync_home ):
-      TrickHLAMessage.failure( 'Could not find the TSync Home directory: ' + tsync_home )
+    # Check for TSync Central Timing Equipment (CTE) driver home directory.
+    if args.tsync_home:
+        tsync_home = args.tsync_home
+    else:
+        tsync_home = os.environ.get("TSYNC_HOME")
+    if tsync_home and not os.path.isdir(tsync_home):
+        TrickHLAMessage.failure("Could not find the TSync Home directory: " + tsync_home)
 
-   # Define preprocessor symbols we use for TrickHLA and set the TRICK_VER based on the
-   # version of the Trick simulation environment we found in our Path.
-   if args.hla4:
-      trickhla_defines = ['-DTRICK_VER=' + trick_ver_year, '-DIEEE_1516_2025', '-DFPU_CW_PROTECTION' ]
-   else:
-      trickhla_defines = ['-DTRICK_VER=' + trick_ver_year, '-DIEEE_1516_2010', '-DFPU_CW_PROTECTION' ]
+    # Define preprocessor symbols we use for TrickHLA and set the TRICK_VER based on the
+    # version of the Trick simulation environment we found in our Path.
+    if args.hla4:
+        trickhla_defines = [
+            "-DTRICK_VER=" + trick_ver_year,
+            "-DIEEE_1516_2025",
+            "-DFPU_CW_PROTECTION",
+        ]
+    else:
+        trickhla_defines = [
+            "-DTRICK_VER=" + trick_ver_year,
+            "-DIEEE_1516_2010",
+            "-DFPU_CW_PROTECTION",
+        ]
 
-   # Form relative paths to all the include directories used by TrickHLA.
-   include_dirs.extend( ['-I./include'] )
-   include_dirs.extend( ['-I' + trick_home + '/include'] )
-   include_dirs.extend( ['-I' + trick_home + '/include/trick/compat'] )
-   include_dirs.extend( ['-I' + trick_home + '/trick_source'] )
-   include_dirs.extend( ['-I' + rti_include] )
-   if tsync_home:
-      include_dirs.extend( ['-I' + tsync_home + '/libtsync/include'] )
-      include_dirs.extend( ['-I' + tsync_home + '/tsync-driver/include'] )
+    # Form relative paths to all the include directories used by TrickHLA.
+    include_dirs.extend(["-I./include"])
+    include_dirs.extend(["-I" + trick_home + "/include"])
+    include_dirs.extend(["-I" + trick_home + "/include/trick/compat"])
+    include_dirs.extend(["-I" + trick_home + "/trick_source"])
+    include_dirs.extend(["-I" + rti_include])
+    if tsync_home:
+        include_dirs.extend(["-I" + tsync_home + "/libtsync/include"])
+        include_dirs.extend(["-I" + tsync_home + "/tsync-driver/include"])
 
-   # Add models source code and include paths to process.
-   if args.process_all or args.process_models:
-      include_dirs.extend( ['-I./models'] )
+    # Add models source code and include paths to process.
+    if args.process_all or args.process_models:
+        include_dirs.extend(["-I./models"])
 
-      if os.path.isdir( './models/Ball/src' ):
-         source_dirs.extend( ['./models/Ball/src/'] )
-      if os.path.isdir( './models/DistIf/src' ):
-         source_dirs.extend( ['./models/DistIf/src/'] )
-      if os.path.isdir( './models/encoding/src' ):
-         source_dirs.extend( ['./models/encoding/src/'] )
-      if os.path.isdir( './models/EntityDynamics/src' ):
-         source_dirs.extend( ['./models/EntityDynamics/src/'] )
-      if os.path.isdir( './models/FrameDynamics/src' ):
-         source_dirs.extend( ['./models/FrameDynamics/src/'] )
-      if os.path.isdir( './models/SAIntegrator/src' ):
-         source_dirs.extend( ['./models/SAIntegrator/src/'] )
-      if os.path.isdir( './models/simconfig/src' ):
-         source_dirs.extend( ['./models/simconfig/src/'] )
-      if os.path.isdir( './models/sine/src' ):
-         source_dirs.extend( ['./models/sine/src/'] )
-      if os.path.isdir( './sims/TrickHLA/SIM_Encoders/models' ):
-         source_dirs.extend( ['./sims/TrickHLA/SIM_Encoders/models/src/'] )
-         include_dirs.extend( ['-I./sims/TrickHLA/SIM_Encoders'] )
+        if os.path.isdir("./models/Ball/src"):
+            source_dirs.extend(["./models/Ball/src/"])
+        if os.path.isdir("./models/DistIf/src"):
+            source_dirs.extend(["./models/DistIf/src/"])
+        if os.path.isdir("./models/encoding/src"):
+            source_dirs.extend(["./models/encoding/src/"])
+        if os.path.isdir("./models/EntityDynamics/src"):
+            source_dirs.extend(["./models/EntityDynamics/src/"])
+        if os.path.isdir("./models/FrameDynamics/src"):
+            source_dirs.extend(["./models/FrameDynamics/src/"])
+        if os.path.isdir("./models/SAIntegrator/src"):
+            source_dirs.extend(["./models/SAIntegrator/src/"])
+        if os.path.isdir("./models/simconfig/src"):
+            source_dirs.extend(["./models/simconfig/src/"])
+        if os.path.isdir("./models/sine/src"):
+            source_dirs.extend(["./models/sine/src/"])
+        if os.path.isdir("./sims/TrickHLA/SIM_Encoders/models"):
+            source_dirs.extend(["./sims/TrickHLA/SIM_Encoders/models/src/"])
+            include_dirs.extend(["-I./sims/TrickHLA/SIM_Encoders"])
 
-   # JEOD
-   if args.process_all or args.process_JEOD:
-      source_dirs.extend ( ['./source/JEOD/'] )
-      if jeod_home:
-         include_dirs.extend( ['-I' + jeod_home + '/models'] )
+    # JEOD
+    if args.process_all or args.process_JEOD:
+        source_dirs.extend(["./source/JEOD/"])
+        if jeod_home:
+            include_dirs.extend(["-I" + jeod_home + "/models"])
 
-   # IMSim
-   if args.process_all or args.process_IMSim:
-      source_dirs.extend ( ['./source/IMSim/'] )
+    # IMSim
+    if args.process_all or args.process_IMSim:
+        source_dirs.extend(["./source/IMSim/"])
 
-   # SpaceFOM
-   if args.process_all or args.process_SpaceFOM:
-      source_dirs.extend ( ['./source/SpaceFOM/'] )
+    # SpaceFOM
+    if args.process_all or args.process_SpaceFOM:
+        source_dirs.extend(["./source/SpaceFOM/"])
 
-   # TrickHLA
-   if args.process_all or args.process_TrickHLA:
-      source_dirs.extend ( ['./source/TrickHLA/'] )
+    # TrickHLA
+    if args.process_all or args.process_TrickHLA:
+        source_dirs.extend(["./source/TrickHLA/"])
 
-   # TrickHLA Encoding
-   if args.process_all or args.process_TrickHLA_encoding:
-      source_dirs.extend ( ['./source/TrickHLA/encoding/'] )
+    # TrickHLA Encoding
+    if args.process_all or args.process_TrickHLA_encoding:
+        source_dirs.extend(["./source/TrickHLA/encoding/"])
 
-   # TrickHLA Time
-   if args.process_all or args.process_TrickHLA_time:
-      source_dirs.extend ( ['./source/TrickHLA/time/'] )
+    # TrickHLA Time
+    if args.process_all or args.process_TrickHLA_time:
+        source_dirs.extend(["./source/TrickHLA/time/"])
 
-   # TrickHLA Utils
-   if args.process_all or args.process_TrickHLA_utils:
-      source_dirs.extend ( ['./source/TrickHLA/utils/'] )
+    # TrickHLA Utils
+    if args.process_all or args.process_TrickHLA_utils:
+        source_dirs.extend(["./source/TrickHLA/utils/"])
 
-   # Add usr local include path if it exists.
-   if os.path.isdir( '/usr/local/include' ):
-      include_dirs.extend( ['-I/usr/local/include'] )
+    # Add usr local include path if it exists.
+    if os.path.isdir("/usr/local/include"):
+        include_dirs.extend(["-I/usr/local/include"])
 
-   # Configure the clang-tidy arguments.
-   # List all checks: clang-tidy --checks='*' --dump-config --explain-config
-   # The insecureAPI checks are disabled because the results are not very good.
-   checks = '--checks=\'-*,clang-diagnostic-*'
-   if args.check_bugprone or args.check_all:
-      checks += ',bugprone-*'
-   if args.check_const_correctness or args.check_all:
-      checks += ',misc-const-correctness,readability-isolate-declaration'
-   if args.check_cppcoreguidelines or args.check_all:
-      checks += ',cppcoreguidelines-*'
-   if args.check_includes or args.check_all:
-      checks += ',bugprone-suspicious-include,llvm-include-order,misc-header-include-cycle,misc-include-cleaner,portability-restrict-system-includes,readability-duplicate-include'
-   if args.check_misc or args.check_all:
-      checks += ',misc-*'
-   if args.check_portability or args.check_all:
-      checks += ',portability-*'
-   if args.check_recommended or args.check_all:
-      checks += ',performance-*,misc-*,-misc-no-recursion,-misc-unused-parameters,readability-duplicate-include,readability-misleading-indentation,bugprone-assert-side-effect,bugprone-macro-repeated-side-effects,bugprone-infinite-loop,bugprone-macro-parentheses,bugprone-posix-return,bugprone-reserved-identifier,bugprone-signal-handler,bugprone-signed-char-misuse,bugprone-sizeof-expression,bugprone-branch-clone'
-   if args.check_default or args.check_all:
-      checks += ',performance-*,clang-analyzer-*,-clang-analyzer-security.insecureAPI.*'
-   if not ( args.check_bugprone or args.check_const_correctness or args.check_cppcoreguidelines or args.check_includes or args.check_misc or args.check_portability or args.check_default ):
-      checks += ',performance-*,clang-analyzer-*,-clang-analyzer-security.insecureAPI.*'
-   if args.disable_performance_avoid_endl:
-      checks += ',-performance-avoid-endl'
+    # Configure the clang-tidy arguments.
+    # List all checks: clang-tidy --checks='*' --dump-config --explain-config
+    # The insecureAPI checks are disabled because the results are not very good.
+    checks = "--checks='-*,clang-diagnostic-*"
+    if args.check_bugprone or args.check_all:
+        checks += ",bugprone-*"
+    if args.check_const_correctness or args.check_all:
+        checks += ",misc-const-correctness,readability-isolate-declaration"
+    if args.check_cppcoreguidelines or args.check_all:
+        checks += ",cppcoreguidelines-*"
+    if args.check_includes or args.check_all:
+        checks += ",bugprone-suspicious-include,llvm-include-order,misc-header-include-cycle,misc-include-cleaner,portability-restrict-system-includes,readability-duplicate-include"
+    if args.check_misc or args.check_all:
+        checks += ",misc-*"
+    if args.check_portability or args.check_all:
+        checks += ",portability-*"
+    if args.check_recommended or args.check_all:
+        checks += ",performance-*,misc-*,-misc-no-recursion,-misc-unused-parameters,readability-duplicate-include,readability-misleading-indentation,bugprone-assert-side-effect,bugprone-macro-repeated-side-effects,bugprone-infinite-loop,bugprone-macro-parentheses,bugprone-posix-return,bugprone-reserved-identifier,bugprone-signal-handler,bugprone-signed-char-misuse,bugprone-sizeof-expression,bugprone-branch-clone"
+    if args.check_default or args.check_all:
+        checks += ",performance-*,clang-analyzer-*,-clang-analyzer-security.insecureAPI.*"
+    if not (
+        args.check_bugprone
+        or args.check_const_correctness
+        or args.check_cppcoreguidelines
+        or args.check_includes
+        or args.check_misc
+        or args.check_portability
+        or args.check_default
+    ):
+        checks += ",performance-*,clang-analyzer-*,-clang-analyzer-security.insecureAPI.*"
+    if args.disable_performance_avoid_endl:
+        checks += ",-performance-avoid-endl"
 
-   checks += '\''
-   clang_tidy_args.append( checks )
-   
-   if args.apply_fixes:
-      clang_tidy_args.append( '--fix-notes' )
-      clang_tidy_args.append( '--fix-errors' )
-      clang_tidy_args.append( '--export-fixes=\'clang_tidy_fixes.xml\'' )
+    checks += "'"
+    clang_tidy_args.append(checks)
 
-   clang_tidy_args.append( '--header-filter=\'.*TrickHLA/.*\'' )
-   clang_tidy_args.append( '--exclude-header-filter=\'.*trick/.*|.*jeod/.*\'' )
-   clang_tidy_extra_args.append( '--' )
-   clang_tidy_extra_args.extend( include_dirs )
-   clang_tidy_extra_args.extend( trickhla_defines )
-   if args.hla4:
-      clang_tidy_extra_args.append( '-std=c++14' )
-   else:
-      clang_tidy_extra_args.append( '-std=c++14' )
+    if args.apply_fixes:
+        clang_tidy_args.append("--fix-notes")
+        clang_tidy_args.append("--fix-errors")
+        clang_tidy_args.append("--export-fixes='clang_tidy_fixes.xml'")
 
-   # Echo check the data if verbose is selected.
-   if args.verbose:
-      TrickHLAMessage.status( '---------------------------------------------------------------------' )
-      TrickHLAMessage.status( 'trickhla_home    = ' + trickhla_home )
-      TrickHLAMessage.status( 'trickhla_defines = ' + ' '.join( trickhla_defines ) )
-      TrickHLAMessage.status( 'source_dirs      = ' + ' '.join( source_dirs ) )
-      TrickHLAMessage.status( 'include_dirs     = ' + ' '.join( include_dirs ) )
-      TrickHLAMessage.status( 'trick_home       = ' + trick_home )
-      if tsync_home:
-         TrickHLAMessage.status( 'tsync_home       = ' + tsync_home )
-      TrickHLAMessage.status( 'clang_tidy_cmd   = ' + clang_tidy_cmd )
-      TrickHLAMessage.status( 'clang_tidy_ver   = ' + clang_tidy_ver )
-      TrickHLAMessage.status( 'clang_tidy_args  = ' + ' '.join( clang_tidy_args ) )
-      TrickHLAMessage.status( 'clang_tidy_extra_args = ' + ' '.join( clang_tidy_extra_args ) )
-      TrickHLAMessage.status( '---------------------------------------------------------------------' )
+    clang_tidy_args.append("--header-filter='.*TrickHLA/.*'")
+    clang_tidy_args.append("--exclude-header-filter='.*trick/.*|.*jeod/.*'")
+    clang_tidy_extra_args.append("--")
+    clang_tidy_extra_args.extend(include_dirs)
+    clang_tidy_extra_args.extend(trickhla_defines)
+    if args.hla4:
+        clang_tidy_extra_args.append("-std=c++14")
+    else:
+        clang_tidy_extra_args.append("-std=c++14")
 
-   # Build the list if source filenames given the source directories.
-   source_files = []
-   file_cnt = 0
-   file_added_cnt = 0
-   for src_dir in source_dirs:
-      for dir_path, dir_names, filenames in os.walk( src_dir ):
-         for filename in filenames:
-            if filename.endswith( ".cpp" ) or filename.endswith( ".cxx" ) or filename.endswith( ".cc" ) or filename.endswith( ".c" ):
-               file_cnt += 1
-               if ( file_cnt >= file_start_cnt ) and ( ( file_cnt_limit <= 0 ) or ( file_added_cnt < file_cnt_limit ) ):
-                  source_files.append( os.path.join( dir_path, filename ) )
-                  file_added_cnt += 1
+    # Echo check the data if verbose is selected.
+    if args.verbose:
+        TrickHLAMessage.status(
+            "---------------------------------------------------------------------"
+        )
+        TrickHLAMessage.status("trickhla_home    = " + trickhla_home)
+        TrickHLAMessage.status("trickhla_defines = " + " ".join(trickhla_defines))
+        TrickHLAMessage.status("source_dirs      = " + " ".join(source_dirs))
+        TrickHLAMessage.status("include_dirs     = " + " ".join(include_dirs))
+        TrickHLAMessage.status("trick_home       = " + trick_home)
+        if tsync_home:
+            TrickHLAMessage.status("tsync_home       = " + tsync_home)
+        TrickHLAMessage.status("clang_tidy_cmd   = " + clang_tidy_cmd)
+        TrickHLAMessage.status("clang_tidy_ver   = " + clang_tidy_ver)
+        TrickHLAMessage.status("clang_tidy_args  = " + " ".join(clang_tidy_args))
+        TrickHLAMessage.status(
+            "clang_tidy_extra_args = " + " ".join(clang_tidy_extra_args)
+        )
+        TrickHLAMessage.status(
+            "---------------------------------------------------------------------"
+        )
 
-   # Form the clang-tidy command with command line options.
-   clang_tidy_command = [ clang_tidy_cmd ]
-   clang_tidy_command.extend( clang_tidy_args )
-   clang_tidy_command.extend( source_files )
-   clang_tidy_command.extend( clang_tidy_extra_args )
+    # Build the list if source filenames given the source directories.
+    source_files = []
+    file_cnt = 0
+    file_added_cnt = 0
+    for src_dir in source_dirs:
+        for dir_path, dir_names, filenames in os.walk(src_dir):
+            for filename in filenames:
+                if (
+                    filename.endswith(".cpp")
+                    or filename.endswith(".cxx")
+                    or filename.endswith(".cc")
+                    or filename.endswith(".c")
+                ):
+                    file_cnt += 1
+                    if (file_cnt >= file_start_cnt) and (
+                        (file_cnt_limit <= 0) or (file_added_cnt < file_cnt_limit)
+                    ):
+                        source_files.append(os.path.join(dir_path, filename))
+                        file_added_cnt += 1
 
-   #
-   # Execute the clang-tidy command
-   #
-   if args.test_only:
-      TrickHLAMessage.status( 'Would execute: ' + ' '.join( clang_tidy_command ) )
-   else:
-      if args.very_verbose:
-         TrickHLAMessage.status( 'Executing: ' + ' '.join( clang_tidy_command ) )
+    # Form the clang-tidy command with command line options.
+    clang_tidy_command = [clang_tidy_cmd]
+    clang_tidy_command.extend(clang_tidy_args)
+    clang_tidy_command.extend(source_files)
+    clang_tidy_command.extend(clang_tidy_extra_args)
 
-      # Execute the clang-tidy command.
-      try:
+    #
+    # Execute the clang-tidy command
+    #
+    if args.test_only:
+        TrickHLAMessage.status("Would execute: " + " ".join(clang_tidy_command))
+    else:
+        if args.very_verbose:
+            TrickHLAMessage.status("Executing: " + " ".join(clang_tidy_command))
 
-         clang_tidy_proc = subprocess.Popen( clang_tidy_command, stdout = subprocess.PIPE, stderr = subprocess.PIPE, text = True )
+        # Execute the clang-tidy command.
+        try:
 
-         if ( True ):
-            # Print files summary as they are processed.
-            while True:
-               line = clang_tidy_proc.stderr.readline()
-               if line == '' and clang_tidy_proc.poll() is not None:
-                  break
-               if line:
-                  print( line.strip() )
+            clang_tidy_proc = subprocess.Popen(
+                clang_tidy_command,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+            )
 
-         else:
-            # Use spinner to indicate activity.
-            count = 0
-            while clang_tidy_proc.poll() is None:
+            if True:
+                # Print files summary as they are processed.
+                while True:
+                    line = clang_tidy_proc.stderr.readline()
+                    if line == "" and clang_tidy_proc.poll() is not None:
+                        break
+                    if line:
+                        print(line.strip())
 
-               # Spinner.
-               if count % 4 == 0:
-                  sys.stdout.write( '\b' )
-                  sys.stdout.write( '|' )
-                  sys.stdout.flush()
-               if count % 4 == 1:
-                  sys.stdout.write( '\b' )
-                  sys.stdout.write( '/' )
-                  sys.stdout.flush()
-               if count % 4 == 2:
-                  sys.stdout.write( '\b' )
-                  sys.stdout.write( '-' )
-                  sys.stdout.flush()
-               if count % 4 == 3:
-                  sys.stdout.write( '\b' )
-                  sys.stdout.write( '\\' )
-                  sys.stdout.flush()
-               count += 1
+            else:
+                # Use spinner to indicate activity.
+                count = 0
+                while clang_tidy_proc.poll() is None:
 
-               # Check process activity 10 times a second.
-               time.sleep( 0.1 )
+                    # Spinner.
+                    if count % 4 == 0:
+                        sys.stdout.write("\b")
+                        sys.stdout.write("|")
+                        sys.stdout.flush()
+                    if count % 4 == 1:
+                        sys.stdout.write("\b")
+                        sys.stdout.write("/")
+                        sys.stdout.flush()
+                    if count % 4 == 2:
+                        sys.stdout.write("\b")
+                        sys.stdout.write("-")
+                        sys.stdout.flush()
+                    if count % 4 == 3:
+                        sys.stdout.write("\b")
+                        sys.stdout.write("\\")
+                        sys.stdout.flush()
+                    count += 1
 
-            # Clear the spinner line.
-            sys.stdout.write( '\b' )
-            sys.stdout.write( ' ' )
-            sys.stdout.write( '\b' )
-            sys.stdout.flush()
+                    # Check process activity 10 times a second.
+                    time.sleep(0.1)
 
-         output, errors = clang_tidy_proc.communicate()
-         print( errors )
-         print( output )
+                # Clear the spinner line.
+                sys.stdout.write("\b")
+                sys.stdout.write(" ")
+                sys.stdout.write("\b")
+                sys.stdout.flush()
 
-      except subprocess.CalledProcessError:
-         TrickHLAMessage.failure( '\'clang-tidy\' command failed! '
-                                  +subprocess.CalledProcessError.message )
+            output, errors = clang_tidy_proc.communicate()
+            print(errors)
+            print(output)
 
-   # Let the user know that we are done.
-   TrickHLAMessage.success( 'Finished checking TrickHLA source code.' )
+        except subprocess.CalledProcessError:
+            TrickHLAMessage.failure(
+                "'clang-tidy' command failed! " + subprocess.CalledProcessError.message
+            )
 
-   return
+    # Let the user know that we are done.
+    TrickHLAMessage.success("Finished checking TrickHLA source code.")
+
+    return
 
 
 # Function to find the clang-tidy command.
@@ -515,82 +642,88 @@ Examples:\n  clang_tidy_code --TrickHLA --SpaceFOM -v --check-includes --check-c
 # @param  clang_tidy_bin     The path to the clang-tidy programs directory.
 # @param  verbose            Flag to set if verbose outputs are on.
 #
-def find_clang_tidy( clang_tidy_bin, verbose = True ):
+def find_clang_tidy(clang_tidy_bin, verbose=True):
 
-   # Initialize the clang-tidy command path.
-   clang_tidy_command = None
-   clang_tidy_version = None
+    # Initialize the clang-tidy command path.
+    clang_tidy_command = None
+    clang_tidy_version = None
 
-   # Check to see if the path to the clang-tidy binaries are set.
-   if clang_tidy_bin:
+    # Check to see if the path to the clang-tidy binaries are set.
+    if clang_tidy_bin:
 
-      # Use the command line path to set the command.
-      clang_tidy_command = clang_tidy_bin + '/clang-tidy'
+        # Use the command line path to set the command.
+        clang_tidy_command = clang_tidy_bin + "/clang-tidy"
 
-   # clang_tidy_bin is not set so lets check other options.
-   else:
+    # clang_tidy_bin is not set so lets check other options.
+    else:
 
-      # Check to see if the $LLVM_HOME environment variable is defined and set.
-      LLVM_HOME = os.environ.get( 'LLVM_HOME' )
-      if LLVM_HOME:
+        # Check to see if the $LLVM_HOME environment variable is defined and set.
+        LLVM_HOME = os.environ.get("LLVM_HOME")
+        if LLVM_HOME:
 
-         # Check to see if LLVM_HOME exists.
-         if os.path.isdir( LLVM_HOME ):
+            # Check to see if LLVM_HOME exists.
+            if os.path.isdir(LLVM_HOME):
 
-            # Form the clang-tidy command based on LLVM_HOME.
-            clang_tidy_command = LLVM_HOME + '/bin/clang-tidy'
+                # Form the clang-tidy command based on LLVM_HOME.
+                clang_tidy_command = LLVM_HOME + "/bin/clang-tidy"
 
+                if verbose:
+                    # Let the user know that we have LLVM_HOME and where it is.
+                    TrickHLAMessage.status("LLVM_HOME: " + LLVM_HOME)
+
+            else:
+                TrickHLAMessage.failure("LLVM_HOME not found: " + LLVM_HOME)
+
+        else:
+
+            # LLVM_HOME is not set so look in standard locations for
+            # clang-tidy starting with the system path first.
+            clang_tidy_command = shutil.which("clang-tidy")
+            if clang_tidy_command is None:
+                if os.path.isfile("/usr/bin/clang-tidy"):
+                    clang_tidy_command = "/usr/bin/clang-tidy"
+                elif os.path.isfile("/usr/local/bin/clang-tidy"):
+                    clang_tidy_command = "/usr/local/bin/clang-tidy"
+                elif os.path.isfile("/usr/local/opt/llvm/bin/clang-tidy"):
+                    clang_tidy_command = "/usr/local/opt/llvm/bin/clang-tidy"
+
+    # We're finished hunting. Now let's check for the clang-tidy command.
+    if clang_tidy_command is None:
+        TrickHLAMessage.failure("Could not find the clang-tidy command!")
+    else:
+        if not os.path.isfile(clang_tidy_command):
+            TrickHLAMessage.failure(
+                "Could not find the clang-tidy command!: " + clang_tidy_command
+            )
+        else:
             if verbose:
-               # Let the user know that we have LLVM_HOME and where it is.
-               TrickHLAMessage.status( 'LLVM_HOME: ' + LLVM_HOME )
+                TrickHLAMessage.status("Using clang-tidy command: " + clang_tidy_command)
 
-         else:
-            TrickHLAMessage.failure( 'LLVM_HOME not found: ' + LLVM_HOME )
+    #
+    # Now get the clang-tidy version ID tag.
+    #
+    try:
+        tidy_ver_cmd = [clang_tidy_command, "--version"]
+        grep_cmd = ["grep", "-i", "version"]
 
-      else:
+        tidy_ver_process = subprocess.Popen(tidy_ver_cmd, stdout=subprocess.PIPE)
+        grep_process = subprocess.Popen(
+            grep_cmd, stdin=tidy_ver_process.stdout, stdout=subprocess.PIPE
+        )
+        tidy_ver_process.stdout.close()
 
-         # LLVM_HOME is not set so look in standard locations for
-         # clang-tidy starting with the system path first.
-         clang_tidy_command = shutil.which( 'clang-tidy' )
-         if clang_tidy_command is None:
-            if os.path.isfile( '/usr/bin/clang-tidy' ):
-               clang_tidy_command = '/usr/bin/clang-tidy'
-            elif os.path.isfile( '/usr/local/bin/clang-tidy' ):
-               clang_tidy_command = '/usr/local/bin/clang-tidy'
-            elif os.path.isfile( '/usr/local/opt/llvm/bin/clang-tidy' ):
-               clang_tidy_command = '/usr/local/opt/llvm/bin/clang-tidy'
+        output, _ = grep_process.communicate()
+        clang_tidy_version = output.decode().rstrip()
 
-   # We're finished hunting. Now let's check for the clang-tidy command.
-   if clang_tidy_command is None:
-      TrickHLAMessage.failure( 'Could not find the clang-tidy command!' )
-   else:
-      if not os.path.isfile( clang_tidy_command ):
-         TrickHLAMessage.failure( 'Could not find the clang-tidy command!: '
-                                  +clang_tidy_command )
-      else:
-         if verbose:
-            TrickHLAMessage.status( 'Using clang-tidy command: ' + clang_tidy_command )
+    except subprocess.CalledProcessError:
+        TrickHLAMessage.failure(
+            "'clang-tidy --version' command failed!: "
+            + clang_tidy_command
+            + ", "
+            + subprocess.CalledProcessError.message
+        )
 
-   #
-   # Now get the clang-tidy version ID tag.
-   #
-   try:
-      tidy_ver_cmd = [clang_tidy_command, '--version']
-      grep_cmd = ['grep', '-i', 'version']
-
-      tidy_ver_process = subprocess.Popen( tidy_ver_cmd, stdout = subprocess.PIPE )
-      grep_process = subprocess.Popen( grep_cmd, stdin = tidy_ver_process.stdout, stdout = subprocess.PIPE )
-      tidy_ver_process.stdout.close()
-
-      output, _ = grep_process.communicate()
-      clang_tidy_version = output.decode().rstrip()
-
-   except subprocess.CalledProcessError:
-      TrickHLAMessage.failure( '\'clang-tidy --version\' command failed!: '
-                               +clang_tidy_command + ', '
-                               +subprocess.CalledProcessError.message )
-
-   return clang_tidy_command, clang_tidy_version
+    return clang_tidy_command, clang_tidy_version
 
 
 # Function to find the Trick home directory and return the Trick version.
@@ -603,93 +736,116 @@ def find_clang_tidy( clang_tidy_bin, verbose = True ):
 # @param trick_path           The path to the Trick home directory.
 # @param verbose              Flag to set if verbose outputs are on.
 #
-def find_trick( trick_path = None, verbose = True ):
+def find_trick(trick_path=None, verbose=True):
 
-   # Check to see if the path to the Trick home directory is already set.
-   if trick_path:
+    # Check to see if the path to the Trick home directory is already set.
+    if trick_path:
 
-      # Use the value passed in.
-      trick_home = trick_path
+        # Use the value passed in.
+        trick_home = trick_path
 
-   # The path to the Trick home directory was not passed in so lets check other options.
-   else:
+    # The path to the Trick home directory was not passed in so lets check other options.
+    else:
 
-      # Check to see if the $TRICK_HOME environment variable is defined and set.
-      trick_home = os.environ.get( 'TRICK_HOME' )
-      if trick_home:
+        # Check to see if the $TRICK_HOME environment variable is defined and set.
+        trick_home = os.environ.get("TRICK_HOME")
+        if trick_home:
 
-         # Check to see if TRICK_HOME exists.
-         if os.path.isdir( trick_home ):
+            # Check to see if TRICK_HOME exists.
+            if os.path.isdir(trick_home):
+                if verbose:
+                    # Let the user know that we have TRICK_HOME and where it is.
+                    TrickHLAMessage.status("TRICK_HOME: " + trick_home)
+
+            else:
+                TrickHLAMessage.failure("TRICK_HOME not found: " + trick_home)
+
+        else:
+
+            # Capture the output from the 'trick-gte TRICK_HOME' command.
+            trick_gte_cmd = ["trick-gte", "TRICK_HOME"]
+            try:
+                trick_home = (
+                    subprocess.check_output(trick_gte_cmd)
+                    .decode("utf8", errors="strict")
+                    .strip()
+                )
+
+            except subprocess.CalledProcessError:
+                TrickHLAMessage.failure(
+                    "'trick-gte' command failed!: "
+                    + trick_gte_cmd
+                    + ", "
+                    + subprocess.CalledProcessError.message
+                )
+
+            # Look in other possible locations.
+            if trick_home == "":
+                # TRICK_HOME is not set so look in the standard locations.
+                if os.path.isdir("/usr/local/Trick"):
+                    trick_home = "/usr/local/Trick"
+                elif os.path.isdir("/Applications/Trick"):
+                    trick_home = "/Applications/Trick"
+                elif os.path.isdir(os.environ.get("HOME") + "/Trick"):
+                    trick_home = os.environ.get("HOME") + "/Trick"
+
+    # We're finished hunting. Now let's check for the Trick home directory.
+    if trick_home is None:
+        TrickHLAMessage.failure("Could not find the Trick home directory!")
+    else:
+        if os.path.isdir(trick_home) is False:
+            TrickHLAMessage.failure(
+                "Could not find the Trick home directory: " + trick_home
+            )
+            trick_home = None
+        else:
             if verbose:
-               # Let the user know that we have TRICK_HOME and where it is.
-               TrickHLAMessage.status( 'TRICK_HOME: ' + trick_home )
+                TrickHLAMessage.status("Using TRICK_HOME: " + trick_home)
 
-         else:
-            TrickHLAMessage.failure( 'TRICK_HOME not found: ' + trick_home )
+    #
+    # Now get the Trick version.
+    #
+    # Form the trick-version command based on TRICK_HOME.
+    trick_version_cmd = trick_home + "/bin/trick-version"
+    if os.path.isfile(trick_version_cmd) is False:
+        TrickHLAMessage.failure(
+            "The 'trick-version' command not found!: " + trick_version_cmd
+        )
 
-      else:
+    # Capture the output from the 'trick-version -version' command.
+    trick_ver_number_cmd = [trick_version_cmd, "-version"]
+    try:
+        trick_version = (
+            subprocess.check_output(trick_ver_number_cmd)
+            .decode("utf8", errors="strict")
+            .strip()
+        )
+    except subprocess.CalledProcessError:
+        TrickHLAMessage.failure(
+            "'trick-version -version' command failed!: "
+            + trick_ver_number_cmd
+            + ", "
+            + subprocess.CalledProcessError.message
+        )
 
-         # Capture the output from the 'trick-gte TRICK_HOME' command.
-         trick_gte_cmd = ['trick-gte', 'TRICK_HOME']
-         try:
-            trick_home = subprocess.check_output( trick_gte_cmd ).decode( 'utf8', errors = 'strict' ).strip()
+    # Capture the output from the 'trick-version -year' command.
+    trick_ver_yr_cmd = [trick_version_cmd, "-year"]
+    try:
+        trick_version_year = (
+            subprocess.check_output(trick_ver_yr_cmd)
+            .decode("utf8", errors="strict")
+            .strip()
+        )
+    except subprocess.CalledProcessError:
+        TrickHLAMessage.failure(
+            "'trick-version -year' command failed!: "
+            + trick_ver_yr_cmd
+            + ", "
+            + subprocess.CalledProcessError.message
+        )
 
-         except subprocess.CalledProcessError:
-            TrickHLAMessage.failure( '\'trick-gte\' command failed!: '
-                                     +trick_gte_cmd + ', '
-                                     +subprocess.CalledProcessError.message )
-
-         # Look in other possible locations.
-         if trick_home == '':
-            # TRICK_HOME is not set so look in the standard locations.
-            if os.path.isdir( '/usr/local/Trick' ):
-               trick_home = '/usr/local/Trick'
-            elif os.path.isdir( '/Applications/Trick' ):
-               trick_home = '/Applications/Trick'
-            elif os.path.isdir( os.environ.get( 'HOME' ) + '/Trick' ):
-               trick_home = os.environ.get( 'HOME' ) + '/Trick'
-
-   # We're finished hunting. Now let's check for the Trick home directory.
-   if trick_home is None:
-      TrickHLAMessage.failure( 'Could not find the Trick home directory!' )
-   else:
-      if os.path.isdir( trick_home ) is False:
-         TrickHLAMessage.failure( 'Could not find the Trick home directory: '
-                                  +trick_home )
-         trick_home = None
-      else:
-         if verbose:
-            TrickHLAMessage.status( 'Using TRICK_HOME: ' + trick_home )
-
-   #
-   # Now get the Trick version.
-   #
-   # Form the trick-version command based on TRICK_HOME.
-   trick_version_cmd = trick_home + '/bin/trick-version'
-   if os.path.isfile( trick_version_cmd ) is False:
-      TrickHLAMessage.failure( 'The \'trick-version\' command not found!: '
-                               +trick_version_cmd )
-
-   # Capture the output from the 'trick-version -version' command.
-   trick_ver_number_cmd = [trick_version_cmd, '-version']
-   try:
-      trick_version = subprocess.check_output( trick_ver_number_cmd ).decode( 'utf8', errors = 'strict' ).strip()
-   except subprocess.CalledProcessError:
-      TrickHLAMessage.failure( '\'trick-version -version\' command failed!: '
-                               +trick_ver_number_cmd + ', '
-                               +subprocess.CalledProcessError.message )
-
-   # Capture the output from the 'trick-version -year' command.
-   trick_ver_yr_cmd = [trick_version_cmd, '-year']
-   try:
-      trick_version_year = subprocess.check_output( trick_ver_yr_cmd ).decode( 'utf8', errors = 'strict' ).strip()
-   except subprocess.CalledProcessError:
-      TrickHLAMessage.failure( '\'trick-version -year\' command failed!: '
-                               +trick_ver_yr_cmd + ', '
-                               +subprocess.CalledProcessError.message )
-
-   # Return what we found.
-   return trick_home, trick_version, trick_version_year
+    # Return what we found.
+    return trick_home, trick_version, trick_version_year
 
 
 # Function to find the HLA RTI home directory.
@@ -700,33 +856,35 @@ def find_trick( trick_path = None, verbose = True ):
 # @param  rti_path  The path to the Trick home directory.
 # @param  verbose   Flag to set if verbose outputs are on.
 #
-def find_hla_rti( rti_path = None, verbose = True ):
+def find_hla_rti(rti_path=None, verbose=True):
 
-   # Check to see if the path to the HLA RTI home directory is already set.
-   if rti_path:
+    # Check to see if the path to the HLA RTI home directory is already set.
+    if rti_path:
 
-      # Use the value passed in.
-      rti_home = rti_path
+        # Use the value passed in.
+        rti_home = rti_path
 
-   # The path to the HLA RTI home directory was not passed in so lets check other options.
-   else:
+    # The path to the HLA RTI home directory was not passed in so lets check other options.
+    else:
 
-      # Check to see if the $RTI_HOME environment variable is defined and set.
-      rti_home = os.environ.get( 'RTI_HOME' )
+        # Check to see if the $RTI_HOME environment variable is defined and set.
+        rti_home = os.environ.get("RTI_HOME")
 
-   # We're finished hunting. Now let's check for the HLA RTI home directory.
-   if rti_home is None:
-      TrickHLAMessage.failure( 'Could not find the HLA RTI home directory!' )
-   else:
-      if os.path.isdir( rti_home ) is False:
-         TrickHLAMessage.failure( 'Could not find the HLA RTI home directory: ' + rti_home )
-         rti_home = None
-      else:
-         if verbose:
-            TrickHLAMessage.status( 'Using RTI_HOME: ' + rti_home )
+    # We're finished hunting. Now let's check for the HLA RTI home directory.
+    if rti_home is None:
+        TrickHLAMessage.failure("Could not find the HLA RTI home directory!")
+    else:
+        if os.path.isdir(rti_home) is False:
+            TrickHLAMessage.failure(
+                "Could not find the HLA RTI home directory: " + rti_home
+            )
+            rti_home = None
+        else:
+            if verbose:
+                TrickHLAMessage.status("Using RTI_HOME: " + rti_home)
 
-   # Return what we found.
-   return rti_home
+    # Return what we found.
+    return rti_home
 
 
 # Function to find the JEOD home directory.
@@ -737,33 +895,33 @@ def find_hla_rti( rti_path = None, verbose = True ):
 # @param  jeod_path  The path to the JEOD home directory.
 # @param  verbose    Flag to set if verbose outputs are on.
 #
-def find_jeod( jeod_path = None, verbose = True ):
+def find_jeod(jeod_path=None, verbose=True):
 
-   # Check to see if the path to the JEOD home directory is already set.
-   if jeod_path:
+    # Check to see if the path to the JEOD home directory is already set.
+    if jeod_path:
 
-      # Use the value passed in.
-      jeod_home = jeod_path
+        # Use the value passed in.
+        jeod_home = jeod_path
 
-   # The path to the JEOD home directory was not passed in so lets check other options.
-   else:
+    # The path to the JEOD home directory was not passed in so lets check other options.
+    else:
 
-      # Check to see if the $JEOD_HOME environment variable is defined and set.
-      jeod_home = os.environ.get( 'JEOD_HOME' )
+        # Check to see if the $JEOD_HOME environment variable is defined and set.
+        jeod_home = os.environ.get("JEOD_HOME")
 
-   # We're finished hunting. Now let's check for the JEOD home directory.
-   if jeod_home is None:
-      TrickHLAMessage.status( 'Could not find the JEOD home directory!' )
-   else:
-      if os.path.isdir( jeod_home ) is False:
-         TrickHLAMessage.status( 'Could not find the JEOD home directory: ' + jeod_home )
-         jeod_home = None
-      else:
-         if verbose:
-            TrickHLAMessage.status( 'Using JEOD_HOME: ' + jeod_home )
+    # We're finished hunting. Now let's check for the JEOD home directory.
+    if jeod_home is None:
+        TrickHLAMessage.status("Could not find the JEOD home directory!")
+    else:
+        if os.path.isdir(jeod_home) is False:
+            TrickHLAMessage.status("Could not find the JEOD home directory: " + jeod_home)
+            jeod_home = None
+        else:
+            if verbose:
+                TrickHLAMessage.status("Using JEOD_HOME: " + jeod_home)
 
-   # Return what we found.
-   return jeod_home
+    # Return what we found.
+    return jeod_home
 
 
 #
