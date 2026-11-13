@@ -205,7 +205,7 @@ ifeq ($(TRICK_HOST_TYPE),Darwin)
          # Using gcc compiler instead of clang.
          $(error ${RED_TXT}S_hla.mk:ERROR: Pitch RTI for HLA 4 only supports clang on the Mac.${RESET_TXT})
       endif
-      # Add the CLASSPATH and DYLD_LIBRARY_PATH environment variables to the 
+      # Add the CLASSPATH and DYLD_LIBRARY_PATH environment variables to the
       # simulation executable.
       export CLASSPATH     += ${RTI_HOME}/lib/prti1516_hla4.jar
       export TRICK_GTE_EXT += CLASSPATH DYLD_LIBRARY_PATH
@@ -262,7 +262,7 @@ ifeq ($(TRICK_HOST_TYPE),Darwin)
          # Using gcc compiler instead of clang.
          $(error ${RED_TXT}S_hla.mk:ERROR: Pitch RTI only supports clang on the Mac.${RESET_TXT})
       endif
-      # Add the CLASSPATH and DYLD_LIBRARY_PATH environment variables to the 
+      # Add the CLASSPATH and DYLD_LIBRARY_PATH environment variables to the
       # simulation executable.
       export CLASSPATH     += ${RTI_HOME}/lib/prti1516e.jar
       export TRICK_GTE_EXT += CLASSPATH DYLD_LIBRARY_PATH
