@@ -10,11 +10,11 @@
 # @rev_entry{ Dan Dexter, NASA ER6, TrickHLA, June 2020, --, Initial implementation, based on check_code.py.}
 # @revs_end
 #
-import time
-import os
-import subprocess
 import argparse
+import os
 import shutil
+import subprocess
+import time
 
 from trickhla_environment import *
 

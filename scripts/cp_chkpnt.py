@@ -23,10 +23,10 @@
 # @rev_entry{ Edwin Z. Crues, NASA ER7, TrickHLA, February 2026, --, Initial version.}
 # @revs_end
 
-import sys
+import argparse
 import os
 import shutil
-import argparse
+import sys
 
 # Import the TrickHLA Python environment.
 from trickhla_environment import *

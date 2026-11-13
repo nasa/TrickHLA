@@ -10,12 +10,11 @@
 # @rev_entry{ Edwin Z. Crues, NASA ER7, TrickHLA, June 2026, --, Initial creation.}
 # @revs_end
 #
-import os
-import sys
-import inspect
-import socket
-
 import argparse
+import inspect
+import os
+import socket
+import sys
 from tkinter import *
 from tkinter import ttk
 

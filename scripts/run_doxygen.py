@@ -13,11 +13,11 @@
 # @rev_entry{ Edwin Z. Crues, NASA ER7, TrickHLA, April 2019, --, Initial creation based off of Valkyrie scripts.}
 # @revs_end
 
-import sys
-import os
-import subprocess
-import shutil
 import argparse
+import os
+import shutil
+import subprocess
+import sys
 
 from trickhla_environment import *
 

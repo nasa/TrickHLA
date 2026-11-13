@@ -32,6 +32,7 @@ else:
 if trickhla_home not in sys.path :
    sys.path.append( trickhla_home )
 
+import trickhla_models
+
 # Import useful TrickHLA support modules
 from TrickHLA_data.TrickHLAUtils.TrickHLAMessage import *
-import trickhla_models
