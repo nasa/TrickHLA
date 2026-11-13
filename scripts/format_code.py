@@ -30,7 +30,8 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description="Format the TrickHLA source code.",
         epilog=textwrap.dedent("""\nExamples:
-format_code -i -v\n  format_code -t -v\n"""),
+format_code -i -v
+format_code -t -v"""),
     )
 
     parser.add_argument(

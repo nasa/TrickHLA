@@ -63,7 +63,8 @@ Option -a: Auto-generated error suppression file: """
             + cppcheck_output_dir
             + "/"
             + ccpcheck_suppresion_autogen_file
-            + """\nExamples:
+            + """\n
+Examples:
 check_code -s -o -v --exhaustive --hla4
 check_code -i -o -v --exhaustive --hla4
 check_code -e -o -v --exhaustive
