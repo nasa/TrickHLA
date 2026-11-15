@@ -18,44 +18,61 @@ import os
 import sys
 
 
-class TrickHLAMessage():
+class TrickHLAMessage:
 
-   _COMMENT_COLOR = '\033[95m'
-   _STATUS_COLOR = '\033[93m'
-   _SUCCESS_COLOR = '\033[32m'
-   _WARNING_COLOR = '\033[94m'
-   _FAILURE_COLOR = '\033[91m'
-   _END_COLOR = '\033[0m'
+    _COMMENT_COLOR = "\033[95m"
+    _STATUS_COLOR = "\033[93m"
+    _SUCCESS_COLOR = "\033[32m"
+    _WARNING_COLOR = "\033[94m"
+    _FAILURE_COLOR = "\033[91m"
+    _END_COLOR = "\033[0m"
 
-   _COMMENT_TAG = 'COMMENT: '
-   _STATUS_TAG = 'STATUS: '
-   _SUCCESS_TAG = 'SUCCESS: '
-   _WARNING_TAG = 'WARNING: '
-   _FAILURE_TAG = os.linesep + 'ERROR: '
+    _COMMENT_TAG = "COMMENT: "
+    _STATUS_TAG = "STATUS: "
+    _SUCCESS_TAG = "SUCCESS: "
+    _WARNING_TAG = "WARNING: "
+    _FAILURE_TAG = os.linesep + "ERROR: "
 
-   _EOL = os.linesep
+    _EOL = os.linesep
 
-   @staticmethod
-   def comment( message ):
-      print ( TrickHLAMessage._COMMENT_COLOR + TrickHLAMessage._COMMENT_TAG \
-       + message + TrickHLAMessage._END_COLOR )
+    @staticmethod
+    def comment(message):
+        print(
+            TrickHLAMessage._COMMENT_COLOR
+            + TrickHLAMessage._COMMENT_TAG
+            + message
+            + TrickHLAMessage._END_COLOR
+        )
 
-   @staticmethod
-   def status( message ):
-      # Use the system default text color.
-      print ( TrickHLAMessage._STATUS_TAG + message + TrickHLAMessage._END_COLOR )
+    @staticmethod
+    def status(message):
+        # Use the system default text color.
+        print(TrickHLAMessage._STATUS_TAG + message + TrickHLAMessage._END_COLOR)
 
-   @staticmethod
-   def success( message ):
-      print ( TrickHLAMessage._SUCCESS_COLOR + TrickHLAMessage._SUCCESS_TAG \
-       + message + TrickHLAMessage._END_COLOR )
+    @staticmethod
+    def success(message):
+        print(
+            TrickHLAMessage._SUCCESS_COLOR
+            + TrickHLAMessage._SUCCESS_TAG
+            + message
+            + TrickHLAMessage._END_COLOR
+        )
 
-   @staticmethod
-   def warning( message ):
-      print ( TrickHLAMessage._WARNING_COLOR + TrickHLAMessage._WARNING_TAG \
-       + message + TrickHLAMessage._END_COLOR )
+    @staticmethod
+    def warning(message):
+        print(
+            TrickHLAMessage._WARNING_COLOR
+            + TrickHLAMessage._WARNING_TAG
+            + message
+            + TrickHLAMessage._END_COLOR
+        )
 
-   @staticmethod
-   def failure( message ):
-      sys.exit( TrickHLAMessage._FAILURE_COLOR + TrickHLAMessage._FAILURE_TAG \
-                + message + TrickHLAMessage._END_COLOR + TrickHLAMessage._EOL )
+    @staticmethod
+    def failure(message):
+        sys.exit(
+            TrickHLAMessage._FAILURE_COLOR
+            + TrickHLAMessage._FAILURE_TAG
+            + message
+            + TrickHLAMessage._END_COLOR
+            + TrickHLAMessage._EOL
+        )

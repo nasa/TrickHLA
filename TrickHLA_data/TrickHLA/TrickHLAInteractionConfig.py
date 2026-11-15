@@ -17,143 +17,139 @@ import sys
 import trick
 
 
-class TrickHLAInteractionConfig( object ):
+class TrickHLAInteractionConfig(object):
 
-   # Ties to TrickHLA from simulation.
-   hla_create                = False
-   hla_FOM_name              = None
-   hla_publish               = True
-   hla_subscribe             = False
-   hla_handler_instance      = None
-   hla_handler_instance_name = None
-   hla_manager_interaction   = None
+    # Ties to TrickHLA from simulation.
+    hla_create = False
+    hla_FOM_name = None
+    hla_publish = True
+    hla_subscribe = False
+    hla_handler_instance = None
+    hla_handler_instance_name = None
+    hla_manager_interaction = None
 
-   # List of TrickHLA object attributes.
-   parameters = None
+    # List of TrickHLA object attributes.
+    parameters = None
 
-   def __init__( self,
-                 thla_FOM_name              = None,
-                 thla_publish               = True,
-                 thla_subscribe             = True,
-                 thla_handler_instance      = None,
-                 thla_handler_instance_name = None,
-                 thla_manager_interaction   = None ):
+    def __init__(
+        self,
+        thla_FOM_name=None,
+        thla_publish=True,
+        thla_subscribe=True,
+        thla_handler_instance=None,
+        thla_handler_instance_name=None,
+        thla_manager_interaction=None,
+    ):
 
-      # Allocate an empty parameters list.
-      self.parameters = []
+        # Allocate an empty parameters list.
+        self.parameters = []
 
-      # Set the Trick HLA object reference here so that the set() function calls
-      # will work as expected. Normally, this is postponed until initialization.
-      if thla_manager_interaction != None:
-         self.hla_manager_interaction = thla_manager_interaction
+        # Set the Trick HLA object reference here so that the set() function calls
+        # will work as expected. Normally, this is postponed until initialization.
+        if thla_manager_interaction != None:
+            self.hla_manager_interaction = thla_manager_interaction
 
-      # Set the interaction FOM name if specified.
-      if thla_FOM_name != None:
-         self.set_FOM_name( thla_FOM_name )
+        # Set the interaction FOM name if specified.
+        if thla_FOM_name != None:
+            self.set_FOM_name(thla_FOM_name)
 
-      # Specify if this interaction is published or subscribed.
-      self.hla_publish = thla_publish
-      self.hla_subscribe = thla_subscribe
+        # Specify if this interaction is published or subscribed.
+        self.hla_publish = thla_publish
+        self.hla_subscribe = thla_subscribe
 
-      # Set interaction handler if specified and not None.
-      if thla_handler_instance != None:
-         self.set_handler_instance( thla_handler_instance )
+        # Set interaction handler if specified and not None.
+        if thla_handler_instance != None:
+            self.set_handler_instance(thla_handler_instance)
 
-      # Still need to set the interaction parameters but this is left to the
-      # specific implementation classes.
+        # Still need to set the interaction parameters but this is left to the
+        # specific implementation classes.
 
-      return
+        return
 
+    def initialize(self, thla_manager_interaction=None):
 
-   def initialize( self, thla_manager_interaction = None ):
+        # Assign the associated TrickHLA object if specified.
+        if thla_manager_interaction != None:
+            self.hla_manager_interaction = thla_manager_interaction
+        elif self.hla_manager_interaction == None:
+            trick.exec_terminate_with_return(
+                -1,
+                sys._getframe(0).f_code.co_filename,
+                sys._getframe(0).f_lineno,
+                "TrickHLAInteraction reference not set.",
+            )
 
-      # Assign the associated TrickHLA object if specified.
-      if thla_manager_interaction != None:
-         self.hla_manager_interaction = thla_manager_interaction
-      elif self.hla_manager_interaction == None:
-         trick.exec_terminate_with_return( -1,
-                                           sys._getframe( 0 ).f_code.co_filename,
-                                           sys._getframe( 0 ).f_lineno,
-                                           'TrickHLAInteraction reference not set.' )
+        # Now make sure that the TrickHLAInteraction data is set.
+        self.set_FOM_name(self.hla_FOM_name)
+        self.set_publish(self.hla_publish)
+        self.set_subscribe(self.hla_subscribe)
+        self.set_handler_instance(self.hla_handler_instance)
 
-      # Now make sure that the TrickHLAInteraction data is set.
-      self.set_FOM_name( self.hla_FOM_name )
-      self.set_publish( self.hla_publish )
-      self.set_subscribe( self.hla_subscribe )
-      self.set_handler_instance( self.hla_handler_instance )
+        # Allocate the federate interaction's parameter list.
+        self.hla_manager_interaction.param_count = len(self.parameters)
+        if self.hla_manager_interaction.param_count > 0:
+            self.hla_manager_interaction.parameters = trick.TMM_declare_var_1d(
+                "TrickHLA::Parameter", self.hla_manager_interaction.param_count
+            )
 
-      # Allocate the federate interaction's parameter list.
-      self.hla_manager_interaction.param_count = len( self.parameters )
-      if ( self.hla_manager_interaction.param_count > 0 ):
-         self.hla_manager_interaction.parameters = \
-               trick.TMM_declare_var_1d( 'TrickHLA::Parameter',
-                                         self.hla_manager_interaction.param_count )
+        # Loop through the federation interaction parameters and initialize them.
+        for indx in range(0, self.hla_manager_interaction.param_count):
+            self.parameters[indx].initialize(
+                self.hla_manager_interaction.parameters[indx]
+            )
 
-      # Loop through the federation interaction parameters and initialize them.
-      for indx in range( 0, self.hla_manager_interaction.param_count ):
-         self.parameters[indx].initialize( self.hla_manager_interaction.parameters[indx] )
+        return
 
-      return
+    def set_FOM_name(self, name):
 
+        self.hla_FOM_name = str(name)
+        if self.hla_manager_interaction != None:
+            self.hla_manager_interaction.FOM_name = str(name)
 
-   def set_FOM_name( self, name ):
+        return
 
-      self.hla_FOM_name = str( name )
-      if self.hla_manager_interaction != None:
-         self.hla_manager_interaction.FOM_name = str( name )
+    def get_FOM_name(self):
 
-      return
+        return str(self.hla_FOM_name)
 
+    def set_publish(self, publish):
 
-   def get_FOM_name( self ):
+        self.hla_publish = publish
+        if self.hla_manager_interaction != None:
+            self.hla_manager_interaction.publish = self.hla_publish
 
-      return str( self.hla_FOM_name )
+        return
 
+    def get_publish(self):
 
-   def set_publish( self, publish ):
+        return hla_publish
 
-      self.hla_publish = publish
-      if self.hla_manager_interaction != None:
-         self.hla_manager_interaction.publish = self.hla_publish
+    def set_subscribe(self, subscribe):
 
-      return
+        self.hla_subscribe = subscribe
+        if self.hla_manager_interaction != None:
+            self.hla_manager_interaction.subscribe = self.hla_subscribe
 
+        return
 
-   def get_publish( self ):
+    def get_subscribe(self):
 
-      return hla_publish
+        return hla_subscribe
 
+    def set_handler_instance(self, inter_hndlr):
 
-   def set_subscribe( self, subscribe ):
+        self.hla_handler_instance = inter_hndlr
+        if self.hla_manager_interaction != None:
+            self.hla_manager_interaction.handler = inter_hndlr
 
-      self.hla_subscribe = subscribe
-      if self.hla_manager_interaction != None:
-         self.hla_manager_interaction.subscribe = self.hla_subscribe
+        return
 
-      return
+    def get_handler_instance(self):
 
+        return self.hla_handler_instance
 
-   def get_subscribe( self ):
+    def add_parameter(self, param):
 
-      return hla_subscribe
+        self.parameters.append(param)
 
-
-   def set_handler_instance( self, inter_hndlr ):
-
-      self.hla_handler_instance = inter_hndlr
-      if self.hla_manager_interaction != None:
-         self.hla_manager_interaction.handler = inter_hndlr
-
-      return
-
-
-   def get_handler_instance( self ):
-
-      return self.hla_handler_instance
-
-
-   def add_parameter( self, param ):
-
-      self.parameters.append( param )
-
-      return
+        return

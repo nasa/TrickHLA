@@ -19,49 +19,50 @@ import trick
 from ..TrickHLA.TrickHLARecordElementConfig import *
 
 
-class TrickHLAAttributeConfig( TrickHLARecordElementConfig ):
+class TrickHLAAttributeConfig(TrickHLARecordElementConfig):
 
-   FOM_name        = None
-   publish         = True
-   subscribe       = True
-   locally_owned   = True
-   config          = trick.TrickHLA.CONFIG_CYCLIC
-   preferred_order = trick.TrickHLA.TRANSPORT_SPECIFIED_IN_FOM
+    FOM_name = None
+    publish = True
+    subscribe = True
+    locally_owned = True
+    config = trick.TrickHLA.CONFIG_CYCLIC
+    preferred_order = trick.TrickHLA.TRANSPORT_SPECIFIED_IN_FOM
 
-   def __init__( self,
-                 FOM_name,
-                 trick_name      = None,
-                 publish         = True,
-                 subscribe       = True,
-                 locally_owned   = True,
-                 config          = trick.TrickHLA.CONFIG_CYCLIC,
-                 rti_encoding    = trick.TrickHLA.ENCODING_UNKNOWN,
-                 preferred_order = trick.TrickHLA.TRANSPORT_SPECIFIED_IN_FOM ):
+    def __init__(
+        self,
+        FOM_name,
+        trick_name=None,
+        publish=True,
+        subscribe=True,
+        locally_owned=True,
+        config=trick.TrickHLA.CONFIG_CYCLIC,
+        rti_encoding=trick.TrickHLA.ENCODING_UNKNOWN,
+        preferred_order=trick.TrickHLA.TRANSPORT_SPECIFIED_IN_FOM,
+    ):
 
-      TrickHLARecordElementConfig.__init__( self, rti_encoding, trick_name )
+        TrickHLARecordElementConfig.__init__(self, rti_encoding, trick_name)
 
-      self.FOM_name        = FOM_name
-      self.publish         = publish
-      self.subscribe       = subscribe
-      self.locally_owned   = locally_owned
-      self.config          = config
-      self.preferred_order = preferred_order
+        self.FOM_name = FOM_name
+        self.publish = publish
+        self.subscribe = subscribe
+        self.locally_owned = locally_owned
+        self.config = config
+        self.preferred_order = preferred_order
 
-      return
+        return
 
+    def initialize(self, attribute):
 
-   def initialize( self, attribute ):
+        attribute.FOM_name = str(self.FOM_name)
+        attribute.trick_name = str(self.trick_name)
+        attribute.publish = self.publish
+        attribute.subscribe = self.subscribe
+        attribute.locally_owned = self.locally_owned
+        attribute.config = self.config
+        attribute.rti_encoding = self.rti_encoding
+        attribute.preferred_order = self.preferred_order
 
-      attribute.FOM_name        = str( self.FOM_name )
-      attribute.trick_name      = str( self.trick_name )
-      attribute.publish         = self.publish
-      attribute.subscribe       = self.subscribe
-      attribute.locally_owned   = self.locally_owned
-      attribute.config          = self.config
-      attribute.rti_encoding    = self.rti_encoding
-      attribute.preferred_order = self.preferred_order
+        if self.rti_encoding == trick.TrickHLA.ENCODING_FIXED_RECORD:
+            self.initialize_fixed_record(attribute, self)
 
-      if ( self.rti_encoding == trick.TrickHLA.ENCODING_FIXED_RECORD ):
-         self.initialize_fixed_record( attribute, self )
-
-      return
+        return

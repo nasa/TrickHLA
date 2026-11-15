@@ -21,137 +21,147 @@ from ..TrickHLA.TrickHLAAttributeConfig import *
 from ..TrickHLA.TrickHLAObjectConfig import *
 
 
-class SpaceFOMDynamicalEntityObject( SpaceFOMPhysicalEntityObject ):
+class SpaceFOMDynamicalEntityObject(SpaceFOMPhysicalEntityObject):
 
-   def __init__( self,
-                 create_entity_object,
-                 entity_instance_name,
-                 entity_S_define_instance,
-                 entity_S_define_instance_name,
-                 entity_conditional         = None,
-                 entity_lag_comp            = None,
-                 entity_lag_comp_type       = trick.TrickHLA.LAG_COMPENSATION_NONE,
-                 entity_ownership           = None,
-                 entity_deleted             = None,
-                 entity_thla_manager_object = None,
-                 entity_thread_IDs          = None ):
+    def __init__(
+        self,
+        create_entity_object,
+        entity_instance_name,
+        entity_S_define_instance,
+        entity_S_define_instance_name,
+        entity_conditional=None,
+        entity_lag_comp=None,
+        entity_lag_comp_type=trick.TrickHLA.LAG_COMPENSATION_NONE,
+        entity_ownership=None,
+        entity_deleted=None,
+        entity_thla_manager_object=None,
+        entity_thread_IDs=None,
+    ):
 
-      # The DynamicalEntity FOM name is fixed for the SpaceFOM and
-      # needs to be overridden before calling the DynamicalEntity constructor.
-      self.entity_FOM_name = 'PhysicalEntity.DynamicalEntity'
+        # The DynamicalEntity FOM name is fixed for the SpaceFOM and
+        # needs to be overridden before calling the DynamicalEntity constructor.
+        self.entity_FOM_name = "PhysicalEntity.DynamicalEntity"
 
-      # Call the base class constructor.
-      SpaceFOMPhysicalEntityObject.__init__( self,
-                                             create_entity_object,
-                                             entity_instance_name,
-                                             entity_S_define_instance,
-                                             entity_S_define_instance_name,
-                                             entity_conditional,
-                                             entity_lag_comp,
-                                             entity_lag_comp_type,
-                                             entity_ownership,
-                                             entity_deleted,
-                                             entity_thla_manager_object,
-                                             entity_thread_IDs )
+        # Call the base class constructor.
+        SpaceFOMPhysicalEntityObject.__init__(
+            self,
+            create_entity_object,
+            entity_instance_name,
+            entity_S_define_instance,
+            entity_S_define_instance_name,
+            entity_conditional,
+            entity_lag_comp,
+            entity_lag_comp_type,
+            entity_ownership,
+            entity_deleted,
+            entity_thla_manager_object,
+            entity_thread_IDs,
+        )
 
-      #######################################################################
-      # NOTE: We do not need to call add_attributes() here.  This would
-      # duplicate the attributes if we do.  The call to add_attributes() in
-      # the SpaceFOMPhysicalEntityObject.__init__() will bind to the
-      # SpaceFOMDynamicalEntityObject.add_attributes() call below and insure
-      # that both are updated.
-      # The power and beauty of object oriented programming. ;-)
-      #######################################################################
-      # Build the object attribute list.
-      # self.add_attributes()
+        #######################################################################
+        # NOTE: We do not need to call add_attributes() here.  This would
+        # duplicate the attributes if we do.  The call to add_attributes() in
+        # the SpaceFOMPhysicalEntityObject.__init__() will bind to the
+        # SpaceFOMDynamicalEntityObject.add_attributes() call below and insure
+        # that both are updated.
+        # The power and beauty of object oriented programming. ;-)
+        #######################################################################
+        # Build the object attribute list.
+        # self.add_attributes()
 
-      return
+        return
 
-   def initialize( self, thla_object ):
+    def initialize(self, thla_object):
 
-      # Call the base class initialization utility function.
-      SpaceFOMPhysicalEntityObject.initialize( self, thla_object )
+        # Call the base class initialization utility function.
+        SpaceFOMPhysicalEntityObject.initialize(self, thla_object)
 
-      return
+        return
 
-   def add_attributes( self ):
+    def add_attributes(self):
 
-      # Add the PhysicalEntity attributes.
-      SpaceFOMPhysicalEntityObject.add_attributes( self )
+        # Add the PhysicalEntity attributes.
+        SpaceFOMPhysicalEntityObject.add_attributes(self)
 
-      # Short cut the sim_object name for the DynamicalEntity data.
-      entity_instance_name = self.trick_entity_sim_obj_name
+        # Short cut the sim_object name for the DynamicalEntity data.
+        entity_instance_name = self.trick_entity_sim_obj_name
 
-      # Set up the map to the DynamicalEntity's force.
-      trick_data_name = str( entity_instance_name ) + '.de_packing_data.force'
-      attribute = TrickHLAAttributeConfig(
-                     FOM_name      = 'force',
-                     trick_name    = trick_data_name,
-                     publish       = self.hla_attribute_publish,
-                     subscribe     = self.hla_attribute_subscribe,
-                     locally_owned = self.hla_create,
-                     config        = trick.TrickHLA.CONFIG_INITIALIZE_AND_CYCLIC,
-                     rti_encoding  = trick.TrickHLA.ENCODING_LITTLE_ENDIAN )
-      self.add_attribute( attribute )
+        # Set up the map to the DynamicalEntity's force.
+        trick_data_name = str(entity_instance_name) + ".de_packing_data.force"
+        attribute = TrickHLAAttributeConfig(
+            FOM_name="force",
+            trick_name=trick_data_name,
+            publish=self.hla_attribute_publish,
+            subscribe=self.hla_attribute_subscribe,
+            locally_owned=self.hla_create,
+            config=trick.TrickHLA.CONFIG_INITIALIZE_AND_CYCLIC,
+            rti_encoding=trick.TrickHLA.ENCODING_LITTLE_ENDIAN,
+        )
+        self.add_attribute(attribute)
 
-      # Set up the map to the DynamicalEntity's torque.
-      trick_data_name = str( entity_instance_name ) + '.de_packing_data.torque'
-      attribute = TrickHLAAttributeConfig(
-                     FOM_name      = 'torque',
-                     trick_name    = trick_data_name,
-                     publish       = self.hla_attribute_publish,
-                     subscribe     = self.hla_attribute_subscribe,
-                     locally_owned = self.hla_create,
-                     config        = trick.TrickHLA.CONFIG_INITIALIZE_AND_CYCLIC,
-                     rti_encoding  = trick.TrickHLA.ENCODING_LITTLE_ENDIAN )
-      self.add_attribute( attribute )
+        # Set up the map to the DynamicalEntity's torque.
+        trick_data_name = str(entity_instance_name) + ".de_packing_data.torque"
+        attribute = TrickHLAAttributeConfig(
+            FOM_name="torque",
+            trick_name=trick_data_name,
+            publish=self.hla_attribute_publish,
+            subscribe=self.hla_attribute_subscribe,
+            locally_owned=self.hla_create,
+            config=trick.TrickHLA.CONFIG_INITIALIZE_AND_CYCLIC,
+            rti_encoding=trick.TrickHLA.ENCODING_LITTLE_ENDIAN,
+        )
+        self.add_attribute(attribute)
 
-      # Set up the map to the DynamicalEntity's mass.
-      trick_data_name = str( entity_instance_name ) + '.de_packing_data.mass'
-      attribute = TrickHLAAttributeConfig(
-                     FOM_name      = 'mass',
-                     trick_name    = trick_data_name,
-                     publish       = self.hla_attribute_publish,
-                     subscribe     = self.hla_attribute_subscribe,
-                     locally_owned = self.hla_create,
-                     config        = trick.TrickHLA.CONFIG_INITIALIZE_AND_CYCLIC,
-                     rti_encoding  = trick.TrickHLA.ENCODING_LITTLE_ENDIAN )
-      self.add_attribute( attribute )
+        # Set up the map to the DynamicalEntity's mass.
+        trick_data_name = str(entity_instance_name) + ".de_packing_data.mass"
+        attribute = TrickHLAAttributeConfig(
+            FOM_name="mass",
+            trick_name=trick_data_name,
+            publish=self.hla_attribute_publish,
+            subscribe=self.hla_attribute_subscribe,
+            locally_owned=self.hla_create,
+            config=trick.TrickHLA.CONFIG_INITIALIZE_AND_CYCLIC,
+            rti_encoding=trick.TrickHLA.ENCODING_LITTLE_ENDIAN,
+        )
+        self.add_attribute(attribute)
 
-      # Set up the map to the DynamicalEntity's mass rate.
-      trick_data_name = str( entity_instance_name ) + '.de_packing_data.mass_rate'
-      attribute = TrickHLAAttributeConfig(
-                     FOM_name      = 'mass_rate',
-                     trick_name    = trick_data_name,
-                     publish       = self.hla_attribute_publish,
-                     subscribe     = self.hla_attribute_subscribe,
-                     locally_owned = self.hla_create,
-                     config        = trick.TrickHLA.CONFIG_INITIALIZE_AND_CYCLIC,
-                     rti_encoding  = trick.TrickHLA.ENCODING_LITTLE_ENDIAN )
-      self.add_attribute( attribute )
+        # Set up the map to the DynamicalEntity's mass rate.
+        trick_data_name = str(entity_instance_name) + ".de_packing_data.mass_rate"
+        attribute = TrickHLAAttributeConfig(
+            FOM_name="mass_rate",
+            trick_name=trick_data_name,
+            publish=self.hla_attribute_publish,
+            subscribe=self.hla_attribute_subscribe,
+            locally_owned=self.hla_create,
+            config=trick.TrickHLA.CONFIG_INITIALIZE_AND_CYCLIC,
+            rti_encoding=trick.TrickHLA.ENCODING_LITTLE_ENDIAN,
+        )
+        self.add_attribute(attribute)
 
-      # Set up the map to the DynamicalEntity's inertia tensor.
-      trick_data_name = str( entity_instance_name ) + '.de_packing_data.inertia'
-      attribute = TrickHLAAttributeConfig(
-                     FOM_name      = 'inertia',
-                     trick_name    = trick_data_name,
-                     publish       = self.hla_attribute_publish,
-                     subscribe     = self.hla_attribute_subscribe,
-                     locally_owned = self.hla_create,
-                     config        = trick.TrickHLA.CONFIG_INITIALIZE_AND_CYCLIC,
-                     rti_encoding  = trick.TrickHLA.ENCODING_LITTLE_ENDIAN )
-      self.add_attribute( attribute )
+        # Set up the map to the DynamicalEntity's inertia tensor.
+        trick_data_name = str(entity_instance_name) + ".de_packing_data.inertia"
+        attribute = TrickHLAAttributeConfig(
+            FOM_name="inertia",
+            trick_name=trick_data_name,
+            publish=self.hla_attribute_publish,
+            subscribe=self.hla_attribute_subscribe,
+            locally_owned=self.hla_create,
+            config=trick.TrickHLA.CONFIG_INITIALIZE_AND_CYCLIC,
+            rti_encoding=trick.TrickHLA.ENCODING_LITTLE_ENDIAN,
+        )
+        self.add_attribute(attribute)
 
-      # Set up the map to the DynamicalEntity's inertia rate.
-      trick_data_name = str( entity_instance_name ) + '.de_packing_data.inertia_rate'
-      attribute = TrickHLAAttributeConfig(
-                     FOM_name      = 'inertia_rate',
-                     trick_name    = trick_data_name,
-                     publish       = self.hla_attribute_publish,
-                     subscribe     = self.hla_attribute_subscribe,
-                     locally_owned = self.hla_create,
-                     config        = trick.TrickHLA.CONFIG_INITIALIZE_AND_CYCLIC,
-                     rti_encoding  = trick.TrickHLA.ENCODING_LITTLE_ENDIAN )
-      self.add_attribute( attribute )
+        # Set up the map to the DynamicalEntity's inertia rate.
+        trick_data_name = str(entity_instance_name) + ".de_packing_data.inertia_rate"
+        attribute = TrickHLAAttributeConfig(
+            FOM_name="inertia_rate",
+            trick_name=trick_data_name,
+            publish=self.hla_attribute_publish,
+            subscribe=self.hla_attribute_subscribe,
+            locally_owned=self.hla_create,
+            config=trick.TrickHLA.CONFIG_INITIALIZE_AND_CYCLIC,
+            rti_encoding=trick.TrickHLA.ENCODING_LITTLE_ENDIAN,
+        )
+        self.add_attribute(attribute)
 
-      return
+        return

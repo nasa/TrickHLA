@@ -4,22 +4,22 @@
 # @ingroup Trick
 # @brief Definition of the Trick simulation configuration Python abstract base
 # class.
-# 
+#
 # This is the base implementation for the Trick simulation configuration class.
 # This Python class is used to define Trick simulation configuration parameters
 # in the Trick input file.
-# 
+#
 # @copyright Copyright 2026 United States Government as represented by the
 # Administrator of the National Aeronautics and Space Administration.
 # No copyright is claimed in the United States under Title 17, U.S. Code.
 # All Other Rights Reserved.
-# 
+#
 # \par<b>Responsible Organization</b>
 # Simulation and Graphics Branch, Mail Code ER7\n
 # Software, Robotics & Simulation Division\n
 # NASA, Johnson Space Center\n
 # 2101 NASA Parkway, Houston, TX  77058
-# 
+#
 # @python_module{Trick}
 #
 # @revs_title
@@ -37,120 +37,123 @@ from enum import IntEnum
 import trick
 
 
-class TrickSimConfig( ABC ):
+class TrickSimConfig(ABC):
 
-   # Make this a singleton class.
-   _instance = None
+    # Make this a singleton class.
+    _instance = None
 
-   # Override the allocation function to ensure one and only one instance.
-   def __new__( tsc, *args, **kwargs ):
+    # Override the allocation function to ensure one and only one instance.
+    def __new__(tsc, *args, **kwargs):
 
-      # Check if and instance already exists.
-      if tsc._instance is None:
-         # Not already allocated.  So, allocate one and only one instance.
-         tsc._instance = super( TrickSimConfig, tsc).__new__(tsc)
-      else:
-         # Already allocated!  This is an error.
-         sys.exit( 'TrickSimConfig:Error: Can only have one TrickSimConfig instance!' )
+        # Check if and instance already exists.
+        if tsc._instance is None:
+            # Not already allocated.  So, allocate one and only one instance.
+            tsc._instance = super(TrickSimConfig, tsc).__new__(tsc)
+        else:
+            # Already allocated!  This is an error.
+            sys.exit("TrickSimConfig:Error: Can only have one TrickSimConfig instance!")
 
-      # Return the single existing instance.
-      return tsc._instance
+        # Return the single existing instance.
+        return tsc._instance
 
-   @abstractmethod
-   # Class constructor.
-   def __init__( self, name ):
+    @abstractmethod
+    # Class constructor.
+    def __init__(self, name):
 
-      trick.exec_set_trap_sigfpe( True )
-      trick.exec_set_stack_trace( False )
+        trick.exec_set_trap_sigfpe(True)
+        trick.exec_set_stack_trace(False)
 
-      # Enable CTRL-C keyboard interrupt signal to freeze/unfreeze the simulation.
-      trick.exec_set_enable_freeze( True )
+        # Enable CTRL-C keyboard interrupt signal to freeze/unfreeze the simulation.
+        trick.exec_set_enable_freeze(True)
 
-      return
+        return
 
+    # Set the Trick software and freeze frame times.
+    def set_software_and_freeze_frame_time(self, software_frame_time):
 
-   # Set the Trick software and freeze frame times.
-   def set_software_and_freeze_frame_time( self, software_frame_time ):
+        self.set_software_frame_time(software_frame_time)
+        self.set_freeze_frame_time(software_frame_time)
 
-      self.set_software_frame_time( software_frame_time )
-      self.set_freeze_frame_time( software_frame_time )
+        return
 
-      return
+    # Set the Trick software frame time.
+    def set_software_frame_time(self, software_frame_time):
 
-   # Set the Trick software frame time.
-   def set_software_frame_time( self, software_frame_time ):
+        trick.exec_set_software_frame(software_frame_time)
 
-      trick.exec_set_software_frame( software_frame_time )
+        return
 
-      return
+    # Set the Trick freeze frame time.
+    def set_freeze_frame_time(self, freeze_frame_time):
 
+        trick.exec_set_freeze_frame(freeze_frame_time)
 
-   # Set the Trick freeze frame time.
-   def set_freeze_frame_time( self, freeze_frame_time ):
+        return
 
-      trick.exec_set_freeze_frame( freeze_frame_time )
+    # Common Trick realtime configuration.
+    def realtime(self, software_frame_time):
 
-      return
+        trick.frame_log_on()
+        trick.real_time_enable()
+        trick.itimer_enable()
+        self.set_software_and_freeze_frame_time(software_frame_time)
 
+        return
 
-   # Common Trick realtime configuration.
-   def realtime( self, software_frame_time ):
-      
-      trick.frame_log_on()
-      trick.real_time_enable()
-      trick.itimer_enable()
-      self.set_software_and_freeze_frame_time( software_frame_time )
+    # Setup to use the Trick Simulation Control Panel
+    def sim_control_panel(self):
 
-      return
+        self.fix_var_server_source_address()
+        trick.var_resolve_hostname()
+        trick.var_allow_connections()
+        self.simControlPanel = trick.SimControlPanel()
+        trick.add_external_application(self.simControlPanel)
 
+        return
 
-   # Setup to use the Trick Simulation Control Panel
-   def sim_control_panel( self ):
+    # Setup to start the simulation in freeze or run.
+    def start_in_freeze(self, freeze=True):
 
-      self.fix_var_server_source_address()
-      trick.var_resolve_hostname()
-      trick.var_allow_connections()
-      self.simControlPanel = trick.SimControlPanel()
-      trick.add_external_application( self.simControlPanel )
+        # Enable CTRL-C keyboard interrupt signal to freeze/unfreeze the simulation.
+        trick.exec_set_enable_freeze(True)
 
-      return
+        # Set to True to start the simulation in freeze.
+        trick.exec_set_freeze_command(freeze)
 
+        return
 
-   # Setup to start the simulation in freeze or run.
-   def start_in_freeze(self, freeze = True ):
+    # Check for valid variable server host name and correct if not valid.
+    def fix_var_server_source_address(self):
+        # The Trick variable server uses the local host name without verifying the
+        # IP address it resolves to is actually used by the local host computer.
+        # Verify the IP address and fallback to 127.0.0.1 if we find a discrepancy.
+        # Otherwise the simulation control panel will not successfully connect.
+        try:
+            if trick.var_server_get_hostname() == socket.gethostname():
+                host_ip_addr = socket.gethostbyname(socket.gethostname())
+                try:
+                    ifconfig_out = subprocess.check_output(["ifconfig"]).decode()
+                    if ifconfig_out.find(host_ip_addr) < 0:
+                        print(
+                            "\033[33m"
+                            + "WARNING: Invalid IP address "
+                            + host_ip_addr
+                            + " resolved for host '"
+                            + trick.var_server_get_hostname()
+                            + "', setting the variable server source address to 127.0.0.1!"
+                            + "\033[0m"
+                        )
+                        trick.var_server_set_source_address("127.0.0.1")
+                except Exception:
+                    return  # Use host source address as is.
+        except Exception:
+            print(
+                "\033[33m"
+                + "WARNING: Problem resolving '"
+                + trick.var_server_get_hostname()
+                + "' host name to an address, setting the variable server source address to 127.0.0.1!"
+                + "\033[0m"
+            )
+            trick.var_server_set_source_address("127.0.0.1")
 
-      # Enable CTRL-C keyboard interrupt signal to freeze/unfreeze the simulation.
-      trick.exec_set_enable_freeze( True )
-
-      # Set to True to start the simulation in freeze.
-      trick.exec_set_freeze_command( freeze )
-
-      return
-
-
-   # Check for valid variable server host name and correct if not valid.
-   def fix_var_server_source_address( self ):
-      # The Trick variable server uses the local host name without verifying the
-      # IP address it resolves to is actually used by the local host computer.
-      # Verify the IP address and fallback to 127.0.0.1 if we find a discrepancy.
-      # Otherwise the simulation control panel will not successfully connect.
-      try:
-         if ( trick.var_server_get_hostname() == socket.gethostname() ):
-            host_ip_addr = socket.gethostbyname( socket.gethostname() )
-            try:
-               ifconfig_out = subprocess.check_output( ['ifconfig'] ).decode()
-               if ( ifconfig_out.find( host_ip_addr ) < 0 ):
-                  print( '\033[33m' + 'WARNING: Invalid IP address ' + host_ip_addr
-                         + ' resolved for host \'' + trick.var_server_get_hostname()
-                         + '\', setting the variable server source address to 127.0.0.1!'
-                         + '\033[0m' )
-                  trick.var_server_set_source_address( '127.0.0.1' )
-            except Exception:
-               return  # Use host source address as is.
-      except Exception:
-         print( '\033[33m' + 'WARNING: Problem resolving \'' + trick.var_server_get_hostname()
-                + '\' host name to an address, setting the variable server source address to 127.0.0.1!'
-                + '\033[0m' )
-         trick.var_server_set_source_address( '127.0.0.1' )
-
-      return
+        return

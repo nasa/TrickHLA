@@ -21,52 +21,57 @@ from trick.top import *
 from ..SpaceFOM.SpaceFOMFederateConfig import *
 
 
-class SpaceFOMFederateConfig2( SpaceFOMFederateConfig ):
+class SpaceFOMFederateConfig2(SpaceFOMFederateConfig):
 
-   def __init__( self,
-                 thla_federate,
-                 thla_control,
-                 thla_config,
-                 thla_federation_name,
-                 thla_federate_name,
-                 thla_federate_type = None,
-                 thla_enabled = True,
-                 thla_FOMs_path = None ):
+    def __init__(
+        self,
+        thla_federate,
+        thla_control,
+        thla_config,
+        thla_federation_name,
+        thla_federate_name,
+        thla_federate_type=None,
+        thla_enabled=True,
+        thla_FOMs_path=None,
+    ):
 
-      # Call the base class constructor.
-      SpaceFOMFederateConfig.__init__( self,
-                                       thla_federate,
-                                       thla_control,
-                                       thla_config,
-                                       thla_federation_name,
-                                       thla_federate_name,
-                                       thla_federate_type,
-                                       thla_enabled,
-                                       thla_FOMs_path )
+        # Call the base class constructor.
+        SpaceFOMFederateConfig.__init__(
+            self,
+            thla_federate,
+            thla_control,
+            thla_config,
+            thla_federation_name,
+            thla_federate_name,
+            thla_federate_type,
+            thla_enabled,
+            thla_FOMs_path,
+        )
 
-      # Add in additional required Space FOM modules.
-      self.add_FOM_module( self.SpaceFOMs_path + 'SISO_SpaceFOM_management2.xml' )
+        # Add in additional required Space FOM modules.
+        self.add_FOM_module(self.SpaceFOMs_path + "SISO_SpaceFOM_management2.xml")
 
-      return
+        return
 
+    def set_FOMs_path(self, FOMs_path):
 
-   def set_FOMs_path( self, FOMs_path ):
+        # You can only set SpaceFOM FOM module path before initialize method is called.
+        if self.initialized:
+            print(
+                "SpaceFOMFederateConfig2.set_FOMs_path(): Warning, already initialized! Ignoring!"
+            )
+            return
 
-      # You can only set SpaceFOM FOM module path before initialize method is called.
-      if self.initialized:
-         print( 'SpaceFOMFederateConfig2.set_FOMs_path(): Warning, already initialized! Ignoring!' )
-         return
+        # Call the parent function to ensure those paths are fixed.
+        SpaceFOMFederateConfig.set_FOMs_path(FOMs_path)
 
-      # Call the parent function to ensure those paths are fixed.
-      SpaceFOMFederateConfig.set_FOMs_path( FOMs_path )
+        # Remove the FOM module with the old path.
+        for item in self.fom_modules:
+            if item.find("SISO_SpaceFOM_management2.xml") != -1:
+                indx = self.fom_modules.index(item)
+                self.fom_modules.pop(indx)
 
-      # Remove the FOM module with the old path.
-      for item in self.fom_modules:
-         if item.find( 'SISO_SpaceFOM_management2.xml' ) != -1:
-            indx = self.fom_modules.index( item )
-            self.fom_modules.pop( indx )
+        # Add the module back in with the specified FOM module path prefix.
+        self.add_FOM_module(self.SpaceFOMs_path + "SISO_SpaceFOM_management2.xml")
 
-      # Add the module back in with the specified FOM module path prefix.
-      self.add_FOM_module( self.SpaceFOMs_path + 'SISO_SpaceFOM_management2.xml' )
-
-      return
+        return

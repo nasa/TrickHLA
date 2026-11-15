@@ -23,61 +23,66 @@ from ..TrickHLA.TrickHLAInteractionConfig import *
 from ..TrickHLA.TrickHLAParameterConfig import *
 
 
-class SpaceFOMMTRInteraction( TrickHLAInteractionConfig ):
+class SpaceFOMMTRInteraction(TrickHLAInteractionConfig):
 
-   trick_sim_obj_name = None
+    trick_sim_obj_name = None
 
-   def __init__( self,
-                 is_master,
-                 S_define_instance,
-                 S_define_instance_name,
-                 manger_interaction = None ):
+    def __init__(
+        self,
+        is_master,
+        S_define_instance,
+        S_define_instance_name,
+        manger_interaction=None,
+    ):
 
-      # Set the name of the interaction.
-      S_define_instance.name = 'ModeTransitionRequest'
+        # Set the name of the interaction.
+        S_define_instance.name = "ModeTransitionRequest"
 
-      # Save the interaction name to use for trick_data_name generation.
-      self.trick_sim_obj_name = str( S_define_instance_name )
+        # Save the interaction name to use for trick_data_name generation.
+        self.trick_sim_obj_name = str(S_define_instance_name)
 
-      # Call the base class constructor.
-      if ( is_master ):
-         TrickHLAInteractionConfig.__init__(
-                        self,
-                        thla_FOM_name              = 'ModeTransitionRequest',
-                        thla_publish               = False,
-                        thla_subscribe             = True,
-                        thla_handler_instance      = S_define_instance,
-                        thla_handler_instance_name = S_define_instance_name,
-                        thla_manager_interaction   = manger_interaction )
-      else:
-         TrickHLAInteractionConfig.__init__(
-                        self,
-                        thla_FOM_name              = 'ModeTransitionRequest',
-                        thla_publish               = True,
-                        thla_subscribe             = False,
-                        thla_handler_instance      = S_define_instance,
-                        thla_handler_instance_name = S_define_instance_name,
-                        thla_manager_interaction   = manger_interaction )
+        # Call the base class constructor.
+        if is_master:
+            TrickHLAInteractionConfig.__init__(
+                self,
+                thla_FOM_name="ModeTransitionRequest",
+                thla_publish=False,
+                thla_subscribe=True,
+                thla_handler_instance=S_define_instance,
+                thla_handler_instance_name=S_define_instance_name,
+                thla_manager_interaction=manger_interaction,
+            )
+        else:
+            TrickHLAInteractionConfig.__init__(
+                self,
+                thla_FOM_name="ModeTransitionRequest",
+                thla_publish=True,
+                thla_subscribe=False,
+                thla_handler_instance=S_define_instance,
+                thla_handler_instance_name=S_define_instance_name,
+                thla_manager_interaction=manger_interaction,
+            )
 
-      # Build the interaction parameters list.
-      self.add_parameters()
+        # Build the interaction parameters list.
+        self.add_parameters()
 
-      return
+        return
 
-   def initialize( self, thla_interaction ):
+    def initialize(self, thla_interaction):
 
-      # Call the base class initialization utility function.
-      TrickHLAInteractionConfig.initialize( self, thla_interaction )
+        # Call the base class initialization utility function.
+        TrickHLAInteractionConfig.initialize(self, thla_interaction)
 
-      return
+        return
 
-   def add_parameters( self ):
+    def add_parameters(self):
 
-      # Set up the map to the MTR interaction execution mode.
-      parameter = TrickHLAParameterConfig(
-                        FOM_name     = 'execution_mode',
-                        trick_name   = str( self.trick_sim_obj_name ) + '.mtr_mode_int',
-                        rti_encoding = trick.TrickHLA.ENCODING_LITTLE_ENDIAN )
-      self.add_parameter( parameter )
+        # Set up the map to the MTR interaction execution mode.
+        parameter = TrickHLAParameterConfig(
+            FOM_name="execution_mode",
+            trick_name=str(self.trick_sim_obj_name) + ".mtr_mode_int",
+            rti_encoding=trick.TrickHLA.ENCODING_LITTLE_ENDIAN,
+        )
+        self.add_parameter(parameter)
 
-      return
+        return
