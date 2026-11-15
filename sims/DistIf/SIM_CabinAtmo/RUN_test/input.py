@@ -4,22 +4,22 @@
 # Trick setup
 trick.var_resolve_hostname()
 trick.var_allow_connections()
-trick.sim_services.exec_set_trap_sigfpe( 1 )
+trick.sim_services.exec_set_trap_sigfpe(1)
 simControlPanel = trick.SimControlPanel()
-trick.add_external_application( simControlPanel )
+trick.add_external_application(simControlPanel)
 trickView = trick.TrickView()
-trick.add_external_application( trickView )
-trickView.set_auto_open_file( 'TV_standalone.tv' )
+trick.add_external_application(trickView)
+trickView.set_auto_open_file("TV_standalone.tv")
 trick.real_time_enable()
-trick.sim_services.exec_set_terminate_time( 86400 )
-trick.exec_set_software_frame( 0.01 )
-trick.TMM_reduced_checkpoint( False )
-trick_mm.mm.set_expanded_arrays( True )
-trick_sys.sched.set_enable_freeze( True )
-trick_sys.sched.set_freeze_command( True )
+trick.sim_services.exec_set_terminate_time(86400)
+trick.exec_set_software_frame(0.01)
+trick.TMM_reduced_checkpoint(False)
+trick_mm.mm.set_expanded_arrays(True)
+trick_sys.sched.set_enable_freeze(True)
+trick_sys.sched.set_freeze_command(True)
 
 # Turn off the HLA sim objects since this input file is for no HLA:
-trick.exec_set_sim_object_onoff( 'THLA', False )
+trick.exec_set_sim_object_onoff("THLA", False)
 
 # Custom initial conditions:
 cabinAtmo.modelConfigA.mImvFanOn = False
@@ -84,4 +84,4 @@ cabinAtmo.lagBufferVest.mDelayFrames = 0
 cabinAtmo.lagBufferImv.mDelayFrames = 0
 
 # Establish reference conservation parameter values at time = 1 second
-trick.add_read( 1.0, """cabinAtmo.conservation.setReference = True""" )
+trick.add_read(1.0, """cabinAtmo.conservation.setReference = True""")

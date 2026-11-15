@@ -14,57 +14,56 @@
 #    ((Dan Dexter)(NASA/ER7)(June 2013)(--)(Initial implementation)))
 ##############################################################################
 
-def log_sine_states( sim_object_name, log_cycle ) :
 
-   #####################################################
-   # Set up the data recording group control parameters.
-   #####################################################
+def log_sine_states(sim_object_name, log_cycle):
 
-   # Build a data recording group name.
-   recording_group_name = sim_object_name + "_States"
+    #####################################################
+    # Set up the data recording group control parameters.
+    #####################################################
 
-   # Create a binary recording group.
-   dr_group = trick.DRBinary( recording_group_name )
-   dr_group.thisown = 0
+    # Build a data recording group name.
+    recording_group_name = sim_object_name + "_States"
 
-   # Set the logging cycle frequency.
-   dr_group.set_cycle( log_cycle )
+    # Create a binary recording group.
+    dr_group = trick.DRBinary(recording_group_name)
+    dr_group.thisown = 0
 
-   # Set up other logging parameters.
-   dr_group.set_freq( trick.DR_Always )
-   dr_group.enable()
+    # Set the logging cycle frequency.
+    dr_group.set_cycle(log_cycle)
 
-   var = sim_object_name + ".truth_data.value"
-   dr_group.add_variable(var)
-   var = sim_object_name + ".truth_data.time"
-   dr_group.add_variable(var)
-   var = sim_object_name + ".truth_data.phase"
-   dr_group.add_variable(var)
-   var = sim_object_name + ".truth_data.amp"
-   dr_group.add_variable(var)
-   var = sim_object_name + ".truth_data.freq"
-   dr_group.add_variable(var)
-   var = sim_object_name + ".truth_data.dvdt"
-   dr_group.add_variable(var)
-   
-   var = sim_object_name + ".sim_data.value"
-   dr_group.add_variable(var)
-   var = sim_object_name + ".sim_data.time"
-   dr_group.add_variable(var)
-   var = sim_object_name + ".sim_data.phase"
-   dr_group.add_variable(var)
-   var = sim_object_name + ".sim_data.amp"
-   dr_group.add_variable(var)
-   var = sim_object_name + ".sim_data.freq"
-   dr_group.add_variable(var)
-   var = sim_object_name + ".sim_data.dvdt"
-   dr_group.add_variable(var)
-   
+    # Set up other logging parameters.
+    dr_group.set_freq(trick.DR_Always)
+    dr_group.enable()
 
-   #########################################################
-   # Add the data recording group to Trick's data recording.
-   #########################################################
-   trick.add_data_record_group( dr_group, trick.DR_Buffer )
+    var = sim_object_name + ".truth_data.value"
+    dr_group.add_variable(var)
+    var = sim_object_name + ".truth_data.time"
+    dr_group.add_variable(var)
+    var = sim_object_name + ".truth_data.phase"
+    dr_group.add_variable(var)
+    var = sim_object_name + ".truth_data.amp"
+    dr_group.add_variable(var)
+    var = sim_object_name + ".truth_data.freq"
+    dr_group.add_variable(var)
+    var = sim_object_name + ".truth_data.dvdt"
+    dr_group.add_variable(var)
 
-   return
+    var = sim_object_name + ".sim_data.value"
+    dr_group.add_variable(var)
+    var = sim_object_name + ".sim_data.time"
+    dr_group.add_variable(var)
+    var = sim_object_name + ".sim_data.phase"
+    dr_group.add_variable(var)
+    var = sim_object_name + ".sim_data.amp"
+    dr_group.add_variable(var)
+    var = sim_object_name + ".sim_data.freq"
+    dr_group.add_variable(var)
+    var = sim_object_name + ".sim_data.dvdt"
+    dr_group.add_variable(var)
 
+    #########################################################
+    # Add the data recording group to Trick's data recording.
+    #########################################################
+    trick.add_data_record_group(dr_group, trick.DR_Buffer)
+
+    return

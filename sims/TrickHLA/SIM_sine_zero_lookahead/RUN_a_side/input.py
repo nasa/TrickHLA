@@ -1,74 +1,76 @@
 import os
 import sys
 
-#---------------------------------------------
+# ---------------------------------------------
 # Set up path so the sim modules can be found.
-#---------------------------------------------
+# ---------------------------------------------
 # Find the TrickHLA home location and append the path.
-trickhla_home = os.environ.get( "TRICKHLA_HOME" )
+trickhla_home = os.environ.get("TRICKHLA_HOME")
 if trickhla_home is None:
-   sys.exit( '\033[91m'+'Environment variable TRICKHLA_HOME is not defined!'+'\033[0m\n' )
+    sys.exit(
+        "\033[91m" + "Environment variable TRICKHLA_HOME is not defined!" + "\033[0m\n"
+    )
 else:
-   if os.path.isdir( trickhla_home ) is False:
-      sys.exit( '\033[91m'+'TRICKHLA_HOME not found: '+trickhla_home+'\033[0m\n' )
+    if os.path.isdir(trickhla_home) is False:
+        sys.exit("\033[91m" + "TRICKHLA_HOME not found: " + trickhla_home + "\033[0m\n")
 
 # Append the path to the top level of the top level TrickHLA directory.
 # We need this to locate the TrickHLA_data Python data directory.
-if trickhla_home not in sys.path :
-   sys.path.append( trickhla_home )
+if trickhla_home not in sys.path:
+    sys.path.append(trickhla_home)
 
 
-#---------------------------------------------
+# ---------------------------------------------
 # Set up Trick executive parameters.
-#---------------------------------------------
-#instruments.echo_jobs.echo_jobs_on()
-#trick.checkpoint_pre_init(1)
+# ---------------------------------------------
+# instruments.echo_jobs.echo_jobs_on()
+# trick.checkpoint_pre_init(1)
 trick.checkpoint_post_init(1)
-#trick.add_read(0.0 , '''trick.checkpoint('checkpoint')''')
+# trick.add_read(0.0 , '''trick.checkpoint('checkpoint')''')
 
 # Import and configure the TrickHLA base Simulation Configuration class.
 from TrickHLA_data.TrickHLA.TrickHLASimConfig import *
 
-sine_sim_config = TrickHLASimConfig( 'sine' )
-sine_sim_config.realtime( software_frame_time = 0.250 )
+sine_sim_config = TrickHLASimConfig("sine")
+sine_sim_config.realtime(software_frame_time=0.250)
 sine_sim_config.sim_control_panel()
 sine_sim_config.start_in_freeze()
 
 run_duration = 15.0
 
 
-#---------------------------------------------
+# ---------------------------------------------
 # Set up data to record.
-#---------------------------------------------
-exec(open( "Log_data/log_sine_states.py" ).read())
-log_sine_states( 'AZ', 0.250 )
-log_sine_states( 'PZ', 0.250 )
-log_sine_states( 'AC', 0.250 )
-log_sine_states( 'PC', 0.250 )
+# ---------------------------------------------
+exec(open("Log_data/log_sine_states.py").read())
+log_sine_states("AZ", 0.250)
+log_sine_states("PZ", 0.250)
+log_sine_states("AC", 0.250)
+log_sine_states("PC", 0.250)
 
 
-#---------------------------------------------
+# ---------------------------------------------
 # Set up the initial Sine states
-#---------------------------------------------
-exec(open( "Modified_data/sine_init.py" ).read())
+# ---------------------------------------------
+exec(open("Modified_data/sine_init.py").read())
 
 
 # Example of a 1-dimensional dynamic array.
 AZ.packing.buff_size = 10
-AZ.packing.buff = trick.sim_services.alloc_type( AZ.packing.buff_size, 'unsigned char' )
+AZ.packing.buff = trick.sim_services.alloc_type(AZ.packing.buff_size, "unsigned char")
 PZ.packing.buff_size = 10
-PZ.packing.buff = trick.sim_services.alloc_type( PZ.packing.buff_size, 'unsigned char' )
+PZ.packing.buff = trick.sim_services.alloc_type(PZ.packing.buff_size, "unsigned char")
 AC.packing.buff_size = 10
-AC.packing.buff = trick.sim_services.alloc_type( AC.packing.buff_size, 'unsigned char' )
+AC.packing.buff = trick.sim_services.alloc_type(AC.packing.buff_size, "unsigned char")
 PC.packing.buff_size = 10
-PC.packing.buff = trick.sim_services.alloc_type( PC.packing.buff_size, 'unsigned char' )
+PC.packing.buff = trick.sim_services.alloc_type(PC.packing.buff_size, "unsigned char")
 
 # We are taking advantage of the input file to specify a unique name for the
 # sim-data name field for the A-side federate.
-AZ.sim_data.name = 'AZ.sim_data.name.A-side.zero'
-PZ.sim_data.name = 'PZ.sim_data.name.A-side.zero'
-AC.sim_data.name = 'AC.sim_data.name.A-side.cyclic'
-PC.sim_data.name = 'PC.sim_data.name.A-side.cyclic'
+AZ.sim_data.name = "AZ.sim_data.name.A-side.zero"
+PZ.sim_data.name = "PZ.sim_data.name.A-side.zero"
+AC.sim_data.name = "AC.sim_data.name.A-side.cyclic"
+PC.sim_data.name = "PC.sim_data.name.A-side.cyclic"
 
 
 # =========================================================================
@@ -80,25 +82,27 @@ THLA.federate.debug_level = trick.DEBUG_LEVEL_4_TRACE
 
 # Specify the HLA base time unit (default: trick.HLA_BASE_TIME_MICROSECONDS)
 # and scale the Trick time tics value.
-THLA.federate.set_HLA_base_time_unit_and_scale_trick_tics( trick.HLA_BASE_TIME_MICROSECONDS )
+THLA.federate.set_HLA_base_time_unit_and_scale_trick_tics(
+    trick.HLA_BASE_TIME_MICROSECONDS
+)
 
 # Configure the CRC.
 # Pitch specific local settings designator:
-THLA.federate.local_settings = 'crcHost = localhost:8989'
+THLA.federate.local_settings = "crcHost = localhost:8989"
 # MAK specific local settings designator, which is anything from the rid.mtl file:
-#THLA.federate.local_settings = '(setqb RTI_tcpForwarderAddr \'192.168.15.3\') (setqb RTI_distributedForwarderPort 5000)'
+# THLA.federate.local_settings = '(setqb RTI_tcpForwarderAddr \'192.168.15.3\') (setqb RTI_distributedForwarderPort 5000)'
 
 # Configure the federate.
-THLA.federate.name             = 'A-side-Federate'
-THLA.federate.FOM_modules      = 'FOMs/S_FOMfile.xml,FOMs/TrickHLAFreezeInteraction.xml'
-THLA.federate.federation_name  = 'SineWaveSim'
+THLA.federate.name = "A-side-Federate"
+THLA.federate.FOM_modules = "FOMs/S_FOMfile.xml,FOMs/TrickHLAFreezeInteraction.xml"
+THLA.federate.federation_name = "SineWaveSim"
 
 # Time management: lookahead, constrained, regulating
-THLA.federate.setup_time_management( 0.0, True, True )
+THLA.federate.setup_time_management(0.0, True, True)
 
 # Configure ExecutionControl.
 # Set the multiphase initialization synchronization points.
-THLA.execution_control.multiphase_init_sync_points = 'Phase1, Phase2'
+THLA.execution_control.multiphase_init_sync_points = "Phase1, Phase2"
 
 # Set the simulation timeline to be used for time computations.
 THLA.execution_control.sim_timeline = THLA_INIT.sim_timeline
@@ -111,296 +115,326 @@ THLA.execution_control.scenario_timeline = THLA_INIT.scenario_timeline
 # wait for all Federates marked as required to join the Federation before
 # continuing on.
 fedA = trick.KnownFederate()
-fedA.name     = 'A-side-Federate'
-fedA.type     = 'A-side-Federate'
+fedA.name = "A-side-Federate"
+fedA.type = "A-side-Federate"
 fedA.required = True
 fedP = trick.KnownFederate()
-fedP.name     = 'P-side-Federate'
-fedP.type     = 'P-side-Federate'
+fedP.name = "P-side-Federate"
+fedP.type = "P-side-Federate"
 fedP.required = True
 THLA.federate.enable_known_feds = True
-THLA.federate.known_federates.push_back( fedA )
-THLA.federate.known_federates.push_back( fedP )
+THLA.federate.known_federates.push_back(fedA)
+THLA.federate.known_federates.push_back(fedP)
 
 
-#---------------------------------------------
+# ---------------------------------------------
 # Set up for simulation configuration.
-#---------------------------------------------
-THLA.simple_sim_config.owner        = 'A-side-Federate'
+# ---------------------------------------------
+THLA.simple_sim_config.owner = "A-side-Federate"
 THLA.simple_sim_config.run_duration = run_duration
 
 
 # The Federate has two objects, it publishes one and subscribes to another.
 obj_service = THLA.federate.get_object_service()
 obj_service.obj_count = 4
-obj_service.objects   = trick.sim_services.alloc_type( obj_service.obj_count, 'TrickHLA::Object' )
+obj_service.objects = trick.sim_services.alloc_type(
+    obj_service.obj_count, "TrickHLA::Object"
+)
 
 # Configure the object this federate will create an HLA instance and
 # publish data for.
-obj_service.objects[0].FOM_name            = 'Test'
-obj_service.objects[0].name                = 'A-side-Federate.Sine.zero'
+obj_service.objects[0].FOM_name = "Test"
+obj_service.objects[0].name = "A-side-Federate.Sine.zero"
 obj_service.objects[0].create_HLA_instance = True
-obj_service.objects[0].packing             = AZ.packing
-obj_service.objects[0].attr_count          = 8
-obj_service.objects[0].attributes          = trick.sim_services.alloc_type( obj_service.objects[0].attr_count, 'TrickHLA::Attribute' )
+obj_service.objects[0].packing = AZ.packing
+obj_service.objects[0].attr_count = 8
+obj_service.objects[0].attributes = trick.sim_services.alloc_type(
+    obj_service.objects[0].attr_count, "TrickHLA::Attribute"
+)
 
-obj_service.objects[0].attributes[0].FOM_name        = 'Time'
-obj_service.objects[0].attributes[0].trick_name      = 'AZ.packing.time'
-obj_service.objects[0].attributes[0].config          = trick.CONFIG_ZERO_LOOKAHEAD
-obj_service.objects[0].attributes[0].publish         = True
-obj_service.objects[0].attributes[0].locally_owned   = True
-obj_service.objects[0].attributes[0].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+obj_service.objects[0].attributes[0].FOM_name = "Time"
+obj_service.objects[0].attributes[0].trick_name = "AZ.packing.time"
+obj_service.objects[0].attributes[0].config = trick.CONFIG_ZERO_LOOKAHEAD
+obj_service.objects[0].attributes[0].publish = True
+obj_service.objects[0].attributes[0].locally_owned = True
+obj_service.objects[0].attributes[0].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
-obj_service.objects[0].attributes[1].FOM_name        = 'Value'
-obj_service.objects[0].attributes[1].trick_name      = 'AZ.packing.value'
-obj_service.objects[0].attributes[1].config          = trick.CONFIG_INITIALIZE + trick.CONFIG_ZERO_LOOKAHEAD
-obj_service.objects[0].attributes[1].publish         = True
-obj_service.objects[0].attributes[1].subscribe       = True
-obj_service.objects[0].attributes[1].locally_owned   = True
-obj_service.objects[0].attributes[1].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+obj_service.objects[0].attributes[1].FOM_name = "Value"
+obj_service.objects[0].attributes[1].trick_name = "AZ.packing.value"
+obj_service.objects[0].attributes[1].config = (
+    trick.CONFIG_INITIALIZE + trick.CONFIG_ZERO_LOOKAHEAD
+)
+obj_service.objects[0].attributes[1].publish = True
+obj_service.objects[0].attributes[1].subscribe = True
+obj_service.objects[0].attributes[1].locally_owned = True
+obj_service.objects[0].attributes[1].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
-obj_service.objects[0].attributes[2].FOM_name        = 'dvdt'
-obj_service.objects[0].attributes[2].trick_name      = 'AZ.packing.dvdt'
-obj_service.objects[0].attributes[2].config          = trick.CONFIG_ZERO_LOOKAHEAD
-obj_service.objects[0].attributes[2].publish         = True
-obj_service.objects[0].attributes[2].locally_owned   = True
-obj_service.objects[0].attributes[2].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+obj_service.objects[0].attributes[2].FOM_name = "dvdt"
+obj_service.objects[0].attributes[2].trick_name = "AZ.packing.dvdt"
+obj_service.objects[0].attributes[2].config = trick.CONFIG_ZERO_LOOKAHEAD
+obj_service.objects[0].attributes[2].publish = True
+obj_service.objects[0].attributes[2].locally_owned = True
+obj_service.objects[0].attributes[2].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
-obj_service.objects[0].attributes[3].FOM_name        = 'Phase'
-obj_service.objects[0].attributes[3].trick_name      = 'AZ.packing.phase_deg' # using packed data instead of 'AZ.sim_data.phase'
-obj_service.objects[0].attributes[3].config          = trick.CONFIG_ZERO_LOOKAHEAD
-obj_service.objects[0].attributes[3].publish         = True
-obj_service.objects[0].attributes[3].locally_owned   = True
-obj_service.objects[0].attributes[3].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+obj_service.objects[0].attributes[3].FOM_name = "Phase"
+obj_service.objects[0].attributes[
+    3
+].trick_name = "AZ.packing.phase_deg"  # using packed data instead of 'AZ.sim_data.phase'
+obj_service.objects[0].attributes[3].config = trick.CONFIG_ZERO_LOOKAHEAD
+obj_service.objects[0].attributes[3].publish = True
+obj_service.objects[0].attributes[3].locally_owned = True
+obj_service.objects[0].attributes[3].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
-obj_service.objects[0].attributes[4].FOM_name        = 'Frequency'
-obj_service.objects[0].attributes[4].trick_name      = 'AZ.packing.freq'
-obj_service.objects[0].attributes[4].config          = trick.CONFIG_ZERO_LOOKAHEAD
-obj_service.objects[0].attributes[4].publish         = True
-obj_service.objects[0].attributes[4].locally_owned   = True
-obj_service.objects[0].attributes[4].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+obj_service.objects[0].attributes[4].FOM_name = "Frequency"
+obj_service.objects[0].attributes[4].trick_name = "AZ.packing.freq"
+obj_service.objects[0].attributes[4].config = trick.CONFIG_ZERO_LOOKAHEAD
+obj_service.objects[0].attributes[4].publish = True
+obj_service.objects[0].attributes[4].locally_owned = True
+obj_service.objects[0].attributes[4].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
-obj_service.objects[0].attributes[5].FOM_name        = 'Amplitude'
-obj_service.objects[0].attributes[5].trick_name      = 'AZ.packing.amp'
-obj_service.objects[0].attributes[5].config          = trick.CONFIG_ZERO_LOOKAHEAD
-obj_service.objects[0].attributes[5].publish         = True
-obj_service.objects[0].attributes[5].locally_owned   = True
-obj_service.objects[0].attributes[5].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+obj_service.objects[0].attributes[5].FOM_name = "Amplitude"
+obj_service.objects[0].attributes[5].trick_name = "AZ.packing.amp"
+obj_service.objects[0].attributes[5].config = trick.CONFIG_ZERO_LOOKAHEAD
+obj_service.objects[0].attributes[5].publish = True
+obj_service.objects[0].attributes[5].locally_owned = True
+obj_service.objects[0].attributes[5].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
-obj_service.objects[0].attributes[6].FOM_name        = 'Tolerance'
-obj_service.objects[0].attributes[6].trick_name      = 'AZ.packing.tol'
-obj_service.objects[0].attributes[6].config          = trick.CONFIG_ZERO_LOOKAHEAD
-obj_service.objects[0].attributes[6].publish         = True
-obj_service.objects[0].attributes[6].locally_owned   = True
-obj_service.objects[0].attributes[6].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+obj_service.objects[0].attributes[6].FOM_name = "Tolerance"
+obj_service.objects[0].attributes[6].trick_name = "AZ.packing.tol"
+obj_service.objects[0].attributes[6].config = trick.CONFIG_ZERO_LOOKAHEAD
+obj_service.objects[0].attributes[6].publish = True
+obj_service.objects[0].attributes[6].locally_owned = True
+obj_service.objects[0].attributes[6].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
-obj_service.objects[0].attributes[7].FOM_name        = 'Name'
-obj_service.objects[0].attributes[7].trick_name      = 'AZ.packing.name'
-obj_service.objects[0].attributes[7].config          = trick.CONFIG_INITIALIZE + trick.CONFIG_ZERO_LOOKAHEAD
-obj_service.objects[0].attributes[7].publish         = True
-obj_service.objects[0].attributes[7].locally_owned   = True
-obj_service.objects[0].attributes[7].rti_encoding    = trick.ENCODING_UNICODE_STRING
+obj_service.objects[0].attributes[7].FOM_name = "Name"
+obj_service.objects[0].attributes[7].trick_name = "AZ.packing.name"
+obj_service.objects[0].attributes[7].config = (
+    trick.CONFIG_INITIALIZE + trick.CONFIG_ZERO_LOOKAHEAD
+)
+obj_service.objects[0].attributes[7].publish = True
+obj_service.objects[0].attributes[7].locally_owned = True
+obj_service.objects[0].attributes[7].rti_encoding = trick.ENCODING_UNICODE_STRING
 
 # Configure the object this federate subscribes to but will not create an
 # HLA instance for.
-obj_service.objects[1].FOM_name            = 'Test'
-obj_service.objects[1].name                = 'P-side-Federate.Sine.zero'
+obj_service.objects[1].FOM_name = "Test"
+obj_service.objects[1].name = "P-side-Federate.Sine.zero"
 obj_service.objects[1].create_HLA_instance = False
-obj_service.objects[1].packing             = PZ.packing
-obj_service.objects[1].attr_count          = 8
-obj_service.objects[1].attributes          = trick.sim_services.alloc_type( obj_service.objects[1].attr_count, 'TrickHLA::Attribute' )
+obj_service.objects[1].packing = PZ.packing
+obj_service.objects[1].attr_count = 8
+obj_service.objects[1].attributes = trick.sim_services.alloc_type(
+    obj_service.objects[1].attr_count, "TrickHLA::Attribute"
+)
 
-obj_service.objects[1].attributes[0].FOM_name        = 'Time'
-obj_service.objects[1].attributes[0].trick_name      = 'PZ.packing.time'
-obj_service.objects[1].attributes[0].config          = trick.CONFIG_ZERO_LOOKAHEAD
-obj_service.objects[1].attributes[0].subscribe       = True
-obj_service.objects[1].attributes[0].locally_owned   = False
-obj_service.objects[1].attributes[0].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+obj_service.objects[1].attributes[0].FOM_name = "Time"
+obj_service.objects[1].attributes[0].trick_name = "PZ.packing.time"
+obj_service.objects[1].attributes[0].config = trick.CONFIG_ZERO_LOOKAHEAD
+obj_service.objects[1].attributes[0].subscribe = True
+obj_service.objects[1].attributes[0].locally_owned = False
+obj_service.objects[1].attributes[0].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
-obj_service.objects[1].attributes[1].FOM_name        = 'Value'
-obj_service.objects[1].attributes[1].trick_name      = 'PZ.packing.value'
-obj_service.objects[1].attributes[1].config          = trick.CONFIG_ZERO_LOOKAHEAD
-obj_service.objects[1].attributes[1].publish         = True
-obj_service.objects[1].attributes[1].subscribe       = True
-obj_service.objects[1].attributes[1].locally_owned   = False
-obj_service.objects[1].attributes[1].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+obj_service.objects[1].attributes[1].FOM_name = "Value"
+obj_service.objects[1].attributes[1].trick_name = "PZ.packing.value"
+obj_service.objects[1].attributes[1].config = trick.CONFIG_ZERO_LOOKAHEAD
+obj_service.objects[1].attributes[1].publish = True
+obj_service.objects[1].attributes[1].subscribe = True
+obj_service.objects[1].attributes[1].locally_owned = False
+obj_service.objects[1].attributes[1].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
-obj_service.objects[1].attributes[2].FOM_name        = 'dvdt'
-obj_service.objects[1].attributes[2].trick_name      = 'PZ.packing.dvdt'
-obj_service.objects[1].attributes[2].config          = trick.CONFIG_ZERO_LOOKAHEAD
-obj_service.objects[1].attributes[2].publish         = True
-obj_service.objects[1].attributes[2].subscribe       = True
-obj_service.objects[1].attributes[2].locally_owned   = False
-obj_service.objects[1].attributes[2].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+obj_service.objects[1].attributes[2].FOM_name = "dvdt"
+obj_service.objects[1].attributes[2].trick_name = "PZ.packing.dvdt"
+obj_service.objects[1].attributes[2].config = trick.CONFIG_ZERO_LOOKAHEAD
+obj_service.objects[1].attributes[2].publish = True
+obj_service.objects[1].attributes[2].subscribe = True
+obj_service.objects[1].attributes[2].locally_owned = False
+obj_service.objects[1].attributes[2].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
-obj_service.objects[1].attributes[3].FOM_name        = 'Phase'
-obj_service.objects[1].attributes[3].trick_name      = 'PZ.packing.phase_deg' # using packed data instead of 'PZ.sim_data.phase'
-obj_service.objects[1].attributes[3].config          = trick.CONFIG_ZERO_LOOKAHEAD
-obj_service.objects[1].attributes[3].subscribe       = True
-obj_service.objects[1].attributes[3].locally_owned   = False
-obj_service.objects[1].attributes[3].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+obj_service.objects[1].attributes[3].FOM_name = "Phase"
+obj_service.objects[1].attributes[
+    3
+].trick_name = "PZ.packing.phase_deg"  # using packed data instead of 'PZ.sim_data.phase'
+obj_service.objects[1].attributes[3].config = trick.CONFIG_ZERO_LOOKAHEAD
+obj_service.objects[1].attributes[3].subscribe = True
+obj_service.objects[1].attributes[3].locally_owned = False
+obj_service.objects[1].attributes[3].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
-obj_service.objects[1].attributes[4].FOM_name        = 'Frequency'
-obj_service.objects[1].attributes[4].trick_name      = 'PZ.packing.freq'
-obj_service.objects[1].attributes[4].config          = trick.CONFIG_ZERO_LOOKAHEAD
-obj_service.objects[1].attributes[4].subscribe       = True
-obj_service.objects[1].attributes[4].locally_owned   = False
-obj_service.objects[1].attributes[4].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+obj_service.objects[1].attributes[4].FOM_name = "Frequency"
+obj_service.objects[1].attributes[4].trick_name = "PZ.packing.freq"
+obj_service.objects[1].attributes[4].config = trick.CONFIG_ZERO_LOOKAHEAD
+obj_service.objects[1].attributes[4].subscribe = True
+obj_service.objects[1].attributes[4].locally_owned = False
+obj_service.objects[1].attributes[4].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
-obj_service.objects[1].attributes[5].FOM_name        = 'Amplitude'
-obj_service.objects[1].attributes[5].trick_name      = 'PZ.packing.amp'
-obj_service.objects[1].attributes[5].config          = trick.CONFIG_ZERO_LOOKAHEAD
-obj_service.objects[1].attributes[5].subscribe       = True
-obj_service.objects[1].attributes[5].locally_owned   = False
-obj_service.objects[1].attributes[5].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+obj_service.objects[1].attributes[5].FOM_name = "Amplitude"
+obj_service.objects[1].attributes[5].trick_name = "PZ.packing.amp"
+obj_service.objects[1].attributes[5].config = trick.CONFIG_ZERO_LOOKAHEAD
+obj_service.objects[1].attributes[5].subscribe = True
+obj_service.objects[1].attributes[5].locally_owned = False
+obj_service.objects[1].attributes[5].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
-obj_service.objects[1].attributes[6].FOM_name        = 'Tolerance'
-obj_service.objects[1].attributes[6].trick_name      = 'PZ.packing.tol'
-obj_service.objects[1].attributes[6].config          = trick.CONFIG_ZERO_LOOKAHEAD
-obj_service.objects[1].attributes[6].subscribe       = True
-obj_service.objects[1].attributes[6].locally_owned   = False
-obj_service.objects[1].attributes[6].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+obj_service.objects[1].attributes[6].FOM_name = "Tolerance"
+obj_service.objects[1].attributes[6].trick_name = "PZ.packing.tol"
+obj_service.objects[1].attributes[6].config = trick.CONFIG_ZERO_LOOKAHEAD
+obj_service.objects[1].attributes[6].subscribe = True
+obj_service.objects[1].attributes[6].locally_owned = False
+obj_service.objects[1].attributes[6].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
-obj_service.objects[1].attributes[7].FOM_name        = 'Name'
-obj_service.objects[1].attributes[7].trick_name      = 'PZ.packing.name'
-obj_service.objects[1].attributes[7].config          = trick.CONFIG_ZERO_LOOKAHEAD
-obj_service.objects[1].attributes[7].subscribe       = True
-obj_service.objects[1].attributes[7].locally_owned   = False
-obj_service.objects[1].attributes[7].rti_encoding    = trick.ENCODING_UNICODE_STRING
+obj_service.objects[1].attributes[7].FOM_name = "Name"
+obj_service.objects[1].attributes[7].trick_name = "PZ.packing.name"
+obj_service.objects[1].attributes[7].config = trick.CONFIG_ZERO_LOOKAHEAD
+obj_service.objects[1].attributes[7].subscribe = True
+obj_service.objects[1].attributes[7].locally_owned = False
+obj_service.objects[1].attributes[7].rti_encoding = trick.ENCODING_UNICODE_STRING
 
 # Cyclic analytic state.
-obj_service.objects[2].FOM_name            = 'Test'
-obj_service.objects[2].name                = 'A-side-Federate.Sine.cyclic'
+obj_service.objects[2].FOM_name = "Test"
+obj_service.objects[2].name = "A-side-Federate.Sine.cyclic"
 obj_service.objects[2].create_HLA_instance = True
-obj_service.objects[2].packing             = AC.packing
-obj_service.objects[2].attr_count          = 8
-obj_service.objects[2].attributes          = trick.sim_services.alloc_type( obj_service.objects[2].attr_count, 'TrickHLA::Attribute' )
+obj_service.objects[2].packing = AC.packing
+obj_service.objects[2].attr_count = 8
+obj_service.objects[2].attributes = trick.sim_services.alloc_type(
+    obj_service.objects[2].attr_count, "TrickHLA::Attribute"
+)
 
-obj_service.objects[2].attributes[0].FOM_name        = 'Time'
-obj_service.objects[2].attributes[0].trick_name      = 'AC.packing.time'
-obj_service.objects[2].attributes[0].config          = trick.CONFIG_CYCLIC
-obj_service.objects[2].attributes[0].publish         = True
-obj_service.objects[2].attributes[0].locally_owned   = True
-obj_service.objects[2].attributes[0].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+obj_service.objects[2].attributes[0].FOM_name = "Time"
+obj_service.objects[2].attributes[0].trick_name = "AC.packing.time"
+obj_service.objects[2].attributes[0].config = trick.CONFIG_CYCLIC
+obj_service.objects[2].attributes[0].publish = True
+obj_service.objects[2].attributes[0].locally_owned = True
+obj_service.objects[2].attributes[0].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
-obj_service.objects[2].attributes[1].FOM_name        = 'Value'
-obj_service.objects[2].attributes[1].trick_name      = 'AC.packing.value'
-obj_service.objects[2].attributes[1].config          = trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
-obj_service.objects[2].attributes[1].publish         = True
-obj_service.objects[2].attributes[1].subscribe       = True
-obj_service.objects[2].attributes[1].locally_owned   = True
-obj_service.objects[2].attributes[1].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+obj_service.objects[2].attributes[1].FOM_name = "Value"
+obj_service.objects[2].attributes[1].trick_name = "AC.packing.value"
+obj_service.objects[2].attributes[1].config = (
+    trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
+)
+obj_service.objects[2].attributes[1].publish = True
+obj_service.objects[2].attributes[1].subscribe = True
+obj_service.objects[2].attributes[1].locally_owned = True
+obj_service.objects[2].attributes[1].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
-obj_service.objects[2].attributes[2].FOM_name        = 'dvdt'
-obj_service.objects[2].attributes[2].trick_name      = 'AC.packing.dvdt'
-obj_service.objects[2].attributes[2].config          = trick.CONFIG_CYCLIC
-obj_service.objects[2].attributes[2].publish         = True
-obj_service.objects[2].attributes[2].locally_owned   = True
-obj_service.objects[2].attributes[2].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+obj_service.objects[2].attributes[2].FOM_name = "dvdt"
+obj_service.objects[2].attributes[2].trick_name = "AC.packing.dvdt"
+obj_service.objects[2].attributes[2].config = trick.CONFIG_CYCLIC
+obj_service.objects[2].attributes[2].publish = True
+obj_service.objects[2].attributes[2].locally_owned = True
+obj_service.objects[2].attributes[2].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
-obj_service.objects[2].attributes[3].FOM_name        = 'Phase'
-obj_service.objects[2].attributes[3].trick_name      = 'AC.packing.phase_deg' # using packed data instead of 'AC.sim_data.phase'
-obj_service.objects[2].attributes[3].config          = trick.CONFIG_CYCLIC
-obj_service.objects[2].attributes[3].publish         = True
-obj_service.objects[2].attributes[3].locally_owned   = True
-obj_service.objects[2].attributes[3].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+obj_service.objects[2].attributes[3].FOM_name = "Phase"
+obj_service.objects[2].attributes[
+    3
+].trick_name = "AC.packing.phase_deg"  # using packed data instead of 'AC.sim_data.phase'
+obj_service.objects[2].attributes[3].config = trick.CONFIG_CYCLIC
+obj_service.objects[2].attributes[3].publish = True
+obj_service.objects[2].attributes[3].locally_owned = True
+obj_service.objects[2].attributes[3].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
-obj_service.objects[2].attributes[4].FOM_name        = 'Frequency'
-obj_service.objects[2].attributes[4].trick_name      = 'AC.packing.freq'
-obj_service.objects[2].attributes[4].config          = trick.CONFIG_CYCLIC
-obj_service.objects[2].attributes[4].publish         = True
-obj_service.objects[2].attributes[4].locally_owned   = True
-obj_service.objects[2].attributes[4].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+obj_service.objects[2].attributes[4].FOM_name = "Frequency"
+obj_service.objects[2].attributes[4].trick_name = "AC.packing.freq"
+obj_service.objects[2].attributes[4].config = trick.CONFIG_CYCLIC
+obj_service.objects[2].attributes[4].publish = True
+obj_service.objects[2].attributes[4].locally_owned = True
+obj_service.objects[2].attributes[4].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
-obj_service.objects[2].attributes[5].FOM_name        = 'Amplitude'
-obj_service.objects[2].attributes[5].trick_name      = 'AC.packing.amp'
-obj_service.objects[2].attributes[5].config          = trick.CONFIG_CYCLIC
-obj_service.objects[2].attributes[5].publish         = True
-obj_service.objects[2].attributes[5].locally_owned   = True
-obj_service.objects[2].attributes[5].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+obj_service.objects[2].attributes[5].FOM_name = "Amplitude"
+obj_service.objects[2].attributes[5].trick_name = "AC.packing.amp"
+obj_service.objects[2].attributes[5].config = trick.CONFIG_CYCLIC
+obj_service.objects[2].attributes[5].publish = True
+obj_service.objects[2].attributes[5].locally_owned = True
+obj_service.objects[2].attributes[5].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
-obj_service.objects[2].attributes[6].FOM_name        = 'Tolerance'
-obj_service.objects[2].attributes[6].trick_name      = 'AC.packing.tol'
-obj_service.objects[2].attributes[6].config          = trick.CONFIG_CYCLIC
-obj_service.objects[2].attributes[6].publish         = True
-obj_service.objects[2].attributes[6].locally_owned   = True
-obj_service.objects[2].attributes[6].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+obj_service.objects[2].attributes[6].FOM_name = "Tolerance"
+obj_service.objects[2].attributes[6].trick_name = "AC.packing.tol"
+obj_service.objects[2].attributes[6].config = trick.CONFIG_CYCLIC
+obj_service.objects[2].attributes[6].publish = True
+obj_service.objects[2].attributes[6].locally_owned = True
+obj_service.objects[2].attributes[6].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
-obj_service.objects[2].attributes[7].FOM_name        = 'Name'
-obj_service.objects[2].attributes[7].trick_name      = 'AC.packing.name'
-obj_service.objects[2].attributes[7].config          = trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
-obj_service.objects[2].attributes[7].publish         = True
-obj_service.objects[2].attributes[7].locally_owned   = True
-obj_service.objects[2].attributes[7].rti_encoding    = trick.ENCODING_UNICODE_STRING
+obj_service.objects[2].attributes[7].FOM_name = "Name"
+obj_service.objects[2].attributes[7].trick_name = "AC.packing.name"
+obj_service.objects[2].attributes[7].config = (
+    trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
+)
+obj_service.objects[2].attributes[7].publish = True
+obj_service.objects[2].attributes[7].locally_owned = True
+obj_service.objects[2].attributes[7].rti_encoding = trick.ENCODING_UNICODE_STRING
 
 # Cyclic propagated state.
-obj_service.objects[3].FOM_name            = 'Test'
-obj_service.objects[3].name                = 'P-side-Federate.Sine.cyclic'
+obj_service.objects[3].FOM_name = "Test"
+obj_service.objects[3].name = "P-side-Federate.Sine.cyclic"
 obj_service.objects[3].create_HLA_instance = False
-obj_service.objects[3].packing             = PC.packing
-obj_service.objects[3].attr_count          = 8
-obj_service.objects[3].attributes          = trick.sim_services.alloc_type( obj_service.objects[3].attr_count, 'TrickHLA::Attribute' )
+obj_service.objects[3].packing = PC.packing
+obj_service.objects[3].attr_count = 8
+obj_service.objects[3].attributes = trick.sim_services.alloc_type(
+    obj_service.objects[3].attr_count, "TrickHLA::Attribute"
+)
 
-obj_service.objects[3].attributes[0].FOM_name        = 'Time'
-obj_service.objects[3].attributes[0].trick_name      = 'PC.packing.time'
-obj_service.objects[3].attributes[0].config          = trick.CONFIG_CYCLIC
-obj_service.objects[3].attributes[0].subscribe       = True
-obj_service.objects[3].attributes[0].locally_owned   = False
-obj_service.objects[3].attributes[0].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+obj_service.objects[3].attributes[0].FOM_name = "Time"
+obj_service.objects[3].attributes[0].trick_name = "PC.packing.time"
+obj_service.objects[3].attributes[0].config = trick.CONFIG_CYCLIC
+obj_service.objects[3].attributes[0].subscribe = True
+obj_service.objects[3].attributes[0].locally_owned = False
+obj_service.objects[3].attributes[0].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
-obj_service.objects[3].attributes[1].FOM_name        = 'Value'
-obj_service.objects[3].attributes[1].trick_name      = 'PC.packing.value'
-obj_service.objects[3].attributes[1].config          = trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
-obj_service.objects[3].attributes[1].publish         = True
-obj_service.objects[3].attributes[1].subscribe       = True
-obj_service.objects[3].attributes[1].locally_owned   = False
-obj_service.objects[3].attributes[1].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+obj_service.objects[3].attributes[1].FOM_name = "Value"
+obj_service.objects[3].attributes[1].trick_name = "PC.packing.value"
+obj_service.objects[3].attributes[1].config = (
+    trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
+)
+obj_service.objects[3].attributes[1].publish = True
+obj_service.objects[3].attributes[1].subscribe = True
+obj_service.objects[3].attributes[1].locally_owned = False
+obj_service.objects[3].attributes[1].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
-obj_service.objects[3].attributes[2].FOM_name        = 'dvdt'
-obj_service.objects[3].attributes[2].trick_name      = 'PC.packing.dvdt'
-obj_service.objects[3].attributes[2].config          = trick.CONFIG_CYCLIC
-obj_service.objects[3].attributes[2].publish         = True
-obj_service.objects[3].attributes[2].subscribe       = True
-obj_service.objects[3].attributes[2].locally_owned   = False
-obj_service.objects[3].attributes[2].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+obj_service.objects[3].attributes[2].FOM_name = "dvdt"
+obj_service.objects[3].attributes[2].trick_name = "PC.packing.dvdt"
+obj_service.objects[3].attributes[2].config = trick.CONFIG_CYCLIC
+obj_service.objects[3].attributes[2].publish = True
+obj_service.objects[3].attributes[2].subscribe = True
+obj_service.objects[3].attributes[2].locally_owned = False
+obj_service.objects[3].attributes[2].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
-obj_service.objects[3].attributes[3].FOM_name        = 'Phase'
-obj_service.objects[3].attributes[3].trick_name      = 'PC.packing.phase_deg' # using packed data instead of 'PC.sim_data.phase'
-obj_service.objects[3].attributes[3].config          = trick.CONFIG_CYCLIC
-obj_service.objects[3].attributes[3].subscribe       = True
-obj_service.objects[3].attributes[3].locally_owned   = False
-obj_service.objects[3].attributes[3].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+obj_service.objects[3].attributes[3].FOM_name = "Phase"
+obj_service.objects[3].attributes[
+    3
+].trick_name = "PC.packing.phase_deg"  # using packed data instead of 'PC.sim_data.phase'
+obj_service.objects[3].attributes[3].config = trick.CONFIG_CYCLIC
+obj_service.objects[3].attributes[3].subscribe = True
+obj_service.objects[3].attributes[3].locally_owned = False
+obj_service.objects[3].attributes[3].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
-obj_service.objects[3].attributes[4].FOM_name        = 'Frequency'
-obj_service.objects[3].attributes[4].trick_name      = 'PC.packing.freq'
-obj_service.objects[3].attributes[4].config          = trick.CONFIG_CYCLIC
-obj_service.objects[3].attributes[4].subscribe       = True
-obj_service.objects[3].attributes[4].locally_owned   = False
-obj_service.objects[3].attributes[4].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+obj_service.objects[3].attributes[4].FOM_name = "Frequency"
+obj_service.objects[3].attributes[4].trick_name = "PC.packing.freq"
+obj_service.objects[3].attributes[4].config = trick.CONFIG_CYCLIC
+obj_service.objects[3].attributes[4].subscribe = True
+obj_service.objects[3].attributes[4].locally_owned = False
+obj_service.objects[3].attributes[4].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
-obj_service.objects[3].attributes[5].FOM_name        = 'Amplitude'
-obj_service.objects[3].attributes[5].trick_name      = 'PC.packing.amp'
-obj_service.objects[3].attributes[5].config          = trick.CONFIG_CYCLIC
-obj_service.objects[3].attributes[5].subscribe       = True
-obj_service.objects[3].attributes[5].locally_owned   = False
-obj_service.objects[3].attributes[5].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+obj_service.objects[3].attributes[5].FOM_name = "Amplitude"
+obj_service.objects[3].attributes[5].trick_name = "PC.packing.amp"
+obj_service.objects[3].attributes[5].config = trick.CONFIG_CYCLIC
+obj_service.objects[3].attributes[5].subscribe = True
+obj_service.objects[3].attributes[5].locally_owned = False
+obj_service.objects[3].attributes[5].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
-obj_service.objects[3].attributes[6].FOM_name        = 'Tolerance'
-obj_service.objects[3].attributes[6].trick_name      = 'PC.packing.tol'
-obj_service.objects[3].attributes[6].config          = trick.CONFIG_CYCLIC
-obj_service.objects[3].attributes[6].subscribe       = True
-obj_service.objects[3].attributes[6].locally_owned   = False
-obj_service.objects[3].attributes[6].rti_encoding    = trick.ENCODING_LITTLE_ENDIAN
+obj_service.objects[3].attributes[6].FOM_name = "Tolerance"
+obj_service.objects[3].attributes[6].trick_name = "PC.packing.tol"
+obj_service.objects[3].attributes[6].config = trick.CONFIG_CYCLIC
+obj_service.objects[3].attributes[6].subscribe = True
+obj_service.objects[3].attributes[6].locally_owned = False
+obj_service.objects[3].attributes[6].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
-obj_service.objects[3].attributes[7].FOM_name        = 'Name'
-obj_service.objects[3].attributes[7].trick_name      = 'PC.packing.name'
-obj_service.objects[3].attributes[7].config          = trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
-obj_service.objects[3].attributes[7].subscribe       = True
-obj_service.objects[3].attributes[7].locally_owned   = False
-obj_service.objects[3].attributes[7].rti_encoding    = trick.ENCODING_UNICODE_STRING
+obj_service.objects[3].attributes[7].FOM_name = "Name"
+obj_service.objects[3].attributes[7].trick_name = "PC.packing.name"
+obj_service.objects[3].attributes[7].config = (
+    trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
+)
+obj_service.objects[3].attributes[7].subscribe = True
+obj_service.objects[3].attributes[7].locally_owned = False
+obj_service.objects[3].attributes[7].rti_encoding = trick.ENCODING_UNICODE_STRING
 
 
-#---------------------------------------------
+# ---------------------------------------------
 # Set up simulation termination time.
-#---------------------------------------------
-trick.sim_services.exec_set_terminate_time( run_duration )
+# ---------------------------------------------
+trick.sim_services.exec_set_terminate_time(run_duration)

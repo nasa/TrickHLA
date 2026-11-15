@@ -3,21 +3,21 @@
 # @file BallSimConfig.py
 # @ingroup TrickHLA
 # @brief Simulation configuration data for the Ball sim.
-# 
+#
 # This Python class sets up the default Trick simulation configuration
 # parameters for the Ball sim.
-# 
+#
 # @copyright Copyright 2026 United States Government as represented by the
 # Administrator of the National Aeronautics and Space Administration.
 # No copyright is claimed in the United States under Title 17, U.S. Code.
 # All Other Rights Reserved.
-# 
+#
 # \par<b>Responsible Organization</b>
 # Simulation and Graphics Branch, Mail Code ER7\n
 # Software, Robotics & Simulation Division\n
 # NASA, Johnson Space Center\n
 # 2101 NASA Parkway, Houston, TX  77058
-# 
+#
 # @python_module{Trick}
 #
 # @revs_title
@@ -35,79 +35,94 @@ import trick
 from TrickHLA_data.Trick.TrickSimConfig import *
 
 
-class BallSimConfig( TrickSimConfig ):
-   
-   # Class constructor.
-   def __init__( self,
-                 sim_name ):
+class BallSimConfig(TrickSimConfig):
 
-      # Newer Trick releases require activation of the variable server interface.
-      if "var_allow_connections" in dir(trick):
-         trick.var_resolve_hostname()
-         trick.var_allow_connections()
-         
-      # Fix the variable server address error.
-      self.fix_var_server_source_address()
+    # Class constructor.
+    def __init__(self, sim_name):
 
-      # Set the name for the simulation.
-      self.sim_name = sim_name
+        # Newer Trick releases require activation of the variable server interface.
+        if "var_allow_connections" in dir(trick):
+            trick.var_resolve_hostname()
+            trick.var_allow_connections()
 
-      # Get the variable server port.
-      self.variable_server_host = trick.var_server_get_hostname()
-      self.variable_server_port = trick.var_server_get_port()
-      
-      # Call the TrickDataRecordingGroup constructor.
-      TrickSimConfig.__init__( self, sim_name )
-            
-      return
-   
-   def ball_graphics( self ):
-      
-      # Set the Ball graphics command path.
-      self.command_path = '../../../models/Ball/graphics/dist/BallDisplay.jar'
-      
-      # Check to see if the command exists.
-      if ( os.path.isfile( self.command_path ) ) :
-         
-         # Build the Ball graphics command.
-         self.ball_graphics_command = 'java -jar ' + self.command_path
-         
-         # Set this up as a Trick external application.
-         self.ballGraphicsApp = trick.ExternalApplication()
-         self.ballGraphicsApp.set_startup_command( self.ball_graphics_command )
-         self.ballGraphicsApp.set_arguments( str( self.variable_server_port ) )
-         trick.add_external_application( self.ballGraphicsApp )
-                                      
-      else :
-         print('=====================================================================================')
-         print('BallDisplay needs to be built. Please \"cd\" into models/Ball/graphics and type \"make\".')
-         print('=====================================================================================')
-         
-      return
+        # Fix the variable server address error.
+        self.fix_var_server_source_address()
 
-   def thlamcp( self ):
-      
-      # Set the Ball graphics command path.
-      self.command_path = '../../../scripts/thlamcp.py'
-      
-      # Check to see if the command exists.
-      if ( os.path.isfile( self.command_path ) ) :
-         
-         # Build the TrickHLA Master Control Panel command.
-         self.thlamcp_command = self.command_path
-         
-         # Set this up as a Trick external application.
-         self.thlamcpApp = trick.ExternalApplication()
-         self.thlamcpApp.set_startup_command( self.thlamcp_command )
-         #self.thlamcpApp.set_arguments( '--auto' )
-         self.thlamcpApp.set_arguments( '--auto -c ' + str( self.variable_server_host ) + ' -p ' + str( self.variable_server_port ) )
-         #self.thlamcpApp.set_port( self.variable_server_port )
-         trick.add_external_application( self.thlamcpApp )
-                                       
-      else :
-         print('=====================================================================================')
-         print('BallDisplay needs to be built. Please \"cd\" into models/Ball/graphics and type \"make\".')
-         print('=====================================================================================')
-         
-      return
-   
+        # Set the name for the simulation.
+        self.sim_name = sim_name
+
+        # Get the variable server port.
+        self.variable_server_host = trick.var_server_get_hostname()
+        self.variable_server_port = trick.var_server_get_port()
+
+        # Call the TrickDataRecordingGroup constructor.
+        TrickSimConfig.__init__(self, sim_name)
+
+        return
+
+    def ball_graphics(self):
+
+        # Set the Ball graphics command path.
+        self.command_path = "../../../models/Ball/graphics/dist/BallDisplay.jar"
+
+        # Check to see if the command exists.
+        if os.path.isfile(self.command_path):
+
+            # Build the Ball graphics command.
+            self.ball_graphics_command = "java -jar " + self.command_path
+
+            # Set this up as a Trick external application.
+            self.ballGraphicsApp = trick.ExternalApplication()
+            self.ballGraphicsApp.set_startup_command(self.ball_graphics_command)
+            self.ballGraphicsApp.set_arguments(str(self.variable_server_port))
+            trick.add_external_application(self.ballGraphicsApp)
+
+        else:
+            print(
+                "====================================================================================="
+            )
+            print(
+                'BallDisplay needs to be built. Please "cd" into models/Ball/graphics and type "make".'
+            )
+            print(
+                "====================================================================================="
+            )
+
+        return
+
+    def thlamcp(self):
+
+        # Set the Ball graphics command path.
+        self.command_path = "../../../scripts/thlamcp.py"
+
+        # Check to see if the command exists.
+        if os.path.isfile(self.command_path):
+
+            # Build the TrickHLA Master Control Panel command.
+            self.thlamcp_command = self.command_path
+
+            # Set this up as a Trick external application.
+            self.thlamcpApp = trick.ExternalApplication()
+            self.thlamcpApp.set_startup_command(self.thlamcp_command)
+            # self.thlamcpApp.set_arguments( '--auto' )
+            self.thlamcpApp.set_arguments(
+                "--auto -c "
+                + str(self.variable_server_host)
+                + " -p "
+                + str(self.variable_server_port)
+            )
+            # self.thlamcpApp.set_port( self.variable_server_port )
+            trick.add_external_application(self.thlamcpApp)
+
+        else:
+            print(
+                "====================================================================================="
+            )
+            print(
+                'BallDisplay needs to be built. Please "cd" into models/Ball/graphics and type "make".'
+            )
+            print(
+                "====================================================================================="
+            )
+
+        return

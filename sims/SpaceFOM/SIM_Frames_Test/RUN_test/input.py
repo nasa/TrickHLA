@@ -17,166 +17,171 @@ import os
 import sys
 
 # Find the TrickHLA home location and append the path.
-trickhla_home = os.environ.get( "TRICKHLA_HOME" )
+trickhla_home = os.environ.get("TRICKHLA_HOME")
 if trickhla_home is None:
-   sys.exit( '\033[91m'+'Environment variable TRICKHLA_HOME is not defined!'+'\033[0m\n' )
+    sys.exit(
+        "\033[91m" + "Environment variable TRICKHLA_HOME is not defined!" + "\033[0m\n"
+    )
 else:
-   if os.path.isdir( trickhla_home ) is False:
-      sys.exit( '\033[91m'+'TRICKHLA_HOME not found: '+trickhla_home+'\033[0m\n' )
+    if os.path.isdir(trickhla_home) is False:
+        sys.exit("\033[91m" + "TRICKHLA_HOME not found: " + trickhla_home + "\033[0m\n")
 
 # Append the path to the top level of the top level TrickHLA directory.
 # We need this to locate the TrickHLA_data Python data directory.
-if trickhla_home not in sys.path :
-   sys.path.append( trickhla_home )
+if trickhla_home not in sys.path:
+    sys.path.append(trickhla_home)
 
 # Load the SpaceFOM specific federate configuration object.
 from TrickHLA_data.SpaceFOM.SpaceFOMFederateConfig import *
+
 # Load the SpaceFOM specific reference frame configuration object.
 from TrickHLA_data.SpaceFOM.SpaceFOMRefFrameObject import *
 
 
 def print_usage_message():
 
-   print( ' ' )
-   print( 'SpaceFOM Reference Frame Simulation Command Line Configuration Options:' )
-   print( '  -c --case [name]     : Set the name for the case definition file.' )
-   print( '  -d                   : Pass the input file debug option on to Trick.' )
-   print( '  --default_data       : Use default_data to configure the objects.' )
-   print( '  -e --express [frame] : Set express frame for the relative state.' )
-   print( '  -f --frames [file]   : Set the name for the frames definition file.' )
-   print( '  -h --help            : Print this help message.' )
-   print( '  -n --native [frame]  : Set the native frame for the entity.' )
-   print( '  --nostop             : Set no stop time on simulation.' )
-   print( '  --stop [time]        : Time to stop simulation, default is 0.5 seconds.' )
-   print( '  -t --tree            : Print the frame tree data.' )
-   print( '  -v --vehicle [file]  : Set the name for the vehicle definition file.' )
-   print( '  --verbose            : Show verbose messages.' )
-   print( ' ' )
+    print(" ")
+    print("SpaceFOM Reference Frame Simulation Command Line Configuration Options:")
+    print("  -c --case [name]     : Set the name for the case definition file.")
+    print("  -d                   : Pass the input file debug option on to Trick.")
+    print("  --default_data       : Use default_data to configure the objects.")
+    print("  -e --express [frame] : Set express frame for the relative state.")
+    print("  -f --frames [file]   : Set the name for the frames definition file.")
+    print("  -h --help            : Print this help message.")
+    print("  -n --native [frame]  : Set the native frame for the entity.")
+    print("  --nostop             : Set no stop time on simulation.")
+    print("  --stop [time]        : Time to stop simulation, default is 0.5 seconds.")
+    print("  -t --tree            : Print the frame tree data.")
+    print("  -v --vehicle [file]  : Set the name for the vehicle definition file.")
+    print("  --verbose            : Show verbose messages.")
+    print(" ")
 
-   trick.exec_terminate_with_return( -1,
-                                     sys._getframe( 0 ).f_code.co_filename,
-                                     sys._getframe( 0 ).f_lineno,
-                                     'Print usage message.' )
-   return
+    trick.exec_terminate_with_return(
+        -1,
+        sys._getframe(0).f_code.co_filename,
+        sys._getframe(0).f_lineno,
+        "Print usage message.",
+    )
+    return
 
 
 def parse_command_line():
 
-   # Execution control parameters
-   global print_usage
-   global run_duration
-   global verbose
-   global config_dir
-   global case_name
-   global case_file
+    # Execution control parameters
+    global print_usage
+    global run_duration
+    global verbose
+    global config_dir
+    global case_name
+    global case_file
 
-   # Frame definition parameters
-   global print_tree
-   global frames_list
-   global express_frame
-   global native_frame
-   global frames_name
-   global frames_file
+    # Frame definition parameters
+    global print_tree
+    global frames_list
+    global express_frame
+    global native_frame
+    global frames_name
+    global frames_file
 
-   # Vehicle definition parameters
-   global vehicle_name
-   global vehicle_file
+    # Vehicle definition parameters
+    global vehicle_name
+    global vehicle_file
 
-   # Get the Trick command line arguments.
-   argc = trick.command_line_args_get_argc()
-   argv = trick.command_line_args_get_argv()
+    # Get the Trick command line arguments.
+    argc = trick.command_line_args_get_argc()
+    argv = trick.command_line_args_get_argv()
 
-   # Process the command line arguments.
-   # argv[0]=S_main*.exe, argv[1]=RUN/input.py file
-   index = 2
-   while ( index < argc ):
+    # Process the command line arguments.
+    # argv[0]=S_main*.exe, argv[1]=RUN/input.py file
+    index = 2
+    while index < argc:
 
-      if ( ( str( argv[index] ) == '-c' ) | ( str( argv[index] ) == '--case' ) ):
-         index = index + 1
-         if ( index < argc ):
-            case_name = str( argv[index] )
-            case_file = config_dir + "/" + case_name + ".py"
-            if not os.path.exists( frames_file ):
-               print( 'input.py ERROR: Frames file not found: ' + frames_file )
-               print_usage = True
-         else:
-            print( 'input.py ERROR: Missing frames name.' )
+        if (str(argv[index]) == "-c") | (str(argv[index]) == "--case"):
+            index = index + 1
+            if index < argc:
+                case_name = str(argv[index])
+                case_file = config_dir + "/" + case_name + ".py"
+                if not os.path.exists(frames_file):
+                    print("input.py ERROR: Frames file not found: " + frames_file)
+                    print_usage = True
+            else:
+                print("input.py ERROR: Missing frames name.")
+                print_usage = True
+
+        elif str(argv[index]) == "-d":
+            # Catch the Trick debug command line option an do NOT terminate.
+            print("DEBUG: Specified input file debug option to Trick.")
+
+        elif str(argv[index]) == "--default_data_config":
+            # Catch the default_data configure command line option an do NOT terminate.
+            print("NOTE: Configuring with default_data option.")
+
+        elif (str(argv[index]) == "-e") | (str(argv[index]) == "--express"):
+            index = index + 1
+            if index < argc:
+                express_frame = str(argv[index])
+            else:
+                print("input.py ERROR: Missing express frame name.")
+                print_usage = True
+
+        elif (str(argv[index]) == "-f") | (str(argv[index]) == "--frames"):
+            index = index + 1
+            if index < argc:
+                frames_name = str(argv[index])
+                frames_file = config_dir + "/" + frames_name + ".py"
+                if not os.path.exists(frames_file):
+                    print("input.py ERROR: Frames file not found: " + frames_file)
+                    print_usage = True
+            else:
+                print("input.py ERROR: Missing frames name.")
+                print_usage = True
+
+        elif str(argv[index]) == "--stop":
+            index = index + 1
+            if index < argc:
+                run_duration = float(str(argv[index]))
+            else:
+                print("input.py ERROR: Missing --stop [time] argument.")
+                print_usage = True
+
+        elif str(argv[index]) == "--nostop":
+            run_duration = None
+
+        elif (str(argv[index]) == "-h") | (str(argv[index]) == "--help"):
             print_usage = True
 
-      elif ( str( argv[index] ) == '-d' ):
-         # Catch the Trick debug command line option an do NOT terminate.
-         print( 'DEBUG: Specified input file debug option to Trick.' )
+        elif (str(argv[index]) == "-n") | (str(argv[index]) == "--native"):
+            index = index + 1
+            if index < argc:
+                native_frame = str(argv[index])
+            else:
+                print("input.py ERROR: Missing entity frame name.")
+                print_usage = True
 
-      elif ( str( argv[index] ) == '--default_data_config' ):
-         # Catch the default_data configure command line option an do NOT terminate.
-         print( 'NOTE: Configuring with default_data option.' )
+        elif (str(argv[index]) == "-t") | (str(argv[index]) == "--tree"):
+            print_tree = True
 
-      elif ( ( str( argv[index] ) == '-e' ) | ( str( argv[index] ) == '--express' ) ):
-         index = index + 1
-         if ( index < argc ):
-            express_frame = str( argv[index] )
-         else:
-            print( 'input.py ERROR: Missing express frame name.' )
+        elif (str(argv[index]) == "-v") | (str(argv[index]) == "--vehicle"):
+            index = index + 1
+            if index < argc:
+                vehicle_name = str(argv[index])
+                vehicle_file = config_dir + "/" + vehicle_name + ".py"
+                if not os.path.exists(vehicle_file):
+                    print("input.py ERROR: Vehicle file not found: " + vehicle_file)
+                    print_usage = True
+            else:
+                print("input.py ERROR: Missing vehicle name.")
+                print_usage = True
+
+        elif str(argv[index]) == "--verbose":
+            verbose = True
+
+        else:
+            print("input.py ERROR: Unknown command line argument " + str(argv[index]))
             print_usage = True
 
-      elif ( ( str( argv[index] ) == '-f' ) | ( str( argv[index] ) == '--frames' ) ):
-         index = index + 1
-         if ( index < argc ):
-            frames_name = str( argv[index] )
-            frames_file = config_dir + "/" + frames_name + ".py"
-            if not os.path.exists( frames_file ):
-               print( 'input.py ERROR: Frames file not found: ' + frames_file )
-               print_usage = True
-         else:
-            print( 'input.py ERROR: Missing frames name.' )
-            print_usage = True
-
-      elif ( str( argv[index] ) == '--stop' ):
-         index = index + 1
-         if ( index < argc ):
-            run_duration = float( str( argv[index] ) )
-         else:
-            print( 'input.py ERROR: Missing --stop [time] argument.' )
-            print_usage = True
-
-      elif ( str( argv[index] ) == '--nostop' ):
-         run_duration = None
-
-      elif ( ( str( argv[index] ) == '-h' ) | ( str( argv[index] ) == '--help' ) ):
-         print_usage = True
-
-      elif ( ( str( argv[index] ) == '-n' ) | ( str( argv[index] ) == '--native' ) ):
-         index = index + 1
-         if ( index < argc ):
-            native_frame = str( argv[index] )
-         else:
-            print( 'input.py ERROR: Missing entity frame name.' )
-            print_usage = True
-
-      elif ( ( str( argv[index] ) == '-t' ) | ( str( argv[index] ) == '--tree' ) ):
-         print_tree = True
-
-      elif ( ( str( argv[index] ) == '-v' ) | ( str( argv[index] ) == '--vehicle' ) ):
-         index = index + 1
-         if ( index < argc ):
-            vehicle_name = str( argv[index] )
-            vehicle_file = config_dir + "/" + vehicle_name + ".py"
-            if not os.path.exists( vehicle_file ):
-               print( 'input.py ERROR: Vehicle file not found: ' + vehicle_file )
-               print_usage = True
-         else:
-            print( 'input.py ERROR: Missing vehicle name.' )
-            print_usage = True
-
-      elif ( str( argv[index] ) == '--verbose' ):
-         verbose = True
-
-      else:
-         print( 'input.py ERROR: Unknown command line argument ' + str( argv[index] ) )
-         print_usage = True
-
-      index = index + 1
-   return
+        index = index + 1
+    return
 
 
 # Default: Don't show usage.
@@ -189,22 +194,22 @@ run_duration = 0.5
 verbose = False
 
 # Default Trick run configuration directory.
-config_dir = 'Modified_data'
+config_dir = "Modified_data"
 
 # Set the default frames name.
-frames_name = 'emm_test_frames'
-frames_file = config_dir + '/' + frames_name + '.py'
+frames_name = "emm_test_frames"
+frames_file = config_dir + "/" + frames_name + ".py"
 
 # Default is not to print the frames tree.
 print_tree = False
 
 # Set the default vehicle name.
-vehicle_name = 'test_vehicle'
-vehicle_file = config_dir + '/' + vehicle_name + '.py'
+vehicle_name = "test_vehicle"
+vehicle_file = config_dir + "/" + vehicle_name + ".py"
 
 # Set the default frames.
-express_frame = 'EarthCentricFixed'
-native_frame = 'EarthCentricInertial'
+express_frame = "EarthCentricFixed"
+native_frame = "EarthCentricInertial"
 
 # Set the default case name.
 case_name = None
@@ -214,12 +219,12 @@ case_file = None
 parse_command_line()
 
 # Check for print usage flag.  Terminates in call.
-if ( print_usage == True ):
-   print_usage_message()
+if print_usage == True:
+    print_usage_message()
 
-#---------------------------------------------
+# ---------------------------------------------
 # Set up Trick executive parameters.
-#---------------------------------------------
+# ---------------------------------------------
 # instruments.echo_jobs.echo_jobs_on()
 # trick.checkpoint_pre_init(1)
 # trick.checkpoint_post_init(1)
@@ -229,9 +234,9 @@ if ( print_usage == True ):
 # Import and configure the TrickHLA base Simulation Configuration class.
 from TrickHLA_data.TrickHLA.TrickHLASimConfig import *
 
-frames_sim_config = TrickHLASimConfig( 'Frames' )
-frames_sim_config.set_software_and_freeze_frame_time( software_frame_time = 0.250 )
-frames_sim_config.start_in_freeze( False )
+frames_sim_config = TrickHLASimConfig("Frames")
+frames_sim_config.set_software_and_freeze_frame_time(software_frame_time=0.250)
+frames_sim_config.start_in_freeze(False)
 
 
 # =========================================================================
@@ -239,12 +244,13 @@ frames_sim_config.start_in_freeze( False )
 # =========================================================================
 # Instantiate the Python SpaceFOM configuration object.
 federate = SpaceFOMFederateConfig(
-   thla_federate        = THLA.federate,
-   thla_control         = THLA.execution_control,
-   thla_config          = THLA.ExCO,
-   thla_federation_name = 'SpaceFOM_Frames_Test',
-   thla_federate_name   = 'SpaceFOMRefFrames',
-   thla_enabled         = True )
+    thla_federate=THLA.federate,
+    thla_control=THLA.execution_control,
+    thla_config=THLA.ExCO,
+    thla_federation_name="SpaceFOM_Frames_Test",
+    thla_federate_name="SpaceFOMRefFrames",
+    thla_enabled=True,
+)
 
 # Set the name of the ExCO S_define instance.
 # We do not need to do this since we're using the ExCO default_data job
@@ -252,126 +258,128 @@ federate = SpaceFOMFederateConfig(
 # federate.set_config_S_define_name( 'THLA_INIT.ExCO' )
 
 # Set the debug output level.
-if ( verbose == True ):
-   # federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_4_TRACE )
-   federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_6_TRACE )
-   federate.set_debug_source( trick.TrickHLA.DEBUG_SOURCE_ALL_MODULES )
-   # federate.set_debug_source( trick.TrickHLA.DEBUG_SOURCE_OBJECT + trick.TrickHLA.DEBUG_SOURCE_ATTRIBUTE )
+if verbose == True:
+    # federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_4_TRACE )
+    federate.set_debug_level(trick.TrickHLA.DEBUG_LEVEL_6_TRACE)
+    federate.set_debug_source(trick.TrickHLA.DEBUG_SOURCE_ALL_MODULES)
+    # federate.set_debug_source( trick.TrickHLA.DEBUG_SOURCE_OBJECT + trick.TrickHLA.DEBUG_SOURCE_ATTRIBUTE )
 else:
-   federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )
-   # federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_2_TRACE )
+    federate.set_debug_level(trick.TrickHLA.DEBUG_LEVEL_0_TRACE)
+    # federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_2_TRACE )
 
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 # Configure this federate SpaceFOM roles for this federate.
-#--------------------------------------------------------------------------
-federate.set_master_role( True )  # This is the Master federate.
-federate.set_pacing_role( True )  # This is the Pacing federate.
-federate.set_RRFP_role( True )    # This is the Root Reference Frame Publisher.
+# --------------------------------------------------------------------------
+federate.set_master_role(True)  # This is the Master federate.
+federate.set_pacing_role(True)  # This is the Pacing federate.
+federate.set_RRFP_role(True)  # This is the Root Reference Frame Publisher.
 
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 # Add in known required federates.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 # This is the RRFP federate.
 # It doesn't really need to know about any other federates.
-federate.add_known_federate( True, str( federate.federate.name ) )
+federate.add_known_federate(True, str(federate.federate.name))
 # federate.add_known_federate( True, 'Master' )
 
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 # Configure the CRC.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 # Pitch specific local settings designator:
-THLA.federate.local_settings = 'crcHost = localhost:8989'
+THLA.federate.local_settings = "crcHost = localhost:8989"
 
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 # Set up federate related time related parameters.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 # Must specify a federate HLA lookahead value in seconds.
-federate.set_lookahead_time( 0.250 )
+federate.set_lookahead_time(0.250)
 
 # Must specify the Least Common Time Step for all federates in the
 # federation execution.
-federate.set_least_common_time_step( 0.250 )
+federate.set_least_common_time_step(0.250)
 
 # Setup Time Management parameters.
-federate.set_time_regulating( True )
-federate.set_time_constrained( True )
+federate.set_time_regulating(True)
+federate.set_time_constrained(True)
 
-#---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 # Set up CTE time line.
-#---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 # By setting this we are specifying the use of Common Timing Equipment (CTE)
 # for controlling the Mode Transitions for all federates using CTE.
 # Don't really need CTE for RRFP.
 # THLA.execution_control.cte_timeline = trick.sim_services.alloc_type( 1, 'TrickHLA::TimeOfDayCTETimeline' )
 
-#---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 # Load the case file if specified.  Note that you can only override the
 # configuration file locations.  Frame and vehicle data should still be
 # configured in specified frame and vehicle input data files.
-#---------------------------------------------------------------------------
-if ( case_file ):
-   if os.path.exists( case_file ):
-      exec( open( case_file ).read() )
-   else:
-      print( 'input.py ERROR: Case file not found: ' + case_file )
-      print_usage_message()
+# ---------------------------------------------------------------------------
+if case_file:
+    if os.path.exists(case_file):
+        exec(open(case_file).read())
+    else:
+        print("input.py ERROR: Case file not found: " + case_file)
+        print_usage_message()
 
-#---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 # Set up the frame states.
-#---------------------------------------------------------------------------
-if os.path.exists( frames_file ):
-   exec( open( frames_file ).read() )
+# ---------------------------------------------------------------------------
+if os.path.exists(frames_file):
+    exec(open(frames_file).read())
 else:
-   print( 'input.py ERROR: Frames file not found: ' + frames_file )
-   print_usage_message()
+    print("input.py ERROR: Frames file not found: " + frames_file)
+    print_usage_message()
 
 # Do a sanity check on selected frame names.
 if not native_frame in frames_list:
-   print( 'input.py ERROR: Unknown native entity frame: ' + native_frame )
-   print_usage_message()
+    print("input.py ERROR: Unknown native entity frame: " + native_frame)
+    print_usage_message()
 
 if not express_frame in frames_list:
-   print( 'input.py ERROR: Unknown express frame: ' + express_frame )
-   print_usage_message()
+    print("input.py ERROR: Unknown express frame: " + express_frame)
+    print_usage_message()
 
-#---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 # Setup the frame integrators
-#---------------------------------------------------------------------------
-sun_loop.getIntegrator( trick.Runge_Kutta_4, 13 )
-embary_loop.getIntegrator( trick.Runge_Kutta_4, 13 )
-earth_inertial_loop.getIntegrator( trick.Runge_Kutta_4, 13 )
-earth_fixed_loop.getIntegrator( trick.Runge_Kutta_4, 13 )
-moon_inertial_loop.getIntegrator( trick.Runge_Kutta_4, 13 )
-moon_fixed_loop.getIntegrator( trick.Runge_Kutta_4, 13 )
-mars_inertial_loop.getIntegrator( trick.Runge_Kutta_4, 13 )
-mars_fixed_loop.getIntegrator( trick.Runge_Kutta_4, 13 )
+# ---------------------------------------------------------------------------
+sun_loop.getIntegrator(trick.Runge_Kutta_4, 13)
+embary_loop.getIntegrator(trick.Runge_Kutta_4, 13)
+earth_inertial_loop.getIntegrator(trick.Runge_Kutta_4, 13)
+earth_fixed_loop.getIntegrator(trick.Runge_Kutta_4, 13)
+moon_inertial_loop.getIntegrator(trick.Runge_Kutta_4, 13)
+moon_fixed_loop.getIntegrator(trick.Runge_Kutta_4, 13)
+mars_inertial_loop.getIntegrator(trick.Runge_Kutta_4, 13)
+mars_fixed_loop.getIntegrator(trick.Runge_Kutta_4, 13)
 
-#---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 # Set up the vehicle state.
-#---------------------------------------------------------------------------
-if os.path.exists( vehicle_file ):
-   exec( open( vehicle_file ).read() )
+# ---------------------------------------------------------------------------
+if os.path.exists(vehicle_file):
+    exec(open(vehicle_file).read())
 else:
-   print( 'input.py ERROR: Vehicle file not found: ' + vehicle_file )
-   print_usage_message()
+    print("input.py ERROR: Vehicle file not found: " + vehicle_file)
+    print_usage_message()
 
-#---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 # Setup the vehicle integrator
-#---------------------------------------------------------------------------
-vehicle_loop.getIntegrator( trick.Runge_Kutta_4, 13 )
+# ---------------------------------------------------------------------------
+vehicle_loop.getIntegrator(trick.Runge_Kutta_4, 13)
 
-#---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 # Set up the Reference Frame objects.
-#---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 
 # Check for object allocation.
 # Probably did not trigger the default_data allocation.
 if THLA.federate.get_object_service().obj_count <= 0:
-   trick.exec_terminate_with_return( -1,
-                                     sys._getframe( 0 ).f_code.co_filename,
-                                     sys._getframe( 0 ).f_lineno,
-                                     'input.py ERROR: TrickHLA::ObjectServices objects have not been allocated! Try running with --default_data_config command line argument.' )
-   
+    trick.exec_terminate_with_return(
+        -1,
+        sys._getframe(0).f_code.co_filename,
+        sys._getframe(0).f_lineno,
+        "input.py ERROR: TrickHLA::ObjectServices objects have not been allocated! Try running with --default_data_config command line argument.",
+    )
+
 
 # Set the debug flag for the reference frames.
 solar_system_barycenter.frame_packing.debug = verbose
@@ -395,67 +403,67 @@ earth_centered_fixed.frame_packing.publish()
 moon_centered_fixed.frame_packing.publish()
 mars_centered_fixed.frame_packing.publish()
 
-#---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 # Set up the Reference Frame Tree
-#---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 ref_frame_tree.frame_tree.debug = True
-trick.exec_set_job_onoff( "ref_frame_tree.frame_tree.print_tree", 1, print_tree )
+trick.exec_set_job_onoff("ref_frame_tree.frame_tree.print_tree", 1, print_tree)
 
-#---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 # Set up the relative state object.
-#---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 rel_test.debug_rel_state = True
 rel_test.debug_entity_state = True
 rel_test.debug_frames = False
 rel_test.rel_state.debug = False
 if express_frame == frames_list[0]:
-   rel_test.rel_state_frame = solar_system_barycenter.frame_packing
+    rel_test.rel_state_frame = solar_system_barycenter.frame_packing
 elif express_frame == frames_list[1]:
-   rel_test.rel_state_frame = sun_inertial.frame_packing
+    rel_test.rel_state_frame = sun_inertial.frame_packing
 elif express_frame == frames_list[2]:
-   rel_test.rel_state_frame = earth_moon_barycenter.frame_packing
+    rel_test.rel_state_frame = earth_moon_barycenter.frame_packing
 elif express_frame == frames_list[3]:
-   rel_test.rel_state_frame = earth_centered_inertial.frame_packing
+    rel_test.rel_state_frame = earth_centered_inertial.frame_packing
 elif express_frame == frames_list[4]:
-   rel_test.rel_state_frame = earth_centered_fixed.frame_packing
+    rel_test.rel_state_frame = earth_centered_fixed.frame_packing
 elif express_frame == frames_list[5]:
-   rel_test.rel_state_frame = moon_centered_inertial.frame_packing
+    rel_test.rel_state_frame = moon_centered_inertial.frame_packing
 elif express_frame == frames_list[6]:
-   rel_test.rel_state_frame = moon_centered_fixed.frame_packing
+    rel_test.rel_state_frame = moon_centered_fixed.frame_packing
 elif express_frame == frames_list[7]:
-   rel_test.rel_state_frame = mars_centered_inertial.frame_packing
+    rel_test.rel_state_frame = mars_centered_inertial.frame_packing
 elif express_frame == frames_list[8]:
-   rel_test.rel_state_frame = mars_centered_fixed.frame_packing
+    rel_test.rel_state_frame = mars_centered_fixed.frame_packing
 
-#---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 # Add the HLA SimObjects associated with this federate.
 # This is really only useful for turning on and off HLA objects.
-#---------------------------------------------------------------------------
-federate.add_sim_object( THLA )
-federate.add_sim_object( THLA_INIT )
-federate.add_sim_object( ref_frame_tree )
-federate.add_sim_object( solar_system_barycenter )
-federate.add_sim_object( sun_inertial )
-federate.add_sim_object( earth_moon_barycenter )
-federate.add_sim_object( earth_centered_inertial )
-federate.add_sim_object( moon_centered_inertial )
-federate.add_sim_object( mars_centered_inertial )
-federate.add_sim_object( earth_centered_fixed )
-federate.add_sim_object( moon_centered_fixed )
-federate.add_sim_object( mars_centered_fixed )
+# ---------------------------------------------------------------------------
+federate.add_sim_object(THLA)
+federate.add_sim_object(THLA_INIT)
+federate.add_sim_object(ref_frame_tree)
+federate.add_sim_object(solar_system_barycenter)
+federate.add_sim_object(sun_inertial)
+federate.add_sim_object(earth_moon_barycenter)
+federate.add_sim_object(earth_centered_inertial)
+federate.add_sim_object(moon_centered_inertial)
+federate.add_sim_object(mars_centered_inertial)
+federate.add_sim_object(earth_centered_fixed)
+federate.add_sim_object(moon_centered_fixed)
+federate.add_sim_object(mars_centered_fixed)
 
-#---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 # Make sure that the Python federate configuration object is initialized.
-#---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 # federate.disable()
 federate.initialize()
 
-#---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 # Set up simulation termination time.
-#---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 
 if run_duration != None:
-   if run_duration == 0.0:
-      trick.stop( 0.0 )
-   else:
-      trick.sim_services.exec_set_terminate_time( run_duration )
+    if run_duration == 0.0:
+        trick.stop(0.0)
+    else:
+        trick.sim_services.exec_set_terminate_time(run_duration)
