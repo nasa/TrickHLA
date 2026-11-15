@@ -28,10 +28,12 @@
 ##############################################################################
 
 import os
+
 import trick
 
 # Import the SpaceFOM base Federate Configuration class.
 from TrickHLA_data.SpaceFOM.SpaceFOMFederateConfig2 import *
+
 
 class BallFederateConfig( SpaceFOMFederateConfig2 ):
    

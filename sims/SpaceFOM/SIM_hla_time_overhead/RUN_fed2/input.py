@@ -32,7 +32,6 @@ if trickhla_home not in sys.path :
 
 # Load the SpaceFOM specific federate configuration object.
 from TrickHLA_data.SpaceFOM.SpaceFOMFederateConfig2 import *
-
 # Load the SpaceFOM specific reference frame configuration object.
 from TrickHLA_data.SpaceFOM.SpaceFOMRefFrameObject import *
 
@@ -163,6 +162,7 @@ core_frame_time = 1.000
 
 # Import and configure the TrickHLA base Simulation Configuration class.
 from TrickHLA_data.TrickHLA.TrickHLASimConfig import *
+
 sim_config = TrickHLASimConfig( 'HLA-time-overhead' )
 sim_config.set_software_and_freeze_frame_time( software_frame_time = core_frame_time )
 sim_config.start_in_freeze( False )
@@ -244,7 +244,8 @@ THLA.federate.enable_time_statistics( True )
 
 if log_time_stats:
    # Import the TrickHLA Time Statistics Data Recording Group class.
-   from TrickHLA_data.TrickHLA.TrickHLATimeStatsDRG import TrickDataRecordingGroup, TrickHLATimeStatsDRG
+   from TrickHLA_data.TrickHLA.TrickHLATimeStatsDRG import (
+       TrickDataRecordingGroup, TrickHLATimeStatsDRG)
 
    # Create the TrickHLA Time Statistics Data Recording Group.
    thla_time_drg = TrickHLATimeStatsDRG( core_frame_time )

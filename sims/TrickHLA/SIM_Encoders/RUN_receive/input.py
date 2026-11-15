@@ -22,6 +22,7 @@ if trickhla_home not in sys.path :
 #---------------------------------------------------------------------------
 # Import and configure the TrickHLA base Simulation Configuration class.
 from TrickHLA_data.TrickHLA.TrickHLASimConfig import *
+
 encoder_sim_config = TrickHLASimConfig( 'encoder' )
 encoder_sim_config.realtime( software_frame_time = 0.1 )
 

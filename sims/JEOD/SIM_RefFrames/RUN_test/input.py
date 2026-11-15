@@ -31,7 +31,6 @@ if trickhla_home not in sys.path :
 
 # Load the SpaceFOM specific federate configuration object.
 from TrickHLA_data.SpaceFOM.SpaceFOMFederateConfig import *
-
 # Load the SpaceFOM specific reference frame configuration object.
 from TrickHLA_data.SpaceFOM.SpaceFOMRefFrameObject import *
 
@@ -123,6 +122,7 @@ if ( print_usage == True ):
 # Import and configure the TrickHLA base Simulation Configuration class.
 # Setup for Trick real time execution. This is the "Pacing" function.
 from TrickHLA_data.TrickHLA.TrickHLASimConfig import *
+
 jeod_sim_config = TrickHLASimConfig( 'jeod' )
 jeod_sim_config.set_software_and_freeze_frame_time( software_frame_time = 0.250 )
 jeod_sim_config.start_in_freeze( False )

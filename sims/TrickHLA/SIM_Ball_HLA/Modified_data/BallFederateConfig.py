@@ -28,10 +28,12 @@
 ##############################################################################
 
 import os
+
 import trick
 
 # Import the TrickHLA base Trick Simulation Configuration class.
 from TrickHLA_data.TrickHLA.TrickHLAFederateConfig import *
+
 
 class BallFederateConfig( TrickHLAFederateConfig ):
    

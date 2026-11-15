@@ -42,21 +42,16 @@ else:
 if trickhla_home not in sys.path :
    sys.path.append( trickhla_home )
 
-# Import the Ball Simulation Configuration class.
-from Modified_data.BallSimConfig import TrickSimConfig, BallSimConfig
-
-# Import the Ball State Data Recording Group class.
-from Modified_data.BallStateDRG import TrickDataRecordingGroup, BallStateDRG
-
 # Import the Ball HLA Federate Configuration class.
 from Modified_data.BallFederateConfig import BallFederateConfig
-
+# Import the Ball Simulation Configuration class.
+from Modified_data.BallSimConfig import BallSimConfig, TrickSimConfig
+# Import the Ball State Data Recording Group class.
+from Modified_data.BallStateDRG import BallStateDRG, TrickDataRecordingGroup
 # Import the Ball HLA Object Configuration function.
 from Modified_data.HLA_ball_config import *
-
 # Import the Wall HLA Object Configuration function.
 from Modified_data.HLA_walls_config import *
-
 
 #---------------------------------------------------------------------------
 # Set the simulation run duration.  Zero (0) means unlimited.

@@ -32,16 +32,14 @@ else:
 if trickhla_home not in sys.path :
    sys.path.append( trickhla_home )
 
+from TrickHLA_data.SpaceFOM.SpaceFOMDynamicalEntityObject import *
 # Load the SpaceFOM specific federate configuration object.
 from TrickHLA_data.SpaceFOM.SpaceFOMFederateConfig import *
-
-# Load the SpaceFOM specific reference frame configuration object.
-from TrickHLA_data.SpaceFOM.SpaceFOMRefFrameObject import *
-
 # Load the SpaceFOM specific entity configuration objects.
 from TrickHLA_data.SpaceFOM.SpaceFOMPhysicalEntityObject import *
 from TrickHLA_data.SpaceFOM.SpaceFOMPhysicalInterfaceObject import *
-from TrickHLA_data.SpaceFOM.SpaceFOMDynamicalEntityObject import *
+# Load the SpaceFOM specific reference frame configuration object.
+from TrickHLA_data.SpaceFOM.SpaceFOMRefFrameObject import *
 
 
 def print_usage_message():
@@ -208,6 +206,7 @@ if ( print_usage == True ):
 
 # Import and configure the TrickHLA base Simulation Configuration class.
 from TrickHLA_data.TrickHLA.TrickHLASimConfig import *
+
 entity_sim_config = TrickHLASimConfig( 'Entity' )
 entity_sim_config.set_software_and_freeze_frame_time( software_frame_time = 0.250 )
 entity_sim_config.start_in_freeze( False )

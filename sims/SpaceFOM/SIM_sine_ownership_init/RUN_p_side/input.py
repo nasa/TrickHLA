@@ -30,14 +30,12 @@ else:
 if trickhla_home not in sys.path :
    sys.path.append( trickhla_home )
 
-# Load the SpaceFOM specific federate configuration object.
-from TrickHLA_data.SpaceFOM.SpaceFOMFederateConfig import *
-
-# Load the SpaceFOM specific reference frame configuration object.
-from TrickHLA_data.SpaceFOM.SpaceFOMRefFrameObject import *
-
 # Load the sine specific Sine object.
 from TrickHLA_data.sine.SineObject import *
+# Load the SpaceFOM specific federate configuration object.
+from TrickHLA_data.SpaceFOM.SpaceFOMFederateConfig import *
+# Load the SpaceFOM specific reference frame configuration object.
+from TrickHLA_data.SpaceFOM.SpaceFOMRefFrameObject import *
 
 
 def print_usage_message():
@@ -155,6 +153,7 @@ if ( print_usage == True ):
 
 # Import and configure the TrickHLA base Simulation Configuration class.
 from TrickHLA_data.TrickHLA.TrickHLASimConfig import *
+
 sine_sim_config = TrickHLASimConfig( 'sine' )
 sine_sim_config.set_software_and_freeze_frame_time( software_frame_time = 0.250 )
 sine_sim_config.start_in_freeze( False )

@@ -31,14 +31,12 @@ else:
 if trickhla_home not in sys.path :
    sys.path.append( trickhla_home )
 
-# Load the SpaceFOM specific federate configuration object.
-from TrickHLA_data.SpaceFOM.SpaceFOMFederateConfig2 import *
-
-# Load the SpaceFOM specific reference frame configuration object.
-from TrickHLA_data.SpaceFOM.SpaceFOMRefFrameObject import *
-
 # Load the sine specific Sine object.
 from TrickHLA_data.sine.SineObject import *
+# Load the SpaceFOM specific federate configuration object.
+from TrickHLA_data.SpaceFOM.SpaceFOMFederateConfig2 import *
+# Load the SpaceFOM specific reference frame configuration object.
+from TrickHLA_data.SpaceFOM.SpaceFOMRefFrameObject import *
 
 
 def print_usage_message():
@@ -219,6 +217,7 @@ core_frame_time = 0.250
 # Import and configure the TrickHLA base Simulation Configuration class.
 # Setup for Trick real time execution. This is the "Pacing" function.
 from TrickHLA_data.TrickHLA.TrickHLASimConfig import *
+
 sim_config = TrickHLASimConfig( 'sine' )
 sim_config.realtime( software_frame_time = core_frame_time )
 sim_config.sim_control_panel()
@@ -239,7 +238,8 @@ log_sine_states( 'P', core_frame_time )
 
 if log_time_stats:
    # Import the TrickHLA Time Statistics Data Recording Group class.
-   from TrickHLA_data.TrickHLA.TrickHLATimeStatsDRG import TrickDataRecordingGroup, TrickHLATimeStatsDRG
+   from TrickHLA_data.TrickHLA.TrickHLATimeStatsDRG import (
+       TrickDataRecordingGroup, TrickHLATimeStatsDRG)
 
    # Create the TrickHLA Time Statistics Data Recording Group.
    thla_time_drg = TrickHLATimeStatsDRG( core_frame_time )

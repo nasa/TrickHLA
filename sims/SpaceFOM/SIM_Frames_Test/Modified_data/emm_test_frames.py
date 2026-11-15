@@ -2,6 +2,7 @@
 
 # Conversions
 import math
+
 deg2rad = math.pi / 180.0
 
 # Create reference frame set.

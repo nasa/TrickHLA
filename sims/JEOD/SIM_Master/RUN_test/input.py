@@ -127,6 +127,7 @@ if ( print_usage == True ):
 # Import and configure the TrickHLA base Simulation Configuration class.
 # Setup for Trick real time execution. This is the "Pacing" function.
 from TrickHLA_data.TrickHLA.TrickHLASimConfig import *
+
 jeod_sim_config = TrickHLASimConfig( 'jeod' )
 jeod_sim_config.realtime( software_frame_time = 0.250 )
 jeod_sim_config.sim_control_panel()

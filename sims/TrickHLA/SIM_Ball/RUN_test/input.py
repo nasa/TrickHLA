@@ -43,11 +43,9 @@ if trickhla_home not in sys.path :
    sys.path.append( trickhla_home )
 
 # Import the Ball Simulation Configuration class.
-from Modified_data.BallSimConfig import TrickSimConfig, BallSimConfig
-
+from Modified_data.BallSimConfig import BallSimConfig, TrickSimConfig
 # Import the Ball State Data Recording Group class.
-from Modified_data.BallStateDRG import TrickDataRecordingGroup, BallStateDRG
-
+from Modified_data.BallStateDRG import BallStateDRG, TrickDataRecordingGroup
 
 #---------------------------------------------------------------------------
 # Configure the Ball simulation.

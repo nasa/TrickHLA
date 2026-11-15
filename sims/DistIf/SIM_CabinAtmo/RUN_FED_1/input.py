@@ -216,6 +216,7 @@ Federate_name = "FED_1"
 # THLA configuration
 sys.path.append( '../../../' )
 from TrickHLA_data.TrickHLA.TrickHLAFederateConfig import *
+
 federate = TrickHLAFederateConfig(
    thla_federate        = THLA.federate,
    thla_control         = THLA.execution_control,
@@ -304,6 +305,7 @@ federate.add_fed_object( data_obj )
 
 # Configure the Conservation parameters HLA data messages
 from Modified_data.DistIf.ConserveParamsObjectConfig import *
+
 data_obj = ConserveParamsObjectConfig( 
    thla_federate_name = 'ConservationData_1_to_2',
    model_name         = 'cabinAtmo.modelB.mConserveParams',

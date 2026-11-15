@@ -42,33 +42,28 @@ else:
 if trickhla_home not in sys.path :
    sys.path.append( trickhla_home )
 
-# Import the Ball Simulation Configuration class.
-from Modified_data.BallSimConfig import TrickSimConfig, BallSimConfig
-
-# Import the Ball State Data Recording Group class.
-from Modified_data.BallStateDRG import TrickDataRecordingGroup, BallStateDRG
-
-# Import the Ball Packing Data Recording Group class.
-from Modified_data.BallPackingDRG import TrickDataRecordingGroup, BallPackingDRG
-
-# Import the TrickHLA Time Statistics Data Recording Group class.
-from TrickHLA_data.TrickHLA.TrickHLATimeStatsDRG import TrickDataRecordingGroup, TrickHLATimeStatsDRG
-
 # Import the Ball HLA Federate Configuration class.
 from Modified_data.BallFederateConfig import BallFederateConfig
-
-# Import the Ball HLA Object Configuration function.
-#from Modified_data.HLA_ball_config import *
-from TrickHLA_data.SpaceFOM.TestRefFrameTree import *
-
 # Import the Ball HLA Object Configuration function.
 #from Modified_data.HLA_ball_config import *
 from Modified_data.BallObject import *
-
+# Import the Ball Packing Data Recording Group class.
+from Modified_data.BallPackingDRG import (BallPackingDRG,
+                                          TrickDataRecordingGroup)
+# Import the Ball Simulation Configuration class.
+from Modified_data.BallSimConfig import BallSimConfig, TrickSimConfig
+# Import the Ball State Data Recording Group class.
+from Modified_data.BallStateDRG import BallStateDRG, TrickDataRecordingGroup
 # Import the Wall HLA Object Configuration function.
 #from Modified_data.HLA_walls_config import *
 from Modified_data.WallObject import *
 
+# Import the Ball HLA Object Configuration function.
+#from Modified_data.HLA_ball_config import *
+from TrickHLA_data.SpaceFOM.TestRefFrameTree import *
+# Import the TrickHLA Time Statistics Data Recording Group class.
+from TrickHLA_data.TrickHLA.TrickHLATimeStatsDRG import (
+    TrickDataRecordingGroup, TrickHLATimeStatsDRG)
 
 #---------------------------------------------------------------------------
 # Set the simulation run duration.  Zero (0) means unlimited.

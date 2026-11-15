@@ -27,8 +27,9 @@
 #
 ##############################################################################
 import trick
-from TrickHLA_data.TrickHLA.TrickHLAObjectConfig import *
+
 from TrickHLA_data.TrickHLA.TrickHLAAttributeConfig import *
+from TrickHLA_data.TrickHLA.TrickHLAObjectConfig import *
 
 
 class WallsObject( TrickHLAObjectConfig ):

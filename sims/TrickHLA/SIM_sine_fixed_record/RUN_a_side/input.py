@@ -29,6 +29,7 @@ trick.checkpoint_post_init(1)
 
 # Import and configure the TrickHLA base Simulation Configuration class.
 from TrickHLA_data.TrickHLA.TrickHLASimConfig import *
+
 sine_sim_config = TrickHLASimConfig( 'sine' )
 sine_sim_config.realtime( software_frame_time = 0.250 )
 sine_sim_config.sim_control_panel()
