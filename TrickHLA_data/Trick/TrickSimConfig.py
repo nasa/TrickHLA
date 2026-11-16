@@ -128,9 +128,9 @@ class TrickSimConfig(ABC):
                      + "\033[0m"
                   )
                   trick.var_server_set_source_address("127.0.0.1")
-            except Exception:
+            except Exception:  # noqa: BLE001
                return  # Use host source address as is.
-      except Exception:
+      except Exception:  # noqa: BLE001
          print(
             "\033[33m"
             + "WARNING: Problem resolving '"
