@@ -2497,8 +2497,11 @@ void Object::send_init_data()
       if ( federate->should_publish_data() ) {
 
          if ( DebugHandler::show( DEBUG_LEVEL_7_TRACE, DEBUG_SOURCE_OBJECT ) ) {
+            string id_str;
+            StringUtilities::to_string( id_str, instance_handle );
             ostringstream msg;
-            msg << "Updating object '" << get_name() << "' attribute values as Receive Order.\n";
+            msg << "Updating object '" << get_name() << "' (instance:"
+                << id_str << ") attribute values as Receive Order.\n";
             DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
          }
 
