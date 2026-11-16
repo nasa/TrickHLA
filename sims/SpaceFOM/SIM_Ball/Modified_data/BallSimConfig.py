@@ -26,7 +26,6 @@
 # @revs_end
 #
 ##############################################################################
-
 import os
 
 import trick
@@ -57,8 +56,6 @@ class BallSimConfig(TrickSimConfig):
       # Call the TrickDataRecordingGroup constructor.
       TrickSimConfig.__init__(self, sim_name)
 
-      return
-
    def ball_graphics(self):
 
       # Set the Ball graphics command path.
@@ -85,8 +82,6 @@ class BallSimConfig(TrickSimConfig):
          print(
             "====================================================================================="
          )
-
-      return
 
    def thlamcp(self):
 
@@ -121,5 +116,3 @@ class BallSimConfig(TrickSimConfig):
          print(
             "====================================================================================="
          )
-
-      return

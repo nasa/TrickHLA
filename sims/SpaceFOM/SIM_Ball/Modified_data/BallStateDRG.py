@@ -26,7 +26,6 @@
 #
 ##############################################################################
 
-
 # Import the TrickHLA base Trick Data Recording Classes.
 from TrickHLA_data.Trick.TrickDataRecordingGroup import *
 
@@ -63,5 +62,3 @@ class BallStateDRG(TrickDataRecordingGroup):
       self.drg.add_variable(self.base_name + ".state.output.acceleration[1]")
       self.drg.add_variable(self.base_name + ".state.output.external_force[0]")
       self.drg.add_variable(self.base_name + ".state.output.external_force[1]")
-
-      return

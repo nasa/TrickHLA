@@ -26,9 +26,6 @@
 # @revs_end
 #
 ##############################################################################
-
-import os
-
 import trick
 
 # Import the SpaceFOM base Federate Configuration class.
@@ -93,8 +90,6 @@ class BallFederateConfig(SpaceFOMFederateConfig2):
       # Configure the federate time management.
       self.set_time_regulating(True)
       self.set_time_constrained(True)
-
-      return
 
    def initialize(self):
 

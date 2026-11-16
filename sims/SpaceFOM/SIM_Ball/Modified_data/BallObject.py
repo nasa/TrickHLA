@@ -53,9 +53,6 @@ class BallObject(TrickHLAObjectConfig):
       # The Ball FOM name is fixed for the SpaceFOM.
       ball_FOM_name = "Ball"
 
-      # Copy the ball federation execution instance name.
-      ball_federation_instance_name = str(ball_instance_name)
-
       # Save the ball name to use for trick_data_name generation.
       self.trick_ball_sim_obj_name = str(ball_S_define_instance_name)
 
@@ -81,14 +78,10 @@ class BallObject(TrickHLAObjectConfig):
       # Build the object attribute list.
       self.add_attributes()
 
-      return
-
    def initialize(self, thla_object):
 
       # Call the base class initialization utility function.
       TrickHLAObjectConfig.initialize(self, thla_object)
-
-      return
 
    def add_attributes(self):
 
@@ -172,5 +165,3 @@ class BallObject(TrickHLAObjectConfig):
          rti_encoding=trick.TrickHLA.ENCODING_LITTLE_ENDIAN,
       )
       self.add_attribute(attribute)
-
-      return
