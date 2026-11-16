@@ -210,8 +210,6 @@ format_code -t -v"""),
       # Let the user know that we are done with the formatting.
       TrickHLAMessage.success("Finished formatting TrickHLA source code.")
 
-   return
-
 
 # Function to find the clang-format command.
 #
@@ -294,38 +292,35 @@ def find_clang_format(llvm_bin, verbose=True):
                      if os.path.isfile(trick_clang_format_path):
                         command_path = trick_clang_format_path
 
-         if command_path is None:
-            # Let's look for it in Brew.
-            if os.path.isdir("/usr/local/Cellar"):
-               # Determine if the default llvm formula is installed.
-               if os.path.isdir("/usr/local/Cellar/llvm"):
-                  # There is an llvm installation in brew.
-                  llvm_versions = os.listdir("/usr/local/Cellar/llvm")
+         if command_path is None and os.path.isdir("/usr/local/Cellar"):
+            # Determine if the default llvm formula is installed.
+            if os.path.isdir("/usr/local/Cellar/llvm"):
+               # There is an llvm installation in brew.
+               llvm_versions = os.listdir("/usr/local/Cellar/llvm")
 
-                  # Assume we will be using the latest version.
-                  llvm_version = llvm_versions[0]
-                  for version in llvm_versions:
-                     if version > llvm_version:
-                        llvm_version = version
+               # Assume we will be using the latest version.
+               llvm_version = llvm_versions[0]
+               for version in llvm_versions:
+                  llvm_version = max(llvm_version, version)
 
-                  # Generate the clang-format command.
-                  bin_path = os.path.join("/usr/local/Cellar/llvm", llvm_version)
-                  command_path = os.path.join(bin_path, "bin", "clang-format")
-               else:
-                  # TODO: Default llvm Brew formula not installed, so search for
-                  # llvm installed for a specific version (i.e. llvm@11):
-                  # brew list -1 --formula | grep llvm | sort -ur
-                  #
-                  # For Mac OS, use a workaround for now to check for llvm@14
-                  # and older versions.
-                  if os.path.isfile("/usr/local/opt/llvm@14/bin/clang-format"):
-                     command_path = "/usr/local/opt/llvm@14/bin/clang-format"
-                  elif os.path.isfile("/usr/local/opt/llvm@13/bin/clang-format"):
-                     command_path = "/usr/local/opt/llvm@13/bin/clang-format"
-                  elif os.path.isfile("/usr/local/opt/llvm@12/bin/clang-format"):
-                     command_path = "/usr/local/opt/llvm@12/bin/clang-format"
-                  elif os.path.isfile("/usr/local/opt/llvm@11/bin/clang-format"):
-                     command_path = "/usr/local/opt/llvm@11/bin/clang-format"
+               # Generate the clang-format command.
+               bin_path = os.path.join("/usr/local/Cellar/llvm", llvm_version)
+               command_path = os.path.join(bin_path, "bin", "clang-format")
+            else:
+               # TODO: Default llvm Brew formula not installed, so search for
+               # llvm installed for a specific version (i.e. llvm@11):
+               # brew list -1 --formula | grep llvm | sort -ur
+               #
+               # For Mac OS, use a workaround for now to check for llvm@14
+               # and older versions.
+               if os.path.isfile("/usr/local/opt/llvm@14/bin/clang-format"):
+                  command_path = "/usr/local/opt/llvm@14/bin/clang-format"
+               elif os.path.isfile("/usr/local/opt/llvm@13/bin/clang-format"):
+                  command_path = "/usr/local/opt/llvm@13/bin/clang-format"
+               elif os.path.isfile("/usr/local/opt/llvm@12/bin/clang-format"):
+                  command_path = "/usr/local/opt/llvm@12/bin/clang-format"
+               elif os.path.isfile("/usr/local/opt/llvm@11/bin/clang-format"):
+                  command_path = "/usr/local/opt/llvm@11/bin/clang-format"
 
    # We're finished hunting. Now let's check for the format command.
    if command_path is None:
@@ -356,9 +351,8 @@ def link_clang_format(thla_scripts, test_only=False, verbose=True):
    thla_clang_format = os.path.join(thla_scripts, "clang-format")
 
    # Check for the .clang-format file.
-   if os.path.isfile(".clang-format"):
-      if verbose:
-         TrickHLAMessage.status("Found existing format specification file: .clang-format")
+   if os.path.isfile(".clang-format") and verbose:
+      TrickHLAMessage.status("Found existing format specification file: .clang-format")
    if os.path.islink(".clang-format"):
       if verbose:
          TrickHLAMessage.status("Found existing format specification link: .clang-format")
@@ -371,8 +365,6 @@ def link_clang_format(thla_scripts, test_only=False, verbose=True):
             TrickHLAMessage.status(
                "Linking to format specification: " + thla_clang_format
             )
-
-   return
 
 
 # Function to format a specific source file.
@@ -425,22 +417,14 @@ def format_file(
    link_clang_format(thla_scripts, test_only, verbose)
 
    # Check to see if we are formatting in place.
-   if not in_place:
-      # We need to create the 'formatted' directory is it does not
-      # already exist.
-      if not os.path.isdir("formatted"):
-         if test_only:
-            if verbose:
-               TrickHLAMessage.status("Would create 'formatted' directory:")
-         else:
-            if verbose:
-               TrickHLAMessage.status("Creating 'formatted' directory:")
-            os.mkdir("formatted")
-      # else :
-      # We should probably clean out the directory if it exists
-      # but we are not going to do that.
-
-   # End: if not in_place :
+   if not in_place and not os.path.isdir("formatted"):
+      if test_only:
+         if verbose:
+            TrickHLAMessage.status("Would create 'formatted' directory:")
+      else:
+         if verbose:
+            TrickHLAMessage.status("Creating 'formatted' directory:")
+         os.mkdir("formatted")
 
    #
    # Format the file.
@@ -522,75 +506,70 @@ def format_directory(
    link_clang_format(thla_scripts, test_only, verbose)
 
    # Check to see if we are formatting in place.
-   if not in_place:
-      # We need to create the 'formatted' directory is it does not
-      # already exist.
-      if not os.path.isdir("formatted"):
-         if test_only:
-            if verbose:
-               TrickHLAMessage.status("Would create 'formatted' directory:")
-         else:
-            if verbose:
-               TrickHLAMessage.status("Creating 'formatted' directory:")
-            os.mkdir("formatted")
-      # else :
-      # We should probably clean out the directory if it exists
-      # but we are not going to do that.
-   # End: if not in_place :
+   if not in_place and not os.path.isdir("formatted"):
+      if test_only:
+         if verbose:
+            TrickHLAMessage.status("Would create 'formatted' directory:")
+      else:
+         if verbose:
+            TrickHLAMessage.status("Creating 'formatted' directory:")
+         os.mkdir("formatted")
 
    # Now format recognized files in the directory.
    dir_list = os.listdir(".")
    for file in dir_list:
       # Only process files.
-      if os.path.isfile(file) and not os.path.islink(file):
-         # Only interested in files with certain extensions.
-         if (
-            file.endswith(".hh")
-            or file.endswith(".h")
-            or file.endswith(".hpp")
-            or file.endswith(".hxx")
-            or file.endswith(".h++")
-            or file.endswith(".cpp")
-            or file.endswith(".c")
-            or file.endswith(".C")
-            or file.endswith(".cc")
-            or file.endswith(".cxx")
-            or file.endswith(".c++")
-         ):
-            # Execute different command depending on 'in place' setting.
-            if in_place:
-               # Build the clang-format command string.
-               command = clang_format_cmd + " -style=file -i " + file
+      if (
+         os.path.isfile(file)
+         and not os.path.islink(file)
+         and file.endswith(
+            (
+               ".hh",
+               ".h",
+               ".hpp",
+               ".hxx",
+               ".h++",
+               ".cpp",
+               ".c",
+               ".C",
+               ".cc",
+               ".cxx",
+               ".c++",
+            )
+         )
+      ):
+         # Execute different command depending on 'in place' setting.
+         if in_place:
+            # Build the clang-format command string.
+            command = clang_format_cmd + " -style=file -i " + file
 
-               if test_only:
-                  TrickHLAMessage.status("Would format file in place with command:")
-                  TrickHLAMessage.status("   " + command)
-
-               else:
-                  if verbose:
-                     TrickHLAMessage.status("Formatting in place: " + file)
-
-                  # Execute the command.
-                  os.system(command)
+            if test_only:
+               TrickHLAMessage.status("Would format file in place with command:")
+               TrickHLAMessage.status("   " + command)
 
             else:
-               # Build the clang-format command string.
-               command = (
-                  clang_format_cmd + " -style=file " + file + " > formatted/" + file
-               )
+               if verbose:
+                  TrickHLAMessage.status("Formatting in place: " + file)
 
-               if test_only:
-                  TrickHLAMessage.status("Would format file with command:")
-                  TrickHLAMessage.status("   " + command)
+               # Execute the command.
+               os.system(command)
 
-               else:
-                  if verbose:
-                     TrickHLAMessage.status("Formatting in 'formatted': " + file)
+         else:
+            # Build the clang-format command string.
+            command = clang_format_cmd + " -style=file " + file + " > formatted/" + file
 
-                  # Execute the command.
-                  os.system(command)
+            if test_only:
+               TrickHLAMessage.status("Would format file with command:")
+               TrickHLAMessage.status("   " + command)
 
-            # End: if in_place :
+            else:
+               if verbose:
+                  TrickHLAMessage.status("Formatting in 'formatted': " + file)
+
+               # Execute the command.
+               os.system(command)
+
+         # End: if in_place :
 
       # End: if os.path.isfile( file ) and not os.path.islink( file ) :
 
@@ -659,8 +638,6 @@ def cleanup_directory(dir_path, test_only=False, verbose=True):
 
    # Move back to the original directory.
    os.chdir(original_dir)
-
-   return
 
 
 #

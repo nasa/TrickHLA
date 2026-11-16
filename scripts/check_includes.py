@@ -14,7 +14,6 @@
 # @revs_end
 #
 import argparse
-import asyncio
 import os
 import shutil
 import subprocess
@@ -35,11 +34,9 @@ def main():
    tsync_home = None
 
    # Initialize the lists that go into the include-what-you-use command argument list.
-   system_includes = []
    trickhla_defines = []
    include_dirs = []
    source_dirs = []
-   trickhla_ignore = []
    iwyu_args = []
 
    #
@@ -434,12 +431,7 @@ check_includes --TrickHLA --SpaceFOM -v --hla4"""),
    for src_dir in source_dirs:
       for dir_path, dir_names, filenames in os.walk(src_dir):
          for filename in filenames:
-            if (
-               filename.endswith(".cpp")
-               or filename.endswith(".cxx")
-               or filename.endswith(".cc")
-               or filename.endswith(".c")
-            ):
+            if filename.endswith((".cpp", ".cxx", ".cc", ".c")):
                file_cnt += 1
                if (file_cnt >= file_start_cnt) and (
                   (file_cnt_limit <= 0) or (file_added_cnt < file_cnt_limit)
@@ -526,8 +518,6 @@ check_includes --TrickHLA --SpaceFOM -v --hla4"""),
 
    # Let the user know that we are done.
    TrickHLAMessage.success("Finished checking TrickHLA source code.")
-
-   return
 
 
 # Function to find the include-what-you-use command.

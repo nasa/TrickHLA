@@ -206,8 +206,6 @@ def main():
    # Let the user know that we are done.
    TrickHLAMessage.success("Finished checking TrickHLA source code.")
 
-   return
-
 
 # Function to find the flawfinder command.
 #

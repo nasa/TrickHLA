@@ -370,8 +370,6 @@ def main():
    # Print out status message.
    TrickHLAMessage.success("Successfully built TrickHLA documentation.")
 
-   return
-
 
 # Determine the TrickHLA version string from the TRICKHLA_VERSION field of the
 # $TRICKHLA_HOME/include/TrickHLA/Version.hh file.
@@ -463,8 +461,6 @@ def setup_doxygen_environment(
          "TRICKHLA_DOX_LATEX: " + os.environ.get("TRICKHLA_DOX_LATEX")
       )
 
-   return
-
 
 # Function to cleans up all the Doxygen artifacts in a directory.
 #
@@ -499,8 +495,6 @@ def cleanup_document_dir(dir_path, error_log, test_only, verbose):
          os.remove(error_log)
    else:
       TrickHLAMessage.warning("Could not find error log: " + error_log)
-
-   return
 
 
 # Function to build the Doxygen generated LaTeX documentation.
@@ -581,8 +575,6 @@ def generate_docs(error_log, test_only, verbose):
       statinfo = os.stat(error_log)
       if statinfo.st_size != 0:
          TrickHLAMessage.warning("Errors detected! Check error log: " + error_log)
-
-   return
 
 
 #

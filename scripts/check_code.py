@@ -503,7 +503,7 @@ check_code -c -vv"""
    # Set the cppcheck arguments based on the type of code checking the user wants to do.
    if args.check_errors_only:
       # We don't need to set any specific arguments for the default error checking.
-      None
+      pass
    elif args.check_for_unused:
       # Only look for unused functions.
       cppcheck_args.append("--enable=unusedFunction")
@@ -586,9 +586,8 @@ check_code -c -vv"""
       or args.check_errors_only
       or args.check_for_unused
       or args.generate_xml
-   ):
-      if os.path.isfile(ccpcheck_suppresion_file):
-         cppcheck_args.insert(0, "--suppressions-list=" + ccpcheck_suppresion_file)
+   ) and os.path.isfile(ccpcheck_suppresion_file):
+      cppcheck_args.insert(0, "--suppressions-list=" + ccpcheck_suppresion_file)
 
    # Enable XML output.
    if args.generate_xml:

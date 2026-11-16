@@ -156,8 +156,6 @@ Available here https://github.com/terryyin/lizard",
    # Let the user know that we are done.
    TrickHLAMessage.success("Finished processing TrickHLA source code.")
 
-   return
-
 
 # Function to find the lizard command.
 #

@@ -11,7 +11,6 @@
 # @revs_end
 #
 import argparse
-import asyncio
 import os
 import shutil
 import subprocess
@@ -32,11 +31,9 @@ def main():
    tsync_home = None
 
    # Initialize the lists that go into the clang-tidy command argument list.
-   system_includes = []
    trickhla_defines = []
    include_dirs = []
    source_dirs = []
-   trickhla_ignore = []
    clang_tidy_args = []
    clang_tidy_extra_args = []
 
@@ -536,12 +533,7 @@ clang_tidy_code --TrickHLA --SpaceFOM -v --check-includes --check-recommended --
    for src_dir in source_dirs:
       for dir_path, dir_names, filenames in os.walk(src_dir):
          for filename in filenames:
-            if (
-               filename.endswith(".cpp")
-               or filename.endswith(".cxx")
-               or filename.endswith(".cc")
-               or filename.endswith(".c")
-            ):
+            if filename.endswith((".cpp", ".cxx", ".cc", ".c")):
                file_cnt += 1
                if (file_cnt >= file_start_cnt) and (
                   (file_cnt_limit <= 0) or (file_added_cnt < file_cnt_limit)
@@ -625,8 +617,6 @@ clang_tidy_code --TrickHLA --SpaceFOM -v --check-includes --check-recommended --
 
    # Let the user know that we are done.
    TrickHLAMessage.success("Finished checking TrickHLA source code.")
-
-   return
 
 
 # Function to find the clang-tidy command.

@@ -25,8 +25,6 @@
 
 import argparse
 import os
-import shutil
-import sys
 
 # Import the TrickHLA Python environment.
 from trickhla_environment import *
@@ -158,7 +156,7 @@ def main():
    # First open the output file.
    try:
       output_file = open(chkpnt_out_path, "w")
-   except IOError as e:
+   except OSError as e:
       TrickHLAMessage.failure(f"Could not open file: {e}")
    finally:
       if verbose_output:
@@ -179,7 +177,7 @@ def main():
       # Close the output file once the input file is processed.
       output_file.close()
 
-   except IOError as e:
+   except OSError as e:
       # Close the output file once the input file is processed.
       output_file.close()
 
