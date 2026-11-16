@@ -1440,7 +1440,7 @@ void ObjectServices::set_object_instance_handles_by_name(
                if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
                   summary << "\n    Object:'" << data_objects[n].get_name()
                           << "' Instance-Handle:Inatance-Not-Known Instance-Handle-Valid:No Obj-Required:"
-                          << ( data_objects[n].is_required() ? "Yes" : "No" );;
+                          << ( data_objects[n].is_required() ? "Yes" : "No" );
                }
             }
          }
