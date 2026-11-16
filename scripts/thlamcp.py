@@ -13,7 +13,6 @@
 import argparse
 import inspect
 import os
-import socket
 import sys
 from tkinter import *
 from tkinter import ttk
@@ -246,7 +245,6 @@ class MasterControl(Frame):
                   "Could not find variable:",
                   variable.name,
                )
-               all_vars_exit = False
 
          except UnexpectedMessageError as ume:
             root.bell()
@@ -256,7 +254,7 @@ class MasterControl(Frame):
                ": ",
                ume,
             )
-         except IOError as ioe:
+         except OSError as ioe:
             root.bell()
             self.disconnectFromSim()
             print(
@@ -294,8 +292,6 @@ class MasterControl(Frame):
 
       # Update the interface based on current simulation state.
       self.updateSimState()
-
-      return
 
    # The variable server error callback function.
    # This function is registered with the variable server and called
@@ -359,7 +355,6 @@ class MasterControl(Frame):
    # The Connect button activation function
    def disconnectFromSim(self):
       self.closeVarServerConnection()
-      return
 
    # This function queries the simulation for the actual host and port
    # values for the variable server connection.
@@ -414,7 +409,7 @@ class MasterControl(Frame):
             ": ",
             uce,
          )
-      except IOError as ioe:
+      except OSError as ioe:
          root.bell()
          self.disconnectFromSim()
          print(
@@ -439,10 +434,7 @@ class MasterControl(Frame):
          self.host_var.set(self.hostname)
 
       # Check the port address.
-      if self.port == 0:
-         self.port = self.port_vs_var.value
-         self.port_var.set(str(self.port))
-      elif self.port != self.port_vs_var.value:
+      if self.port == 0 or self.port != self.port_vs_var.value:
          self.port = self.port_vs_var.value
          self.port_var.set(str(self.port))
 
@@ -544,8 +536,6 @@ class MasterControl(Frame):
          root.bell()
          print("MasterControl::goToRun:", inspect.currentframe().f_lineno, e)
 
-      return
-
    # Freeze button activation function.
    def goToFreeze(self):
       try:
@@ -553,8 +543,6 @@ class MasterControl(Frame):
       except Exception as e:
          root.bell()
          print("MasterControl::goToFreeze:", inspect.currentframe().f_lineno, e)
-
-      return
 
    # Save button activation function.
    def federationSave(self):
@@ -574,8 +562,6 @@ class MasterControl(Frame):
          root.bell
          print("MasterControl::federationSave:", inspect.currentframe().f_lineno, e)
 
-      return
-
    # Restore button activation function.
    def federationRestore(self):
 
@@ -594,8 +580,6 @@ class MasterControl(Frame):
          root.bell
          print("MasterControl::federationRestore:", inspect.currentframe().f_lineno, e)
 
-      return
-
    # Shutdown button activation button.
    def federationShutdown(self):
       print(
@@ -612,8 +596,6 @@ class MasterControl(Frame):
       # Close the variable server connection.
       self.closeVarServerConnection()
 
-      return
-
    # Exit/Quit button activation function.
    def applicationExit(self):
 
@@ -622,8 +604,6 @@ class MasterControl(Frame):
 
       # Quit the application.
       self.quit()
-
-      return
 
    # This function will close the simulation variable server connection
    # and reset the interface to a pre-connection state.
@@ -751,8 +731,6 @@ class MasterControl(Frame):
          self.hlt_vs_var,
       ]
 
-      return
-
    # Create the Tk widgets used in the interface.
    def createWidgets(self):
 
@@ -862,7 +840,7 @@ class MasterControl(Frame):
       self.action_frame.rowconfigure(4, weight=1)
       self.action_frame.rowconfigure(5, weight=1)
 
-      action_options = dict(sticky=(N, W))
+      action_options = {"sticky": (N, W)}
       self.connect_button.grid(row=0, column=0, **action_options)
       self.disconnect_button.grid(row=0, column=1, **action_options)
       self.host_label.grid(row=1, column=0, **action_options)
@@ -889,7 +867,7 @@ class MasterControl(Frame):
       self.time_frame.rowconfigure(3, weight=1)
       self.time_frame.rowconfigure(4, weight=1)
 
-      time_options = dict(sticky=(N, W))
+      time_options = {"sticky": (N, W)}
       self.time_label.grid(row=0, column=3, columnspan=4, **time_options)
       self.set_label.grid(row=1, column=3, **time_options)
       self.set_value.grid(row=1, column=4, **time_options)
