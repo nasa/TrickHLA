@@ -48,8 +48,6 @@ class TrickHLAAttributeConfig(TrickHLARecordElementConfig):
       self.config = config
       self.preferred_order = preferred_order
 
-      return
-
    def initialize(self, attribute):
 
       attribute.FOM_name = str(self.FOM_name)
@@ -63,5 +61,3 @@ class TrickHLAAttributeConfig(TrickHLARecordElementConfig):
 
       if self.rti_encoding == trick.TrickHLA.ENCODING_FIXED_RECORD:
          self.initialize_fixed_record(attribute, self)
-
-      return

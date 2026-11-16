@@ -197,5 +197,3 @@ class JEODRefFrameTreeObject:
          frame_deleted=mars_centered_fixed.deleted_callback,
       )
       federate.add_fed_object(mars_pfix_frame_obj)
-
-      return

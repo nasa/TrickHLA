@@ -44,7 +44,7 @@ class SpaceFOMRefFrameObject(TrickHLAObjectConfig):
       frame_FOM_name = "ReferenceFrame"
 
       # Copy the frame federation execution instance name.
-      frame_federation_instance_name = str(frame_instance_name)
+      str(frame_instance_name)
 
       # Save the frame name to use for trick_data_name generation.
       self.trick_frame_sim_obj_name = str(frame_S_define_instance_name)
@@ -88,14 +88,10 @@ class SpaceFOMRefFrameObject(TrickHLAObjectConfig):
       # Build the object attribute list.
       self.add_attributes()
 
-      return
-
    def initialize(self, thla_object):
 
       # Call the base class initialization utility function.
       TrickHLAObjectConfig.initialize(self, thla_object)
-
-      return
 
    def add_attributes(self):
 
@@ -152,5 +148,3 @@ class SpaceFOMRefFrameObject(TrickHLAObjectConfig):
             rti_encoding=trick.TrickHLA.ENCODING_NONE,
          )
          self.add_attribute(attribute)
-
-      return

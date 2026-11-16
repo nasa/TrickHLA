@@ -83,8 +83,6 @@ class SpaceFOMFederateConfig(TrickHLAFederateConfig):
       # this class.
       # self.add_multiphase_init_sync_point( 'sync_point_name' )
 
-      return
-
    def set_designated_late_joiner(self, designated_late_joiner):
 
       # You can only set the designated late joiner state before initialize method is called.
@@ -98,8 +96,6 @@ class SpaceFOMFederateConfig(TrickHLAFederateConfig):
          else:
             self.federate.set_join_constraint(trick.TrickHLA.FEDERATE_JOIN_EARLY_OR_LATE)
 
-      return
-
    def set_master_role(self, master_state=True):
 
       # You can only change master state before initialize method is called.
@@ -110,8 +106,6 @@ class SpaceFOMFederateConfig(TrickHLAFederateConfig):
       else:
          self.is_master = master_state
          self.control.master = master_state
-
-      return
 
    def set_pacing_role(self, pacing_state=True):
 
@@ -124,8 +118,6 @@ class SpaceFOMFederateConfig(TrickHLAFederateConfig):
          self.is_pacing = pacing_state
          self.control.pacing = pacing_state
 
-      return
-
    def set_RRFP_role(self, RRFP_state=True):
 
       # You can only change RRFP state before initialize method is called.
@@ -137,8 +129,6 @@ class SpaceFOMFederateConfig(TrickHLAFederateConfig):
          self.is_RRFP = RRFP_state
          self.control.root_frame_pub = RRFP_state
 
-      return
-
    def set_config_S_define_name(self, config_S_define_name):
 
       # You can only change RRFP state before initialize method is called.
@@ -148,8 +138,6 @@ class SpaceFOMFederateConfig(TrickHLAFederateConfig):
          )
       else:
          self.config_S_define_name = config_S_define_name
-
-      return
 
    def set_scenario_timeline_epoch(self, epoch):
 

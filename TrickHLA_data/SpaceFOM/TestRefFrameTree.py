@@ -110,8 +110,6 @@ class TestFrameTree(TrickHLAObjectConfig):
       # Set the debug flag for test tree.
       self.set_debug(self.tree_debug)
 
-      return
-
    def set_debug(self, debug_state=True):
 
       # Set the debug flag for the root reference frame.
@@ -119,8 +117,6 @@ class TestFrameTree(TrickHLAObjectConfig):
 
       # Set the debug flag for the leaf reference frame.
       self.leaf_ref_frame.frame_packing.debug = self.tree_debug
-
-      return
 
    def set_tree_default_state(
       self, root_frame_name="RootFrame", leaf_frame_name="FrameA"
@@ -164,8 +160,6 @@ class TestFrameTree(TrickHLAObjectConfig):
       self.test_tree.leaf_frame_data.state.ang_vel[2] = 0.0
       self.test_tree.leaf_frame_data.state.time = 0.0
 
-      return
-
    def set_leaf_frame_state(self, state):
 
       self.test_tree.leaf_frame_data.state.pos[0] = state.pos[0]
@@ -183,10 +177,6 @@ class TestFrameTree(TrickHLAObjectConfig):
       self.test_tree.leaf_frame_data.state.ang_vel[2] = state.ang_vel[2]
       self.test_tree.leaf_frame_data.state.time = state.time
 
-      return
-
    def set_leaf_lag_comp_type(self, comp_type):
 
       self.leaf_frame.set_lag_comp_type(comp_type)
-
-      return

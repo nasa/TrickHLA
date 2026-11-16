@@ -18,7 +18,7 @@ import sys
 import trick
 
 
-class TrickHLAObjectConfig(object):
+class TrickHLAObjectConfig:
    # Ties to TrickHLA from simulation.
    hla_create = False
    hla_instance_name = None
@@ -134,8 +134,6 @@ class TrickHLAObjectConfig(object):
       # Still need to set the object attributes but this is left to the
       # specific implementation classes.
 
-      return
-
    def initialize(self, thla_object=None):
 
       # Assign the associated TrickHLA object if specified.
@@ -195,18 +193,14 @@ class TrickHLAObjectConfig(object):
          )
 
       # Loop through the federation object attributes and initialize them.
-      for indx in range(0, self.hla_object.attr_count):
+      for indx in range(self.hla_object.attr_count):
          self.attributes[indx].initialize(self.hla_object.attributes[indx])
-
-      return
 
    def set_create(self, create_obj):
 
       self.hla_create = create_obj
       if self.hla_object != None:
          self.hla_object.create_HLA_instance = self.hla_create
-
-      return
 
    def get_create(self):
 
@@ -218,15 +212,11 @@ class TrickHLAObjectConfig(object):
       if self.hla_object != None:
          self.hla_object.required = self.hla_required
 
-      return
-
    def set_instance_name(self, name):
 
       self.hla_instance_name = str(name)
       if self.hla_object != None:
          self.hla_object.name = str(name)
-
-      return
 
    def get_instance_name(self):
 
@@ -238,8 +228,6 @@ class TrickHLAObjectConfig(object):
       if self.hla_object != None:
          self.hla_object.FOM_name = str(name)
 
-      return
-
    def get_FOM_name(self):
 
       return str(self.hla_FOM_name)
@@ -249,8 +237,6 @@ class TrickHLAObjectConfig(object):
       self.hla_thread_IDs = str(threadIDs)
       if self.hla_object != None:
          self.hla_object.thread_ids = str(threadIDs)
-
-      return
 
    def get_thread_IDs(self):
 
@@ -263,15 +249,11 @@ class TrickHLAObjectConfig(object):
          self.hla_object.lag_comp = obj_lag_comp
          self.hla_object.lag_comp_type = trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE
 
-      return
-
    def set_lag_comp_type(self, lag_comp_type):
 
       self.hla_lag_comp_type = lag_comp_type
       if self.hla_object != None:
          self.hla_object.lag_comp_type = lag_comp_type
-
-      return
 
    def set_deleted_instance(self, obj_deleted):
 
@@ -279,15 +261,11 @@ class TrickHLAObjectConfig(object):
       if self.hla_object != None:
          self.hla_object.deleted = obj_deleted
 
-      return
-
    def set_ownership_instance(self, obj_ownership_handler):
 
       self.hla_ownership_instance = obj_ownership_handler
       if self.hla_object != None:
          self.hla_object.ownership = obj_ownership_handler
-
-      return
 
    def set_conditional_instance(self, obj_conditional):
 
@@ -295,15 +273,11 @@ class TrickHLAObjectConfig(object):
       if self.hla_object != None:
          self.hla_object.conditional = obj_conditional
 
-      return
-
    def set_packing_instance(self, obj_packing):
 
       self.hla_packing_instance = obj_packing
       if self.hla_object != None:
          self.hla_object.packing = obj_packing
-
-      return
 
    def get_packing_instance(self):
 
@@ -313,13 +287,9 @@ class TrickHLAObjectConfig(object):
 
       self.attributes.append(attribute)
 
-      return
-
    def set_attribute_publish(self, publish):
 
       self.hla_attribute_publish = publish
-
-      return
 
    def get_attribute_publish(self):
 
@@ -329,8 +299,6 @@ class TrickHLAObjectConfig(object):
 
       self.hla_attribute_subscribe = subscribe
 
-      return
-
    def get_attribute_subscribe(self):
 
       return self.hla_attribute_subscribe
@@ -338,8 +306,6 @@ class TrickHLAObjectConfig(object):
    def set_attribute_config(self, attribute_config):
 
       self.hla_attribute_config = attribute_config
-
-      return
 
    def get_attribute_config(self):
 
@@ -350,8 +316,6 @@ class TrickHLAObjectConfig(object):
       self.hla_blocking_cyclic_read = blocking_cyclic_read
       if self.hla_object != None:
          self.hla_object.blocking_cyclic_read = self.hla_blocking_cyclic_read
-
-      return
 
    def get_blocking_cyclic_read(self):
 

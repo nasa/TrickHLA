@@ -68,14 +68,10 @@ class SpaceFOMDynamicalEntityObject(SpaceFOMPhysicalEntityObject):
       # Build the object attribute list.
       # self.add_attributes()
 
-      return
-
    def initialize(self, thla_object):
 
       # Call the base class initialization utility function.
       SpaceFOMPhysicalEntityObject.initialize(self, thla_object)
-
-      return
 
    def add_attributes(self):
 
@@ -162,5 +158,3 @@ class SpaceFOMDynamicalEntityObject(SpaceFOMPhysicalEntityObject):
          rti_encoding=trick.TrickHLA.ENCODING_LITTLE_ENDIAN,
       )
       self.add_attribute(attribute)
-
-      return

@@ -15,7 +15,6 @@
 #     ((Dan Dexter) (NASA/ER6) (Oct 2025) (--) (Updated to add extended ExCO attributes.))
 #     ((Dan Dexter) (NASA/ER6) (Mar 2026) (--) (Added support for Federate Type string.)))
 ##############################################################################
-import trick
 from trick.top import *
 
 from ..SpaceFOM.SpaceFOMFederateConfig import *
@@ -49,8 +48,6 @@ class SpaceFOMFederateConfig2(SpaceFOMFederateConfig):
 
       # Add in additional required Space FOM modules.
       self.add_FOM_module(self.SpaceFOMs_path + "SISO_SpaceFOM_management2.xml")
-
-      return
 
    def set_FOMs_path(self, FOMs_path):
 

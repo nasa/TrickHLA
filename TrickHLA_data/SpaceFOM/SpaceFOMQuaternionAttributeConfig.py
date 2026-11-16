@@ -47,5 +47,3 @@ class SpaceFOMQuaternionAttributeConfig(
       SpaceFOMQuaternionFixedRecordConfig.__init__(
          self, quat_rec_trick_name=quat_trick_name
       )
-
-      return

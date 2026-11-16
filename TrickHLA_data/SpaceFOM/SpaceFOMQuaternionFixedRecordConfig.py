@@ -41,5 +41,3 @@ class SpaceFOMQuaternionFixedRecordConfig(TrickHLARecordElementConfig):
 
       self.add_record_element(quat_scalar_element)
       self.add_record_element(quat_vector_element)
-
-      return

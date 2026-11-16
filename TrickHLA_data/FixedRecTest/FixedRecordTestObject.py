@@ -22,7 +22,7 @@ from ..TrickHLA.TrickHLARecordElementConfig import *
 
 class FixedRecordTestObject(TrickHLAObjectConfig):
    # The fixed-record test HLA class FOM name.
-   fixed_rec_FOM_name = str("MainFixedRecObject")
+   fixed_rec_FOM_name = "MainFixedRecObject"
 
    # Trick simulation object name (constructed).
    trick_sim_obj_name = None
@@ -70,14 +70,10 @@ class FixedRecordTestObject(TrickHLAObjectConfig):
       # Build the object attribute list.
       self.add_attributes()
 
-      return
-
    def initialize(self, thla_object):
 
       # Call the base class initialization utility function.
       TrickHLAObjectConfig.initialize(self, thla_object)
-
-      return
 
    def add_attributes(self):
 
@@ -185,5 +181,3 @@ class FixedRecordTestObject(TrickHLAObjectConfig):
          trick_name=trick_data_name,
       )
       elem_3_record.add_record_element(element_2_name)
-
-      return

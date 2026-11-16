@@ -15,7 +15,6 @@
 # PROGRAMMERS:
 #    (((Edwin Z. Crues) (NASA) (June 2016) (--) (Space FOM development)))
 ##############################################################################
-import sys
 
 import trick
 
@@ -65,14 +64,10 @@ class SpaceFOMMTRInteraction(TrickHLAInteractionConfig):
       # Build the interaction parameters list.
       self.add_parameters()
 
-      return
-
    def initialize(self, thla_interaction):
 
       # Call the base class initialization utility function.
       TrickHLAInteractionConfig.initialize(self, thla_interaction)
-
-      return
 
    def add_parameters(self):
 
@@ -83,5 +78,3 @@ class SpaceFOMMTRInteraction(TrickHLAInteractionConfig):
          rti_encoding=trick.TrickHLA.ENCODING_LITTLE_ENDIAN,
       )
       self.add_parameter(parameter)
-
-      return

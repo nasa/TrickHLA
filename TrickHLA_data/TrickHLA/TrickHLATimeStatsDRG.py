@@ -141,5 +141,3 @@ class TrickHLATimeStatsDRG(TrickDataRecordingGroup):
          self.drg.add_variable(
             self.base_name + ".federate.time_management_service.tara_tag_stats.jitter_max"
          )
-
-      return

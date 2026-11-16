@@ -43,9 +43,6 @@ class SpaceFOMPhysicalEntityObject(TrickHLAObjectConfig):
       entity_thread_IDs=None,
    ):
 
-      # Copy the PhysicalEntity federation execution instance name.
-      entity_federation_instance_name = str(entity_instance_name)
-
       # Save the PhysicalEntity name to use for trick_data_name generation.
       self.trick_entity_sim_obj_name = str(entity_S_define_instance_name)
 
@@ -75,14 +72,10 @@ class SpaceFOMPhysicalEntityObject(TrickHLAObjectConfig):
       # Build the object attribute list.
       self.add_attributes()
 
-      return
-
    def initialize(self, thla_object):
 
       # Call the base class initialization utility function.
       TrickHLAObjectConfig.initialize(self, thla_object)
-
-      return
 
    def add_attributes(self):
 
@@ -229,5 +222,3 @@ class SpaceFOMPhysicalEntityObject(TrickHLAObjectConfig):
             rti_encoding=trick.TrickHLA.ENCODING_NONE,
          )
          self.add_attribute(attribute)
-
-      return

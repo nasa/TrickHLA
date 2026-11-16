@@ -32,7 +32,6 @@ import socket
 import subprocess
 import sys
 from abc import ABC, abstractmethod
-from enum import IntEnum
 
 import trick
 
@@ -47,7 +46,7 @@ class TrickSimConfig(ABC):
       # Check if and instance already exists.
       if tsc._instance is None:
          # Not already allocated.  So, allocate one and only one instance.
-         tsc._instance = super(TrickSimConfig, tsc).__new__(tsc)
+         tsc._instance = super().__new__(tsc)
       else:
          # Already allocated!  This is an error.
          sys.exit("TrickSimConfig:Error: Can only have one TrickSimConfig instance!")
@@ -65,29 +64,21 @@ class TrickSimConfig(ABC):
       # Enable CTRL-C keyboard interrupt signal to freeze/unfreeze the simulation.
       trick.exec_set_enable_freeze(True)
 
-      return
-
    # Set the Trick software and freeze frame times.
    def set_software_and_freeze_frame_time(self, software_frame_time):
 
       self.set_software_frame_time(software_frame_time)
       self.set_freeze_frame_time(software_frame_time)
 
-      return
-
    # Set the Trick software frame time.
    def set_software_frame_time(self, software_frame_time):
 
       trick.exec_set_software_frame(software_frame_time)
 
-      return
-
    # Set the Trick freeze frame time.
    def set_freeze_frame_time(self, freeze_frame_time):
 
       trick.exec_set_freeze_frame(freeze_frame_time)
-
-      return
 
    # Common Trick realtime configuration.
    def realtime(self, software_frame_time):
@@ -96,8 +87,6 @@ class TrickSimConfig(ABC):
       trick.real_time_enable()
       trick.itimer_enable()
       self.set_software_and_freeze_frame_time(software_frame_time)
-
-      return
 
    # Setup to use the Trick Simulation Control Panel
    def sim_control_panel(self):
@@ -108,8 +97,6 @@ class TrickSimConfig(ABC):
       self.simControlPanel = trick.SimControlPanel()
       trick.add_external_application(self.simControlPanel)
 
-      return
-
    # Setup to start the simulation in freeze or run.
    def start_in_freeze(self, freeze=True):
 
@@ -118,8 +105,6 @@ class TrickSimConfig(ABC):
 
       # Set to True to start the simulation in freeze.
       trick.exec_set_freeze_command(freeze)
-
-      return
 
    # Check for valid variable server host name and correct if not valid.
    def fix_var_server_source_address(self):

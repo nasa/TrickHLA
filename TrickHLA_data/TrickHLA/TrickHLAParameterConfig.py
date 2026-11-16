@@ -27,8 +27,6 @@ class TrickHLAParameterConfig(TrickHLARecordElementConfig):
 
       self.FOM_name = FOM_name
 
-      return
-
    def initialize(self, parameter):
 
       parameter.FOM_name = str(self.FOM_name)
@@ -37,5 +35,3 @@ class TrickHLAParameterConfig(TrickHLARecordElementConfig):
 
       if self.rti_encoding == trick.TrickHLA.ENCODING_FIXED_RECORD:
          self.initialize_fixed_record(parameter, self)
-
-      return

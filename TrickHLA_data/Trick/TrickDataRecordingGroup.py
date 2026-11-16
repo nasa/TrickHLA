@@ -68,7 +68,6 @@ class TrickDataRecordingGroup(ABC):
       buffer=TrickDRBuffer.BUFFER,
       enabled=True,
    ):
-
       # Set the class variables.
       self.name = name
       self.rate = rate
@@ -138,10 +137,8 @@ class TrickDataRecordingGroup(ABC):
    def initialize_groups():
 
       # Iterate through the Data Recording Group Collection
-      for name, dr_group in TrickDataRecordingGroup.groups.items():
+      for dr_group in TrickDataRecordingGroup.groups.values():
          trick.add_data_record_group(dr_group.drg, dr_group.buffer)
-
-      return
 
    # A static method to retrieve a named Data Recording Group from the collection.
    @staticmethod
@@ -150,7 +147,7 @@ class TrickDataRecordingGroup(ABC):
       # Check to see if the Trick Data Recording Group is in the collection.
       if group_name not in TrickDataRecordingGroup.groups:
          raise ValueError(
-            "TrickDataRecordingGroup:find_trick_drg: '" + name + "' NOT found!"
+            "TrickDataRecordingGroup:find_trick_drg: '" + group_name + "' NOT found!"
          )
          return None
 
@@ -184,9 +181,9 @@ class TrickDataRecordingGroup(ABC):
 
       # Set the enable state.
       if state:
-         drg.enable()
+         self.drg.enable()
       else:
-         drg.disable()
+         self.drg.disable()
 
       return
 

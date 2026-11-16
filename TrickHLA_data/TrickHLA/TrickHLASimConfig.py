@@ -26,8 +26,6 @@
 # @revs_end
 #
 ##############################################################################
-import os
-
 import trick
 
 # Import the TrickHLA base Trick Simulation Configuration class.
@@ -46,5 +44,3 @@ class TrickHLASimConfig(TrickSimConfig):
 
       # Call the TrickDataRecordingGroup constructor.
       TrickSimConfig.__init__(self, sim_name)
-
-      return

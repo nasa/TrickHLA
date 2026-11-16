@@ -47,5 +47,3 @@ class SpaceFOMSpaceTimeCoordinateAttributeConfig(
       SpaceFOMSpaceTimeCoordinateFixedRecordConfig.__init__(
          self, stc_rec_trick_name=stc_trick_name
       )
-
-      return

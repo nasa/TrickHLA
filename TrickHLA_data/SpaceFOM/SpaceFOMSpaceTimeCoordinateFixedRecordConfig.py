@@ -86,5 +86,3 @@ class SpaceFOMSpaceTimeCoordinateFixedRecordConfig(TrickHLARecordElementConfig):
       self.add_record_element(translational_state)
       self.add_record_element(rotational_state)
       self.add_record_element(time_element)
-
-      return

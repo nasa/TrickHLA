@@ -15,7 +15,7 @@
 import trick
 
 
-class TrickHLARecordElementConfig(object):
+class TrickHLARecordElementConfig:
    rti_encoding = trick.TrickHLA.ENCODING_UNKNOWN
    trick_name = None
 
@@ -27,16 +27,12 @@ class TrickHLARecordElementConfig(object):
       self.rti_encoding = rti_encoding
       self.trick_name = trick_name
 
-      return
-
    def add_record_element(self, element):
 
       if self.elements == None:
          self.elements = []
 
       self.elements.append(element)
-
-      return
 
    def initialize_fixed_record(self, thla_elem, input_elem):
 
@@ -51,7 +47,7 @@ class TrickHLARecordElementConfig(object):
             )
 
             # Loop through the fixed record elements and initialize them.
-            for indx in range(0, thla_elem.element_count):
+            for indx in range(thla_elem.element_count):
                if (
                   input_elem.elements[indx].rti_encoding
                   == trick.TrickHLA.ENCODING_FIXED_RECORD
@@ -68,6 +64,4 @@ class TrickHLARecordElementConfig(object):
                         input_elem.elements[indx].trick_name
                      )
                   else:
-                     thla_elem.elements[indx].trick_name = str("")
-
-      return
+                     thla_elem.elements[indx].trick_name = ""
