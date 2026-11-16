@@ -32,17 +32,17 @@ import sys
 # Find the TrickHLA home location and append the path.
 trickhla_home = os.environ.get("TRICKHLA_HOME")
 if trickhla_home is None:
-    sys.exit(
-        "\033[91m" + "Environment variable TRICKHLA_HOME is not defined!" + "\033[0m\n"
-    )
+   sys.exit(
+      "\033[91m" + "Environment variable TRICKHLA_HOME is not defined!" + "\033[0m\n"
+   )
 else:
-    if os.path.isdir(trickhla_home) is False:
-        sys.exit("\033[91m" + "TRICKHLA_HOME not found: " + trickhla_home + "\033[0m\n")
+   if os.path.isdir(trickhla_home) is False:
+      sys.exit("\033[91m" + "TRICKHLA_HOME not found: " + trickhla_home + "\033[0m\n")
 
 # Append the path to the top level of the top level TrickHLA directory.
 # We need this to locate the TrickHLA_data Python data directory.
 if trickhla_home not in sys.path:
-    sys.path.append(trickhla_home)
+   sys.path.append(trickhla_home)
 
 # Import the Ball Simulation Configuration class.
 from Modified_data.BallSimConfig import BallSimConfig, TrickSimConfig
@@ -139,7 +139,7 @@ ball_sim_config.ball_graphics()
 run_duration = 10.0
 
 if run_duration != None:
-    if run_duration == 0.0:
-        trick.stop(0.0)
-    else:
-        trick.sim_services.exec_set_terminate_time(run_duration)
+   if run_duration == 0.0:
+      trick.stop(0.0)
+   else:
+      trick.sim_services.exec_set_terminate_time(run_duration)

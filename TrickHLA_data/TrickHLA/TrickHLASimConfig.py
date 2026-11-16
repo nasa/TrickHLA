@@ -35,17 +35,16 @@ from TrickHLA_data.Trick.TrickSimConfig import *
 
 
 class TrickHLASimConfig(TrickSimConfig):
+   # Class constructor.
+   def __init__(self, sim_name):
 
-    # Class constructor.
-    def __init__(self, sim_name):
+      # Set the name for the simulation.
+      self.sim_name = sim_name
 
-        # Set the name for the simulation.
-        self.sim_name = sim_name
+      # Get the variable server port.
+      self.variable_server_port = trick.var_server_get_port()
 
-        # Get the variable server port.
-        self.variable_server_port = trick.var_server_get_port()
+      # Call the TrickDataRecordingGroup constructor.
+      TrickSimConfig.__init__(self, sim_name)
 
-        # Call the TrickDataRecordingGroup constructor.
-        TrickSimConfig.__init__(self, sim_name)
-
-        return
+      return

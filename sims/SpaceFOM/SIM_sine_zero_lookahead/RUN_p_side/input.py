@@ -20,17 +20,17 @@ import sys
 # Find the TrickHLA home location and append the path.
 trickhla_home = os.environ.get("TRICKHLA_HOME")
 if trickhla_home is None:
-    sys.exit(
-        "\033[91m" + "Environment variable TRICKHLA_HOME is not defined!" + "\033[0m\n"
-    )
+   sys.exit(
+      "\033[91m" + "Environment variable TRICKHLA_HOME is not defined!" + "\033[0m\n"
+   )
 else:
-    if os.path.isdir(trickhla_home) is False:
-        sys.exit("\033[91m" + "TRICKHLA_HOME not found: " + trickhla_home + "\033[0m\n")
+   if os.path.isdir(trickhla_home) is False:
+      sys.exit("\033[91m" + "TRICKHLA_HOME not found: " + trickhla_home + "\033[0m\n")
 
 # Append the path to the top level of the top level TrickHLA directory.
 # We need this to locate the TrickHLA_data Python data directory.
 if trickhla_home not in sys.path:
-    sys.path.append(trickhla_home)
+   sys.path.append(trickhla_home)
 
 # Load the sine specific Sine object.
 from TrickHLA_data.sine.SineObject import *
@@ -44,87 +44,86 @@ from TrickHLA_data.SpaceFOM.SpaceFOMRefFrameObject import *
 
 def print_usage_message():
 
-    print(" ")
-    print("TrickHLA SpaceFOM Roles Test Simulation Command Line Configuration Options:")
-    print("  -h --help             : Print this help message.")
-    print("  -f --fed_name [name]  : Name of the Federate, default is P-side-Federate.")
-    print(
-        "  -fe --fex_name [name] : Name of the Federation Execution, default is SpaceFOM_sine."
-    )
-    print("  --nostop              : Set no stop time on simulation.")
-    print("  -s --stop [time]      : Time to stop simulation, default is 10.0 seconds.")
-    print("  --verbose             : Show verbose messages.")
-    print(" ")
+   print(" ")
+   print("TrickHLA SpaceFOM Roles Test Simulation Command Line Configuration Options:")
+   print("  -h --help             : Print this help message.")
+   print("  -f --fed_name [name]  : Name of the Federate, default is P-side-Federate.")
+   print(
+      "  -fe --fex_name [name] : Name of the Federation Execution, default is SpaceFOM_sine."
+   )
+   print("  --nostop              : Set no stop time on simulation.")
+   print("  -s --stop [time]      : Time to stop simulation, default is 10.0 seconds.")
+   print("  --verbose             : Show verbose messages.")
+   print(" ")
 
-    trick.exec_terminate_with_return(
-        -1,
-        sys._getframe(0).f_code.co_filename,
-        sys._getframe(0).f_lineno,
-        "Print usage message.",
-    )
-    return
+   trick.exec_terminate_with_return(
+      -1,
+      sys._getframe(0).f_code.co_filename,
+      sys._getframe(0).f_lineno,
+      "Print usage message.",
+   )
+   return
 
 
 def parse_command_line():
 
-    global print_usage
-    global run_duration
-    global verbose
-    global federate_name
-    global federation_name
+   global print_usage
+   global run_duration
+   global verbose
+   global federate_name
+   global federation_name
 
-    # Get the Trick command line arguments.
-    argc = trick.command_line_args_get_argc()
-    argv = trick.command_line_args_get_argv()
+   # Get the Trick command line arguments.
+   argc = trick.command_line_args_get_argc()
+   argv = trick.command_line_args_get_argv()
 
-    # Process the command line arguments.
-    # argv[0]=S_main*.exe, argv[1]=RUN/input.py file
-    index = 2
-    while index < argc:
+   # Process the command line arguments.
+   # argv[0]=S_main*.exe, argv[1]=RUN/input.py file
+   index = 2
+   while index < argc:
+      if (str(argv[index]) == "-h") | (str(argv[index]) == "--help"):
+         print_usage = True
 
-        if (str(argv[index]) == "-h") | (str(argv[index]) == "--help"):
+      elif (str(argv[index]) == "-f") | (str(argv[index]) == "--fed_name"):
+         index = index + 1
+         if index < argc:
+            federate_name = str(argv[index])
+         else:
+            print("ERROR: Missing --fed_name [name] argument.")
             print_usage = True
 
-        elif (str(argv[index]) == "-f") | (str(argv[index]) == "--fed_name"):
-            index = index + 1
-            if index < argc:
-                federate_name = str(argv[index])
-            else:
-                print("ERROR: Missing --fed_name [name] argument.")
-                print_usage = True
-
-        elif (str(argv[index]) == "-fe") | (str(argv[index]) == "--fex_name"):
-            index = index + 1
-            if index < argc:
-                federation_name = str(argv[index])
-            else:
-                print("ERROR: Missing --fex_name [name] argument.")
-                print_usage = True
-
-        elif str(argv[index]) == "-nostop":
-            run_duration = None
-
-        elif (str(argv[index]) == "-s") | (str(argv[index]) == "--stop"):
-            index = index + 1
-            if index < argc:
-                run_duration = float(str(argv[index]))
-            else:
-                print("ERROR: Missing -stop [time] argument.")
-                print_usage = True
-
-        elif str(argv[index]) == "--verbose":
-            verbose = True
-
-        elif str(argv[index]) == "-d":
-            # Pass this on to Trick.
-            break
-
-        else:
-            print("ERROR: Unknown command line argument " + str(argv[index]))
+      elif (str(argv[index]) == "-fe") | (str(argv[index]) == "--fex_name"):
+         index = index + 1
+         if index < argc:
+            federation_name = str(argv[index])
+         else:
+            print("ERROR: Missing --fex_name [name] argument.")
             print_usage = True
 
-        index = index + 1
-    return
+      elif str(argv[index]) == "-nostop":
+         run_duration = None
+
+      elif (str(argv[index]) == "-s") | (str(argv[index]) == "--stop"):
+         index = index + 1
+         if index < argc:
+            run_duration = float(str(argv[index]))
+         else:
+            print("ERROR: Missing -stop [time] argument.")
+            print_usage = True
+
+      elif str(argv[index]) == "--verbose":
+         verbose = True
+
+      elif str(argv[index]) == "-d":
+         # Pass this on to Trick.
+         break
+
+      else:
+         print("ERROR: Unknown command line argument " + str(argv[index]))
+         print_usage = True
+
+      index = index + 1
+   return
 
 
 # Default: Don't show usage.
@@ -145,7 +144,7 @@ federation_name = "SpaceFOM_sine_zero_lookahead"
 parse_command_line()
 
 if print_usage == True:
-    print_usage_message()
+   print_usage_message()
 
 # ---------------------------------------------
 # Set up Trick executive parameters.
@@ -178,11 +177,11 @@ log_sine_states("PC", 0.250)
 # =========================================================================
 # Instantiate the Python SpaceFOM configuration object.
 federate = SpaceFOMFederateConfig(
-    thla_federate=THLA.federate,
-    thla_control=THLA.execution_control,
-    thla_config=THLA.ExCO,
-    thla_federation_name=federation_name,
-    thla_federate_name=federate_name,
+   thla_federate=THLA.federate,
+   thla_control=THLA.execution_control,
+   thla_config=THLA.ExCO,
+   thla_federation_name=federation_name,
+   thla_federate_name=federate_name,
 )
 
 # Set the name of the ExCO S_define instance.
@@ -192,9 +191,9 @@ federate = SpaceFOMFederateConfig(
 
 # Set the debug output level.
 if verbose == True:
-    federate.set_debug_level(trick.TrickHLA.DEBUG_LEVEL_4_TRACE)
+   federate.set_debug_level(trick.TrickHLA.DEBUG_LEVEL_4_TRACE)
 else:
-    federate.set_debug_level(trick.TrickHLA.DEBUG_LEVEL_0_TRACE)
+   federate.set_debug_level(trick.TrickHLA.DEBUG_LEVEL_0_TRACE)
 
 # --------------------------------------------------------------------------
 # Configure this federate SpaceFOM roles for this federate.
@@ -278,42 +277,42 @@ PC.sim_data.name = "PC.sim_data.name.P-side.cyclic"
 # ---------------------------------------------------------------------------
 
 sine_AZ = SineObject(
-    sine_create_object=False,
-    sine_obj_instance_name="A-side-Federate.Sine.zero",
-    sine_trick_sim_obj_name="AZ",
-    sine_packing=AZ.packing,
-    sine_attribute_config=trick.CONFIG_ZERO_LOOKAHEAD,
+   sine_create_object=False,
+   sine_obj_instance_name="A-side-Federate.Sine.zero",
+   sine_trick_sim_obj_name="AZ",
+   sine_packing=AZ.packing,
+   sine_attribute_config=trick.CONFIG_ZERO_LOOKAHEAD,
 )
 
 # Add this sine object to the list of managed objects.
 federate.add_fed_object(sine_AZ)
 
 sine_PZ = SineObject(
-    sine_create_object=True,
-    sine_obj_instance_name="P-side-Federate.Sine.zero",
-    sine_trick_sim_obj_name="PZ",
-    sine_packing=PZ.packing,
-    sine_attribute_config=trick.CONFIG_ZERO_LOOKAHEAD,
+   sine_create_object=True,
+   sine_obj_instance_name="P-side-Federate.Sine.zero",
+   sine_trick_sim_obj_name="PZ",
+   sine_packing=PZ.packing,
+   sine_attribute_config=trick.CONFIG_ZERO_LOOKAHEAD,
 )
 
 # Add this sine object to the list of managed objects.
 federate.add_fed_object(sine_PZ)
 
 sine_AC = SineObject(
-    sine_create_object=False,
-    sine_obj_instance_name="A-side-Federate.Sine.cyclic",
-    sine_trick_sim_obj_name="AC",
-    sine_packing=AC.packing,
+   sine_create_object=False,
+   sine_obj_instance_name="A-side-Federate.Sine.cyclic",
+   sine_trick_sim_obj_name="AC",
+   sine_packing=AC.packing,
 )
 
 # Add this sine object to the list of managed objects.
 federate.add_fed_object(sine_AC)
 
 sine_PC = SineObject(
-    sine_create_object=True,
-    sine_obj_instance_name="P-side-Federate.Sine.cyclic",
-    sine_trick_sim_obj_name="PC",
-    sine_packing=PC.packing,
+   sine_create_object=True,
+   sine_obj_instance_name="P-side-Federate.Sine.cyclic",
+   sine_trick_sim_obj_name="PC",
+   sine_packing=PC.packing,
 )
 
 # Add this sine object to the list of managed objects.
@@ -325,11 +324,11 @@ federate.add_fed_object(sine_PC)
 # If it is NOT the RRFP, it will subscribe to the frame.
 # ---------------------------------------------------------------------------
 root_frame = SpaceFOMRefFrameObject(
-    create_frame_object=federate.is_RRFP,
-    frame_instance_name="RootFrame",
-    frame_S_define_instance=root_ref_frame.frame_packing,
-    frame_S_define_instance_name="root_ref_frame.frame_packing",
-    frame_conditional=root_ref_frame.conditional,
+   create_frame_object=federate.is_RRFP,
+   frame_instance_name="RootFrame",
+   frame_S_define_instance=root_ref_frame.frame_packing,
+   frame_S_define_instance_name="root_ref_frame.frame_packing",
+   frame_conditional=root_ref_frame.conditional,
 )
 
 # Set the debug flag for the root reference frame.
@@ -345,16 +344,16 @@ federate.set_root_frame(root_frame)
 # Set up an alternate vehicle reference frame object for discovery.
 # ---------------------------------------------------------------------------
 frame_A = SpaceFOMRefFrameObject(
-    create_frame_object=False,
-    frame_instance_name="FrameA",
-    frame_S_define_instance=leaf_ref_frame.frame_packing,
-    frame_S_define_instance_name="leaf_ref_frame.frame_packing",
-    parent_S_define_instance=root_ref_frame.frame_packing,
-    parent_name="RootFrame",
-    frame_conditional=leaf_ref_frame.conditional,
-    frame_lag_comp=leaf_ref_frame.lag_compensation,
-    frame_ownership=leaf_ref_frame.ownership_handler,
-    frame_deleted=leaf_ref_frame.deleted_callback,
+   create_frame_object=False,
+   frame_instance_name="FrameA",
+   frame_S_define_instance=leaf_ref_frame.frame_packing,
+   frame_S_define_instance_name="leaf_ref_frame.frame_packing",
+   parent_S_define_instance=root_ref_frame.frame_packing,
+   parent_name="RootFrame",
+   frame_conditional=leaf_ref_frame.conditional,
+   frame_lag_comp=leaf_ref_frame.lag_compensation,
+   frame_ownership=leaf_ref_frame.ownership_handler,
+   frame_deleted=leaf_ref_frame.deleted_callback,
 )
 
 # Set the debug flag for the root reference frame.
@@ -396,7 +395,7 @@ federate.initialize()
 # Set up simulation termination time.
 # ---------------------------------------------------------------------------
 if run_duration:
-    trick.sim_services.exec_set_terminate_time(run_duration)
+   trick.sim_services.exec_set_terminate_time(run_duration)
 
 # ---------------------------------------------------------------------------
 # Send a timed MTR request to the Master federate.

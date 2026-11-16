@@ -19,17 +19,17 @@ import sys
 # Find the TrickHLA home location and append the path.
 trickhla_home = os.environ.get("TRICKHLA_HOME")
 if trickhla_home is None:
-    sys.exit(
-        "\033[91m" + "Environment variable TRICKHLA_HOME is not defined!" + "\033[0m\n"
-    )
+   sys.exit(
+      "\033[91m" + "Environment variable TRICKHLA_HOME is not defined!" + "\033[0m\n"
+   )
 else:
-    if os.path.isdir(trickhla_home) is False:
-        sys.exit("\033[91m" + "TRICKHLA_HOME not found: " + trickhla_home + "\033[0m\n")
+   if os.path.isdir(trickhla_home) is False:
+      sys.exit("\033[91m" + "TRICKHLA_HOME not found: " + trickhla_home + "\033[0m\n")
 
 # Append the path to the top level of the top level TrickHLA directory.
 # We need this to locate the TrickHLA_data Python data directory.
 if trickhla_home not in sys.path:
-    sys.path.append(trickhla_home)
+   sys.path.append(trickhla_home)
 
 # Load the SpaceFOM specific federate configuration object.
 from TrickHLA_data.SpaceFOM.SpaceFOMFederateConfig import *
@@ -40,116 +40,115 @@ from TrickHLA_data.SpaceFOM.SpaceFOMRefFrameObject import *
 
 def print_usage_message():
 
-    print(" ")
-    print("TrickHLA SpaceFOM Roles Test Simulation Command Line Configuration Options:")
-    print("  -h --help             : Print this help message.")
-    print("  -f --fed_name [name]  : Name of the Federate, default is PhysicalEntity.")
-    print(
-        "  -fe --fex_name [name] : Name of the Federation Execution, default is SpaceFOM_Roles_Test."
-    )
-    print("  -m --master [name]    : Name of the Master federate, default is Master.")
-    print("  --nostop              : Set no stop time on simulation.")
-    print("  -p --pacing [name]    : Name of the Pacing federate, default is Pacing.")
-    print("  -s --stop [time]      : Time to stop simulation, default is 10.0 seconds.")
-    print("  --verbose             : Show verbose messages.")
-    print(" ")
+   print(" ")
+   print("TrickHLA SpaceFOM Roles Test Simulation Command Line Configuration Options:")
+   print("  -h --help             : Print this help message.")
+   print("  -f --fed_name [name]  : Name of the Federate, default is PhysicalEntity.")
+   print(
+      "  -fe --fex_name [name] : Name of the Federation Execution, default is SpaceFOM_Roles_Test."
+   )
+   print("  -m --master [name]    : Name of the Master federate, default is Master.")
+   print("  --nostop              : Set no stop time on simulation.")
+   print("  -p --pacing [name]    : Name of the Pacing federate, default is Pacing.")
+   print("  -s --stop [time]      : Time to stop simulation, default is 10.0 seconds.")
+   print("  --verbose             : Show verbose messages.")
+   print(" ")
 
-    trick.exec_terminate_with_return(
-        -1,
-        sys._getframe(0).f_code.co_filename,
-        sys._getframe(0).f_lineno,
-        "Print usage message.",
-    )
-    return
+   trick.exec_terminate_with_return(
+      -1,
+      sys._getframe(0).f_code.co_filename,
+      sys._getframe(0).f_lineno,
+      "Print usage message.",
+   )
+   return
 
 
 def parse_command_line():
 
-    global print_usage
-    global run_duration
-    global verbose
-    global federate_name
-    global federation_name
-    global master_name
-    global pacing_name
-    global rrfp_name
+   global print_usage
+   global run_duration
+   global verbose
+   global federate_name
+   global federation_name
+   global master_name
+   global pacing_name
+   global rrfp_name
 
-    # Get the Trick command line arguments.
-    argc = trick.command_line_args_get_argc()
-    argv = trick.command_line_args_get_argv()
+   # Get the Trick command line arguments.
+   argc = trick.command_line_args_get_argc()
+   argv = trick.command_line_args_get_argv()
 
-    # Process the command line arguments.
-    # argv[0]=S_main*.exe, argv[1]=RUN/input.py file
-    index = 2
-    while index < argc:
+   # Process the command line arguments.
+   # argv[0]=S_main*.exe, argv[1]=RUN/input.py file
+   index = 2
+   while index < argc:
+      if (str(argv[index]) == "-h") | (str(argv[index]) == "--help"):
+         print_usage = True
 
-        if (str(argv[index]) == "-h") | (str(argv[index]) == "--help"):
+      elif (str(argv[index]) == "-f") | (str(argv[index]) == "--fed_name"):
+         index = index + 1
+         if index < argc:
+            federate_name = str(argv[index])
+         else:
+            print("ERROR: Missing --fed_name [name] argument.")
             print_usage = True
 
-        elif (str(argv[index]) == "-f") | (str(argv[index]) == "--fed_name"):
-            index = index + 1
-            if index < argc:
-                federate_name = str(argv[index])
-            else:
-                print("ERROR: Missing --fed_name [name] argument.")
-                print_usage = True
-
-        elif (str(argv[index]) == "-fe") | (str(argv[index]) == "--fex_name"):
-            index = index + 1
-            if index < argc:
-                federation_name = str(argv[index])
-            else:
-                print("ERROR: Missing --fex_name [name] argument.")
-                print_usage = True
-
-        elif (str(argv[index]) == "-m") | (str(argv[index]) == "--master"):
-            index = index + 1
-            if index < argc:
-                master_name = str(argv[index])
-            else:
-                print("ERROR: Missing --master [name] argument.")
-                print_usage = True
-
-        elif (str(argv[index]) == "-p") | (str(argv[index]) == "--pacing"):
-            index = index + 1
-            if index < argc:
-                pacing_name = str(argv[index])
-            else:
-                print("ERROR: Missing --pacing [name] argument.")
-                print_usage = True
-
-        elif str(argv[index]) == "-nostop":
-            run_duration = None
-
-        elif (str(argv[index]) == "-r") | (str(argv[index]) == "--root_frame"):
-            index = index + 1
-            if index < argc:
-                root_frame_name = str(argv[index])
-            else:
-                print("ERROR: Missing --root_frame [name] argument.")
-                print_usage = True
-
-        elif (str(argv[index]) == "-s") | (str(argv[index]) == "--stop"):
-            index = index + 1
-            if index < argc:
-                run_duration = float(str(argv[index]))
-            else:
-                print("ERROR: Missing -stop [time] argument.")
-                print_usage = True
-
-        elif str(argv[index]) == "--verbose":
-            verbose = True
-
-        elif str(argv[index]) == "-d":
-            # Pass this on to Trick.
-            break
-
-        else:
-            print("ERROR: Unknown command line argument " + str(argv[index]))
+      elif (str(argv[index]) == "-fe") | (str(argv[index]) == "--fex_name"):
+         index = index + 1
+         if index < argc:
+            federation_name = str(argv[index])
+         else:
+            print("ERROR: Missing --fex_name [name] argument.")
             print_usage = True
 
-        index = index + 1
-    return
+      elif (str(argv[index]) == "-m") | (str(argv[index]) == "--master"):
+         index = index + 1
+         if index < argc:
+            master_name = str(argv[index])
+         else:
+            print("ERROR: Missing --master [name] argument.")
+            print_usage = True
+
+      elif (str(argv[index]) == "-p") | (str(argv[index]) == "--pacing"):
+         index = index + 1
+         if index < argc:
+            pacing_name = str(argv[index])
+         else:
+            print("ERROR: Missing --pacing [name] argument.")
+            print_usage = True
+
+      elif str(argv[index]) == "-nostop":
+         run_duration = None
+
+      elif (str(argv[index]) == "-r") | (str(argv[index]) == "--root_frame"):
+         index = index + 1
+         if index < argc:
+            root_frame_name = str(argv[index])
+         else:
+            print("ERROR: Missing --root_frame [name] argument.")
+            print_usage = True
+
+      elif (str(argv[index]) == "-s") | (str(argv[index]) == "--stop"):
+         index = index + 1
+         if index < argc:
+            run_duration = float(str(argv[index]))
+         else:
+            print("ERROR: Missing -stop [time] argument.")
+            print_usage = True
+
+      elif str(argv[index]) == "--verbose":
+         verbose = True
+
+      elif str(argv[index]) == "-d":
+         # Pass this on to Trick.
+         break
+
+      else:
+         print("ERROR: Unknown command line argument " + str(argv[index]))
+         print_usage = True
+
+      index = index + 1
+   return
 
 
 # Default: Don't show usage.
@@ -179,7 +178,7 @@ root_frame_name = "RootFrame"
 parse_command_line()
 
 if print_usage == True:
-    print_usage_message()
+   print_usage_message()
 
 # ---------------------------------------------
 # Set up Trick executive parameters.
@@ -203,12 +202,12 @@ roles_sim_config.start_in_freeze(False)
 # =========================================================================
 # Instantiate the Python SpaceFOM configuration object.
 federate = SpaceFOMFederateConfig(
-    thla_federate=THLA.federate,
-    thla_control=THLA.execution_control,
-    thla_config=THLA.ExCO,
-    thla_federation_name=federation_name,
-    thla_federate_name=federate_name,
-    thla_enabled=True,
+   thla_federate=THLA.federate,
+   thla_control=THLA.execution_control,
+   thla_config=THLA.ExCO,
+   thla_federation_name=federation_name,
+   thla_federate_name=federate_name,
+   thla_enabled=True,
 )
 
 # Set the name of the ExCO S_define instance.
@@ -218,9 +217,9 @@ federate = SpaceFOMFederateConfig(
 
 # Set the debug output level.
 if verbose == True:
-    federate.set_debug_level(trick.TrickHLA.DEBUG_LEVEL_4_TRACE)
+   federate.set_debug_level(trick.TrickHLA.DEBUG_LEVEL_4_TRACE)
 else:
-    federate.set_debug_level(trick.TrickHLA.DEBUG_LEVEL_0_TRACE)
+   federate.set_debug_level(trick.TrickHLA.DEBUG_LEVEL_0_TRACE)
 
 # --------------------------------------------------------------------------
 # Configure this federate SpaceFOM roles for this federate.
@@ -316,10 +315,10 @@ ref_frame_tree.leaf_frame_data.state.time = 0.0
 # If it is NOT the RRFP, it will subscribe to the frame.
 # ---------------------------------------------------------------------------
 root_frame = SpaceFOMRefFrameObject(
-    create_frame_object=federate.is_RRFP,
-    frame_instance_name="RootFrame",
-    frame_S_define_instance=root_ref_frame.frame_packing,
-    frame_S_define_instance_name="root_ref_frame.frame_packing",
+   create_frame_object=federate.is_RRFP,
+   frame_instance_name="RootFrame",
+   frame_S_define_instance=root_ref_frame.frame_packing,
+   frame_S_define_instance_name="root_ref_frame.frame_packing",
 )
 
 # Set the debug flag for the root reference frame.
@@ -332,16 +331,16 @@ federate.set_root_frame(root_frame)
 # Set up an alternate vehicle reference frame object for discovery.
 # ---------------------------------------------------------------------------
 frame_A = SpaceFOMRefFrameObject(
-    create_frame_object=True,
-    frame_instance_name="FrameA",
-    frame_S_define_instance=leaf_ref_frame.frame_packing,
-    frame_S_define_instance_name="leaf_ref_frame.frame_packing",
-    parent_S_define_instance=root_ref_frame.frame_packing,
-    parent_name=root_frame_name,
-    frame_conditional=leaf_ref_frame.conditional,
-    frame_lag_comp=leaf_ref_frame.lag_compensation,
-    frame_ownership=leaf_ref_frame.ownership_handler,
-    frame_deleted=leaf_ref_frame.deleted_callback,
+   create_frame_object=True,
+   frame_instance_name="FrameA",
+   frame_S_define_instance=leaf_ref_frame.frame_packing,
+   frame_S_define_instance_name="leaf_ref_frame.frame_packing",
+   parent_S_define_instance=root_ref_frame.frame_packing,
+   parent_name=root_frame_name,
+   frame_conditional=leaf_ref_frame.conditional,
+   frame_lag_comp=leaf_ref_frame.lag_compensation,
+   frame_ownership=leaf_ref_frame.ownership_handler,
+   frame_deleted=leaf_ref_frame.deleted_callback,
 )
 
 # Set the debug flag for the root reference frame.
@@ -378,4 +377,4 @@ federate.initialize()
 # Set up simulation termination time.
 # ---------------------------------------------------------------------------
 if run_duration:
-    trick.sim_services.exec_set_terminate_time(run_duration)
+   trick.sim_services.exec_set_terminate_time(run_duration)

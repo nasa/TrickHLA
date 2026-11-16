@@ -32,17 +32,17 @@ import sys
 # Find the TrickHLA home location and append the path.
 trickhla_home = os.environ.get("TRICKHLA_HOME")
 if trickhla_home is None:
-    sys.exit(
-        "\033[91m" + "Environment variable TRICKHLA_HOME is not defined!" + "\033[0m\n"
-    )
+   sys.exit(
+      "\033[91m" + "Environment variable TRICKHLA_HOME is not defined!" + "\033[0m\n"
+   )
 else:
-    if os.path.isdir(trickhla_home) is False:
-        sys.exit("\033[91m" + "TRICKHLA_HOME not found: " + trickhla_home + "\033[0m\n")
+   if os.path.isdir(trickhla_home) is False:
+      sys.exit("\033[91m" + "TRICKHLA_HOME not found: " + trickhla_home + "\033[0m\n")
 
 # Append the path to the top level of the top level TrickHLA directory.
 # We need this to locate the TrickHLA_data Python data directory.
 if trickhla_home not in sys.path:
-    sys.path.append(trickhla_home)
+   sys.path.append(trickhla_home)
 
 # Import the Ball HLA Federate Configuration class.
 from Modified_data.BallFederateConfig import BallFederateConfig
@@ -70,8 +70,8 @@ from TrickHLA_data.SpaceFOM.TestRefFrameTree import *
 
 # Import the TrickHLA Time Statistics Data Recording Group class.
 from TrickHLA_data.TrickHLA.TrickHLATimeStatsDRG import (
-    TrickDataRecordingGroup,
-    TrickHLATimeStatsDRG,
+   TrickDataRecordingGroup,
+   TrickHLATimeStatsDRG,
 )
 
 # ---------------------------------------------------------------------------
@@ -182,11 +182,11 @@ ball_sim_config.thlamcp()
 # ---------------------------------------------------------------------------
 # Configure the Ball HLA data
 ball_fed_config = BallFederateConfig(
-    thla=THLA,
-    thla_init=THLA_INIT,
-    federate_name="Ball-test",
-    federation_name="BallFederation",
-    enabled=True,
+   thla=THLA,
+   thla_init=THLA_INIT,
+   federate_name="Ball-test",
+   federation_name="BallFederation",
+   enabled=True,
 )
 
 # Override the default CRC settings.
@@ -205,7 +205,7 @@ ball_fed_config.set_RRFP_role(True)  # This is the Root Reference Frame Publishe
 # Only the Master federate can set the LCTS in a SpaceFOM federate!
 # This call only sticks after the Master role is set!
 if ball_fed_config.is_master:
-    ball_fed_config.set_least_common_time_step(0.10)
+   ball_fed_config.set_least_common_time_step(0.10)
 
 #
 # Add in known required federates.
@@ -216,10 +216,10 @@ ball_fed_config.add_known_federate(True, str(ball_fed_config.federate.name), "Ba
 # Configure the Wall HLA data.
 # ...........................................................................
 walls_config = WallsObject(
-    create_walls_object=True,
-    walls_instance_name="walls",
-    walls_S_define_instance=walls_hla.packing,
-    walls_S_define_instance_name="walls_hla.packing",
+   create_walls_object=True,
+   walls_instance_name="walls",
+   walls_S_define_instance=walls_hla.packing,
+   walls_S_define_instance_name="walls_hla.packing",
 )
 ball_fed_config.add_fed_object(walls_config)
 
@@ -228,26 +228,26 @@ ball_fed_config.add_fed_object(walls_config)
 # objects.
 # ...........................................................................
 ball1_config = BallObject(
-    create_ball_object=True,
-    ball_instance_name=str(ball1.state.name),
-    ball_S_define_instance=ball1_hla.packing,
-    ball_S_define_instance_name="ball1_hla.packing",
+   create_ball_object=True,
+   ball_instance_name=str(ball1.state.name),
+   ball_S_define_instance=ball1_hla.packing,
+   ball_S_define_instance_name="ball1_hla.packing",
 )
 ball_fed_config.add_fed_object(ball1_config)
 
 ball2_config = BallObject(
-    create_ball_object=True,
-    ball_instance_name=str(ball2.state.name),
-    ball_S_define_instance=ball2_hla.packing,
-    ball_S_define_instance_name="ball2_hla.packing",
+   create_ball_object=True,
+   ball_instance_name=str(ball2.state.name),
+   ball_S_define_instance=ball2_hla.packing,
+   ball_S_define_instance_name="ball2_hla.packing",
 )
 ball_fed_config.add_fed_object(ball2_config)
 
 ball3_config = BallObject(
-    create_ball_object=True,
-    ball_instance_name=str(ball3.state.name),
-    ball_S_define_instance=ball3_hla.packing,
-    ball_S_define_instance_name="ball3_hla.packing",
+   create_ball_object=True,
+   ball_instance_name=str(ball3.state.name),
+   ball_S_define_instance=ball3_hla.packing,
+   ball_S_define_instance_name="ball3_hla.packing",
 )
 ball_fed_config.add_fed_object(ball3_config)
 
@@ -256,11 +256,11 @@ ball_fed_config.add_fed_object(ball3_config)
 # Set up a trivial test reference frame tree.
 # ...........................................................................
 test_frame_tree = TestFrameTree(
-    federate_config=ball_fed_config,
-    test_tree_sim_obj=ref_frame_tree,
-    root_frame_sim_obj=root_ref_frame,
-    leaf_frame_sim_obj=leaf_ref_frame,
-    tree_debug=False,
+   federate_config=ball_fed_config,
+   test_tree_sim_obj=ref_frame_tree,
+   root_frame_sim_obj=root_ref_frame,
+   leaf_frame_sim_obj=leaf_ref_frame,
+   tree_debug=False,
 )
 
 
@@ -289,7 +289,7 @@ ball_fed_config.initialize()
 # Manage simulation termination time.
 # ---------------------------------------------------------------------------
 if run_duration != None:
-    if run_duration == 0.0:
-        trick.stop(0.0)
-    else:
-        trick.sim_services.exec_set_terminate_time(run_duration)
+   if run_duration == 0.0:
+      trick.stop(0.0)
+   else:
+      trick.sim_services.exec_set_terminate_time(run_duration)

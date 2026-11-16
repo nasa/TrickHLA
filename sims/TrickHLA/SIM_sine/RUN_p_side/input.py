@@ -7,17 +7,17 @@ import sys
 # Find the TrickHLA home location and append the path.
 trickhla_home = os.environ.get("TRICKHLA_HOME")
 if trickhla_home is None:
-    sys.exit(
-        "\033[91m" + "Environment variable TRICKHLA_HOME is not defined!" + "\033[0m\n"
-    )
+   sys.exit(
+      "\033[91m" + "Environment variable TRICKHLA_HOME is not defined!" + "\033[0m\n"
+   )
 else:
-    if os.path.isdir(trickhla_home) is False:
-        sys.exit("\033[91m" + "TRICKHLA_HOME not found: " + trickhla_home + "\033[0m\n")
+   if os.path.isdir(trickhla_home) is False:
+      sys.exit("\033[91m" + "TRICKHLA_HOME not found: " + trickhla_home + "\033[0m\n")
 
 # Append the path to the top level of the top level TrickHLA directory.
 # We need this to locate the TrickHLA_data Python data directory.
 if trickhla_home not in sys.path:
-    sys.path.append(trickhla_home)
+   sys.path.append(trickhla_home)
 
 # ---------------------------------------------
 # Set up Trick executive parameters.
@@ -135,7 +135,7 @@ THLA.simple_sim_config.run_duration = run_duration
 interaction_service = THLA.federate.get_interaction_service()
 interaction_service.inter_count = 1
 interaction_service.interactions = trick.sim_services.alloc_type(
-    interaction_service.inter_count, "TrickHLA::Interaction"
+   interaction_service.inter_count, "TrickHLA::Interaction"
 )
 
 interaction_service.interactions[0].FOM_name = "Communication"
@@ -144,38 +144,38 @@ interaction_service.interactions[0].subscribe = True
 interaction_service.interactions[0].handler = P.interaction_handler
 interaction_service.interactions[0].param_count = 3
 interaction_service.interactions[0].parameters = trick.sim_services.alloc_type(
-    interaction_service.interactions[0].param_count, "TrickHLA::Parameter"
+   interaction_service.interactions[0].param_count, "TrickHLA::Parameter"
 )
 
 interaction_service.interactions[0].parameters[0].FOM_name = "Message"
 interaction_service.interactions[0].parameters[
-    0
+   0
 ].trick_name = "P.interaction_handler.message"
 interaction_service.interactions[0].parameters[
-    0
+   0
 ].rti_encoding = trick.ENCODING_UNICODE_STRING
 
 interaction_service.interactions[0].parameters[1].FOM_name = "time"
 interaction_service.interactions[0].parameters[
-    1
+   1
 ].trick_name = "P.interaction_handler.time"
 interaction_service.interactions[0].parameters[
-    1
+   1
 ].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
 interaction_service.interactions[0].parameters[2].FOM_name = "year"
 interaction_service.interactions[0].parameters[
-    2
+   2
 ].trick_name = "P.interaction_handler.year"
 interaction_service.interactions[0].parameters[
-    2
+   2
 ].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
 
 # The Federate has two objects, it publishes one and subscribes to another.
 THLA.federate.get_object_service().obj_count = 2
 THLA.federate.get_object_service().objects = trick.sim_services.alloc_type(
-    THLA.federate.get_object_service().obj_count, "TrickHLA::Object"
+   THLA.federate.get_object_service().obj_count, "TrickHLA::Object"
 )
 
 
@@ -191,7 +191,7 @@ THLA.federate.get_object_service().objects[0].conditional = A.conditional
 THLA.federate.get_object_service().objects[0].deleted = A.obj_deleted
 THLA.federate.get_object_service().objects[0].attr_count = 8
 THLA.federate.get_object_service().objects[0].attributes = trick.sim_services.alloc_type(
-    THLA.federate.get_object_service().objects[0].attr_count, "TrickHLA::Attribute"
+   THLA.federate.get_object_service().objects[0].attr_count, "TrickHLA::Attribute"
 )
 
 THLA.federate.get_object_service().objects[0].attributes[0].FOM_name = "Time"
@@ -201,19 +201,19 @@ THLA.federate.get_object_service().objects[0].attributes[0].publish = True
 THLA.federate.get_object_service().objects[0].attributes[0].subscribe = True
 THLA.federate.get_object_service().objects[0].attributes[0].locally_owned = False
 THLA.federate.get_object_service().objects[0].attributes[
-    0
+   0
 ].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
 THLA.federate.get_object_service().objects[0].attributes[1].FOM_name = "Value"
 THLA.federate.get_object_service().objects[0].attributes[1].trick_name = "A.packing.value"
 THLA.federate.get_object_service().objects[0].attributes[1].config = (
-    trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
+   trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
 )
 THLA.federate.get_object_service().objects[0].attributes[1].publish = True
 THLA.federate.get_object_service().objects[0].attributes[1].subscribe = True
 THLA.federate.get_object_service().objects[0].attributes[1].locally_owned = False
 THLA.federate.get_object_service().objects[0].attributes[
-    1
+   1
 ].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
 THLA.federate.get_object_service().objects[0].attributes[2].FOM_name = "dvdt"
@@ -223,19 +223,19 @@ THLA.federate.get_object_service().objects[0].attributes[2].publish = True
 THLA.federate.get_object_service().objects[0].attributes[2].subscribe = True
 THLA.federate.get_object_service().objects[0].attributes[2].locally_owned = False
 THLA.federate.get_object_service().objects[0].attributes[
-    2
+   2
 ].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
 THLA.federate.get_object_service().objects[0].attributes[3].FOM_name = "Phase"
 THLA.federate.get_object_service().objects[0].attributes[
-    3
+   3
 ].trick_name = "A.packing.phase_deg"  # using packed data instead of 'A.sim_data.phase'
 THLA.federate.get_object_service().objects[0].attributes[3].config = trick.CONFIG_CYCLIC
 THLA.federate.get_object_service().objects[0].attributes[3].publish = True
 THLA.federate.get_object_service().objects[0].attributes[3].subscribe = True
 THLA.federate.get_object_service().objects[0].attributes[3].locally_owned = False
 THLA.federate.get_object_service().objects[0].attributes[
-    3
+   3
 ].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
 THLA.federate.get_object_service().objects[0].attributes[4].FOM_name = "Frequency"
@@ -245,7 +245,7 @@ THLA.federate.get_object_service().objects[0].attributes[4].publish = True
 THLA.federate.get_object_service().objects[0].attributes[4].subscribe = True
 THLA.federate.get_object_service().objects[0].attributes[4].locally_owned = False
 THLA.federate.get_object_service().objects[0].attributes[
-    4
+   4
 ].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
 THLA.federate.get_object_service().objects[0].attributes[5].FOM_name = "Amplitude"
@@ -255,7 +255,7 @@ THLA.federate.get_object_service().objects[0].attributes[5].publish = True
 THLA.federate.get_object_service().objects[0].attributes[5].subscribe = True
 THLA.federate.get_object_service().objects[0].attributes[5].locally_owned = False
 THLA.federate.get_object_service().objects[0].attributes[
-    5
+   5
 ].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
 THLA.federate.get_object_service().objects[0].attributes[6].FOM_name = "Tolerance"
@@ -265,19 +265,19 @@ THLA.federate.get_object_service().objects[0].attributes[6].publish = True
 THLA.federate.get_object_service().objects[0].attributes[6].subscribe = True
 THLA.federate.get_object_service().objects[0].attributes[6].locally_owned = False
 THLA.federate.get_object_service().objects[0].attributes[
-    6
+   6
 ].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
 THLA.federate.get_object_service().objects[0].attributes[7].FOM_name = "Name"
 THLA.federate.get_object_service().objects[0].attributes[7].trick_name = "A.packing.name"
 THLA.federate.get_object_service().objects[0].attributes[7].config = (
-    trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
+   trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
 )
 THLA.federate.get_object_service().objects[0].attributes[7].publish = True
 THLA.federate.get_object_service().objects[0].attributes[7].subscribe = True
 THLA.federate.get_object_service().objects[0].attributes[7].locally_owned = False
 THLA.federate.get_object_service().objects[0].attributes[
-    7
+   7
 ].rti_encoding = trick.ENCODING_UNICODE_STRING
 
 
@@ -293,7 +293,7 @@ THLA.federate.get_object_service().objects[1].conditional = P.conditional
 THLA.federate.get_object_service().objects[1].deleted = P.obj_deleted
 THLA.federate.get_object_service().objects[1].attr_count = 8
 THLA.federate.get_object_service().objects[1].attributes = trick.sim_services.alloc_type(
-    THLA.federate.get_object_service().objects[1].attr_count, "TrickHLA::Attribute"
+   THLA.federate.get_object_service().objects[1].attr_count, "TrickHLA::Attribute"
 )
 
 THLA.federate.get_object_service().objects[1].attributes[0].FOM_name = "Time"
@@ -302,19 +302,19 @@ THLA.federate.get_object_service().objects[1].attributes[0].config = trick.CONFI
 THLA.federate.get_object_service().objects[1].attributes[0].publish = True
 THLA.federate.get_object_service().objects[1].attributes[0].locally_owned = True
 THLA.federate.get_object_service().objects[1].attributes[
-    0
+   0
 ].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
 THLA.federate.get_object_service().objects[1].attributes[1].FOM_name = "Value"
 THLA.federate.get_object_service().objects[1].attributes[1].trick_name = "P.packing.value"
 THLA.federate.get_object_service().objects[1].attributes[1].config = (
-    trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
+   trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
 )
 THLA.federate.get_object_service().objects[1].attributes[1].publish = True
 THLA.federate.get_object_service().objects[1].attributes[1].subscribe = True
 THLA.federate.get_object_service().objects[1].attributes[1].locally_owned = True
 THLA.federate.get_object_service().objects[1].attributes[
-    1
+   1
 ].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
 THLA.federate.get_object_service().objects[1].attributes[2].FOM_name = "dvdt"
@@ -323,18 +323,18 @@ THLA.federate.get_object_service().objects[1].attributes[2].config = trick.CONFI
 THLA.federate.get_object_service().objects[1].attributes[2].publish = True
 THLA.federate.get_object_service().objects[1].attributes[2].locally_owned = True
 THLA.federate.get_object_service().objects[1].attributes[
-    2
+   2
 ].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
 THLA.federate.get_object_service().objects[1].attributes[3].FOM_name = "Phase"
 THLA.federate.get_object_service().objects[1].attributes[
-    3
+   3
 ].trick_name = "P.packing.phase_deg"  # using packed data instead of 'P.sim_data.phase'
 THLA.federate.get_object_service().objects[1].attributes[3].config = trick.CONFIG_CYCLIC
 THLA.federate.get_object_service().objects[1].attributes[3].publish = True
 THLA.federate.get_object_service().objects[1].attributes[3].locally_owned = True
 THLA.federate.get_object_service().objects[1].attributes[
-    3
+   3
 ].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
 THLA.federate.get_object_service().objects[1].attributes[4].FOM_name = "Frequency"
@@ -343,7 +343,7 @@ THLA.federate.get_object_service().objects[1].attributes[4].config = trick.CONFI
 THLA.federate.get_object_service().objects[1].attributes[4].publish = True
 THLA.federate.get_object_service().objects[1].attributes[4].locally_owned = True
 THLA.federate.get_object_service().objects[1].attributes[
-    4
+   4
 ].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
 THLA.federate.get_object_service().objects[1].attributes[5].FOM_name = "Amplitude"
@@ -352,7 +352,7 @@ THLA.federate.get_object_service().objects[1].attributes[5].config = trick.CONFI
 THLA.federate.get_object_service().objects[1].attributes[5].publish = True
 THLA.federate.get_object_service().objects[1].attributes[5].locally_owned = True
 THLA.federate.get_object_service().objects[1].attributes[
-    5
+   5
 ].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
 THLA.federate.get_object_service().objects[1].attributes[6].FOM_name = "Tolerance"
@@ -361,18 +361,18 @@ THLA.federate.get_object_service().objects[1].attributes[6].config = trick.CONFI
 THLA.federate.get_object_service().objects[1].attributes[6].publish = True
 THLA.federate.get_object_service().objects[1].attributes[6].locally_owned = True
 THLA.federate.get_object_service().objects[1].attributes[
-    6
+   6
 ].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
 THLA.federate.get_object_service().objects[1].attributes[7].FOM_name = "Name"
 THLA.federate.get_object_service().objects[1].attributes[7].trick_name = "P.packing.name"
 THLA.federate.get_object_service().objects[1].attributes[7].config = (
-    trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
+   trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
 )
 THLA.federate.get_object_service().objects[1].attributes[7].publish = True
 THLA.federate.get_object_service().objects[1].attributes[7].locally_owned = True
 THLA.federate.get_object_service().objects[1].attributes[
-    7
+   7
 ].rti_encoding = trick.ENCODING_UNICODE_STRING
 
 # ---------------------------------------------

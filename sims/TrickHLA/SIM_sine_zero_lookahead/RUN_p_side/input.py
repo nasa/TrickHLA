@@ -7,17 +7,17 @@ import sys
 # Find the TrickHLA home location and append the path.
 trickhla_home = os.environ.get("TRICKHLA_HOME")
 if trickhla_home is None:
-    sys.exit(
-        "\033[91m" + "Environment variable TRICKHLA_HOME is not defined!" + "\033[0m\n"
-    )
+   sys.exit(
+      "\033[91m" + "Environment variable TRICKHLA_HOME is not defined!" + "\033[0m\n"
+   )
 else:
-    if os.path.isdir(trickhla_home) is False:
-        sys.exit("\033[91m" + "TRICKHLA_HOME not found: " + trickhla_home + "\033[0m\n")
+   if os.path.isdir(trickhla_home) is False:
+      sys.exit("\033[91m" + "TRICKHLA_HOME not found: " + trickhla_home + "\033[0m\n")
 
 # Append the path to the top level of the top level TrickHLA directory.
 # We need this to locate the TrickHLA_data Python data directory.
 if trickhla_home not in sys.path:
-    sys.path.append(trickhla_home)
+   sys.path.append(trickhla_home)
 
 
 # ---------------------------------------------
@@ -87,7 +87,7 @@ THLA.federate.debug_level = trick.DEBUG_LEVEL_4_TRACE
 # Specify the HLA base time unit (default: trick.HLA_BASE_TIME_MICROSECONDS)
 # and scale the Trick time tics value.
 THLA.federate.set_HLA_base_time_unit_and_scale_trick_tics(
-    trick.HLA_BASE_TIME_MICROSECONDS
+   trick.HLA_BASE_TIME_MICROSECONDS
 )
 
 # Configure the CRC.
@@ -140,7 +140,7 @@ THLA.simple_sim_config.run_duration = run_duration
 obj_service = THLA.federate.get_object_service()
 obj_service.obj_count = 4
 obj_service.objects = trick.sim_services.alloc_type(
-    obj_service.obj_count, "TrickHLA::Object"
+   obj_service.obj_count, "TrickHLA::Object"
 )
 
 
@@ -152,7 +152,7 @@ obj_service.objects[0].create_HLA_instance = False
 obj_service.objects[0].packing = AZ.packing
 obj_service.objects[0].attr_count = 8
 obj_service.objects[0].attributes = trick.sim_services.alloc_type(
-    obj_service.objects[0].attr_count, "TrickHLA::Attribute"
+   obj_service.objects[0].attr_count, "TrickHLA::Attribute"
 )
 
 obj_service.objects[0].attributes[0].FOM_name = "Time"
@@ -166,7 +166,7 @@ obj_service.objects[0].attributes[0].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 obj_service.objects[0].attributes[1].FOM_name = "Value"
 obj_service.objects[0].attributes[1].trick_name = "AZ.packing.value"
 obj_service.objects[0].attributes[1].config = (
-    trick.CONFIG_INITIALIZE + trick.CONFIG_ZERO_LOOKAHEAD
+   trick.CONFIG_INITIALIZE + trick.CONFIG_ZERO_LOOKAHEAD
 )
 obj_service.objects[0].attributes[1].publish = True
 obj_service.objects[0].attributes[1].subscribe = True
@@ -183,7 +183,7 @@ obj_service.objects[0].attributes[2].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
 obj_service.objects[0].attributes[3].FOM_name = "Phase"
 obj_service.objects[0].attributes[
-    3
+   3
 ].trick_name = "AZ.packing.phase_deg"  # using packed data instead of 'AZ.sim_data.phase'
 obj_service.objects[0].attributes[3].config = trick.CONFIG_ZERO_LOOKAHEAD
 obj_service.objects[0].attributes[3].publish = True
@@ -218,7 +218,7 @@ obj_service.objects[0].attributes[6].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 obj_service.objects[0].attributes[7].FOM_name = "Name"
 obj_service.objects[0].attributes[7].trick_name = "AZ.packing.name"
 obj_service.objects[0].attributes[7].config = (
-    trick.CONFIG_INITIALIZE + trick.CONFIG_ZERO_LOOKAHEAD
+   trick.CONFIG_INITIALIZE + trick.CONFIG_ZERO_LOOKAHEAD
 )
 obj_service.objects[0].attributes[7].publish = True
 obj_service.objects[0].attributes[7].subscribe = True
@@ -234,7 +234,7 @@ obj_service.objects[1].create_HLA_instance = True
 obj_service.objects[1].packing = PZ.packing
 obj_service.objects[1].attr_count = 8
 obj_service.objects[1].attributes = trick.sim_services.alloc_type(
-    obj_service.objects[1].attr_count, "TrickHLA::Attribute"
+   obj_service.objects[1].attr_count, "TrickHLA::Attribute"
 )
 
 obj_service.objects[1].attributes[0].FOM_name = "Time"
@@ -261,7 +261,7 @@ obj_service.objects[1].attributes[2].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
 obj_service.objects[1].attributes[3].FOM_name = "Phase"
 obj_service.objects[1].attributes[
-    3
+   3
 ].trick_name = "PZ.packing.phase_deg"  # using packed data instead of 'PZ.sim_data.phase'
 obj_service.objects[1].attributes[3].config = trick.CONFIG_ZERO_LOOKAHEAD
 obj_service.objects[1].attributes[3].publish = True
@@ -303,7 +303,7 @@ obj_service.objects[2].create_HLA_instance = False
 obj_service.objects[2].packing = AC.packing
 obj_service.objects[2].attr_count = 8
 obj_service.objects[2].attributes = trick.sim_services.alloc_type(
-    obj_service.objects[2].attr_count, "TrickHLA::Attribute"
+   obj_service.objects[2].attr_count, "TrickHLA::Attribute"
 )
 
 obj_service.objects[2].attributes[0].FOM_name = "Time"
@@ -317,7 +317,7 @@ obj_service.objects[2].attributes[0].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 obj_service.objects[2].attributes[1].FOM_name = "Value"
 obj_service.objects[2].attributes[1].trick_name = "AC.packing.value"
 obj_service.objects[2].attributes[1].config = (
-    trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
+   trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
 )
 obj_service.objects[2].attributes[1].publish = True
 obj_service.objects[2].attributes[1].subscribe = True
@@ -334,7 +334,7 @@ obj_service.objects[2].attributes[2].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
 obj_service.objects[2].attributes[3].FOM_name = "Phase"
 obj_service.objects[2].attributes[
-    3
+   3
 ].trick_name = "AC.packing.phase_deg"  # using packed data instead of 'AC.sim_data.phase'
 obj_service.objects[2].attributes[3].config = trick.CONFIG_CYCLIC
 obj_service.objects[2].attributes[3].publish = True
@@ -369,7 +369,7 @@ obj_service.objects[2].attributes[6].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 obj_service.objects[2].attributes[7].FOM_name = "Name"
 obj_service.objects[2].attributes[7].trick_name = "AC.packing.name"
 obj_service.objects[2].attributes[7].config = (
-    trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
+   trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
 )
 obj_service.objects[2].attributes[7].publish = True
 obj_service.objects[2].attributes[7].subscribe = True
@@ -383,7 +383,7 @@ obj_service.objects[3].create_HLA_instance = True
 obj_service.objects[3].packing = PC.packing
 obj_service.objects[3].attr_count = 8
 obj_service.objects[3].attributes = trick.sim_services.alloc_type(
-    obj_service.objects[3].attr_count, "TrickHLA::Attribute"
+   obj_service.objects[3].attr_count, "TrickHLA::Attribute"
 )
 
 obj_service.objects[3].attributes[0].FOM_name = "Time"
@@ -396,7 +396,7 @@ obj_service.objects[3].attributes[0].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 obj_service.objects[3].attributes[1].FOM_name = "Value"
 obj_service.objects[3].attributes[1].trick_name = "PC.packing.value"
 obj_service.objects[3].attributes[1].config = (
-    trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
+   trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
 )
 obj_service.objects[3].attributes[1].publish = True
 obj_service.objects[3].attributes[1].subscribe = True
@@ -412,7 +412,7 @@ obj_service.objects[3].attributes[2].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
 obj_service.objects[3].attributes[3].FOM_name = "Phase"
 obj_service.objects[3].attributes[
-    3
+   3
 ].trick_name = "PC.packing.phase_deg"  # using packed data instead of 'PC.sim_data.phase'
 obj_service.objects[3].attributes[3].config = trick.CONFIG_CYCLIC
 obj_service.objects[3].attributes[3].publish = True
@@ -443,7 +443,7 @@ obj_service.objects[3].attributes[6].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 obj_service.objects[3].attributes[7].FOM_name = "Name"
 obj_service.objects[3].attributes[7].trick_name = "PC.packing.name"
 obj_service.objects[3].attributes[7].config = (
-    trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
+   trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
 )
 obj_service.objects[3].attributes[7].publish = True
 obj_service.objects[3].attributes[7].locally_owned = True

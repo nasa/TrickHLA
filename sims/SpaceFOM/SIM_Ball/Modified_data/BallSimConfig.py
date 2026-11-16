@@ -36,93 +36,90 @@ from TrickHLA_data.Trick.TrickSimConfig import *
 
 
 class BallSimConfig(TrickSimConfig):
+   # Class constructor.
+   def __init__(self, sim_name):
 
-    # Class constructor.
-    def __init__(self, sim_name):
+      # Newer Trick releases require activation of the variable server interface.
+      if "var_allow_connections" in dir(trick):
+         trick.var_resolve_hostname()
+         trick.var_allow_connections()
 
-        # Newer Trick releases require activation of the variable server interface.
-        if "var_allow_connections" in dir(trick):
-            trick.var_resolve_hostname()
-            trick.var_allow_connections()
+      # Fix the variable server address error.
+      self.fix_var_server_source_address()
 
-        # Fix the variable server address error.
-        self.fix_var_server_source_address()
+      # Set the name for the simulation.
+      self.sim_name = sim_name
 
-        # Set the name for the simulation.
-        self.sim_name = sim_name
+      # Get the variable server port.
+      self.variable_server_host = trick.var_server_get_hostname()
+      self.variable_server_port = trick.var_server_get_port()
 
-        # Get the variable server port.
-        self.variable_server_host = trick.var_server_get_hostname()
-        self.variable_server_port = trick.var_server_get_port()
+      # Call the TrickDataRecordingGroup constructor.
+      TrickSimConfig.__init__(self, sim_name)
 
-        # Call the TrickDataRecordingGroup constructor.
-        TrickSimConfig.__init__(self, sim_name)
+      return
 
-        return
+   def ball_graphics(self):
 
-    def ball_graphics(self):
+      # Set the Ball graphics command path.
+      self.command_path = "../../../models/Ball/graphics/dist/BallDisplay.jar"
 
-        # Set the Ball graphics command path.
-        self.command_path = "../../../models/Ball/graphics/dist/BallDisplay.jar"
+      # Check to see if the command exists.
+      if os.path.isfile(self.command_path):
+         # Build the Ball graphics command.
+         self.ball_graphics_command = "java -jar " + self.command_path
 
-        # Check to see if the command exists.
-        if os.path.isfile(self.command_path):
+         # Set this up as a Trick external application.
+         self.ballGraphicsApp = trick.ExternalApplication()
+         self.ballGraphicsApp.set_startup_command(self.ball_graphics_command)
+         self.ballGraphicsApp.set_arguments(str(self.variable_server_port))
+         trick.add_external_application(self.ballGraphicsApp)
 
-            # Build the Ball graphics command.
-            self.ball_graphics_command = "java -jar " + self.command_path
+      else:
+         print(
+            "====================================================================================="
+         )
+         print(
+            'BallDisplay needs to be built. Please "cd" into models/Ball/graphics and type "make".'
+         )
+         print(
+            "====================================================================================="
+         )
 
-            # Set this up as a Trick external application.
-            self.ballGraphicsApp = trick.ExternalApplication()
-            self.ballGraphicsApp.set_startup_command(self.ball_graphics_command)
-            self.ballGraphicsApp.set_arguments(str(self.variable_server_port))
-            trick.add_external_application(self.ballGraphicsApp)
+      return
 
-        else:
-            print(
-                "====================================================================================="
-            )
-            print(
-                'BallDisplay needs to be built. Please "cd" into models/Ball/graphics and type "make".'
-            )
-            print(
-                "====================================================================================="
-            )
+   def thlamcp(self):
 
-        return
+      # Set the Ball graphics command path.
+      self.command_path = "../../../scripts/thlamcp.py"
 
-    def thlamcp(self):
+      # Check to see if the command exists.
+      if os.path.isfile(self.command_path):
+         # Build the TrickHLA Master Control Panel command.
+         self.thlamcp_command = self.command_path
 
-        # Set the Ball graphics command path.
-        self.command_path = "../../../scripts/thlamcp.py"
+         # Set this up as a Trick external application.
+         self.thlamcpApp = trick.ExternalApplication()
+         self.thlamcpApp.set_startup_command(self.thlamcp_command)
+         # self.thlamcpApp.set_arguments( '--auto' )
+         self.thlamcpApp.set_arguments(
+            "--auto -c "
+            + str(self.variable_server_host)
+            + " -p "
+            + str(self.variable_server_port)
+         )
+         # self.thlamcpApp.set_port( self.variable_server_port )
+         trick.add_external_application(self.thlamcpApp)
 
-        # Check to see if the command exists.
-        if os.path.isfile(self.command_path):
+      else:
+         print(
+            "====================================================================================="
+         )
+         print(
+            'BallDisplay needs to be built. Please "cd" into models/Ball/graphics and type "make".'
+         )
+         print(
+            "====================================================================================="
+         )
 
-            # Build the TrickHLA Master Control Panel command.
-            self.thlamcp_command = self.command_path
-
-            # Set this up as a Trick external application.
-            self.thlamcpApp = trick.ExternalApplication()
-            self.thlamcpApp.set_startup_command(self.thlamcp_command)
-            # self.thlamcpApp.set_arguments( '--auto' )
-            self.thlamcpApp.set_arguments(
-                "--auto -c "
-                + str(self.variable_server_host)
-                + " -p "
-                + str(self.variable_server_port)
-            )
-            # self.thlamcpApp.set_port( self.variable_server_port )
-            trick.add_external_application(self.thlamcpApp)
-
-        else:
-            print(
-                "====================================================================================="
-            )
-            print(
-                'BallDisplay needs to be built. Please "cd" into models/Ball/graphics and type "make".'
-            )
-            print(
-                "====================================================================================="
-            )
-
-        return
+      return

@@ -4,17 +4,17 @@ import sys
 # Find the TrickHLA home location and append the path.
 trickhla_home = os.environ.get("TRICKHLA_HOME")
 if trickhla_home is None:
-    sys.exit(
-        "\033[91m" + "Environment variable TRICKHLA_HOME is not defined!" + "\033[0m\n"
-    )
+   sys.exit(
+      "\033[91m" + "Environment variable TRICKHLA_HOME is not defined!" + "\033[0m\n"
+   )
 else:
-    if os.path.isdir(trickhla_home) is False:
-        sys.exit("\033[91m" + "TRICKHLA_HOME not found: " + trickhla_home + "\033[0m\n")
+   if os.path.isdir(trickhla_home) is False:
+      sys.exit("\033[91m" + "TRICKHLA_HOME not found: " + trickhla_home + "\033[0m\n")
 
 # Append the path to the top level of the top level TrickHLA directory.
 # We need this to locate the TrickHLA_data Python data directory.
 if trickhla_home not in sys.path:
-    sys.path.append(trickhla_home)
+   sys.path.append(trickhla_home)
 
 # ---------------------------------------------
 # Set up Trick executive parameters.
@@ -72,8 +72,8 @@ P.interaction_handler.message = "A-side: P.interaction_handler.message"
 
 # Send an interaction.
 trick.add_read(
-    12.0,
-    """A.interaction_handler.send_sine_interaction( THLA_INIT.scenario_timeline.get_time() )""",
+   12.0,
+   """A.interaction_handler.send_sine_interaction( THLA_INIT.scenario_timeline.get_time() )""",
 )
 
 
@@ -137,7 +137,7 @@ THLA.imsim_config.run_duration = run_duration
 interaction_service = THLA.federate.get_interaction_service()
 interaction_service.inter_count = 1
 interaction_service.interactions = trick.sim_services.alloc_type(
-    interaction_service.inter_count, "TrickHLA::Interaction"
+   interaction_service.inter_count, "TrickHLA::Interaction"
 )
 
 interaction_service.interactions[0].FOM_name = "Communication"
@@ -146,31 +146,31 @@ interaction_service.interactions[0].subscribe = False
 interaction_service.interactions[0].handler = A.interaction_handler
 interaction_service.interactions[0].param_count = 3
 interaction_service.interactions[0].parameters = trick.sim_services.alloc_type(
-    interaction_service.interactions[0].param_count, "TrickHLA::Parameter"
+   interaction_service.interactions[0].param_count, "TrickHLA::Parameter"
 )
 
 interaction_service.interactions[0].parameters[0].FOM_name = "Message"
 interaction_service.interactions[0].parameters[
-    0
+   0
 ].trick_name = "A.interaction_handler.message"
 interaction_service.interactions[0].parameters[
-    0
+   0
 ].rti_encoding = trick.ENCODING_UNICODE_STRING
 
 interaction_service.interactions[0].parameters[1].FOM_name = "time"
 interaction_service.interactions[0].parameters[
-    1
+   1
 ].trick_name = "A.interaction_handler.time"
 interaction_service.interactions[0].parameters[
-    1
+   1
 ].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
 interaction_service.interactions[0].parameters[2].FOM_name = "year"
 interaction_service.interactions[0].parameters[
-    2
+   2
 ].trick_name = "A.interaction_handler.year"
 interaction_service.interactions[0].parameters[
-    2
+   2
 ].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
 
@@ -178,7 +178,7 @@ interaction_service.interactions[0].parameters[
 obj_service = THLA.federate.get_object_service()
 obj_service.obj_count = 2
 obj_service.objects = trick.sim_services.alloc_type(
-    obj_service.obj_count, "TrickHLA::Object"
+   obj_service.obj_count, "TrickHLA::Object"
 )
 
 # Configure the object this federate will create an HLA instance and
@@ -194,7 +194,7 @@ obj_service.objects[0].conditional = A.conditional
 obj_service.objects[0].deleted = A.obj_deleted
 obj_service.objects[0].attr_count = 8
 obj_service.objects[0].attributes = trick.sim_services.alloc_type(
-    obj_service.objects[0].attr_count, "TrickHLA::Attribute"
+   obj_service.objects[0].attr_count, "TrickHLA::Attribute"
 )
 
 obj_service.objects[0].attributes[0].FOM_name = "Time"
@@ -207,7 +207,7 @@ obj_service.objects[0].attributes[0].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 obj_service.objects[0].attributes[1].FOM_name = "Value"
 obj_service.objects[0].attributes[1].trick_name = "A.packing.value"
 obj_service.objects[0].attributes[1].config = (
-    trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
+   trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
 )
 obj_service.objects[0].attributes[1].publish = True
 obj_service.objects[0].attributes[1].subscribe = True
@@ -223,7 +223,7 @@ obj_service.objects[0].attributes[2].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
 obj_service.objects[0].attributes[3].FOM_name = "Phase"
 obj_service.objects[0].attributes[
-    3
+   3
 ].trick_name = "A.packing.phase_deg"  # using packed data instead of 'A.sim_data.phase'
 obj_service.objects[0].attributes[3].config = trick.CONFIG_CYCLIC
 obj_service.objects[0].attributes[3].publish = True
@@ -254,7 +254,7 @@ obj_service.objects[0].attributes[6].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 obj_service.objects[0].attributes[7].FOM_name = "Name"
 obj_service.objects[0].attributes[7].trick_name = "A.packing.name"
 obj_service.objects[0].attributes[7].config = (
-    trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
+   trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
 )
 obj_service.objects[0].attributes[7].publish = True
 obj_service.objects[0].attributes[7].locally_owned = True
@@ -272,7 +272,7 @@ obj_service.objects[1].conditional = P.conditional
 obj_service.objects[1].deleted = P.obj_deleted
 obj_service.objects[1].attr_count = 8
 obj_service.objects[1].attributes = trick.sim_services.alloc_type(
-    obj_service.objects[1].attr_count, "TrickHLA::Attribute"
+   obj_service.objects[1].attr_count, "TrickHLA::Attribute"
 )
 
 obj_service.objects[1].attributes[0].FOM_name = "Time"
@@ -285,7 +285,7 @@ obj_service.objects[1].attributes[0].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 obj_service.objects[1].attributes[1].FOM_name = "Value"
 obj_service.objects[1].attributes[1].trick_name = "P.packing.value"
 obj_service.objects[1].attributes[1].config = (
-    trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
+   trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
 )
 obj_service.objects[1].attributes[1].publish = True
 obj_service.objects[1].attributes[1].subscribe = True
@@ -302,7 +302,7 @@ obj_service.objects[1].attributes[2].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
 obj_service.objects[1].attributes[3].FOM_name = "Phase"
 obj_service.objects[1].attributes[
-    3
+   3
 ].trick_name = "P.packing.phase_deg"  # using packed data instead of 'P.sim_data.phase'
 obj_service.objects[1].attributes[3].config = trick.CONFIG_CYCLIC
 obj_service.objects[1].attributes[3].subscribe = True
@@ -333,7 +333,7 @@ obj_service.objects[1].attributes[6].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 obj_service.objects[1].attributes[7].FOM_name = "Name"
 obj_service.objects[1].attributes[7].trick_name = "P.packing.name"
 obj_service.objects[1].attributes[7].config = (
-    trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
+   trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
 )
 obj_service.objects[1].attributes[7].subscribe = True
 obj_service.objects[1].attributes[7].locally_owned = False

@@ -36,47 +36,45 @@ from TrickHLA_data.Trick.TrickSimConfig import *
 
 
 class BallSimConfig(TrickSimConfig):
+   # Class constructor.
+   def __init__(self, sim_name):
 
-    # Class constructor.
-    def __init__(self, sim_name):
+      # Set the name for the simulation.
+      self.sim_name = sim_name
 
-        # Set the name for the simulation.
-        self.sim_name = sim_name
+      # Get the variable server port.
+      self.variable_server_port = trick.var_server_get_port()
 
-        # Get the variable server port.
-        self.variable_server_port = trick.var_server_get_port()
+      # Call the TrickDataRecordingGroup constructor.
+      TrickSimConfig.__init__(self, sim_name)
 
-        # Call the TrickDataRecordingGroup constructor.
-        TrickSimConfig.__init__(self, sim_name)
+      return
 
-        return
+   def ball_graphics(self):
 
-    def ball_graphics(self):
+      # Set the Ball graphics command path.
+      self.command_path = "../../../models/Ball/graphics/dist/BallDisplay.jar"
 
-        # Set the Ball graphics command path.
-        self.command_path = "../../../models/Ball/graphics/dist/BallDisplay.jar"
+      # Check to see if the command exists.
+      if os.path.isfile(self.command_path):
+         # Build the Ball graphics command.
+         self.ball_graphics_command = "java -jar " + self.command_path
 
-        # Check to see if the command exists.
-        if os.path.isfile(self.command_path):
+         # Set this up as a Trick external application.
+         self.ballGraphicsApp = trick.ExternalApplication()
+         self.ballGraphicsApp.set_startup_command(self.ball_graphics_command)
+         self.ballGraphicsApp.set_arguments(str(self.variable_server_port))
+         trick.add_external_application(self.ballGraphicsApp)
 
-            # Build the Ball graphics command.
-            self.ball_graphics_command = "java -jar " + self.command_path
+      else:
+         print(
+            "====================================================================================="
+         )
+         print(
+            'BallDisplay needs to be built. Please "cd" into models/Ball/graphics and type "make".'
+         )
+         print(
+            "====================================================================================="
+         )
 
-            # Set this up as a Trick external application.
-            self.ballGraphicsApp = trick.ExternalApplication()
-            self.ballGraphicsApp.set_startup_command(self.ball_graphics_command)
-            self.ballGraphicsApp.set_arguments(str(self.variable_server_port))
-            trick.add_external_application(self.ballGraphicsApp)
-
-        else:
-            print(
-                "====================================================================================="
-            )
-            print(
-                'BallDisplay needs to be built. Please "cd" into models/Ball/graphics and type "make".'
-            )
-            print(
-                "====================================================================================="
-            )
-
-        return
+      return

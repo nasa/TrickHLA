@@ -21,17 +21,17 @@ import sys
 # Find the TrickHLA home location and append the path.
 trickhla_home = os.environ.get("TRICKHLA_HOME")
 if trickhla_home is None:
-    sys.exit(
-        "\033[91m" + "Environment variable TRICKHLA_HOME is not defined!" + "\033[0m\n"
-    )
+   sys.exit(
+      "\033[91m" + "Environment variable TRICKHLA_HOME is not defined!" + "\033[0m\n"
+   )
 else:
-    if os.path.isdir(trickhla_home) is False:
-        sys.exit("\033[91m" + "TRICKHLA_HOME not found: " + trickhla_home + "\033[0m\n")
+   if os.path.isdir(trickhla_home) is False:
+      sys.exit("\033[91m" + "TRICKHLA_HOME not found: " + trickhla_home + "\033[0m\n")
 
 # Append the path to the top level of the top level TrickHLA directory.
 # We need this to locate the TrickHLA_data Python data directory.
 if trickhla_home not in sys.path:
-    sys.path.append(trickhla_home)
+   sys.path.append(trickhla_home)
 
 # Load the sine specific Sine object.
 from TrickHLA_data.sine.SineObject import *
@@ -45,99 +45,98 @@ from TrickHLA_data.SpaceFOM.SpaceFOMRefFrameObject import *
 
 def print_usage_message():
 
-    print(" ")
-    print("TrickHLA Sine Wave SpaceFOM Simulation Command Line Configuration Options:")
-    print("  -h --help              : Print this help message.")
-    print("  -f --fed_name [name]   : Name of the Federate, default is A-side-Federate.")
-    print(
-        "  -fe --fex_name [name]  : Name of the Federation Execution, default is SpaceFOM_sine."
-    )
-    print("  --nostop               : Set no stop time on simulation.")
-    print(
-        "  -r --root_frame [name] : Name of the root reference frame, default is RootFrame."
-    )
-    print("  -s --stop [time]       : Time to stop simulation, default is 10.0 seconds.")
-    print("  --verbose              : Show verbose messages.")
-    print(" ")
+   print(" ")
+   print("TrickHLA Sine Wave SpaceFOM Simulation Command Line Configuration Options:")
+   print("  -h --help              : Print this help message.")
+   print("  -f --fed_name [name]   : Name of the Federate, default is A-side-Federate.")
+   print(
+      "  -fe --fex_name [name]  : Name of the Federation Execution, default is SpaceFOM_sine."
+   )
+   print("  --nostop               : Set no stop time on simulation.")
+   print(
+      "  -r --root_frame [name] : Name of the root reference frame, default is RootFrame."
+   )
+   print("  -s --stop [time]       : Time to stop simulation, default is 10.0 seconds.")
+   print("  --verbose              : Show verbose messages.")
+   print(" ")
 
-    trick.exec_terminate_with_return(
-        -1,
-        sys._getframe(0).f_code.co_filename,
-        sys._getframe(0).f_lineno,
-        "Print usage message.",
-    )
-    return
+   trick.exec_terminate_with_return(
+      -1,
+      sys._getframe(0).f_code.co_filename,
+      sys._getframe(0).f_lineno,
+      "Print usage message.",
+   )
+   return
 
 
 def parse_command_line():
 
-    global print_usage
-    global run_duration
-    global verbose
-    global federate_name
-    global federation_name
-    global root_frame_name
+   global print_usage
+   global run_duration
+   global verbose
+   global federate_name
+   global federation_name
+   global root_frame_name
 
-    # Get the Trick command line arguments.
-    argc = trick.command_line_args_get_argc()
-    argv = trick.command_line_args_get_argv()
+   # Get the Trick command line arguments.
+   argc = trick.command_line_args_get_argc()
+   argv = trick.command_line_args_get_argv()
 
-    # Process the command line arguments.
-    # argv[0]=S_main*.exe, argv[1]=RUN/input.py file
-    index = 2
-    while index < argc:
+   # Process the command line arguments.
+   # argv[0]=S_main*.exe, argv[1]=RUN/input.py file
+   index = 2
+   while index < argc:
+      if (str(argv[index]) == "-h") | (str(argv[index]) == "--help"):
+         print_usage = True
 
-        if (str(argv[index]) == "-h") | (str(argv[index]) == "--help"):
+      elif (str(argv[index]) == "-f") | (str(argv[index]) == "--fed_name"):
+         index = index + 1
+         if index < argc:
+            federate_name = str(argv[index])
+         else:
+            print("ERROR: Missing --fed_name [name] argument.")
             print_usage = True
 
-        elif (str(argv[index]) == "-f") | (str(argv[index]) == "--fed_name"):
-            index = index + 1
-            if index < argc:
-                federate_name = str(argv[index])
-            else:
-                print("ERROR: Missing --fed_name [name] argument.")
-                print_usage = True
-
-        elif (str(argv[index]) == "-fe") | (str(argv[index]) == "--fex_name"):
-            index = index + 1
-            if index < argc:
-                federation_name = str(argv[index])
-            else:
-                print("ERROR: Missing --fex_name [name] argument.")
-                print_usage = True
-
-        elif (str(argv[index]) == "-r") | (str(argv[index]) == "--root_frame"):
-            index = index + 1
-            if index < argc:
-                root_frame_name = str(argv[index])
-            else:
-                print("ERROR: Missing --root_frame [name] argument.")
-                print_usage = True
-
-        elif str(argv[index]) == "--nostop":
-            run_duration = None
-
-        elif (str(argv[index]) == "-s") | (str(argv[index]) == "--stop"):
-            index = index + 1
-            if index < argc:
-                run_duration = float(str(argv[index]))
-            else:
-                print("ERROR: Missing -stop [time] argument.")
-                print_usage = True
-
-        elif str(argv[index]) == "--verbose":
-            verbose = True
-
-        elif str(argv[index]) == "-d":
-            # Pass this on to Trick.
-            break
-
-        else:
-            print("ERROR: Unknown command line argument " + str(argv[index]))
+      elif (str(argv[index]) == "-fe") | (str(argv[index]) == "--fex_name"):
+         index = index + 1
+         if index < argc:
+            federation_name = str(argv[index])
+         else:
+            print("ERROR: Missing --fex_name [name] argument.")
             print_usage = True
 
-        index = index + 1
-    return
+      elif (str(argv[index]) == "-r") | (str(argv[index]) == "--root_frame"):
+         index = index + 1
+         if index < argc:
+            root_frame_name = str(argv[index])
+         else:
+            print("ERROR: Missing --root_frame [name] argument.")
+            print_usage = True
+
+      elif str(argv[index]) == "--nostop":
+         run_duration = None
+
+      elif (str(argv[index]) == "-s") | (str(argv[index]) == "--stop"):
+         index = index + 1
+         if index < argc:
+            run_duration = float(str(argv[index]))
+         else:
+            print("ERROR: Missing -stop [time] argument.")
+            print_usage = True
+
+      elif str(argv[index]) == "--verbose":
+         verbose = True
+
+      elif str(argv[index]) == "-d":
+         # Pass this on to Trick.
+         break
+
+      else:
+         print("ERROR: Unknown command line argument " + str(argv[index]))
+         print_usage = True
+
+      index = index + 1
+   return
 
 
 # Default: Don't show usage.
@@ -161,7 +160,7 @@ root_frame_name = "RootFrame"
 parse_command_line()
 
 if print_usage == True:
-    print_usage_message()
+   print_usage_message()
 
 # ---------------------------------------------
 # Set up Trick executive parameters.
@@ -194,12 +193,12 @@ log_sine_states("P", 0.250)
 # =========================================================================
 # Instantiate the Python SpaceFOM configuration object.
 federate = SpaceFOMFederateConfig(
-    thla_federate=THLA.federate,
-    thla_control=THLA.execution_control,
-    thla_config=THLA.ExCO,
-    thla_federation_name=federation_name,
-    thla_federate_name=federate_name,
-    thla_enabled=True,
+   thla_federate=THLA.federate,
+   thla_control=THLA.execution_control,
+   thla_config=THLA.ExCO,
+   thla_federation_name=federation_name,
+   thla_federate_name=federate_name,
+   thla_enabled=True,
 )
 
 # Set the name of the ExCO S_define instance.
@@ -209,9 +208,9 @@ federate = SpaceFOMFederateConfig(
 
 # Set the debug output level.
 if verbose == True:
-    federate.set_debug_level(trick.TrickHLA.DEBUG_LEVEL_4_TRACE)
+   federate.set_debug_level(trick.TrickHLA.DEBUG_LEVEL_4_TRACE)
 else:
-    federate.set_debug_level(trick.TrickHLA.DEBUG_LEVEL_0_TRACE)
+   federate.set_debug_level(trick.TrickHLA.DEBUG_LEVEL_0_TRACE)
 
 # --------------------------------------------------------------------------
 # Configure this federate SpaceFOM roles for this federate.
@@ -296,33 +295,33 @@ P.interaction_handler.message = "A-side: P.interaction_handler.message"
 # ---------------------------------------------------------------------------
 
 sine_A = SineObject(
-    sine_create_object=True,
-    sine_obj_instance_name="A-side-Federate.Sine",
-    sine_trick_sim_obj_name="A",
-    sine_packing=IMSim_A.packing,
-    sine_conditional=IMSim_A.conditional,
-    sine_lag_comp=IMSim_A.lag_compensation,
-    sine_lag_comp_type=trick.TrickHLA.LAG_COMPENSATION_NONE,
-    sine_ownership=IMSim_A.ownership_handler,
-    sine_deleted=IMSim_A.obj_deleted,
-    sine_attribute_publish=True,
-    sine_attribute_subscribe=True,
+   sine_create_object=True,
+   sine_obj_instance_name="A-side-Federate.Sine",
+   sine_trick_sim_obj_name="A",
+   sine_packing=IMSim_A.packing,
+   sine_conditional=IMSim_A.conditional,
+   sine_lag_comp=IMSim_A.lag_compensation,
+   sine_lag_comp_type=trick.TrickHLA.LAG_COMPENSATION_NONE,
+   sine_ownership=IMSim_A.ownership_handler,
+   sine_deleted=IMSim_A.obj_deleted,
+   sine_attribute_publish=True,
+   sine_attribute_subscribe=True,
 )
 
 # Add this sine object to the list of managed objects.
 federate.add_fed_object(sine_A)
 
 sine_P = SineObject(
-    sine_create_object=False,
-    sine_obj_instance_name="P-side-Federate.Sine",
-    sine_trick_sim_obj_name="P",
-    sine_packing=P.packing,
-    sine_conditional=P.conditional,
-    sine_lag_comp=P.lag_compensation,
-    sine_lag_comp_type=trick.TrickHLA.LAG_COMPENSATION_NONE,
-    sine_deleted=P.obj_deleted,
-    sine_attribute_publish=True,
-    sine_attribute_subscribe=True,
+   sine_create_object=False,
+   sine_obj_instance_name="P-side-Federate.Sine",
+   sine_trick_sim_obj_name="P",
+   sine_packing=P.packing,
+   sine_conditional=P.conditional,
+   sine_lag_comp=P.lag_compensation,
+   sine_lag_comp_type=trick.TrickHLA.LAG_COMPENSATION_NONE,
+   sine_deleted=P.obj_deleted,
+   sine_attribute_publish=True,
+   sine_attribute_subscribe=True,
 )
 
 # Add this sine object to the list of managed objects.
@@ -373,11 +372,11 @@ ref_frame_tree.leaf_frame_data.state.time = 0.0
 # If it is NOT the RRFP, it will subscribe to the frame.
 # ---------------------------------------------------------------------------
 root_frame = SpaceFOMRefFrameObject(
-    create_frame_object=federate.is_RRFP,
-    frame_instance_name=root_frame_name,
-    frame_S_define_instance=root_ref_frame.frame_packing,
-    frame_S_define_instance_name="root_ref_frame.frame_packing",
-    frame_conditional=root_ref_frame.conditional,
+   create_frame_object=federate.is_RRFP,
+   frame_instance_name=root_frame_name,
+   frame_S_define_instance=root_ref_frame.frame_packing,
+   frame_S_define_instance_name="root_ref_frame.frame_packing",
+   frame_conditional=root_ref_frame.conditional,
 )
 
 # Set the debug flag for the root reference frame.
@@ -393,16 +392,16 @@ federate.set_root_frame(root_frame)
 # Set up an alternate vehicle reference frame object for discovery.
 # ---------------------------------------------------------------------------
 frame_A = SpaceFOMRefFrameObject(
-    create_frame_object=True,
-    frame_instance_name="FrameA",
-    frame_S_define_instance=leaf_ref_frame.frame_packing,
-    frame_S_define_instance_name="leaf_ref_frame.frame_packing",
-    parent_S_define_instance=root_ref_frame.frame_packing,
-    parent_name=root_frame_name,
-    frame_conditional=leaf_ref_frame.conditional,
-    frame_lag_comp=leaf_ref_frame.lag_compensation,
-    frame_ownership=leaf_ref_frame.ownership_handler,
-    frame_deleted=leaf_ref_frame.deleted_callback,
+   create_frame_object=True,
+   frame_instance_name="FrameA",
+   frame_S_define_instance=leaf_ref_frame.frame_packing,
+   frame_S_define_instance_name="leaf_ref_frame.frame_packing",
+   parent_S_define_instance=root_ref_frame.frame_packing,
+   parent_name=root_frame_name,
+   frame_conditional=leaf_ref_frame.conditional,
+   frame_lag_comp=leaf_ref_frame.lag_compensation,
+   frame_ownership=leaf_ref_frame.ownership_handler,
+   frame_deleted=leaf_ref_frame.deleted_callback,
 )
 
 # Set the debug flag for the root reference frame.
@@ -449,11 +448,11 @@ federate.initialize()
 # Example of a 1-dimensional dynamic array.
 IMSim_A.packing.buff_size = 10
 IMSim_A.packing.buff = trick.sim_services.alloc_type(
-    IMSim_A.packing.buff_size, "unsigned char"
+   IMSim_A.packing.buff_size, "unsigned char"
 )
 IMSim_P.packing.buff_size = 10
 IMSim_P.packing.buff = trick.sim_services.alloc_type(
-    IMSim_P.packing.buff_size, "unsigned char"
+   IMSim_P.packing.buff_size, "unsigned char"
 )
 
 # We are taking advantage of the input file to specify a unique name for the
@@ -502,7 +501,7 @@ IMSim_THLA.imsim_exec_control.scenario_timeline = IMSim_THLA_INIT.scenario_timel
 IMSim_THLA.federate.enable_known_feds = True
 IMSim_THLA.federate.known_feds_count = 2
 IMSim_THLA.federate.known_feds = trick.sim_services.alloc_type(
-    IMSim_THLA.federate.known_feds_count, "TrickHLA::KnownFederate"
+   IMSim_THLA.federate.known_feds_count, "TrickHLA::KnownFederate"
 )
 IMSim_THLA.federate.known_feds[0].name = "IMSim-A-side-Federate"
 IMSim_THLA.federate.known_feds[0].required = True
@@ -521,7 +520,7 @@ IMSim_THLA.imsim_config.run_duration = run_duration
 IMSim_interaction_service = IMSim_THLA.federate.get_interaction_service()
 IMSim_interaction_service.inter_count = 1
 IMSim_interaction_service.interactions = trick.sim_services.alloc_type(
-    IMSim_interaction_service.inter_count, "TrickHLA::Interaction"
+   IMSim_interaction_service.inter_count, "TrickHLA::Interaction"
 )
 
 IMSim_interaction_service.interactions[0].FOM_name = "Communication"
@@ -530,31 +529,31 @@ IMSim_interaction_service.interactions[0].subscribe = False
 IMSim_interaction_service.interactions[0].handler = IMSim_A.interaction_handler
 IMSim_interaction_service.interactions[0].param_count = 3
 IMSim_interaction_service.interactions[0].parameters = trick.sim_services.alloc_type(
-    IMSim_interaction_service.interactions[0].param_count, "TrickHLA::Parameter"
+   IMSim_interaction_service.interactions[0].param_count, "TrickHLA::Parameter"
 )
 
 IMSim_interaction_service.interactions[0].parameters[0].FOM_name = "Message"
 IMSim_interaction_service.interactions[0].parameters[
-    0
+   0
 ].trick_name = "IMSim_A.interaction_handler.message"
 IMSim_interaction_service.interactions[0].parameters[
-    0
+   0
 ].rti_encoding = trick.ENCODING_UNICODE_STRING
 
 IMSim_interaction_service.interactions[0].parameters[1].FOM_name = "time"
 IMSim_interaction_service.interactions[0].parameters[
-    1
+   1
 ].trick_name = "IMSim_A.interaction_handler.time"
 IMSim_interaction_service.interactions[0].parameters[
-    1
+   1
 ].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
 IMSim_interaction_service.interactions[0].parameters[2].FOM_name = "year"
 IMSim_interaction_service.interactions[0].parameters[
-    2
+   2
 ].trick_name = "IMSim_A.interaction_handler.year"
 IMSim_interaction_service.interactions[0].parameters[
-    2
+   2
 ].rti_encoding = trick.ENCODING_LITTLE_ENDIAN
 
 
@@ -562,7 +561,7 @@ IMSim_interaction_service.interactions[0].parameters[
 IMSim_obj_service = THLA.federate.get_object_service()
 IMSim_obj_service.obj_count = 2
 IMSim_obj_service.objects = trick.sim_services.alloc_type(
-    IMSim_obj_service.obj_count, "TrickHLA::Object"
+   IMSim_obj_service.obj_count, "TrickHLA::Object"
 )
 
 # Configure the object this federate will create an HLA instance and
@@ -578,7 +577,7 @@ IMSim_obj_service.objects[0].conditional = IMSim_A.conditional
 IMSim_obj_service.objects[0].deleted = IMSim_A.obj_deleted
 IMSim_obj_service.objects[0].attr_count = 8
 IMSim_obj_service.objects[0].attributes = trick.sim_services.alloc_type(
-    IMSim_obj_service.objects[0].attr_count, "TrickHLA::Attribute"
+   IMSim_obj_service.objects[0].attr_count, "TrickHLA::Attribute"
 )
 
 IMSim_obj_service.objects[0].attributes[0].FOM_name = "Time"
@@ -591,7 +590,7 @@ IMSim_obj_service.objects[0].attributes[0].rti_encoding = trick.ENCODING_LITTLE_
 IMSim_obj_service.objects[0].attributes[1].FOM_name = "Value"
 IMSim_obj_service.objects[0].attributes[1].trick_name = "IMSim_A.packing.value"
 IMSim_obj_service.objects[0].attributes[1].config = (
-    trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
+   trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
 )
 IMSim_obj_service.objects[0].attributes[1].publish = True
 IMSim_obj_service.objects[0].attributes[1].subscribe = True
@@ -607,9 +606,9 @@ IMSim_obj_service.objects[0].attributes[2].rti_encoding = trick.ENCODING_LITTLE_
 
 IMSim_obj_service.objects[0].attributes[3].FOM_name = "Phase"
 IMSim_obj_service.objects[0].attributes[
-    3
+   3
 ].trick_name = (
-    "IMSim_A.packing.phase_deg"  # using packed data instead of 'A.sim_data.phase'
+   "IMSim_A.packing.phase_deg"  # using packed data instead of 'A.sim_data.phase'
 )
 IMSim_obj_service.objects[0].attributes[3].config = trick.CONFIG_CYCLIC
 IMSim_obj_service.objects[0].attributes[3].publish = True
@@ -640,7 +639,7 @@ IMSim_obj_service.objects[0].attributes[6].rti_encoding = trick.ENCODING_LITTLE_
 IMSim_obj_service.objects[0].attributes[7].FOM_name = "Name"
 IMSim_obj_service.objects[0].attributes[7].trick_name = "IMSim_A.packing.name"
 IMSim_obj_service.objects[0].attributes[7].config = (
-    trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
+   trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
 )
 IMSim_obj_service.objects[0].attributes[7].publish = True
 IMSim_obj_service.objects[0].attributes[7].locally_owned = True
@@ -658,7 +657,7 @@ IMSim_obj_service.objects[1].conditional = IMSim_P.conditional
 IMSim_obj_service.objects[1].deleted = IMSim_P.obj_deleted
 IMSim_obj_service.objects[1].attr_count = 8
 IMSim_obj_service.objects[1].attributes = trick.sim_services.alloc_type(
-    IMSim_obj_service.objects[1].attr_count, "TrickHLA::Attribute"
+   IMSim_obj_service.objects[1].attr_count, "TrickHLA::Attribute"
 )
 
 IMSim_obj_service.objects[1].attributes[0].FOM_name = "Time"
@@ -671,7 +670,7 @@ IMSim_obj_service.objects[1].attributes[0].rti_encoding = trick.ENCODING_LITTLE_
 IMSim_obj_service.objects[1].attributes[1].FOM_name = "Value"
 IMSim_obj_service.objects[1].attributes[1].trick_name = "IMSim_P.packing.value"
 IMSim_obj_service.objects[1].attributes[1].config = (
-    trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
+   trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
 )
 IMSim_obj_service.objects[1].attributes[1].publish = True
 IMSim_obj_service.objects[1].attributes[1].subscribe = True
@@ -688,9 +687,9 @@ IMSim_obj_service.objects[1].attributes[2].rti_encoding = trick.ENCODING_LITTLE_
 
 IMSim_obj_service.objects[1].attributes[3].FOM_name = "Phase"
 IMSim_obj_service.objects[1].attributes[
-    3
+   3
 ].trick_name = (
-    "IMSim_P.packing.phase_deg"  # using packed data instead of 'IMSim_P.sim_data.phase'
+   "IMSim_P.packing.phase_deg"  # using packed data instead of 'IMSim_P.sim_data.phase'
 )
 IMSim_obj_service.objects[1].attributes[3].config = trick.CONFIG_CYCLIC
 IMSim_obj_service.objects[1].attributes[3].subscribe = True
@@ -721,7 +720,7 @@ IMSim_obj_service.objects[1].attributes[6].rti_encoding = trick.ENCODING_LITTLE_
 IMSim_obj_service.objects[1].attributes[7].FOM_name = "Name"
 IMSim_obj_service.objects[1].attributes[7].trick_name = "IMSim_P.packing.name"
 IMSim_obj_service.objects[1].attributes[7].config = (
-    trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
+   trick.CONFIG_INITIALIZE + trick.CONFIG_CYCLIC
 )
 IMSim_obj_service.objects[1].attributes[7].subscribe = True
 IMSim_obj_service.objects[1].attributes[7].locally_owned = False
@@ -732,4 +731,4 @@ IMSim_obj_service.objects[1].attributes[7].rti_encoding = trick.ENCODING_UNICODE
 # Set up simulation termination time.
 # ---------------------------------------------------------------------------
 if run_duration:
-    trick.sim_services.exec_set_terminate_time(run_duration)
+   trick.sim_services.exec_set_terminate_time(run_duration)

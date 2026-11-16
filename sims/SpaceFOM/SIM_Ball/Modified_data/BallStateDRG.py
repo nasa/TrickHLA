@@ -32,37 +32,36 @@ from TrickHLA_data.Trick.TrickDataRecordingGroup import *
 
 
 class BallStateDRG(TrickDataRecordingGroup):
+   # Class constructor.
+   def __init__(
+      self,
+      base_name,
+      group_name,
+      rate,
+      format=TrickDRFormat.ASCII,
+      when=TrickDRWhen.ALWAYS,
+      change_var=None,
+      buffer=TrickDRBuffer.BUFFER,
+      enabled=True,
+   ):
 
-    # Class constructor.
-    def __init__(
-        self,
-        base_name,
-        group_name,
-        rate,
-        format=TrickDRFormat.ASCII,
-        when=TrickDRWhen.ALWAYS,
-        change_var=None,
-        buffer=TrickDRBuffer.BUFFER,
-        enabled=True,
-    ):
+      # Set the base name for looking up the state variables.
+      self.base_name = base_name
 
-        # Set the base name for looking up the state variables.
-        self.base_name = base_name
+      # Call the TrickDataRecordingGroup constructor.
+      TrickDataRecordingGroup.__init__(
+         self, group_name, rate, format, when, change_var, buffer, enabled
+      )
 
-        # Call the TrickDataRecordingGroup constructor.
-        TrickDataRecordingGroup.__init__(
-            self, group_name, rate, format, when, change_var, buffer, enabled
-        )
+      # Add the state recording variables.
+      self.drg.add_variable(self.base_name + ".state.output.time")
+      self.drg.add_variable(self.base_name + ".state.output.position[0]")
+      self.drg.add_variable(self.base_name + ".state.output.position[1]")
+      self.drg.add_variable(self.base_name + ".state.output.velocity[0]")
+      self.drg.add_variable(self.base_name + ".state.output.velocity[1]")
+      self.drg.add_variable(self.base_name + ".state.output.acceleration[0]")
+      self.drg.add_variable(self.base_name + ".state.output.acceleration[1]")
+      self.drg.add_variable(self.base_name + ".state.output.external_force[0]")
+      self.drg.add_variable(self.base_name + ".state.output.external_force[1]")
 
-        # Add the state recording variables.
-        self.drg.add_variable(self.base_name + ".state.output.time")
-        self.drg.add_variable(self.base_name + ".state.output.position[0]")
-        self.drg.add_variable(self.base_name + ".state.output.position[1]")
-        self.drg.add_variable(self.base_name + ".state.output.velocity[0]")
-        self.drg.add_variable(self.base_name + ".state.output.velocity[1]")
-        self.drg.add_variable(self.base_name + ".state.output.acceleration[0]")
-        self.drg.add_variable(self.base_name + ".state.output.acceleration[1]")
-        self.drg.add_variable(self.base_name + ".state.output.external_force[0]")
-        self.drg.add_variable(self.base_name + ".state.output.external_force[1]")
-
-        return
+      return

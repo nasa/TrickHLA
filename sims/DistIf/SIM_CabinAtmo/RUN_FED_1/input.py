@@ -8,25 +8,25 @@
 #
 def print_usage_message():
 
-    global crc_host
-    global crc_port
-    global local_settings
+   global crc_host
+   global crc_port
+   global local_settings
 
-    print(" ")
-    print("Simulation Command Line Configuration Options:")
-    print("  -h --help              : Print this help message.")
-    print("  -r --crcHost [name]    : Name of RTI CRC Host, currently:", crc_host)
-    print("  -p --crcPort [number]  : Port number for the RTI CRC, currently:", crc_port)
-    print("  -s --settings [string] : RTI CRC local settings:", local_settings)
-    print(" ")
+   print(" ")
+   print("Simulation Command Line Configuration Options:")
+   print("  -h --help              : Print this help message.")
+   print("  -r --crcHost [name]    : Name of RTI CRC Host, currently:", crc_host)
+   print("  -p --crcPort [number]  : Port number for the RTI CRC, currently:", crc_port)
+   print("  -s --settings [string] : RTI CRC local settings:", local_settings)
+   print(" ")
 
-    trick.exec_terminate_with_return(
-        -1,
-        sys._getframe(0).f_code.co_filename,
-        sys._getframe(0).f_lineno,
-        "Print usage message.",
-    )
-    return
+   trick.exec_terminate_with_return(
+      -1,
+      sys._getframe(0).f_code.co_filename,
+      sys._getframe(0).f_lineno,
+      "Print usage message.",
+   )
+   return
 
 
 # END: print_usage_message
@@ -34,56 +34,55 @@ def print_usage_message():
 
 def parse_command_line():
 
-    global print_usage
-    global crc_host
-    global crc_port
-    global local_settings
-    global override_settings
+   global print_usage
+   global crc_host
+   global crc_port
+   global local_settings
+   global override_settings
 
-    # Get the Trick command line arguments.
-    argc = trick.command_line_args_get_argc()
-    argv = trick.command_line_args_get_argv()
+   # Get the Trick command line arguments.
+   argc = trick.command_line_args_get_argc()
+   argv = trick.command_line_args_get_argv()
 
-    # Process the command line arguments.
-    # argv[0]=S_main*.exe, argv[1]=RUN/input.py file
-    index = 2
-    while index < argc:
+   # Process the command line arguments.
+   # argv[0]=S_main*.exe, argv[1]=RUN/input.py file
+   index = 2
+   while index < argc:
+      if (str(argv[index]) == "-h") | (str(argv[index]) == "--help"):
+         print_usage = True
 
-        if (str(argv[index]) == "-h") | (str(argv[index]) == "--help"):
+      elif (str(argv[index]) == "-r") | (str(argv[index]) == "--crcHost"):
+         index = index + 1
+         if index < argc:
+            crc_host = str(argv[index])
+         else:
+            print("ERROR: Missing --crcHost [name] argument.")
             print_usage = True
 
-        elif (str(argv[index]) == "-r") | (str(argv[index]) == "--crcHost"):
-            index = index + 1
-            if index < argc:
-                crc_host = str(argv[index])
-            else:
-                print("ERROR: Missing --crcHost [name] argument.")
-                print_usage = True
-
-        elif (str(argv[index]) == "-p") | (str(argv[index]) == "--crcPort"):
-            index = index + 1
-            if index < argc:
-                crc_port = int(str(argv[index]))
-            else:
-                print("ERROR: Missing --crcPort [port] argument.")
-                print_usage = True
-
-        elif (str(argv[index]) == "-s") | (str(argv[index]) == "--settings"):
-            index = index + 1
-            if index < argc:
-                local_settings = str(argv[index])
-                override_settings = True
-            else:
-                print("ERROR: Missing --settings [string] argument.")
-                print_usage = True
-
-        else:
-            print("ERROR: Unknown command line argument " + str(argv[index]))
+      elif (str(argv[index]) == "-p") | (str(argv[index]) == "--crcPort"):
+         index = index + 1
+         if index < argc:
+            crc_port = int(str(argv[index]))
+         else:
+            print("ERROR: Missing --crcPort [port] argument.")
             print_usage = True
 
-        index = index + 1
+      elif (str(argv[index]) == "-s") | (str(argv[index]) == "--settings"):
+         index = index + 1
+         if index < argc:
+            local_settings = str(argv[index])
+            override_settings = True
+         else:
+            print("ERROR: Missing --settings [string] argument.")
+            print_usage = True
 
-    return
+      else:
+         print("ERROR: Unknown command line argument " + str(argv[index]))
+         print_usage = True
+
+      index = index + 1
+
+   return
 
 
 # END: parse_command_line
@@ -110,10 +109,10 @@ parse_command_line()
 # Check to see if setting were overridden.
 # If not, then form the local_settings string since host and port may have been set.
 if not override_settings:
-    local_settings = "crcHost = " + crc_host + ":" + str(crc_port)
+   local_settings = "crcHost = " + crc_host + ":" + str(crc_port)
 
 if print_usage == True:
-    print_usage_message()
+   print_usage_message()
 
 # Trick setup
 trick.var_resolve_hostname()
@@ -224,12 +223,12 @@ sys.path.append("../../../")
 from TrickHLA_data.TrickHLA.TrickHLAFederateConfig import *
 
 federate = TrickHLAFederateConfig(
-    thla_federate=THLA.federate,
-    thla_control=THLA.execution_control,
-    thla_config=THLA.simple_sim_config,
-    thla_federation_name=Federation_name,
-    thla_federate_name=Federate_name,
-    thla_enabled=True,
+   thla_federate=THLA.federate,
+   thla_control=THLA.execution_control,
+   thla_config=THLA.simple_sim_config,
+   thla_federation_name=Federation_name,
+   thla_federate_name=Federate_name,
+   thla_enabled=True,
 )
 
 federate.fix_var_server_source_address()
@@ -254,67 +253,67 @@ from Modified_data.DistIf.FluidDistIfObjectConfig import *
 
 # Interfaces between modelA in this federate (FED_1) to modelB in the other FED_2:
 data_obj = FluidDistIfAToBObjectConfig(
-    thla_federate_name="FluidDistIf_Vestibule_1A_to_2B",
-    bus_name="cabinAtmo.modelA.mVestibule.mIf",
-    isBusA=True,
-    FOM_type="FluidDistIfDataBase.FluidDistIfData_6_4",
+   thla_federate_name="FluidDistIf_Vestibule_1A_to_2B",
+   bus_name="cabinAtmo.modelA.mVestibule.mIf",
+   isBusA=True,
+   FOM_type="FluidDistIfDataBase.FluidDistIfData_6_4",
 )
 federate.add_fed_object(data_obj)
 
 data_obj = FluidDistIfAToBObjectConfig(
-    thla_federate_name="FluidDistIf_Vestibule_2B_to_1A",
-    bus_name="cabinAtmo.modelA.mVestibule.mIf",
-    isBusA=False,
-    FOM_type="FluidDistIfDataBase.FluidDistIfData_6_4",
+   thla_federate_name="FluidDistIf_Vestibule_2B_to_1A",
+   bus_name="cabinAtmo.modelA.mVestibule.mIf",
+   isBusA=False,
+   FOM_type="FluidDistIfDataBase.FluidDistIfData_6_4",
 )
 federate.add_fed_object(data_obj)
 
 data_obj = FluidDistIfAToBObjectConfig(
-    thla_federate_name="FluidDistIf_IMV_1A_to_2B",
-    bus_name="cabinAtmo.modelA.mImvDuct.mIf",
-    isBusA=True,
-    FOM_type="FluidDistIfDataBase.FluidDistIfData_6_4",
+   thla_federate_name="FluidDistIf_IMV_1A_to_2B",
+   bus_name="cabinAtmo.modelA.mImvDuct.mIf",
+   isBusA=True,
+   FOM_type="FluidDistIfDataBase.FluidDistIfData_6_4",
 )
 federate.add_fed_object(data_obj)
 
 data_obj = FluidDistIfAToBObjectConfig(
-    thla_federate_name="FluidDistIf_IMV_2B_to_1A",
-    bus_name="cabinAtmo.modelA.mImvDuct.mIf",
-    isBusA=False,
-    FOM_type="FluidDistIfDataBase.FluidDistIfData_6_4",
+   thla_federate_name="FluidDistIf_IMV_2B_to_1A",
+   bus_name="cabinAtmo.modelA.mImvDuct.mIf",
+   isBusA=False,
+   FOM_type="FluidDistIfDataBase.FluidDistIfData_6_4",
 )
 federate.add_fed_object(data_obj)
 
 # Interfaces between modelB in this federate (FED_1) to modelA in the other FED_2:
 data_obj = FluidDistIfAToBObjectConfig(
-    thla_federate_name="FluidDistIf_Vestibule_2A_to_1B",
-    bus_name="cabinAtmo.modelB.mVestibule.mIf",
-    isBusA=True,
-    FOM_type="FluidDistIfDataBase.FluidDistIfData_6_4",
+   thla_federate_name="FluidDistIf_Vestibule_2A_to_1B",
+   bus_name="cabinAtmo.modelB.mVestibule.mIf",
+   isBusA=True,
+   FOM_type="FluidDistIfDataBase.FluidDistIfData_6_4",
 )
 federate.add_fed_object(data_obj)
 
 data_obj = FluidDistIfAToBObjectConfig(
-    thla_federate_name="FluidDistIf_Vestibule_1B_to_2A",
-    bus_name="cabinAtmo.modelB.mVestibule.mIf",
-    isBusA=False,
-    FOM_type="FluidDistIfDataBase.FluidDistIfData_6_4",
+   thla_federate_name="FluidDistIf_Vestibule_1B_to_2A",
+   bus_name="cabinAtmo.modelB.mVestibule.mIf",
+   isBusA=False,
+   FOM_type="FluidDistIfDataBase.FluidDistIfData_6_4",
 )
 federate.add_fed_object(data_obj)
 
 data_obj = FluidDistIfAToBObjectConfig(
-    thla_federate_name="FluidDistIf_IMV_2A_to_1B",
-    bus_name="cabinAtmo.modelB.mImvDuct.mIf",
-    isBusA=True,
-    FOM_type="FluidDistIfDataBase.FluidDistIfData_6_4",
+   thla_federate_name="FluidDistIf_IMV_2A_to_1B",
+   bus_name="cabinAtmo.modelB.mImvDuct.mIf",
+   isBusA=True,
+   FOM_type="FluidDistIfDataBase.FluidDistIfData_6_4",
 )
 federate.add_fed_object(data_obj)
 
 data_obj = FluidDistIfAToBObjectConfig(
-    thla_federate_name="FluidDistIf_IMV_1B_to_2A",
-    bus_name="cabinAtmo.modelB.mImvDuct.mIf",
-    isBusA=False,
-    FOM_type="FluidDistIfDataBase.FluidDistIfData_6_4",
+   thla_federate_name="FluidDistIf_IMV_1B_to_2A",
+   bus_name="cabinAtmo.modelB.mImvDuct.mIf",
+   isBusA=False,
+   FOM_type="FluidDistIfDataBase.FluidDistIfData_6_4",
 )
 federate.add_fed_object(data_obj)
 
@@ -322,18 +321,18 @@ federate.add_fed_object(data_obj)
 from Modified_data.DistIf.ConserveParamsObjectConfig import *
 
 data_obj = ConserveParamsObjectConfig(
-    thla_federate_name="ConservationData_1_to_2",
-    model_name="cabinAtmo.modelB.mConserveParams",
-    isOwner=True,
-    FOM_type="ConservationParams",
+   thla_federate_name="ConservationData_1_to_2",
+   model_name="cabinAtmo.modelB.mConserveParams",
+   isOwner=True,
+   FOM_type="ConservationParams",
 )
 federate.add_fed_object(data_obj)
 
 data_obj = ConserveParamsObjectConfig(
-    thla_federate_name="ConservationData_2_to_1",
-    model_name="cabinAtmo.conservation.modelBConserveParams",
-    isOwner=False,
-    FOM_type="ConservationParams",
+   thla_federate_name="ConservationData_2_to_1",
+   model_name="cabinAtmo.conservation.modelBConserveParams",
+   isOwner=False,
+   FOM_type="ConservationParams",
 )
 federate.add_fed_object(data_obj)
 

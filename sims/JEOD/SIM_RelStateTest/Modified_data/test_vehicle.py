@@ -58,12 +58,12 @@ veh.mass_init.allocate_points(1)
 veh.mass_init.get_mass_point(0).set_name("Active docking port")
 veh.mass_init.get_mass_point(0).pt_frame_spec = trick.MassPointInit.StructToBody
 veh.mass_init.get_mass_point(0).position = trick.attach_units("m", [1.0, 0.0, 0.0])
-veh.mass_init.get_mass_point(0).pt_orientation.data_source = (
-    trick.Orientation.InputEigenRotation
-)
+veh.mass_init.get_mass_point(
+   0
+).pt_orientation.data_source = trick.Orientation.InputEigenRotation
 
 veh.mass_init.get_mass_point(0).pt_orientation.eigen_angle = trick.attach_units(
-    "degree", 0.0
+   "degree", 0.0
 )
 veh.mass_init.get_mass_point(0).pt_orientation.eigen_axis = [0.0, 0.0, 1.0]
 
@@ -73,7 +73,7 @@ veh.trans_init.reference_ref_frame_name = frames_dict[native_frame]
 veh.trans_init.body_frame_id = "composite_body"
 
 veh.trans_init.position = trick.attach_units(
-    "km", [1296.944012, -1060.824450, 2522.289146]
+   "km", [1296.944012, -1060.824450, 2522.289146]
 )
 # veh.trans_init.velocity = trick.attach_units( 'km/s',[ -.930578, -.439312, .862075])
 veh.trans_init.velocity = trick.attach_units("km/s", [0.0, 0.0, 0.0])

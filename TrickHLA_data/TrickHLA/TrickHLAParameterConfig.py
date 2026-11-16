@@ -19,24 +19,23 @@ from ..TrickHLA.TrickHLARecordElementConfig import *
 
 
 class TrickHLAParameterConfig(TrickHLARecordElementConfig):
+   FOM_name = None
 
-    FOM_name = None
+   def __init__(self, FOM_name, trick_name=None, rti_encoding=trick.ENCODING_UNKNOWN):
 
-    def __init__(self, FOM_name, trick_name=None, rti_encoding=trick.ENCODING_UNKNOWN):
+      TrickHLARecordElementConfig.__init__(self, rti_encoding, trick_name)
 
-        TrickHLARecordElementConfig.__init__(self, rti_encoding, trick_name)
+      self.FOM_name = FOM_name
 
-        self.FOM_name = FOM_name
+      return
 
-        return
+   def initialize(self, parameter):
 
-    def initialize(self, parameter):
+      parameter.FOM_name = str(self.FOM_name)
+      parameter.trick_name = str(self.trick_name)
+      parameter.rti_encoding = self.rti_encoding
 
-        parameter.FOM_name = str(self.FOM_name)
-        parameter.trick_name = str(self.trick_name)
-        parameter.rti_encoding = self.rti_encoding
+      if self.rti_encoding == trick.TrickHLA.ENCODING_FIXED_RECORD:
+         self.initialize_fixed_record(parameter, self)
 
-        if self.rti_encoding == trick.TrickHLA.ENCODING_FIXED_RECORD:
-            self.initialize_fixed_record(parameter, self)
-
-        return
+      return

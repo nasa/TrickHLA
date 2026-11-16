@@ -21,17 +21,17 @@ import sys
 # Find the TrickHLA home location and append the path.
 trickhla_home = os.environ.get("TRICKHLA_HOME")
 if trickhla_home is None:
-    sys.exit(
-        "\033[91m" + "Environment variable TRICKHLA_HOME is not defined!" + "\033[0m\n"
-    )
+   sys.exit(
+      "\033[91m" + "Environment variable TRICKHLA_HOME is not defined!" + "\033[0m\n"
+   )
 else:
-    if os.path.isdir(trickhla_home) is False:
-        sys.exit("\033[91m" + "TRICKHLA_HOME not found: " + trickhla_home + "\033[0m\n")
+   if os.path.isdir(trickhla_home) is False:
+      sys.exit("\033[91m" + "TRICKHLA_HOME not found: " + trickhla_home + "\033[0m\n")
 
 # Append the path to the top level of the top level TrickHLA directory.
 # We need this to locate the TrickHLA_data Python data directory.
 if trickhla_home not in sys.path:
-    sys.path.append(trickhla_home)
+   sys.path.append(trickhla_home)
 
 # Load the SpaceFOM specific federate configuration object.
 from TrickHLA_data.SpaceFOM.SpaceFOMFederateConfig import *
@@ -42,70 +42,69 @@ from TrickHLA_data.SpaceFOM.SpaceFOMRefFrameObject import *
 
 def print_usage_message():
 
-    print(" ")
-    print("TrickHLA SpaceFOM JEOD Master Simulation Command Line Configuration Options:")
-    print("  --default_data_config : Configure simulation in default data.")
-    print("  -h --help             : Print this help message.")
-    print("  --stop [time]         : Time to stop simulation, default is 10.0 seconds.")
-    print("  --nostop              : Set no stop time on simulation.")
-    print("  --verbose             : Show verbose messages.")
-    print(" ")
+   print(" ")
+   print("TrickHLA SpaceFOM JEOD Master Simulation Command Line Configuration Options:")
+   print("  --default_data_config : Configure simulation in default data.")
+   print("  -h --help             : Print this help message.")
+   print("  --stop [time]         : Time to stop simulation, default is 10.0 seconds.")
+   print("  --nostop              : Set no stop time on simulation.")
+   print("  --verbose             : Show verbose messages.")
+   print(" ")
 
-    trick.exec_terminate_with_return(
-        -1,
-        sys._getframe(0).f_code.co_filename,
-        sys._getframe(0).f_lineno,
-        "Print usage message.",
-    )
-    return
+   trick.exec_terminate_with_return(
+      -1,
+      sys._getframe(0).f_code.co_filename,
+      sys._getframe(0).f_lineno,
+      "Print usage message.",
+   )
+   return
 
 
 def parse_command_line():
 
-    global print_usage
-    global run_duration
-    global verbose
+   global print_usage
+   global run_duration
+   global verbose
 
-    # Get the Trick command line arguments.
-    argc = trick.command_line_args_get_argc()
-    argv = trick.command_line_args_get_argv()
+   # Get the Trick command line arguments.
+   argc = trick.command_line_args_get_argc()
+   argv = trick.command_line_args_get_argv()
 
-    # Process the command line arguments.
-    # argv[0]=S_main*.exe, argv[1]=RUN/input.py file
-    index = 2
-    while index < argc:
-
-        if str(argv[index]) == "--stop":
-            index = index + 1
-            if index < argc:
-                run_duration = float(str(argv[index]))
-            else:
-                print("ERROR: Missing --stop [time] argument.")
-                print_usage = True
-
-        elif str(argv[index]) == "--nostop":
-            run_duration = None
-
-        elif (str(argv[index]) == "-h") | (str(argv[index]) == "--help"):
+   # Process the command line arguments.
+   # argv[0]=S_main*.exe, argv[1]=RUN/input.py file
+   index = 2
+   while index < argc:
+      if str(argv[index]) == "--stop":
+         index = index + 1
+         if index < argc:
+            run_duration = float(str(argv[index]))
+         else:
+            print("ERROR: Missing --stop [time] argument.")
             print_usage = True
 
-        elif str(argv[index]) == "--verbose":
-            verbose = True
+      elif str(argv[index]) == "--nostop":
+         run_duration = None
 
-        elif str(argv[index]) == "-d":
-            # Catch the Trick debug command line option an do NOT terminate.
-            print("DEBUG: Specified input file debug option to Trick.")
+      elif (str(argv[index]) == "-h") | (str(argv[index]) == "--help"):
+         print_usage = True
 
-        elif str(argv[index]) == "--default_data_config":
-            # Catch the default data configuration command line option an do NOT terminate.
-            break
+      elif str(argv[index]) == "--verbose":
+         verbose = True
 
-        else:
-            print("ERROR: Unknown command line argument " + str(argv[index]))
-            print_usage = True
+      elif str(argv[index]) == "-d":
+         # Catch the Trick debug command line option an do NOT terminate.
+         print("DEBUG: Specified input file debug option to Trick.")
 
-        index = index + 1
-    return
+      elif str(argv[index]) == "--default_data_config":
+         # Catch the default data configuration command line option an do NOT terminate.
+         break
+
+      else:
+         print("ERROR: Unknown command line argument " + str(argv[index]))
+         print_usage = True
+
+      index = index + 1
+   return
 
 
 # Default: Don't show usage.
@@ -120,7 +119,7 @@ verbose = False
 parse_command_line()
 
 if print_usage == True:
-    print_usage_message()
+   print_usage_message()
 
 # ---------------------------------------------
 # Set up Trick executive parameters.
@@ -177,12 +176,12 @@ dynamics.dyn_manager.deriv_ephem_update = True
 # =========================================================================
 # Instantiate the Python SpaceFOM configuration object.
 federate = SpaceFOMFederateConfig(
-    thla_federate=THLA.federate,
-    thla_control=THLA.execution_control,
-    thla_config=THLA.ExCO,
-    thla_federation_name="SpaceFOM_JEOD_Test",
-    thla_federate_name="Master",
-    thla_enabled=True,
+   thla_federate=THLA.federate,
+   thla_control=THLA.execution_control,
+   thla_config=THLA.ExCO,
+   thla_federation_name="SpaceFOM_JEOD_Test",
+   thla_federate_name="Master",
+   thla_enabled=True,
 )
 
 # Set the name of the ExCO S_define instance.
@@ -192,13 +191,13 @@ federate = SpaceFOMFederateConfig(
 
 # Set the debug output level.
 if verbose == True:
-    # federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_4_TRACE )
-    federate.set_debug_level(trick.TrickHLA.DEBUG_LEVEL_6_TRACE)
-    federate.set_debug_source(trick.TrickHLA.DEBUG_SOURCE_ALL_MODULES)
-    # federate.set_debug_source( trick.TrickHLA.DEBUG_SOURCE_OBJECT + trick.TrickHLA.DEBUG_SOURCE_ATTRIBUTE )
+   # federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_4_TRACE )
+   federate.set_debug_level(trick.TrickHLA.DEBUG_LEVEL_6_TRACE)
+   federate.set_debug_source(trick.TrickHLA.DEBUG_SOURCE_ALL_MODULES)
+   # federate.set_debug_source( trick.TrickHLA.DEBUG_SOURCE_OBJECT + trick.TrickHLA.DEBUG_SOURCE_ATTRIBUTE )
 else:
-    # federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )
-    federate.set_debug_level(trick.TrickHLA.DEBUG_LEVEL_1_TRACE)
+   # federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_0_TRACE )
+   federate.set_debug_level(trick.TrickHLA.DEBUG_LEVEL_1_TRACE)
 
 # --------------------------------------------------------------------------
 # Configure this federate SpaceFOM roles for this federate.
@@ -299,4 +298,4 @@ federate.initialize()
 # Set up simulation termination time.
 # ---------------------------------------------------------------------------
 if run_duration:
-    trick.sim_services.exec_set_terminate_time(run_duration)
+   trick.sim_services.exec_set_terminate_time(run_duration)

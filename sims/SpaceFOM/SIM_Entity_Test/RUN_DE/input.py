@@ -21,17 +21,17 @@ import sys
 # Find the TrickHLA home location and append the path.
 trickhla_home = os.environ.get("TRICKHLA_HOME")
 if trickhla_home is None:
-    sys.exit(
-        "\033[91m" + "Environment variable TRICKHLA_HOME is not defined!" + "\033[0m\n"
-    )
+   sys.exit(
+      "\033[91m" + "Environment variable TRICKHLA_HOME is not defined!" + "\033[0m\n"
+   )
 else:
-    if os.path.isdir(trickhla_home) is False:
-        sys.exit("\033[91m" + "TRICKHLA_HOME not found: " + trickhla_home + "\033[0m\n")
+   if os.path.isdir(trickhla_home) is False:
+      sys.exit("\033[91m" + "TRICKHLA_HOME not found: " + trickhla_home + "\033[0m\n")
 
 # Append the path to the top level of the top level TrickHLA directory.
 # We need this to locate the TrickHLA_data Python data directory.
 if trickhla_home not in sys.path:
-    sys.path.append(trickhla_home)
+   sys.path.append(trickhla_home)
 
 from TrickHLA_data.SpaceFOM.SpaceFOMDynamicalEntityObject import *
 
@@ -48,132 +48,131 @@ from TrickHLA_data.SpaceFOM.SpaceFOMRefFrameObject import *
 
 def print_usage_message():
 
-    print(" ")
-    print("TrickHLA SpaceFOM Other Simulation Command Line Configuration Options:")
-    print("  -h --help             : Print this help message.")
-    print("  -f --fed_name [name]  : Name of the Federate, default is PhysicalEntity.")
-    print(
-        "  -fe --fex_name [name] : Name of the Federation Execution, default is SpaceFOM_Roles_Test."
-    )
-    print("  -de [name]            : Name of the DynamicalEntity, default is Voyager.")
-    print("  --nostop              : Set no stop time on simulation.")
-    print("  -pe [name]            : Name of the PhysicalEntity, default is Enterprise.")
-    print(
-        "  -pi [name]            : Name of the PhysicalInterface, default is Enterprise.dockingport."
-    )
-    print(
-        "  --phy_fed [name]      : Name of the PhysicalEntity federate, default is PhysicalEntity."
-    )
-    print("  -s --stop [time]      : Time to stop simulation, default is 10.0 seconds.")
-    print("  --verbose             : Show verbose messages.")
-    print(" ")
+   print(" ")
+   print("TrickHLA SpaceFOM Other Simulation Command Line Configuration Options:")
+   print("  -h --help             : Print this help message.")
+   print("  -f --fed_name [name]  : Name of the Federate, default is PhysicalEntity.")
+   print(
+      "  -fe --fex_name [name] : Name of the Federation Execution, default is SpaceFOM_Roles_Test."
+   )
+   print("  -de [name]            : Name of the DynamicalEntity, default is Voyager.")
+   print("  --nostop              : Set no stop time on simulation.")
+   print("  -pe [name]            : Name of the PhysicalEntity, default is Enterprise.")
+   print(
+      "  -pi [name]            : Name of the PhysicalInterface, default is Enterprise.dockingport."
+   )
+   print(
+      "  --phy_fed [name]      : Name of the PhysicalEntity federate, default is PhysicalEntity."
+   )
+   print("  -s --stop [time]      : Time to stop simulation, default is 10.0 seconds.")
+   print("  --verbose             : Show verbose messages.")
+   print(" ")
 
-    trick.exec_terminate_with_return(
-        -1,
-        sys._getframe(0).f_code.co_filename,
-        sys._getframe(0).f_lineno,
-        "Print usage message.",
-    )
-    return
+   trick.exec_terminate_with_return(
+      -1,
+      sys._getframe(0).f_code.co_filename,
+      sys._getframe(0).f_lineno,
+      "Print usage message.",
+   )
+   return
 
 
 def parse_command_line():
 
-    global print_usage
-    global run_duration
-    global verbose
-    global federate_name
-    global federation_name
-    global dyn_entity_name
-    global phy_entity_name
-    global phy_interface_name
-    global phy_interface_name
-    global phy_federate_name
+   global print_usage
+   global run_duration
+   global verbose
+   global federate_name
+   global federation_name
+   global dyn_entity_name
+   global phy_entity_name
+   global phy_interface_name
+   global phy_interface_name
+   global phy_federate_name
 
-    # Get the Trick command line arguments.
-    argc = trick.command_line_args_get_argc()
-    argv = trick.command_line_args_get_argv()
+   # Get the Trick command line arguments.
+   argc = trick.command_line_args_get_argc()
+   argv = trick.command_line_args_get_argv()
 
-    # Process the command line arguments.
-    # argv[0]=S_main*.exe, argv[1]=RUN/input.py file
-    index = 2
-    while index < argc:
-
-        if str(argv[index]) == "--stop":
-            index = index + 1
-            if index < argc:
-                run_duration = float(str(argv[index]))
-            else:
-                print("ERROR: Missing -stop [time] argument.")
-                print_usage = True
-
-        elif str(argv[index]) == "--nostop":
-            run_duration = None
-
-        elif (str(argv[index]) == "-h") | (str(argv[index]) == "--help"):
+   # Process the command line arguments.
+   # argv[0]=S_main*.exe, argv[1]=RUN/input.py file
+   index = 2
+   while index < argc:
+      if str(argv[index]) == "--stop":
+         index = index + 1
+         if index < argc:
+            run_duration = float(str(argv[index]))
+         else:
+            print("ERROR: Missing -stop [time] argument.")
             print_usage = True
 
-        elif str(argv[index]) == "-de":
-            index = index + 1
-            if index < argc:
-                dyn_entity_name = str(argv[index])
-            else:
-                print("ERROR: Missing -de [name] argument.")
-                print_usage = True
+      elif str(argv[index]) == "--nostop":
+         run_duration = None
 
-        elif (str(argv[index]) == "-f") | (str(argv[index]) == "--fed_name"):
-            index = index + 1
-            if index < argc:
-                federate_name = str(argv[index])
-            else:
-                print("ERROR: Missing --fed_name [name] argument.")
-                print_usage = True
+      elif (str(argv[index]) == "-h") | (str(argv[index]) == "--help"):
+         print_usage = True
 
-        elif (str(argv[index]) == "-fe") | (str(argv[index]) == "--fex_name"):
-            index = index + 1
-            if index < argc:
-                federation_name = str(argv[index])
-            else:
-                print("ERROR: Missing --fex_name [name] argument.")
-                print_usage = True
-
-        elif str(argv[index]) == "-pe":
-            index = index + 1
-            if index < argc:
-                phy_entity_name = str(argv[index])
-            else:
-                print("ERROR: Missing -pe [name] argument.")
-                print_usage = True
-
-        elif str(argv[index]) == "-pi":
-            index = index + 1
-            if index < argc:
-                phy_interface_name = str(argv[index])
-            else:
-                print("ERROR: Missing -pi [name] argument.")
-                print_usage = True
-
-        elif str(argv[index]) == "--phy_fed":
-            index = index + 1
-            if index < argc:
-                phy_federate_name = str(argv[index])
-            else:
-                print("ERROR: Missing --phy_fed [name] argument.")
-                print_usage = True
-
-        elif str(argv[index]) == "--verbose":
-            verbose = True
-
-        elif str(argv[index]) == "-d":
-            # Pass this on to Trick.
-            break
-
-        else:
-            print("ERROR: Unknown command line argument " + str(argv[index]))
+      elif str(argv[index]) == "-de":
+         index = index + 1
+         if index < argc:
+            dyn_entity_name = str(argv[index])
+         else:
+            print("ERROR: Missing -de [name] argument.")
             print_usage = True
 
-        index = index + 1
-    return
+      elif (str(argv[index]) == "-f") | (str(argv[index]) == "--fed_name"):
+         index = index + 1
+         if index < argc:
+            federate_name = str(argv[index])
+         else:
+            print("ERROR: Missing --fed_name [name] argument.")
+            print_usage = True
+
+      elif (str(argv[index]) == "-fe") | (str(argv[index]) == "--fex_name"):
+         index = index + 1
+         if index < argc:
+            federation_name = str(argv[index])
+         else:
+            print("ERROR: Missing --fex_name [name] argument.")
+            print_usage = True
+
+      elif str(argv[index]) == "-pe":
+         index = index + 1
+         if index < argc:
+            phy_entity_name = str(argv[index])
+         else:
+            print("ERROR: Missing -pe [name] argument.")
+            print_usage = True
+
+      elif str(argv[index]) == "-pi":
+         index = index + 1
+         if index < argc:
+            phy_interface_name = str(argv[index])
+         else:
+            print("ERROR: Missing -pi [name] argument.")
+            print_usage = True
+
+      elif str(argv[index]) == "--phy_fed":
+         index = index + 1
+         if index < argc:
+            phy_federate_name = str(argv[index])
+         else:
+            print("ERROR: Missing --phy_fed [name] argument.")
+            print_usage = True
+
+      elif str(argv[index]) == "--verbose":
+         verbose = True
+
+      elif str(argv[index]) == "-d":
+         # Pass this on to Trick.
+         break
+
+      else:
+         print("ERROR: Unknown command line argument " + str(argv[index]))
+         print_usage = True
+
+      index = index + 1
+   return
 
 
 # Default: Don't show usage.
@@ -206,7 +205,7 @@ phy_federate_name = "PhysicalEntity"
 parse_command_line()
 
 if print_usage == True:
-    print_usage_message()
+   print_usage_message()
 
 # ---------------------------------------------
 # Set up Trick executive parameters.
@@ -247,7 +246,7 @@ pe_dynamics.entity.pe_data.state.vel = [0.0, 0.0, 0.0]
 
 # Initial rotational state.
 pe_dynamics.entity.pe_data.state.att.set_from_Euler_deg(
-    trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0]
+   trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0]
 )
 pe_dynamics.entity.pe_data.state.ang_vel = [0.0, 0.0, 0.0]
 
@@ -259,7 +258,7 @@ pe_dynamics.entity.pe_data.cm = [0.0, 0.0, 0.0]
 pe_dynamics.entity.de_data.mass = pe_mass
 pe_dynamics.entity.de_data.mass_rate = 0.0
 pe_dynamics.entity.pe_data.body_wrt_struct.set_from_Euler_deg(
-    trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0]
+   trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0]
 )
 
 # Principal inertia of a solid sphere.
@@ -290,7 +289,7 @@ de_dynamics.entity.pe_data.state.vel = [0.0, 0.0, 0.0]
 
 # Initial rotational state.
 de_dynamics.entity.pe_data.state.att.set_from_Euler_deg(
-    trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0]
+   trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0]
 )
 de_dynamics.entity.pe_data.state.ang_vel = [0.0, 0.0, 0.0]
 
@@ -302,7 +301,7 @@ de_dynamics.entity.pe_data.cm = [0.0, 0.0, 0.0]
 de_dynamics.entity.de_data.mass = de_mass
 de_dynamics.entity.de_data.mass_rate = 0.0
 de_dynamics.entity.pe_data.body_wrt_struct.set_from_Euler_deg(
-    trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0]
+   trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0]
 )
 
 # Principal inertia of a solid sphere.
@@ -324,7 +323,7 @@ de_dynamics.entity.de_data.torque = [0.01, 0.01, 0.01]
 # =========================================================================
 # Instantiate the Python SpaceFOM configuration object.
 federate = SpaceFOMFederateConfig(
-    THLA.federate, THLA.execution_control, THLA.ExCO, federation_name, federate_name, True
+   THLA.federate, THLA.execution_control, THLA.ExCO, federation_name, federate_name, True
 )
 
 # Set the name of the ExCO S_define instance.
@@ -334,12 +333,12 @@ federate = SpaceFOMFederateConfig(
 
 # Set the debug output level.
 if verbose == True:
-    federate.set_debug_level(trick.TrickHLA.DEBUG_LEVEL_4_TRACE)
-    # federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_6_TRACE )
-    federate.set_debug_source(trick.TrickHLA.DEBUG_SOURCE_ALL_MODULES)
-    # federate.set_debug_source( trick.TrickHLA.DEBUG_SOURCE_OBJECT + trick.TrickHLA.DEBUG_SOURCE_ATTRIBUTE )
+   federate.set_debug_level(trick.TrickHLA.DEBUG_LEVEL_4_TRACE)
+   # federate.set_debug_level( trick.TrickHLA.DEBUG_LEVEL_6_TRACE )
+   federate.set_debug_source(trick.TrickHLA.DEBUG_SOURCE_ALL_MODULES)
+   # federate.set_debug_source( trick.TrickHLA.DEBUG_SOURCE_OBJECT + trick.TrickHLA.DEBUG_SOURCE_ATTRIBUTE )
 else:
-    federate.set_debug_level(trick.TrickHLA.DEBUG_LEVEL_0_TRACE)
+   federate.set_debug_level(trick.TrickHLA.DEBUG_LEVEL_0_TRACE)
 
 # --------------------------------------------------------------------------
 # Configure this federate SpaceFOM roles for this federate.
@@ -395,11 +394,11 @@ federate.set_time_constrained(True)
 # If it is NOT the RRFP, it will subscribe to the frame.
 # ---------------------------------------------------------------------------
 root_frame = SpaceFOMRefFrameObject(
-    create_frame_object=federate.is_RRFP,
-    frame_instance_name="RootFrame",
-    frame_S_define_instance=root_ref_frame.frame_packing,
-    frame_S_define_instance_name="root_ref_frame.frame_packing",
-    frame_conditional=root_ref_frame.conditional,
+   create_frame_object=federate.is_RRFP,
+   frame_instance_name="RootFrame",
+   frame_S_define_instance=root_ref_frame.frame_packing,
+   frame_S_define_instance_name="root_ref_frame.frame_packing",
+   frame_conditional=root_ref_frame.conditional,
 )
 
 # Set the debug flag for the root reference frame.
@@ -415,16 +414,16 @@ federate.set_root_frame(root_frame)
 # Set up an alternate vehicle reference frame object for discovery.
 # ---------------------------------------------------------------------------
 frame_A = SpaceFOMRefFrameObject(
-    create_frame_object=False,
-    frame_instance_name="FrameA",
-    frame_S_define_instance=leaf_ref_frame.frame_packing,
-    frame_S_define_instance_name="leaf_ref_frame.frame_packing",
-    parent_S_define_instance=root_ref_frame.frame_packing,
-    parent_name="RootFrame",
-    frame_conditional=leaf_ref_frame.conditional,
-    frame_lag_comp=leaf_ref_frame.lag_compensation,
-    frame_ownership=leaf_ref_frame.ownership_handler,
-    frame_deleted=leaf_ref_frame.deleted_callback,
+   create_frame_object=False,
+   frame_instance_name="FrameA",
+   frame_S_define_instance=leaf_ref_frame.frame_packing,
+   frame_S_define_instance_name="leaf_ref_frame.frame_packing",
+   parent_S_define_instance=root_ref_frame.frame_packing,
+   parent_name="RootFrame",
+   frame_conditional=leaf_ref_frame.conditional,
+   frame_lag_comp=leaf_ref_frame.lag_compensation,
+   frame_ownership=leaf_ref_frame.ownership_handler,
+   frame_deleted=leaf_ref_frame.deleted_callback,
 )
 
 # Set the debug flag for the root reference frame.
@@ -445,14 +444,14 @@ frame_A.set_lag_comp_type(trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE)
 # Set up the PhysicalEntity object for discovery.
 # ---------------------------------------------------------------------------
 phy_entity = SpaceFOMPhysicalEntityObject(
-    create_entity_object=False,
-    entity_instance_name=phy_entity_name,
-    entity_S_define_instance=physical_entity.entity_packing,
-    entity_S_define_instance_name="physical_entity.entity_packing",
-    entity_conditional=physical_entity.conditional,
-    entity_lag_comp=physical_entity.lag_compensation,
-    entity_ownership=physical_entity.ownership_handler,
-    entity_deleted=physical_entity.deleted_callback,
+   create_entity_object=False,
+   entity_instance_name=phy_entity_name,
+   entity_S_define_instance=physical_entity.entity_packing,
+   entity_S_define_instance_name="physical_entity.entity_packing",
+   entity_conditional=physical_entity.conditional,
+   entity_lag_comp=physical_entity.lag_compensation,
+   entity_ownership=physical_entity.ownership_handler,
+   entity_deleted=physical_entity.deleted_callback,
 )
 
 # Set the debug flag for the Entity.
@@ -473,13 +472,13 @@ phy_entity.set_lag_comp_type(trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE)
 # Set up the PhysicalInterface object for discovery.
 # ---------------------------------------------------------------------------
 phy_interface = SpaceFOMPhysicalInterfaceObject(
-    create_interface_object=False,
-    interface_instance_name=phy_interface_name,
-    interface_S_define_instance=physical_interface.interface_packing,
-    interface_S_define_instance_name="physical_interface.interface_packing",
-    interface_conditional=physical_interface.conditional,
-    interface_ownership=physical_interface.ownership_handler,
-    interface_deleted=physical_interface.deleted_callback,
+   create_interface_object=False,
+   interface_instance_name=phy_interface_name,
+   interface_S_define_instance=physical_interface.interface_packing,
+   interface_S_define_instance_name="physical_interface.interface_packing",
+   interface_conditional=physical_interface.conditional,
+   interface_ownership=physical_interface.ownership_handler,
+   interface_deleted=physical_interface.deleted_callback,
 )
 
 # Set the debug flag for the Entity.
@@ -492,14 +491,14 @@ federate.add_fed_object(phy_interface)
 # Set up the DynamicalEntity object for discovery.
 # ---------------------------------------------------------------------------
 dyn_entity = SpaceFOMDynamicalEntityObject(
-    create_entity_object=True,
-    entity_instance_name=dyn_entity_name,
-    entity_S_define_instance=dynamical_entity.entity_packing,
-    entity_S_define_instance_name="dynamical_entity.entity_packing",
-    entity_conditional=dynamical_entity.conditional,
-    entity_lag_comp=dynamical_entity.lag_compensation,
-    entity_ownership=dynamical_entity.ownership_handler,
-    entity_deleted=dynamical_entity.deleted_callback,
+   create_entity_object=True,
+   entity_instance_name=dyn_entity_name,
+   entity_S_define_instance=dynamical_entity.entity_packing,
+   entity_S_define_instance_name="dynamical_entity.entity_packing",
+   entity_conditional=dynamical_entity.conditional,
+   entity_lag_comp=dynamical_entity.lag_compensation,
+   entity_ownership=dynamical_entity.ownership_handler,
+   entity_deleted=dynamical_entity.deleted_callback,
 )
 
 # Set the debug flag for the Entity.
@@ -538,7 +537,7 @@ federate.initialize()
 # Set up simulation termination time.
 # ---------------------------------------------------------------------------
 if run_duration:
-    trick.sim_services.exec_set_terminate_time(run_duration)
+   trick.sim_services.exec_set_terminate_time(run_duration)
 
 # ---------------------------------------------------------------------------
 # Send a timed MTR request to the Master federate.

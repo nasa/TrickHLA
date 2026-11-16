@@ -32,17 +32,17 @@ import sys
 # Find the TrickHLA home location and append the path.
 trickhla_home = os.environ.get("TRICKHLA_HOME")
 if trickhla_home is None:
-    sys.exit(
-        "\033[91m" + "Environment variable TRICKHLA_HOME is not defined!" + "\033[0m\n"
-    )
+   sys.exit(
+      "\033[91m" + "Environment variable TRICKHLA_HOME is not defined!" + "\033[0m\n"
+   )
 else:
-    if os.path.isdir(trickhla_home) is False:
-        sys.exit("\033[91m" + "TRICKHLA_HOME not found: " + trickhla_home + "\033[0m\n")
+   if os.path.isdir(trickhla_home) is False:
+      sys.exit("\033[91m" + "TRICKHLA_HOME not found: " + trickhla_home + "\033[0m\n")
 
 # Append the path to the top level of the top level TrickHLA directory.
 # We need this to locate the TrickHLA_data Python data directory.
 if trickhla_home not in sys.path:
-    sys.path.append(trickhla_home)
+   sys.path.append(trickhla_home)
 
 # Import the Ball HLA Federate Configuration class.
 from Modified_data.BallFederateConfig import BallFederateConfig
@@ -153,11 +153,11 @@ ball_sim_config.ball_graphics()
 # ---------------------------------------------------------------------------
 # Configure the Ball HLA data
 ball_fed_config = BallFederateConfig(
-    thla=THLA,
-    thla_init=THLA_INIT,
-    federate_name="Ball1-Federate",
-    federation_name="BallFederation",
-    enabled=True,
+   thla=THLA,
+   thla_init=THLA_INIT,
+   federate_name="Ball1-Federate",
+   federation_name="BallFederation",
+   enabled=True,
 )
 
 # Add in known required federates.
@@ -169,7 +169,7 @@ ball_fed_config.add_known_federate(True, "Ball3-Federate")
 obj_service = THLA.federate.get_object_service()
 obj_service.obj_count = ensemble.num_balls + 1
 obj_service.objects = trick.sim_services.alloc_type(
-    obj_service.obj_count, "TrickHLA::Object"
+   obj_service.obj_count, "TrickHLA::Object"
 )
 
 #
@@ -181,13 +181,13 @@ HLA_walls_config(obj_service.objects[0], "walls_hla", "walls", walls_hla.packing
 # Configure the HLA data for each Ball.
 #
 HLA_ball_config(
-    obj_service.objects[1], "ball1_hla", ball1.state.name, ball1_hla.packing, True
+   obj_service.objects[1], "ball1_hla", ball1.state.name, ball1_hla.packing, True
 )
 HLA_ball_config(
-    obj_service.objects[2], "ball2_hla", ball2.state.name, ball2_hla.packing, False
+   obj_service.objects[2], "ball2_hla", ball2.state.name, ball2_hla.packing, False
 )
 HLA_ball_config(
-    obj_service.objects[3], "ball3_hla", ball3.state.name, ball3_hla.packing, False
+   obj_service.objects[3], "ball3_hla", ball3.state.name, ball3_hla.packing, False
 )
 
 #
@@ -208,7 +208,7 @@ ball_fed_config.initialize()
 # Manage simulation termination time.
 # ---------------------------------------------------------------------------
 if run_duration != None:
-    if run_duration == 0.0:
-        trick.stop(0.0)
-    else:
-        trick.sim_services.exec_set_terminate_time(run_duration)
+   if run_duration == 0.0:
+      trick.stop(0.0)
+   else:
+      trick.sim_services.exec_set_terminate_time(run_duration)

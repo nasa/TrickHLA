@@ -24,7 +24,7 @@ vehicle.entity.pe_data.cm = [0.0, 0.0, 0.0]
 vehicle.entity.de_data.mass = vehicle_mass
 vehicle.entity.de_data.mass_rate = 0.0
 vehicle.entity.pe_data.body_wrt_struct.set_from_Euler_deg(
-    trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0]
+   trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0]
 )
 
 # Principal inertia of a solid sphere.

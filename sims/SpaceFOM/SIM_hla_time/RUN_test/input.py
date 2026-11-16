@@ -19,17 +19,17 @@ import sys
 # Find the TrickHLA home location and append the path.
 trickhla_home = os.environ.get("TRICKHLA_HOME")
 if trickhla_home is None:
-    sys.exit(
-        "\033[91m" + "Environment variable TRICKHLA_HOME is not defined!" + "\033[0m\n"
-    )
+   sys.exit(
+      "\033[91m" + "Environment variable TRICKHLA_HOME is not defined!" + "\033[0m\n"
+   )
 else:
-    if os.path.isdir(trickhla_home) is False:
-        sys.exit("\033[91m" + "TRICKHLA_HOME not found: " + trickhla_home + "\033[0m\n")
+   if os.path.isdir(trickhla_home) is False:
+      sys.exit("\033[91m" + "TRICKHLA_HOME not found: " + trickhla_home + "\033[0m\n")
 
 # Append the path to the top level of the top level TrickHLA directory.
 # We need this to locate the TrickHLA_data Python data directory.
 if trickhla_home not in sys.path:
-    sys.path.append(trickhla_home)
+   sys.path.append(trickhla_home)
 
 # Load the sine specific Sine object.
 from TrickHLA_data.sine.SineObject import *
@@ -43,107 +43,106 @@ from TrickHLA_data.SpaceFOM.SpaceFOMRefFrameObject import *
 
 def print_usage_message():
 
-    print(" ")
-    print(
-        "TrickHLA SpaceFOM HLA Time Managed Simulation Command Line Configuration Options:"
-    )
-    print("  -h --help              : Print this help message.")
-    print(
-        "  --cte [on|off]         : on: Use Central Timing Equipment (CTE), off: no CTE (Default)"
-    )
-    print("  -f --fed_name [name]   : Name of the Federate, default is Simple-Time-Fed.")
-    print(
-        "  -fe --fex_name [name]  : Name of the Federation Execution, default is SpaceFOM_sine."
-    )
-    print("  --nostop               : Set no stop time on simulation.")
-    print("  -s --stop [time]       : Time to stop simulation, default is 10.0 seconds.")
-    print("  --verbose [            : Show verbose messages.")
-    print(" ")
+   print(" ")
+   print(
+      "TrickHLA SpaceFOM HLA Time Managed Simulation Command Line Configuration Options:"
+   )
+   print("  -h --help              : Print this help message.")
+   print(
+      "  --cte [on|off]         : on: Use Central Timing Equipment (CTE), off: no CTE (Default)"
+   )
+   print("  -f --fed_name [name]   : Name of the Federate, default is Simple-Time-Fed.")
+   print(
+      "  -fe --fex_name [name]  : Name of the Federation Execution, default is SpaceFOM_sine."
+   )
+   print("  --nostop               : Set no stop time on simulation.")
+   print("  -s --stop [time]       : Time to stop simulation, default is 10.0 seconds.")
+   print("  --verbose [            : Show verbose messages.")
+   print(" ")
 
-    trick.exec_terminate_with_return(
-        -1,
-        sys._getframe(0).f_code.co_filename,
-        sys._getframe(0).f_lineno,
-        "Print usage message.",
-    )
-    return
+   trick.exec_terminate_with_return(
+      -1,
+      sys._getframe(0).f_code.co_filename,
+      sys._getframe(0).f_lineno,
+      "Print usage message.",
+   )
+   return
 
 
 def parse_command_line():
 
-    global print_usage
-    global enable_cte
-    global run_duration
-    global verbose
-    global federate_name
-    global federation_name
+   global print_usage
+   global enable_cte
+   global run_duration
+   global verbose
+   global federate_name
+   global federation_name
 
-    # Get the Trick command line arguments.
-    argc = trick.command_line_args_get_argc()
-    argv = trick.command_line_args_get_argv()
+   # Get the Trick command line arguments.
+   argc = trick.command_line_args_get_argc()
+   argv = trick.command_line_args_get_argv()
 
-    # Process the command line arguments.
-    # argv[0]=S_main*.exe, argv[1]=RUN/input.py file
-    index = 2
-    while index < argc:
+   # Process the command line arguments.
+   # argv[0]=S_main*.exe, argv[1]=RUN/input.py file
+   index = 2
+   while index < argc:
+      if (str(argv[index]) == "-h") | (str(argv[index]) == "--help"):
+         print_usage = True
 
-        if (str(argv[index]) == "-h") | (str(argv[index]) == "--help"):
+      elif str(argv[index]) == "--cte":
+         index = index + 1
+         if index < argc:
+            if str(argv[index]) == "on":
+               enable_cte = True
+            elif str(argv[index]) == "off":
+               enable_cte = False
+            else:
+               print("ERROR: Unknown --cte argument: " + str(argv[index]))
+               print_usage = True
+         else:
+            print("ERROR: Missing --cte [on|off] argument.")
             print_usage = True
 
-        elif str(argv[index]) == "--cte":
-            index = index + 1
-            if index < argc:
-                if str(argv[index]) == "on":
-                    enable_cte = True
-                elif str(argv[index]) == "off":
-                    enable_cte = False
-                else:
-                    print("ERROR: Unknown --cte argument: " + str(argv[index]))
-                    print_usage = True
-            else:
-                print("ERROR: Missing --cte [on|off] argument.")
-                print_usage = True
-
-        elif (str(argv[index]) == "-f") | (str(argv[index]) == "--fed_name"):
-            index = index + 1
-            if index < argc:
-                federate_name = str(argv[index])
-            else:
-                print("ERROR: Missing --fed_name [name] argument.")
-                print_usage = True
-
-        elif (str(argv[index]) == "-fe") | (str(argv[index]) == "--fex_name"):
-            index = index + 1
-            if index < argc:
-                federation_name = str(argv[index])
-            else:
-                print("ERROR: Missing --fex_name [name] argument.")
-                print_usage = True
-
-        elif str(argv[index]) == "--nostop":
-            run_duration = None
-
-        elif (str(argv[index]) == "-s") | (str(argv[index]) == "--stop"):
-            index = index + 1
-            if index < argc:
-                run_duration = float(str(argv[index]))
-            else:
-                print("ERROR: Missing -stop [time] argument.")
-                print_usage = True
-
-        elif str(argv[index]) == "--verbose":
-            verbose = True
-
-        elif str(argv[index]) == "-d":
-            # Pass this on to Trick.
-            break
-
-        else:
-            print("ERROR: Unknown command line argument " + str(argv[index]))
+      elif (str(argv[index]) == "-f") | (str(argv[index]) == "--fed_name"):
+         index = index + 1
+         if index < argc:
+            federate_name = str(argv[index])
+         else:
+            print("ERROR: Missing --fed_name [name] argument.")
             print_usage = True
 
-        index = index + 1
-    return
+      elif (str(argv[index]) == "-fe") | (str(argv[index]) == "--fex_name"):
+         index = index + 1
+         if index < argc:
+            federation_name = str(argv[index])
+         else:
+            print("ERROR: Missing --fex_name [name] argument.")
+            print_usage = True
+
+      elif str(argv[index]) == "--nostop":
+         run_duration = None
+
+      elif (str(argv[index]) == "-s") | (str(argv[index]) == "--stop"):
+         index = index + 1
+         if index < argc:
+            run_duration = float(str(argv[index]))
+         else:
+            print("ERROR: Missing -stop [time] argument.")
+            print_usage = True
+
+      elif str(argv[index]) == "--verbose":
+         verbose = True
+
+      elif str(argv[index]) == "-d":
+         # Pass this on to Trick.
+         break
+
+      else:
+         print("ERROR: Unknown command line argument " + str(argv[index]))
+         print_usage = True
+
+      index = index + 1
+   return
 
 
 # Default: Don't show usage.
@@ -167,7 +166,7 @@ federation_name = "SpaceFOM_sine"
 parse_command_line()
 
 if print_usage == True:
-    print_usage_message()
+   print_usage_message()
 
 
 # ---------------------------------------------
@@ -192,12 +191,12 @@ roles_sim_config.start_in_freeze(False)
 # =========================================================================
 # Instantiate the Python SpaceFOM configuration object.
 federate = SpaceFOMFederateConfig(
-    thla_federate=THLA.federate,
-    thla_control=THLA.execution_control,
-    thla_config=THLA.ExCO,
-    thla_federation_name=federation_name,
-    thla_federate_name=federate_name,
-    thla_enabled=True,
+   thla_federate=THLA.federate,
+   thla_control=THLA.execution_control,
+   thla_config=THLA.ExCO,
+   thla_federation_name=federation_name,
+   thla_federate_name=federate_name,
+   thla_enabled=True,
 )
 
 # Set the name of the ExCO S_define instance.
@@ -207,9 +206,9 @@ federate = SpaceFOMFederateConfig(
 
 # Set the debug output level.
 if verbose == True:
-    federate.set_debug_level(trick.TrickHLA.DEBUG_LEVEL_4_TRACE)
+   federate.set_debug_level(trick.TrickHLA.DEBUG_LEVEL_4_TRACE)
 else:
-    federate.set_debug_level(trick.TrickHLA.DEBUG_LEVEL_0_TRACE)
+   federate.set_debug_level(trick.TrickHLA.DEBUG_LEVEL_0_TRACE)
 
 # --------------------------------------------------------------------------
 # Configure this federate SpaceFOM roles for this federate.
@@ -236,8 +235,8 @@ THLA.federate.local_settings = "crcHost = localhost:8989"
 THLA.execution_control.sim_timeline = THLA_INIT.sim_timeline
 
 if enable_cte == True:
-    # Set the CTE timeline and change the Trick real time clock to use it.
-    THLA.execution_control.cte_timeline = THLA_INIT.cte_timeline
+   # Set the CTE timeline and change the Trick real time clock to use it.
+   THLA.execution_control.cte_timeline = THLA_INIT.cte_timeline
 
 # Specify the HLA base time unit (default: trick.HLA_BASE_TIME_MICROSECONDS)
 # and scale the Trick time tics value.
@@ -277,4 +276,4 @@ federate.initialize()
 # Set up simulation termination time.
 # ---------------------------------------------------------------------------
 if run_duration:
-    trick.sim_services.exec_set_terminate_time(run_duration)
+   trick.sim_services.exec_set_terminate_time(run_duration)

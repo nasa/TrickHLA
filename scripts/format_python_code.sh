@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Format Python code and sort imports.
-# pipx install black isort
+# pipx install black isort ruff
 #
 # November 13, 2026: Dan Dexter/dan.e.dexter@nasa.gov
 #
@@ -18,4 +18,6 @@ isort ${TRICKHLA_HOME}
 
 echo "----------------------------------------------------------"
 echo "Formatting Python code..."
-black --line-length 90 ${TRICKHLA_HOME}
+#black --line-length 90 ${TRICKHLA_HOME}
+ruff format --config "indent-width = 3" --config "line-length = 90" ${TRICKHLA_HOME}
+

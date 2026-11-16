@@ -27,129 +27,119 @@ from TrickHLA_data.Trick.TrickDataRecordingGroup import *
 
 
 class TrickHLATimeStatsDRG(TrickDataRecordingGroup):
+   # Class constructor.
+   def __init__(
+      self,
+      rate,
+      log_min_max=False,
+      base_name="THLA",
+      group_name="THLATimeStats",
+      format=TrickDRFormat.BINARY,
+      when=TrickDRWhen.ALWAYS,
+      change_var=None,
+      buffer=TrickDRBuffer.BUFFER,
+      enabled=True,
+   ):
 
-    # Class constructor.
-    def __init__(
-        self,
-        rate,
-        log_min_max=False,
-        base_name="THLA",
-        group_name="THLATimeStats",
-        format=TrickDRFormat.BINARY,
-        when=TrickDRWhen.ALWAYS,
-        change_var=None,
-        buffer=TrickDRBuffer.BUFFER,
-        enabled=True,
-    ):
+      # Set the base name for looking up the state variables.
+      self.base_name = base_name
 
-        # Set the base name for looking up the state variables.
-        self.base_name = base_name
+      # Call the TrickDataRecordingGroup constructor.
+      TrickDataRecordingGroup.__init__(
+         self, group_name, rate, format, when, change_var, buffer, enabled
+      )
 
-        # Call the TrickDataRecordingGroup constructor.
-        TrickDataRecordingGroup.__init__(
-            self, group_name, rate, format, when, change_var, buffer, enabled
-        )
-
-        # Add the TAG wait time statistics recording variables.
-        self.drg.add_variable(
+      # Add the TAG wait time statistics recording variables.
+      self.drg.add_variable(
+         self.base_name + ".federate.time_management_service.tag_wait_stats.elapsed_time"
+      )
+      self.drg.add_variable(
+         self.base_name
+         + ".federate.time_management_service.tag_wait_stats.elapsed_time_avg"
+      )
+      if log_min_max:
+         self.drg.add_variable(
             self.base_name
-            + ".federate.time_management_service.tag_wait_stats.elapsed_time"
-        )
-        self.drg.add_variable(
+            + ".federate.time_management_service.tag_wait_stats.elapsed_time_min"
+         )
+         self.drg.add_variable(
             self.base_name
-            + ".federate.time_management_service.tag_wait_stats.elapsed_time_avg"
-        )
-        if log_min_max:
-            self.drg.add_variable(
-                self.base_name
-                + ".federate.time_management_service.tag_wait_stats.elapsed_time_min"
-            )
-            self.drg.add_variable(
-                self.base_name
-                + ".federate.time_management_service.tag_wait_stats.elapsed_time_max"
-            )
-        self.drg.add_variable(
-            self.base_name + ".federate.time_management_service.tag_wait_stats.jitter"
-        )
-        self.drg.add_variable(
-            self.base_name + ".federate.time_management_service.tag_wait_stats.jitter_avg"
-        )
-        if log_min_max:
-            self.drg.add_variable(
-                self.base_name
-                + ".federate.time_management_service.tag_wait_stats.jitter_min"
-            )
-            self.drg.add_variable(
-                self.base_name
-                + ".federate.time_management_service.tag_wait_stats.jitter_max"
-            )
+            + ".federate.time_management_service.tag_wait_stats.elapsed_time_max"
+         )
+      self.drg.add_variable(
+         self.base_name + ".federate.time_management_service.tag_wait_stats.jitter"
+      )
+      self.drg.add_variable(
+         self.base_name + ".federate.time_management_service.tag_wait_stats.jitter_avg"
+      )
+      if log_min_max:
+         self.drg.add_variable(
+            self.base_name + ".federate.time_management_service.tag_wait_stats.jitter_min"
+         )
+         self.drg.add_variable(
+            self.base_name + ".federate.time_management_service.tag_wait_stats.jitter_max"
+         )
 
-        # Add the TAR to TAG elapsed time statistics recording variables.
-        self.drg.add_variable(
+      # Add the TAR to TAG elapsed time statistics recording variables.
+      self.drg.add_variable(
+         self.base_name + ".federate.time_management_service.tar_tag_stats.elapsed_time"
+      )
+      self.drg.add_variable(
+         self.base_name
+         + ".federate.time_management_service.tar_tag_stats.elapsed_time_avg"
+      )
+      if log_min_max:
+         self.drg.add_variable(
             self.base_name
-            + ".federate.time_management_service.tar_tag_stats.elapsed_time"
-        )
-        self.drg.add_variable(
+            + ".federate.time_management_service.tar_tag_stats.elapsed_time_min"
+         )
+         self.drg.add_variable(
             self.base_name
-            + ".federate.time_management_service.tar_tag_stats.elapsed_time_avg"
-        )
-        if log_min_max:
-            self.drg.add_variable(
-                self.base_name
-                + ".federate.time_management_service.tar_tag_stats.elapsed_time_min"
-            )
-            self.drg.add_variable(
-                self.base_name
-                + ".federate.time_management_service.tar_tag_stats.elapsed_time_max"
-            )
-        self.drg.add_variable(
-            self.base_name + ".federate.time_management_service.tar_tag_stats.jitter"
-        )
-        self.drg.add_variable(
-            self.base_name + ".federate.time_management_service.tar_tag_stats.jitter_avg"
-        )
-        if log_min_max:
-            self.drg.add_variable(
-                self.base_name
-                + ".federate.time_management_service.tar_tag_stats.jitter_min"
-            )
-            self.drg.add_variable(
-                self.base_name
-                + ".federate.time_management_service.tar_tag_stats.jitter_max"
-            )
+            + ".federate.time_management_service.tar_tag_stats.elapsed_time_max"
+         )
+      self.drg.add_variable(
+         self.base_name + ".federate.time_management_service.tar_tag_stats.jitter"
+      )
+      self.drg.add_variable(
+         self.base_name + ".federate.time_management_service.tar_tag_stats.jitter_avg"
+      )
+      if log_min_max:
+         self.drg.add_variable(
+            self.base_name + ".federate.time_management_service.tar_tag_stats.jitter_min"
+         )
+         self.drg.add_variable(
+            self.base_name + ".federate.time_management_service.tar_tag_stats.jitter_max"
+         )
 
-        # Add the TARA to TAG elapsed time statistics recording variables.
-        self.drg.add_variable(
+      # Add the TARA to TAG elapsed time statistics recording variables.
+      self.drg.add_variable(
+         self.base_name + ".federate.time_management_service.tara_tag_stats.elapsed_time"
+      )
+      self.drg.add_variable(
+         self.base_name
+         + ".federate.time_management_service.tara_tag_stats.elapsed_time_avg"
+      )
+      if log_min_max:
+         self.drg.add_variable(
             self.base_name
-            + ".federate.time_management_service.tara_tag_stats.elapsed_time"
-        )
-        self.drg.add_variable(
+            + ".federate.time_management_service.tara_tag_stats.elapsed_time_min"
+         )
+         self.drg.add_variable(
             self.base_name
-            + ".federate.time_management_service.tara_tag_stats.elapsed_time_avg"
-        )
-        if log_min_max:
-            self.drg.add_variable(
-                self.base_name
-                + ".federate.time_management_service.tara_tag_stats.elapsed_time_min"
-            )
-            self.drg.add_variable(
-                self.base_name
-                + ".federate.time_management_service.tara_tag_stats.elapsed_time_max"
-            )
-        self.drg.add_variable(
-            self.base_name + ".federate.time_management_service.tara_tag_stats.jitter"
-        )
-        self.drg.add_variable(
-            self.base_name + ".federate.time_management_service.tara_tag_stats.jitter_avg"
-        )
-        if log_min_max:
-            self.drg.add_variable(
-                self.base_name
-                + ".federate.time_management_service.tara_tag_stats.jitter_min"
-            )
-            self.drg.add_variable(
-                self.base_name
-                + ".federate.time_management_service.tara_tag_stats.jitter_max"
-            )
+            + ".federate.time_management_service.tara_tag_stats.elapsed_time_max"
+         )
+      self.drg.add_variable(
+         self.base_name + ".federate.time_management_service.tara_tag_stats.jitter"
+      )
+      self.drg.add_variable(
+         self.base_name + ".federate.time_management_service.tara_tag_stats.jitter_avg"
+      )
+      if log_min_max:
+         self.drg.add_variable(
+            self.base_name + ".federate.time_management_service.tara_tag_stats.jitter_min"
+         )
+         self.drg.add_variable(
+            self.base_name + ".federate.time_management_service.tara_tag_stats.jitter_max"
+         )
 
-        return
+      return

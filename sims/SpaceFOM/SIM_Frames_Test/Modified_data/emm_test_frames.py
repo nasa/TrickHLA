@@ -5,15 +5,15 @@ deg2rad = math.pi / 180.0
 
 # Create reference frame set.
 frames_list = [
-    "SolarSystemBarycentricInertial",
-    "SunCentricInertial",
-    "EarthMoonBarycentricInertial",
-    "EarthCentricInertial",
-    "EarthCentricFixed",
-    "MoonCentricInertial",
-    "MoonCentricFixed",
-    "MarsCentricInertial",
-    "MarsCentricFixed",
+   "SolarSystemBarycentricInertial",
+   "SunCentricInertial",
+   "EarthMoonBarycentricInertial",
+   "EarthCentricInertial",
+   "EarthCentricFixed",
+   "MoonCentricInertial",
+   "MoonCentricFixed",
+   "MarsCentricInertial",
+   "MarsCentricFixed",
 ]
 
 
@@ -27,7 +27,7 @@ ssbary_frame.frame.data.parent_name = ""
 ssbary_frame.frame.data.state.pos = [0.0, 0.0, 0.0]
 ssbary_frame.frame.data.state.vel = [0.0, 0.0, 0.0]
 ssbary_frame.frame.data.state.att.set_from_Euler_deg(
-    trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0]
+   trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0]
 )
 ssbary_frame.frame.data.state.ang_vel = [0.0, 0.0, 0.0]
 
@@ -51,7 +51,7 @@ embary_frame.frame.data.parent_name = frames_list[1]
 embary_frame.frame.data.state.pos = [1000000.0, 0.0, 0.0]
 embary_frame.frame.data.state.vel = [0.0, 10.0, 0.0]
 embary_frame.frame.data.state.att.set_from_Euler_deg(
-    trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0]
+   trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0]
 )
 embary_frame.frame.data.state.ang_vel = [0.0, 0.0, 0.0]
 
@@ -62,7 +62,7 @@ earth_inertial_frame.frame.data.parent_name = frames_list[2]
 earth_inertial_frame.frame.data.state.pos = [-1.0, 0.0, 0.0]
 earth_inertial_frame.frame.data.state.vel = [0.0, 0.0, 0.0]
 earth_inertial_frame.frame.data.state.att.set_from_Euler_deg(
-    trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0]
+   trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0]
 )
 earth_inertial_frame.frame.data.state.ang_vel = [0.0, 0.0, 0.0]
 
@@ -73,7 +73,7 @@ earth_fixed_frame.frame.data.parent_name = frames_list[3]
 earth_fixed_frame.frame.data.state.pos = [0.0, 0.0, 0.0]
 earth_fixed_frame.frame.data.state.vel = [0.0, 0.0, 0.0]
 earth_fixed_frame.frame.data.state.att.set_from_Euler_deg(
-    trick.Roll_Pitch_Yaw, [0.0, 0.0, -45.0]
+   trick.Roll_Pitch_Yaw, [0.0, 0.0, -45.0]
 )
 earth_fixed_frame.frame.data.state.ang_vel = [0.0, 0.0, 0.000 * deg2rad]
 # Set the environmental acceleration values.
@@ -87,7 +87,7 @@ moon_inertial_frame.frame.data.parent_name = frames_list[2]
 moon_inertial_frame.frame.data.state.pos = [1.0, 0.0, 0.0]
 moon_inertial_frame.frame.data.state.vel = [0.0, 0.0, 0.0]
 moon_inertial_frame.frame.data.state.att.set_from_Euler_deg(
-    trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0]
+   trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0]
 )
 moon_inertial_frame.frame.data.state.ang_vel = [0.0, 0.0, 0.0]
 
@@ -98,7 +98,7 @@ moon_fixed_frame.frame.data.parent_name = frames_list[5]
 moon_fixed_frame.frame.data.state.pos = [0.0, 0.0, 0.0]
 moon_fixed_frame.frame.data.state.vel = [0.0, 0.0, 0.0]
 moon_fixed_frame.frame.data.state.att.set_from_Euler_deg(
-    trick.Roll_Pitch_Yaw, [0.0, 0.0, 45.0]
+   trick.Roll_Pitch_Yaw, [0.0, 0.0, 45.0]
 )
 moon_fixed_frame.frame.data.state.ang_vel = [0.0, 0.0, 0.0001 * deg2rad]
 
@@ -112,7 +112,7 @@ mars_inertial_frame.frame.data.parent_name = frames_list[2]
 mars_inertial_frame.frame.data.state.pos = [0.0, 2000000.0, 0.0]
 mars_inertial_frame.frame.data.state.vel = [0.0, 0.0, 0.0]
 mars_inertial_frame.frame.data.state.att.set_from_Euler_deg(
-    trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0]
+   trick.Roll_Pitch_Yaw, [0.0, 0.0, 0.0]
 )
 mars_inertial_frame.frame.data.state.ang_vel = [0.0, 0.0, 0.0]
 
@@ -123,6 +123,6 @@ mars_fixed_frame.frame.data.parent_name = frames_list[7]
 mars_fixed_frame.frame.data.state.pos = [0.0, 0.0, 0.0]
 mars_fixed_frame.frame.data.state.vel = [0.0, 0.0, 0.0]
 mars_fixed_frame.frame.data.state.att.set_from_Euler_deg(
-    trick.Roll_Pitch_Yaw, [0.0, 0.0, 90.0]
+   trick.Roll_Pitch_Yaw, [0.0, 0.0, 90.0]
 )
 mars_fixed_frame.frame.data.state.ang_vel = [0.0, 0.0, 0.0001 * deg2rad]
