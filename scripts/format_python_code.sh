@@ -12,12 +12,23 @@ if [ ! -d $TRICKHLA_HOME ]; then
 fi
 cd ${TRICKHLA_HOME}
 
+# Either use ruff for sorting imports and formatting code or use the
+# combination of isort and black instead.
+use_ruff=true
+
 echo "----------------------------------------------------------"
 echo "Sorting Python imports..."
-isort ${TRICKHLA_HOME}
+if $use_ruff; then
+   ruff check --select I --fix .
+else
+   isort ${TRICKHLA_HOME}
+fi
 
 echo "----------------------------------------------------------"
 echo "Formatting Python code..."
-#black --line-length 90 ${TRICKHLA_HOME}
-ruff format --config "indent-width = 3" --config "line-length = 90" ${TRICKHLA_HOME}
-
+if $use_ruff; then
+   # Reformat to use 3 spaces for indents.
+   ruff format --config "indent-width = 3" --config "line-length = 90" ${TRICKHLA_HOME}
+else
+   black --line-length 90 ${TRICKHLA_HOME}
+fi
