@@ -1,7 +1,8 @@
 #!/bin/bash
 #
 # Format Python code and sort imports.
-# pipx install black isort ruff
+# Using ruff lint tool: pipx install ruff
+# Alternative tool set: pipx install black isort
 #
 # November 13, 2026: Dan Dexter/dan.e.dexter@nasa.gov
 #
@@ -10,7 +11,6 @@ if [ ! -d $TRICKHLA_HOME ]; then
    echo "ERROR: TRICKHLA_HOME ${TRICKHLA_HOME} does not exist, exiting..."
    exit 1
 fi
-cd ${TRICKHLA_HOME}
 
 # Either use ruff for sorting imports and formatting code or use the
 # combination of isort and black instead.

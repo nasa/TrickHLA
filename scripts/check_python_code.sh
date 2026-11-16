@@ -10,7 +10,6 @@ if [ ! -d $TRICKHLA_HOME ]; then
    echo "ERROR: TRICKHLA_HOME ${TRICKHLA_HOME} does not exist, exiting..."
    exit 1
 fi
-cd ${TRICKHLA_HOME}
 
 ruff check ${TRICKHLA_HOME}/scripts
 ruff check ${TRICKHLA_HOME}/TrickHLA_data
