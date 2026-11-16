@@ -19,7 +19,7 @@ use_ruff=true
 echo "----------------------------------------------------------"
 echo "Sorting Python imports..."
 if $use_ruff; then
-   ruff check --select I --fix .
+   ruff check --select I --fix ${TRICKHLA_HOME}
 else
    isort ${TRICKHLA_HOME}
 fi
@@ -30,5 +30,6 @@ if $use_ruff; then
    # Reformat to use 3 spaces for indents.
    ruff format --config "indent-width = 3" --config "line-length = 90" ${TRICKHLA_HOME}
 else
+   # Black is hard coded to use 4 spaces for indents.
    black --line-length 90 ${TRICKHLA_HOME}
 fi
