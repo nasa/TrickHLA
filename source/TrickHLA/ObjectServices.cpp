@@ -1426,9 +1426,9 @@ void ObjectServices::set_object_instance_handles_by_name(
                string id_str;
                StringUtilities::to_string( id_str, data_objects[n].get_instance_handle() );
                summary << "\n    Object:'" << data_objects[n].get_name()
-                       << "'  ID:" << id_str
-                       << "  ID-Valid:" << ( data_objects[n].is_instance_handle_valid() ? "Yes" : "No" )
-                       << "  Obj-Required:" << ( data_objects[n].is_required() ? "Yes" : "No" );
+                       << "' Instance-Handle:" << id_str
+                       << " Instance-Handle-Valid:" << ( data_objects[n].is_instance_handle_valid() ? "Yes" : "No" )
+                       << " Obj-Required:" << ( data_objects[n].is_required() ? "Yes" : "No" );
             }
          } catch ( ObjectInstanceNotKnown const &e ) {
             // If this object is not required, just ignore the object instance
@@ -1439,7 +1439,8 @@ void ObjectServices::set_object_instance_handles_by_name(
             } else {
                if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_OBJ_SERVICES ) ) {
                   summary << "\n    Object:'" << data_objects[n].get_name()
-                          << "'  ID:Inatance-Not-Known  ID-Valid:No  Obj-Required:No";
+                          << "' Instance-Handle:Inatance-Not-Known Instance-Handle-Valid:No Obj-Required:"
+                          << ( data_objects[n].is_required() ? "Yes" : "No" );;
                }
             }
          }
