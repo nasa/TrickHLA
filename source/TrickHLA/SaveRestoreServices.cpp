@@ -533,7 +533,7 @@ bool SaveRestoreServices::save_check_checkpoint()
    // Get the Trick checkpoint write status.
    bool const checkpoint_write_state = trick_MM->get_checkpoint_write_state();
 
-   // Check to see if the checkpoint succeded.
+   // Check to see if the checkpoint succeeded.
    if ( checkpoint_write_state == true ) {
       if ( DebugHandler::show( DEBUG_LEVEL_4_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
          std::string label_str;
@@ -615,7 +615,7 @@ bool SaveRestoreServices::save_in_progress_check()
 /*!
  *  @job_class{scheduled}
  */
-void SaveRestoreServices::save_succeded()
+void SaveRestoreServices::save_succeeded()
 {
    std::string label_str;
 
@@ -1822,23 +1822,6 @@ void SaveRestoreServices::restore_after_checkpoint_load()
    // Restore the data constructs from loading the checkpoint file.
    federate->restore_data_after_checkpoint();
 
-   //
-   // Get us restarted again...
-   //
-
-   // Reset RTI data to the state it was in when checkpointed
-   object_service->setup_object_ref_attributes();
-   interaction_service->setup_interaction_ref_attributes();
-
-   object_service->setup_object_RTI_handles();
-   interaction_service->setup_interaction_RTI_handles();
-
-   object_service->set_all_object_instance_handles_by_name();
-
-   // FIXME: These need to be implemented.
-   // Restore interactions and sync points
-   // reinstate_sync_pts();
-
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
       DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Rebuilt HLA federate state.\n" );
    }
@@ -1965,9 +1948,12 @@ bool SaveRestoreServices::restore_waiting_for_completion()
    }
 
    // Check to see that the restore_after_checkpoint_load jobs ran successfully.
-   // If so, the restore_state should be THLARestoreProcessEnum::RESTORE_WAITING_COMPLETION.
+   // If so, the restore_state should be either
+   // THLARestoreProcessEnum::RESTORE_WAITING_COMPLETION or
+   // THLARestoreProcessEnum::RESTORE_COMPLETE.
    // If not, then we are not in the Restore state we think we should be in.
-   if ( this->restore_state != THLARestoreProcessEnum::RESTORE_WAITING_COMPLETION ) {
+   if (    (this->restore_state != THLARestoreProcessEnum::RESTORE_WAITING_COMPLETION)
+        && (this->restore_state != THLARestoreProcessEnum::RESTORE_COMPLETE) ) {
       string restore_label_str;
       StringUtilities::to_string( restore_label_str, restore_label );
       ostringstream errmsg;
@@ -1997,7 +1983,7 @@ bool SaveRestoreServices::restore_waiting_for_completion()
 /*!
  *  @job_class{scheduled}
  */
-void SaveRestoreServices::restore_succeded()
+void SaveRestoreServices::restore_succeeded()
 {
 
    // Just return if HLA save and restore is not supported by the simulation
@@ -2017,6 +2003,23 @@ void SaveRestoreServices::restore_succeded()
    if ( restore_state != THLARestoreProcessEnum::RESTORE_COMPLETE ) {
       return;
    }
+
+   //
+   // Get us restarted again...
+   //
+
+   // Reset RTI data to the state it was in when checkpointed
+   object_service->setup_object_ref_attributes();
+   interaction_service->setup_interaction_ref_attributes();
+
+   object_service->setup_object_RTI_handles();
+   interaction_service->setup_interaction_RTI_handles();
+
+   object_service->set_all_object_instance_handles_by_name();
+
+   // FIXME: These need to be implemented.
+   // Restore interactions and sync points
+   // reinstate_sync_pts();
 
    // Macro to save the FPU Control Word register value.
    TRICKHLA_SAVE_FPU_CONTROL_WORD;

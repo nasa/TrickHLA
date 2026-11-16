@@ -1113,7 +1113,7 @@ void ExecutionControlBase::save_process()
             DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
          }
          // Save actions when Save completed successfully.
-         save_restore_service->save_succeded();
+         save_restore_service->save_succeeded();
 
          // Reset the Save state to SAVE_NONE.
          save_restore_service->save_state = THLASaveProcessEnum::SAVE_NONE;
@@ -1391,7 +1391,7 @@ void ExecutionControlBase::restore_process()
             DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
          }
          // Restore actions when Restore completed successfully.
-         this->restore_succeded();
+         this->restore_succeeded();
 
          // Reset the Restore state to RESTORE_NONE.
          save_restore_service->restore_state = THLARestoreProcessEnum::RESTORE_NONE;
@@ -1538,9 +1538,9 @@ void ExecutionControlBase::restore_waiting_for_completion()
 /*!
  *  @job_class{freeze}
  */
-void ExecutionControlBase::restore_succeded()
+void ExecutionControlBase::restore_succeeded()
 {
-   save_restore_service->restore_succeded();
+   save_restore_service->restore_succeeded();
    return;
 }
 
@@ -1797,7 +1797,7 @@ void ExecutionControlBase::checkpoint_restart()
       save_restore_service->save_state = THLASaveProcessEnum::SAVE_NONE;
    }
 
-   // Check to see if the load_checkpoint succeded.
+   // Check to see if the load_checkpoint succeeded.
    if ( !trick_MM->get_checkpoint_restore_state() ) {
 
       // Set the Restore state to failed!

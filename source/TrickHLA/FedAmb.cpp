@@ -433,10 +433,8 @@ void FedAmb::federationRestoreBegun()
 {
    // Status report.
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FED_AMB ) ) {
-      string label_str;
-      StringUtilities::to_string( label_str, save_restore_service->restore_get_label() );
       ostringstream msg;
-      msg << "Restore begun for Label '" << label_str << "'\n";
+      msg << "Federation Restore begun!\n";
       DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str() );
    }
 

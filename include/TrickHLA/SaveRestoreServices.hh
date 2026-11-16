@@ -262,7 +262,7 @@ class SaveRestoreServices : public CheckpointConversionBase
    bool save_in_progress_check();
 
    /*! @brief The Federation Save process completed successfully. */
-   void save_succeded();
+   void save_succeeded();
 
    /*! @brief The Federation Save process did NOT complete successfully. */
    void save_failed();
@@ -402,7 +402,7 @@ class SaveRestoreServices : public CheckpointConversionBase
    bool restore_waiting_for_completion();
 
    /*! @brief Function called when a Restore process succeeds. */
-   void restore_succeded();
+   void restore_succeeded();
 
    /*! @brief Function called when a Restore process fails. */
    void restore_failed();

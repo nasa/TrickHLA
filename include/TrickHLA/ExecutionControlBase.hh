@@ -804,7 +804,7 @@ class ExecutionControlBase : public SyncPointManagerBase
    virtual void restore_waiting_for_completion();
 
    /*! @brief Function called when a Restore process succeeds. */
-   virtual void restore_succeded();
+   virtual void restore_succeeded();
 
    /*! @brief Function called when a Restore process fails. */
    virtual void restore_failed();
