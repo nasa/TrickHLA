@@ -1507,6 +1507,21 @@ bool Federate::verify_joined_federates()
                   break;
                }
             } else {
+               if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+                  string name_str, type_str, mom_name_str, fed_hndl_str;
+                  StringUtilities::to_string( name_str, joined_federate.name );
+                  StringUtilities::to_string( type_str, joined_federate.type );
+                  StringUtilities::to_string( mom_name_str, joined_federate.MOM_instance_name );
+                  StringUtilities::to_string( fed_hndl_str, joined_federate.federate_handle );
+                  ostringstream errmsg;
+                  errmsg << "Incomplete joined federate:\n"
+                         << "   Name: " << name_str << "\n"
+                         << "   Type: " << type_str << "\n"
+                         << "   Required: " << (joined_federate.required ? "Yes\n" : "No\n")
+                         << "   MOM name: " << mom_name_str << "\n"
+                         << "   Fed handle: " << fed_hndl_str << "\n";
+                  DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+               }
                // An incomplete joined federate is an automatic fail.
                success = false;
                break;
@@ -1516,6 +1531,13 @@ bool Federate::verify_joined_federates()
 
          // If no match was found then mark this as a fail.
          if ( !found ) {
+            if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
+               string fed_hndl_str;
+               StringUtilities::to_string( fed_hndl_str, fed_handle );
+               ostringstream errmsg;
+               errmsg << "Federate handle not found in list: " << fed_hndl_str << "\n";
+               DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
+            }
             success = false;
          }
 
@@ -1534,8 +1556,8 @@ bool Federate::verify_joined_federates()
          string joined_feds_str;
          StringUtilities::to_string( joined_feds_str, list_joined_federates() );
          ostringstream errmsg;
-         errmsg << "Could not match joined federates with federates in Federation."
-                << " List of joined federates:\n"
+         errmsg << "Could not match joined federates with federates in Federation.\n"
+                << "List of joined federates:\n"
                 << joined_feds_str << "\n";
          DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
       }
@@ -1774,7 +1796,7 @@ void Federate::wait_for_joined_federates_update()
 wstring Federate::list_joined_federates()
 {
    wstringstream summary;
-   summary << "Federate Name, Type, Required\n";
+   summary << "Federate Name, Type, Required, MOM name, fed hndl, obj hndl\n";
 
    // Iterate through the joined federates map.
    KnownFederateMap::iterator map_iter;
@@ -1790,9 +1812,16 @@ wstring Federate::list_joined_federates()
       }
 
       // List out the federate information.
-      summary << joined_federate.name;
+      string mom_name_str, fed_hdnl_str, obj_hndl_str;
+      StringUtilities::to_string( mom_name_str, joined_federate.MOM_instance_name );
+      StringUtilities::to_string( fed_hdnl_str, joined_federate.federate_handle );
+      StringUtilities::to_string( obj_hndl_str, joined_federate.object_instance_handle );
+      summary << "  " << joined_federate.name;
       summary << ", " << joined_federate.type;
-      summary << ", " << ( joined_federate.required ? "True" : "False" );
+      summary << ", " << ( joined_federate.required ? "True" : "False"  );
+      summary << ", " << joined_federate.MOM_instance_name;
+      summary << ", " << joined_federate.federate_handle.toString();
+      summary << ", " << joined_federate.object_instance_handle.toString();
    }
 
    // Return the joined federate list as a wide string.
@@ -2827,7 +2856,7 @@ void Federate::unsubscribe_from_MOM_federation_info()
    attributes.insert( MOM_HLAfederatesInFederation_handle );
    attributes.insert( MOM_HLAautoProvide_handle );
 
-   // Unsubscribe from there particular attributes.
+   // Unsubscribe from their particular attributes.
    unsubscribe_attributes( MOM_HLAfederation_class_handle, attributes );
 
    // Clear the attribute list before returning.

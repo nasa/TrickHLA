@@ -407,6 +407,9 @@ class SaveRestoreServices : public CheckpointConversionBase
    /*! @brief Function called when a Restore process fails. */
    void restore_failed();
 
+   /*! @brief Retore the federate handles in the joined federates list. */
+   void restore_joined_federates();
+
    /*! @brief Prints the reason for the federation restore failure.
     * @param reason Restore failure reason. */
    static void restore_failed_print_reason( RTI1516_NAMESPACE::RestoreFailureReason reason );
@@ -434,17 +437,6 @@ class SaveRestoreServices : public CheckpointConversionBase
    {
       return;
    }
-
-   //--------------------------------------------------------------------------
-   // Potentially deprecated SaveRestoreService functions.
-   //--------------------------------------------------------------------------
-
-   /*! @brief Restore checkpoint.
-    *  @param file_name Checkpoint file name. */
-   void restore_checkpoint( std::string const &file_name );
-
-   /*! @brief Restart the sim from a checkpoint. */
-   void restart_checkpoint();
 
   protected:
    //

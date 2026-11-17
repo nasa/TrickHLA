@@ -1767,7 +1767,7 @@ void SaveRestoreServices::restore_waiting_for_checkpoint_load()
    }
 
    // NOTE: The Restore state will transition from RESTORE_INITIATED to
-   // RESTORE_CHECKPOINT one the Federate::checkpoint_preload job is called.
+   // RESTORE_CHECKPOINT once the Federate::checkpoint_preload job is called.
 
    return;
 }
@@ -2005,10 +2005,11 @@ void SaveRestoreServices::restore_succeeded()
    }
 
    //
-   // Get us restarted again...
+   // Now that the Federation has been Restored, we need to rebuild
+   // the Object and Interaction instances.
    //
 
-   // Reset RTI data to the state it was in when checkpointed
+   // Reset RTI data to the state it was in when Saved
    object_service->setup_object_ref_attributes();
    interaction_service->setup_interaction_ref_attributes();
 
@@ -2017,7 +2018,10 @@ void SaveRestoreServices::restore_succeeded()
 
    object_service->set_all_object_instance_handles_by_name();
 
-   // FIXME: These need to be implemented.
+   // Restore the federate handles for the joined federates.
+   restore_joined_federates();
+
+   // TODO: Does this need to be implemented?
    // Restore interactions and sync points
    // reinstate_sync_pts();
 
@@ -2049,7 +2053,7 @@ void SaveRestoreServices::restore_succeeded()
    // TODO: Load the checkpoint base time units into the Int64BaseTime class
    // so that all the HLA time representations use the correct base time.
    //
-   // Refresh the HLA time constants given the HLA base time from the checkpoint.
+   // Refresh the HLA time constants given the HLA base time from the Save.
    time_management_service->refresh_HLA_time_constants();
 
    // Resume publishing HLA data.
@@ -2113,6 +2117,44 @@ void SaveRestoreServices::restore_failed()
    return;
 }
 
+/*!
+ *  @job_class{scheduled}
+ */
+void SaveRestoreServices::restore_joined_federates()
+{
+
+   // Loop through the joined federates.
+   for ( auto &joined_fed_item : federate->joined_federates_map ) {
+
+      // Get the known federate reference.
+      KnownFederate &joined_federate = joined_fed_item.second;
+
+      // Macro to save the FPU Control Word register value.
+      TRICKHLA_SAVE_FPU_CONTROL_WORD;
+
+      // Get the federate handle by name from the RTI ambassador.
+      try {
+         joined_federate.federate_handle = federate->get_RTI_ambassador()->getFederateHandle( joined_federate.name );
+      } catch ( NameNotFound const &e ) {
+         DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
+      } catch ( FederateNotExecutionMember const &e ) {
+         DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
+      } catch ( NotConnected const &e ) {
+         DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
+         federate->set_connection_lost();
+      } catch ( RTIinternalError const &e ) {
+         DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
+      }
+
+      // Macro to restore the saved FPU Control Word register value.
+      TRICKHLA_RESTORE_FPU_CONTROL_WORD;
+      TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
+
+   }
+
+   return;
+}
+
 void SaveRestoreServices::restore_failed_print_reason(
    RestoreFailureReason reason )
 {
@@ -2136,104 +2178,4 @@ void SaveRestoreServices::restore_failed_print_reason(
          DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Failure reason: UNKNOWN\n" );
          break;
    }
-}
-
-//--------------------------------------------------------------------------
-// FIXME: Potentially deprecated SaveRestoreService functions.
-//--------------------------------------------------------------------------
-
-void SaveRestoreServices::restore_checkpoint(
-   string const &file_name )
-{
-   string trick_filename = file_name;
-   // Prepend federation name to the filename (if it's not already prepended)
-   string const federation_name_str = federate->get_federation_name();
-   if ( trick_filename.compare( 0, federation_name_str.length(), federation_name_str ) != 0 ) {
-      trick_filename = federation_name_str + "_" + file_name;
-   }
-   DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__,
-                                string( "Restoring checkpoint file: '" )
-                                   .append( trick_filename )
-                                   .append( "'\n" ) );
-
-   // Must init all data recording groups since we are restarting at init
-   // time before Trick would normally do this. Prior to Trick 10.8, the only way
-   // to do this is by calling each recording group init() routine in the S_define
-
-   // This will run pre-load-checkpoint jobs, clear memory, read checkpoint
-   // file, and run restart jobs.
-   the_cpr->load_checkpoint( this->HLA_save_directory + "/" + trick_filename );
-
-   the_cpr->load_checkpoint_job();
-
-   // TODO: Load the checkpoint base time units into the Int64BaseTime class
-   // so that all the HLA time representations use the correct base time.
-   //
-   // Refresh the HLA time constants given the HLA base time from the checkpoint.
-   time_management_service->refresh_HLA_time_constants();
-
-   // If exec_set_freeze_command(true) is in master fed's input.py file when
-   // check-pointed, then restore starts up in freeze.
-   // Clear non-master fed's freeze command so it does not cause
-   // unnecessary freeze interaction to be sent.
-   if ( !federate->get_execution_control()->is_master() ) {
-      exec_set_freeze_command( false );
-   }
-
-   DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "Checkpoint file load complete.\n" );
-
-   // indicate that the restore was completed successfully
-   this->restore_state = THLARestoreProcessEnum::RESTORE_COMPLETE;
-
-   return;
-}
-
-//--------------------------------------------------------------------------
-// FIXME: Potentially deprecated SaveRestoreService functions.
-//--------------------------------------------------------------------------
-
-/*!
- * \par<b>Assumptions and Limitations:</b>
- * - Currently only used with IMSim initialization scheme; only for restore at simulation startup.
- *  @job_class{environment}
- */
-void SaveRestoreServices::restart_checkpoint()
-{
-   if ( DebugHandler::show( DEBUG_LEVEL_3_TRACE, DEBUG_SOURCE_SAVE_RESTORE_SERVICES ) ) {
-      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
-   }
-
-   // Macro to save the FPU Control Word register value.
-   TRICKHLA_SAVE_FPU_CONTROL_WORD;
-
-   try {
-      HLAinteger64Time fedTime;
-      federate->get_RTI_ambassador()->queryLogicalTime( fedTime );
-      time_management_service->set_granted_time( fedTime );
-   } catch ( FederateNotExecutionMember const &e ) {
-      DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
-   } catch ( SaveInProgress const &e ) {
-      DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
-   } catch ( RestoreInProgress const &e ) {
-      DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
-   } catch ( NotConnected const &e ) {
-      DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
-      federate->set_connection_lost();
-   } catch ( RTIinternalError const &e ) {
-      DebugHandler::print_exception( __PRETTY_FUNCTION__, __LINE__, e );
-   }
-
-   // Macro to restore the saved FPU Control Word register value.
-   TRICKHLA_RESTORE_FPU_CONTROL_WORD;
-   TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
-   time_management_service->set_requested_time_to_granted_time();
-   this->restore_state = THLARestoreProcessEnum::RESTORE_NONE;
-
-   // FIXME: Is this needed?
-   // reinstate_sync_pts();
-
-   // FIXME: Reset the Save/Restore state.
-   restore_label.clear();
-   restore_state = THLARestoreProcessEnum::RESTORE_NONE;
 }
