@@ -23,6 +23,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{MemoryServices.cpp}
 @trick_link_dependency{ObjectServices.cpp}
 @trick_link_dependency{SaveRestoreServices.cpp}
+@trick_link_dependency{ReportingServices.cpp}
 @trick_link_dependency{Types.cpp}
 @trick_link_dependency{time/TimeManagementServices.cpp}
 @trick_link_dependency{time/TrickThreadCoordinator.cpp}
@@ -71,6 +72,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/ObjectServices.hh"
 #include "TrickHLA/SaveRestoreServices.hh"
+#include "TrickHLA/ReportingServices.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/TimeManagementServices.hh"
 #include "TrickHLA/utils/ElapsedTimeStats.hh"
@@ -205,6 +207,7 @@ Federate::Federate()
      time_management_service( *this ),
      object_service( *this ),
      save_restore_service( *this ),
+     reporting_service( *this ),
      interaction_service( *this ),
      execution_control( nullptr ),
      execution_config( nullptr ),
@@ -318,6 +321,9 @@ void Federate::setup(
    // Register the ExecutionControl instance with the TrickHLA::SaveRestoreServices instance.
    this->save_restore_service.execution_control = &federate_execution_control;
 
+   // Register the ExecutionControl instance with the TrickHLA::ReportingServices instance.
+   this->reporting_service.execution_control = &federate_execution_control;
+
    // Set up the TrickHLA::ExecutionControl instance.
    this->execution_control->setup( *this );
 }
@@ -412,6 +418,7 @@ void Federate::initialize()
     * will pull the defaults from the Trick simulation execution.
     */
    save_restore_service.set_HLA_save_directory( save_restore_service.get_HLA_save_directory() );
+   reporting_service.set_HLA_save_directory( reporting_service.get_HLA_save_directory() );
 
    execution_control->initialize();
 

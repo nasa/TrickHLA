@@ -28,6 +28,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../source/TrickHLA/InteractionServices.cpp}
 @trick_link_dependency{../../source/TrickHLA/ObjectServices.cpp}
 @trick_link_dependency{../../source/TrickHLA/SaveRestoreServices.cpp}
+@trick_link_dependency{../../source/TrickHLA/ReportingServices.cpp}
 @trick_link_dependency{../../source/TrickHLA/Types.cpp}
 @trick_link_dependency{../../source/TrickHLA/time/Int64Time.cpp}
 @trick_link_dependency{../../source/TrickHLA/time/TimeManagementServices.cpp}
@@ -61,6 +62,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/ObjectServices.hh"
 #include "TrickHLA/SaveRestoreServices.hh"
+#include "TrickHLA/ReportingServices.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64Interval.hh"
 #include "TrickHLA/time/Int64Time.hh"
@@ -119,6 +121,7 @@ class Federate : public CheckpointConversionBase
    friend class ObjectServices;
    friend class Object;
    friend class SaveRestoreServices;
+   friend class ReportingServices;
    friend class TimeManagementServices;
    friend class TrickThreadCoordinator;
 
@@ -154,6 +157,8 @@ class Federate : public CheckpointConversionBase
    bool can_rejoin_federation; /**< @trick_units{--}
       Enables this federate to resign in a way to allow re-joining of the
       federation at a later time. TODO: Is this needed anymore? */
+
+   ReportingServices reporting_service; ///< @trick_units{--} Reporting services.
 
    //--------------------------------------------------------------------------
 
@@ -1006,6 +1011,13 @@ class Federate : public CheckpointConversionBase
    SaveRestoreServices *get_save_restore_service()
    {
       return ( &( this->save_restore_service ) );
+   }
+
+   /*! @brief Get the pointer to the associated TrickHLA::ReportingServices instance.
+    *  @return Pointer to the associated TrickHLA::ReportingServices instance. */
+   ReportingServices *get_reporting_service()
+   {
+      return ( &( this->reporting_service ) );
    }
 
    /*! @brief Get the pointer to the associated TrickHLA::InteractionServices instance.
