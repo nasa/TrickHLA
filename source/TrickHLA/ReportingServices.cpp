@@ -104,8 +104,8 @@ ReportingServices::ReportingServices( Federate &fed )
      interaction_service( fed.get_interaction_service() ),
      time_management_service( fed.get_time_management_service() ),
      execution_control( nullptr ),
-     joined_federates_file_name( "" ),
-     HLA_save_directory( "" )
+     HLA_save_directory( "" ),
+     do_generate_report( true )
 {
    return;
 }
@@ -121,7 +121,7 @@ ReportingServices::~ReportingServices()
 }
 
 //----------------------------------------------------------------------------
-// General SavRestoreService support functions.
+// General ReportingService support functions.
 //----------------------------------------------------------------------------
 
 /*!
@@ -187,87 +187,135 @@ bool ReportingServices::check_HLA_save_directory()
  */
 void ReportingServices::generate_report()
 {
-    ostringstream msg;
+   if ( do_generate_report ) {
+      ostringstream msg;
 
-    // msg << endl << "Known Federates:" << endl;
-    // if ( federate->enable_known_feds ) {
-    //     if ( federate->known_feds_count == 0 ) {
-    //         msg << "\tNo Known Federates" << endl;
-    //     } else {
-    //         for ( int i = 0; i < federate->known_feds_count; ++i ) {
-    //             msg << "\t" << federate->known_federates[i].name << endl;
-    //         }
-    //     }
-    // } else {
-    //     msg << "\tDisabled" << endl;
-    // }
+      // Print Known Federates
+      msg << endl << "Known Federates:" << endl;
+      if ( federate->enable_known_feds ) {
+         if ( federate->known_federates.size() == 0 ) {
+               msg << "\tNo Known Federates" << endl;
+         } else {
+               for ( long unsigned int i = 0; i < federate->known_federates.size(); ++i ) {
+                  msg << "\t" << federate->known_federates[i].name.c_str() << endl;
+               }
+         }
+      } else {
+         msg << "\tDisabled" << endl;
+      }
+      message_publish( MSG_NORMAL, msg.str().c_str() );
+      msg.str("");
+      msg.clear();
 
-    msg << endl << "FOM Modules:" << endl;
-    if ( federate->FOM_modules.empty() ) {
-        msg << "\tNo FOM Modules" << endl;
-    } else {
-        msg << "\t" << regex_replace(federate->FOM_modules, regex(", "), "\n\t") << endl;
-    }
+      // Print FOM Modules
+      msg << endl << "FOM Modules:" << endl;
+      if ( federate->FOM_modules.empty() ) {
+         msg << "\tNo FOM Modules" << endl;
+      } else {
+         msg << "\t" << regex_replace(federate->FOM_modules, regex(", "), "\n\t") << endl;
+      }
+      message_publish( MSG_NORMAL, msg.str().c_str() );
+      msg.str("");
+      msg.clear();
 
-    msg << endl << "Objects:" << endl;
-    if ( object_service->obj_count == 0 ) {
-        msg << "\tNo Objects" << endl;
-    } else {
-        for ( int i = 0; i < object_service->obj_count; ++i ) {
-            msg << "\t" << object_service->objects[i].get_FOM_name() << endl;
-            msg << "\t" << object_service->objects[i].get_name() << endl;
+      // Print HLA Objects
+      msg << endl << "Objects:" << endl;
+      if ( object_service->obj_count == 0 ) {
+         msg << "\tNo Objects" << endl;
+      } else {
+         for ( int i = 0; i < object_service->obj_count; ++i ) {
+               msg << "\t" << object_service->objects[i].get_FOM_name() << endl;
+               msg << "\t" << object_service->objects[i].get_name() << endl;
 
-            unsigned short int padding_width = 0;
-            for ( int j = 0; j < object_service->objects[i].get_attribute_count(); ++j ) {
-                if ( object_service->objects[i].get_attributes()[j].get_FOM_name().length() > padding_width ) {
-                padding_width = object_service->objects[i].get_attributes()[j].get_FOM_name().length();
-                }
+               unsigned short int padding_width = 0;
+               for ( int j = 0; j < object_service->objects[i].get_attribute_count(); ++j ) {
+                  if ( object_service->objects[i].get_attributes()[j].get_FOM_name().length() > padding_width ) {
+                     padding_width = object_service->objects[i].get_attributes()[j].get_FOM_name().length();
+                  }
+               }
+
+               for ( int j = 0; j < object_service->objects[i].get_attribute_count(); ++j ) {
+                  msg << "\t\t";
+                  if ( object_service->objects[i].get_attributes()[j].is_publish()   ) { msg << "p"; }
+                  if ( object_service->objects[i].get_attributes()[j].is_subscribe() ) { msg << "s"; }
+
+                  string att_FOM_name = object_service->objects[i].get_attributes()[j].get_FOM_name();
+                  msg << "\t" << att_FOM_name.append(padding_width - att_FOM_name.length(), ' ');
+                  msg << "\t" << object_service->objects[i].get_attributes()[j].get_trick_name() << endl;
+               }
+         }
+      }
+      message_publish( MSG_NORMAL, msg.str().c_str() );
+      msg.str("");
+      msg.clear();
+
+      // Print HLA Interactions
+      msg << endl << "Interactions:" << endl;
+      if ( interaction_service->inter_count == 0 ) {
+         msg << "\tNo Interactions" << endl;
+      } else {
+         for ( int i = 0; i < interaction_service->inter_count; ++i ) {
+            msg << "\t";
+            if ( interaction_service->interactions[i].is_publish()  ) { msg << "p"; }
+            if ( interaction_service->interactions[i].is_subscribe()) { msg << "s"; }
+            msg << "\t" << interaction_service->interactions[i].get_FOM_name() << endl;
+
+            msg << "\t" << "Parameters:" << endl;
+            for ( int j = 0; j < interaction_service->interactions[i].get_parameter_count(); ++j ) {
+               msg << "\t\t" << interaction_service->interactions[i].get_parameters()[j].get_FOM_name();
+               msg << "\t"   << interaction_service->interactions[i].get_parameters()[j].get_trick_name();
             }
+         }
+      }
+      message_publish( MSG_NORMAL, msg.str().c_str() );
+      msg.str("");
+      msg.clear();
 
+      // Write HLA Objects to CSV file
+      if ( object_service->obj_count > 0 ) {
+         string file_name = get_HLA_save_directory() + "/" + federate->get_federation_name() + "__" + federate->get_federate_name() + "__objects.csv";
+         ofstream file(file_name);
+
+         file << "Object FOM Name,";
+         file << "Object Name,";
+         file << "Attribute FOM Name,";
+         file << federate->get_federate_name() << " Publish"   << ",";
+         file << federate->get_federate_name() << " Subscribe" << ",";
+         file << federate->get_federate_name()                 << endl;
+
+         for ( int i = 0; i < object_service->obj_count; ++i ) {
             for ( int j = 0; j < object_service->objects[i].get_attribute_count(); ++j ) {
-                msg << "\t\t";
-                if ( object_service->objects[i].get_attributes()[j].is_publish() ) {
-                msg << "p";
-                }
-                if ( object_service->objects[i].get_attributes()[j].is_subscribe() ) {
-                msg << "s";
-                }
-
-                string att_FOM_name = object_service->objects[i].get_attributes()[j].get_FOM_name();
-                msg << "\t" << att_FOM_name.append(padding_width - att_FOM_name.length(), ' ');
-                msg << "\t" << object_service->objects[i].get_attributes()[j].get_trick_name() << endl;
+                  file << object_service->objects[i].get_FOM_name() << "." << object_service->objects[i].get_name() << "." << object_service->objects[i].get_attributes()[j].get_FOM_name() << ",";
+                  file << object_service->objects[i].get_FOM_name()                                          << ",";
+                  file << object_service->objects[i].get_name()                                              << ",";
+                  file << object_service->objects[i].get_attributes()[j].get_FOM_name()                      << ",";
+                  file <<(object_service->objects[i].get_attributes()[j].is_publish()    ? "True" : "False") << ",";
+                  file <<(object_service->objects[i].get_attributes()[j].is_subscribe()  ? "True" : "False") << ",";
+                  file << object_service->objects[i].get_attributes()[j].get_trick_name()                    << endl;
             }
-        }
-    }
+         }
 
-    message_publish( MSG_NORMAL, msg.str().c_str() );
+         file.close();
 
-    string file_name = get_HLA_save_directory() + "/" + federate->get_federation_name() + "__" + federate->get_federate_name() + ".csv";
-    ofstream file(file_name);
+         msg << "List of HLA Objects written to " + file_name << endl;
+         message_publish( MSG_NORMAL, msg.str().c_str() );
+         msg.str("");
+         msg.clear();
+      }
+   }
 
-    file << "Object FOM Name,";
-    file << "Object Name,";
-    file << "Attribute FOM Name,";
-    file << federate->get_federate_name() << " Publish"   << ",";
-    file << federate->get_federate_name() << " Subscribe" << ",";
-    file << federate->get_federate_name()                 << endl;
+   // Write HLA Interactions to CSV file
+   if ( interaction_service->inter_count > 0 ) {
+      string file_name = get_HLA_save_directory() + "/" + federate->get_federation_name() + "__" + federate->get_federate_name() + "__interactions.csv";
+      ofstream file(file_name);
 
-    for ( int i = 0; i < object_service->obj_count; ++i ) {
-        for ( int j = 0; j < object_service->objects[i].get_attribute_count(); ++j ) {
-            file << object_service->objects[i].get_FOM_name() << "." << object_service->objects[i].get_name() << "." << object_service->objects[i].get_attributes()[j].get_FOM_name() << ",";
-            file << object_service->objects[i].get_FOM_name()                                          << ",";
-            file << object_service->objects[i].get_name()                                              << ",";
-            file << object_service->objects[i].get_attributes()[j].get_FOM_name()                      << ",";
-            file <<(object_service->objects[i].get_attributes()[j].is_publish()    ? "True" : "False") << ",";
-            file <<(object_service->objects[i].get_attributes()[j].is_subscribe()  ? "True" : "False") << ",";
-            file << object_service->objects[i].get_attributes()[j].get_trick_name()                    << endl;
-        }
-    }
+      // TODO
+      file << "TO DO";
+      file.close();
 
-    file.close();
-
-    message_publish( MSG_NORMAL, ("List of objects written to " + file_name + "\n").c_str() );
-
+      msg << "List of HLA Interactions written to " + file_name << endl;
+      message_publish( MSG_NORMAL, msg.str().c_str() );
+   }
 
    return;
 }

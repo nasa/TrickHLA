@@ -174,13 +174,9 @@ class ReportingServices : public CheckpointConversionBase
    TimeManagementServices *time_management_service; ///< @trick_units{--} Associated TrickHLA::TimeManagementServices.
    ExecutionControlBase   *execution_control;       ///< @trick_units{--} Associated TrickHLA::ExecutionControlBase.
 
-   // The ReportingServices information known at execution time. This is
-   // loaded when we join the federation and is automatically kept current when
-   // other federates join / resign from the federation.
-   std::string joined_federates_file_name; ///< @trick_io{**} File containing the names of the joined federates.
-
-   // Save and Restore variables.
+   // Reporting variables.
    std::string HLA_save_directory; ///< @trick_units{--} HLA Save directory.
+   bool        do_generate_report; ///< @trick_units{--} Whether or not to generate the report.
 
   private:
    // Do not allow the copy constructor or assignment operator.
