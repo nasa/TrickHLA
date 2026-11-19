@@ -206,9 +206,9 @@ Federate::Federate()
      federate_ambassador( *this ),
      time_management_service( *this ),
      object_service( *this ),
+     interaction_service( *this ),
      save_restore_service( *this ),
      reporting_service( *this ),
-     interaction_service( *this ),
      execution_control( nullptr ),
      execution_config( nullptr ),
      hla_logical_time( 0 ),
@@ -321,9 +321,6 @@ void Federate::setup(
    // Register the ExecutionControl instance with the TrickHLA::SaveRestoreServices instance.
    this->save_restore_service.execution_control = &federate_execution_control;
 
-   // Register the ExecutionControl instance with the TrickHLA::ReportingServices instance.
-   this->reporting_service.execution_control = &federate_execution_control;
-
    // Set up the TrickHLA::ExecutionControl instance.
    this->execution_control->setup( *this );
 }
@@ -418,7 +415,15 @@ void Federate::initialize()
     * will pull the defaults from the Trick simulation execution.
     */
    save_restore_service.set_HLA_save_directory( save_restore_service.get_HLA_save_directory() );
-   reporting_service.set_HLA_save_directory( reporting_service.get_HLA_save_directory() );
+
+   /*
+    * Set the directory in which to generate the reports.
+    * This may look like an odd way to set that directory.  However, if the
+    * directory is set in the input file, it will only test for the
+    * existence of the directory.  If it is not set in the input file, it
+    * will pull the defaults from the Trick simulation execution.
+    */
+   reporting_service.set_reports_directory( reporting_service.get_reports_directory() );
 
    execution_control->initialize();
 
@@ -546,6 +551,9 @@ void Federate::post_multiphase_initialization()
 {
    // Perform the Execution Control specific post-multi-phase initialization.
    execution_control->post_multi_phase_init_processes();
+
+   // Generate any reports if requested.
+   reporting_service.generate_reports();
 
    // Debug printout.
    if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
@@ -3564,6 +3572,32 @@ void Federate::checkpoint_restart()
 
    return;
 }
+
+//-------------------------------------------------------------------------
+// Report Generation Interface.
+//-------------------------------------------------------------------------
+/*!
+ *  @job_class{initialization}
+ */
+void Federate::add_report( THLAReportFormatEnum format )
+{
+   reporting_service.add_report( format );
+   return;
+}
+
+/*!
+ *  @job_class{initialization}
+ */
+void Federate::remove_report( THLAReportFormatEnum format )
+{
+   reporting_service.remove_report( format );
+   return;
+}
+
+
+//-------------------------------------------------------------------------
+// 
+//-------------------------------------------------------------------------
 
 /*!
  * @job_class{initialization}

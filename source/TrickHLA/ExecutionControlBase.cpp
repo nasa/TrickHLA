@@ -144,7 +144,8 @@ ExecutionControlBase::ExecutionControlBase()
      time_management_service( nullptr ),
      object_service( nullptr ),
      interaction_service( nullptr ),
-     save_restore_service( nullptr )
+     save_restore_service( nullptr ),
+     reporting_service( nullptr )
 {
    return;
 }
@@ -180,7 +181,8 @@ ExecutionControlBase::ExecutionControlBase(
      time_management_service( nullptr ),
      object_service( nullptr ),
      interaction_service( nullptr ),
-     save_restore_service( nullptr )
+     save_restore_service( nullptr ),
+     reporting_service( nullptr )
 {
    return;
 }
@@ -219,6 +221,9 @@ void ExecutionControlBase::setup(
 
    // Set the TrickHLA::InteractionServices instance reference.
    this->interaction_service = fed.get_interaction_service();
+
+   // Set the TrickHLA::ReportingServices instance reference.
+   this->reporting_service = fed.get_reporting_service();
 
    // Set the TrickHLA::ExecutionConfigurationBase instance reference.
    this->execution_configuration = fed.get_execution_configuration();
@@ -1645,6 +1650,7 @@ void ExecutionControlBase::convert_data_before_checkpoint()
    object_service->convert_data_before_checkpoint();
    interaction_service->convert_data_before_checkpoint();
    save_restore_service->convert_data_before_checkpoint();
+   reporting_service->convert_data_before_checkpoint();
 
    // TODO: Do the Timelines need to be converted.
 
@@ -1672,6 +1678,7 @@ void ExecutionControlBase::restore_data_after_checkpoint()
    object_service->restore_data_after_checkpoint();
    interaction_service->restore_data_after_checkpoint();
    save_restore_service->restore_data_after_checkpoint();
+   reporting_service->restore_data_after_checkpoint();
 
    // Restoring the synchronization point lists.
    SyncPointManagerBase::restore_data_after_checkpoint();
@@ -1697,6 +1704,7 @@ void ExecutionControlBase::free_converted_data_for_checkpoint()
    object_service->free_converted_data_for_checkpoint();
    interaction_service->free_converted_data_for_checkpoint();
    save_restore_service->free_converted_data_for_checkpoint();
+   reporting_service->free_converted_data_for_checkpoint();
 
    // Freeing the synchronization point lists checkpoint data.
    SyncPointManagerBase::free_converted_data_for_checkpoint();

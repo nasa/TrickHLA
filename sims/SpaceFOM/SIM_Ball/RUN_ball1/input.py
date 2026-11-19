@@ -201,6 +201,9 @@ ball_fed_config.add_known_federate(True, str(ball_fed_config.federate.name))
 ball_fed_config.add_known_federate(True, "Ball 2 Sim")
 ball_fed_config.add_known_federate(False, "Ball 3 Sim")
 
+# Activate report
+THLA.federate.add_report( trick.TrickHLA.THLAReportFormatEnum_REPORT_FORMAT_CSV )
+
 
 # ---------------------------------------------------------------------------
 # Setup the Data Recording Groups.

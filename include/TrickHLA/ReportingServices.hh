@@ -19,11 +19,7 @@ NASA, Johnson Space Center\n
 @python_module{TrickHLA}
 
 @tldh
-@trick_link_dependency{../../source/TrickHLA/ExecutionControlBase.cpp}
-@trick_link_dependency{../../source/TrickHLA/Federate.cpp}
 @trick_link_dependency{../../source/TrickHLA/ReportingServices.cpp}
-@trick_link_dependency{../../source/TrickHLA/Types.cpp}
-@trick_link_dependency{../../source/TrickHLA/time/TimeManagementServices.cpp}
 
 @revs_title
 @revs_begin
@@ -36,31 +32,14 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_REPORTING_SERVICES_HH
 
 // System includes.
+#include <string>
 #include <cstdint>
+
+// Trick includes.
 
 // TrickHLA includes.
 #include "TrickHLA/CheckpointConversionBase.hh"
-#include "TrickHLA/HLAStandardSupport.hh"
-#include "TrickHLA/time/Int64Time.hh"
-
-// C++11 deprecated dynamic exception specifications for a function so we need
-// to silence the warnings coming from the IEEE 1516 declared functions.
-// This should work for both GCC and Clang.
-#if defined( IEEE_1516_2010 )
-#   pragma GCC diagnostic push
-#   pragma GCC diagnostic ignored "-Wdeprecated"
-#endif
-
-// HLA include files.
-#include "RTI/Enums.h"
-#include "RTI/Handle.h"
-#include "RTI/RTI1516.h"
-#include "RTI/Typedefs.h"
-#include "RTI/VariableLengthData.h"
-
-#if defined( IEEE_1516_2010 )
-#   pragma GCC diagnostic pop
-#endif
+#include "TrickHLA/ReportFormatCSV.hh"
 
 namespace TrickHLA
 {
@@ -69,9 +48,9 @@ namespace TrickHLA
 // through pointers, these classes are included as forward declarations. This
 // helps to limit issues with recursive includes.
 class Federate;
+class TimeManagementServices;
 class ObjectServices;
 class InteractionServices;
-class TimeManagementServices;
 class ExecutionControlBase;
 
 class ReportingServices : public CheckpointConversionBase
@@ -92,7 +71,12 @@ class ReportingServices : public CheckpointConversionBase
    friend class ExecutionControlBase;
    friend class FedAmb;
 
+   friend class ReportFormatCSV;
+   friend class ReportFormatMD;
+   friend class ReportFormatLaTeX;
+
   public:
+
    //
    // Public constructors and destructor.
    //
@@ -109,38 +93,47 @@ class ReportingServices : public CheckpointConversionBase
    //
    // General support functions.
    //
-   /*! @brief Set the HLA save directory.
-    * @return Success of setting the HLA Save directory path.
+   /*! @brief Set the directory in which to generate the reports.
+    * @return Success of setting the reports directory path.
     * @detail If a path isn't provided, then a default path is constructed. */
-   bool set_HLA_save_directory()
+   bool set_reports_directory()
    {
-      return set_HLA_save_directory( "" );
+      return set_reports_directory( "" );
    }
 
-   /*! @brief Set the HLA save directory.
-    * @return Success of setting the HLA Save directory path.
+   /*! @brief Set the directory in which to generate the reports.
+    * @return Success of setting the reports directory path.
     * @detail If a path isn't provided, then a default path is constructed.
-    * @param  path Full path to the HLA Save directory.  */
-   bool set_HLA_save_directory( std::string const &path );
+    * @param  path Full path to the reports directory.  */
+   bool set_reports_directory( std::string const &path );
 
-   /*! @brief Get the HLA save directory.
-    * @return HLA save directory. */
-   std::string const &get_HLA_save_directory()
+   /*! @brief Get the path to the reports directory.
+    * @return Path to the reports directory. */
+   std::string const &get_reports_directory()
    {
-      return HLA_save_directory;
+      return reports_directory;
    }
 
-   /*! @brief Check if HLA_save_directory is empty. If so, ask the EXECUTIVE
+   /*! @brief Check if reports_directory is empty. If so, ask the EXECUTIVE
     * for info and build the absolute path of the RUN directory.
     * @return Success of HLA Save directory path. */
-   bool check_HLA_save_directory();
+   bool check_reports_directory();
+   
+   /*! @brief Add a report format to generate.
+    *  @param format Rreport format to add. */
+   void add_report( THLAReportFormatEnum format );
+
+   /*! @brief Add a report format to generate.
+    *  @param format Rreport format to add. */
+   void remove_report( THLAReportFormatEnum format );
 
    //..........................................................................
    // Report Generation functions.
    //..........................................................................
 
-   /*! @brief Function called to generate the report. */
-   void generate_report();
+   /*! @brief Function called to generate all requested reports. */
+   void generate_reports();
+
 
    //-------------------------------------------------------------------------
    // CheckpointConversionBase Interface.
@@ -165,22 +158,23 @@ class ReportingServices : public CheckpointConversionBase
    }
 
   protected:
+
+   std::string reports_directory; ///< @trick_units{--} Path to the reports directory.
+   uint16_t    report_formats;    ///< @trick_units{1} Report formats to generate.
+
    //
    // References to the Federate and associated services.
    //
-   Federate               *federate;                ///< @trick_units{--} Associated TrickHLA::Federate.
-   ObjectServices         *object_service;          ///< @trick_units{--} Associated ObjectServices.
-   InteractionServices    *interaction_service;     ///< @trick_units{--} Associated InteractionServices.
-   TimeManagementServices *time_management_service; ///< @trick_units{--} Associated TrickHLA::TimeManagementServices.
-   ExecutionControlBase   *execution_control;       ///< @trick_units{--} Associated TrickHLA::ExecutionControlBase.
+   Federate            *federate;            ///< @trick_units{--} Associated TrickHLA::Federate.
+   ObjectServices      *object_services;     ///< @trick_units{--} Object services associated with the federate.
+   InteractionServices *interaction_service; ///< @trick_units{--} Interaction services associated with the federate.
 
-   // The ReportingServices information known at execution time. This is
-   // loaded when we join the federation and is automatically kept current when
-   // other federates join / resign from the federation.
-   std::string joined_federates_file_name; ///< @trick_io{**} File containing the names of the joined federates.
-
-   // Save and Restore variables.
-   std::string HLA_save_directory; ///< @trick_units{--} HLA Save directory.
+   //
+   // Known report formats.
+   //
+   ReportFormatCSV   format_csv; ///< @trick_units{--} CSV report generation instance.
+   //ReportFormatMD    format_md; ///< @trick_units{--} Markdown report generation instance.
+   //ReportFormatLaTeX format_latex; ///< @trick_units{--} LaTeX report generation instance.
 
   private:
    // Do not allow the copy constructor or assignment operator.

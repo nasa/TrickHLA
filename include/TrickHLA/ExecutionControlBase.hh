@@ -81,11 +81,12 @@ namespace TrickHLA
 // helps to limit issues with recursive includes.
 class ExecutionConfigurationBase;
 class Federate;
+class TimeManagementServices;
 class InteractionServices;
 class ObjectServices;
 class Object;
 class SaveRestoreServices;
-class TimeManagementServices;
+class ReportingServices;
 
 class ExecutionControlBase : public SyncPointManagerBase
 {
@@ -907,6 +908,7 @@ class ExecutionControlBase : public SyncPointManagerBase
    TrickHLA::ObjectServices         *object_service;          ///< @trick_io{**} Associated ObjectServices.
    TrickHLA::InteractionServices    *interaction_service;     ///< @trick_io{**} Associated Interaction service.
    TrickHLA::SaveRestoreServices    *save_restore_service;    ///< @trick_io{**} Associated Save & Restore service.
+   TrickHLA::ReportingServices      *reporting_service;       ///< @trick_io{**} Associated Reporting service.
 
   private:
    // Do not allow the copy constructor.

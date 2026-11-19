@@ -118,8 +118,8 @@ class Federate : public CheckpointConversionBase
    friend class FedAmb;
    friend class Interaction;
    friend class InteractionServices;
-   friend class ObjectServices;
    friend class Object;
+   friend class ObjectServices;
    friend class SaveRestoreServices;
    friend class ReportingServices;
    friend class TimeManagementServices;
@@ -157,8 +157,6 @@ class Federate : public CheckpointConversionBase
    bool can_rejoin_federation; /**< @trick_units{--}
       Enables this federate to resign in a way to allow re-joining of the
       federation at a later time. TODO: Is this needed anymore? */
-
-   ReportingServices reporting_service; ///< @trick_units{--} Reporting services.
 
    //--------------------------------------------------------------------------
 
@@ -1161,6 +1159,17 @@ class Federate : public CheckpointConversionBase
     *  part of an HLA Restore.  Delegates to Execution Control interface.*/
    void checkpoint_restart() override;
 
+   //-------------------------------------------------------------------------
+   // Federate Report service interfaces.
+   //
+   /*! @brief Add a report format to generate.
+    *  @param format Rreport format to add. */
+   void add_report( THLAReportFormatEnum format );
+
+   /*! @brief Add a report format to generate.
+    *  @param format Rreport format to add. */
+   void remove_report( THLAReportFormatEnum format );
+
   private:
    //
    // Federation state variables.
@@ -1207,8 +1216,9 @@ class Federate : public CheckpointConversionBase
    MemoryServices         memory_services;         ///< @trick_units{--} Memory services class.
    TimeManagementServices time_management_service; ///< @trick_units{--} Time Management services.
    ObjectServices         object_service;          ///< @trick_units{--} Object Management services.
-   SaveRestoreServices    save_restore_service;    ///< @trick_units{--} Save & Restore services.
    InteractionServices    interaction_service;     ///< @trick_units{--} Interaction services.
+   SaveRestoreServices    save_restore_service;    ///< @trick_units{--} Save & Restore services.
+   ReportingServices      reporting_service;       ///< @trick_units{--} Reporting services.
 
    //
    // Federation required associations.
