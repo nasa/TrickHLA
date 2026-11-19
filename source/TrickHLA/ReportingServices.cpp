@@ -105,7 +105,7 @@ ReportingServices::~ReportingServices()
 }
 
 //----------------------------------------------------------------------------
-// General Reporting support functions.
+// General ReportingService support functions.
 //----------------------------------------------------------------------------
 
 /*!
