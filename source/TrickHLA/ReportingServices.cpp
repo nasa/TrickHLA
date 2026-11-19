@@ -302,19 +302,19 @@ void ReportingServices::generate_report()
          msg.str("");
          msg.clear();
       }
-   }
 
-   // Write HLA Interactions to CSV file
-   if ( interaction_service->inter_count > 0 ) {
-      string file_name = get_HLA_save_directory() + "/" + federate->get_federation_name() + "__" + federate->get_federate_name() + "__interactions.csv";
-      ofstream file(file_name);
+      // Write HLA Interactions to CSV file
+      if ( interaction_service->inter_count > 0 ) {
+         string file_name = get_HLA_save_directory() + "/" + federate->get_federation_name() + "__" + federate->get_federate_name() + "__interactions.csv";
+         ofstream file(file_name);
 
-      // TODO
-      file << "TO DO";
-      file.close();
+         // TODO
+         file << "TO DO";
+         file.close();
 
-      msg << "List of HLA Interactions written to " + file_name << endl;
-      message_publish( MSG_NORMAL, msg.str().c_str() );
+         msg << "List of HLA Interactions written to " + file_name << endl;
+         message_publish( MSG_NORMAL, msg.str().c_str() );
+      }
    }
 
    return;
