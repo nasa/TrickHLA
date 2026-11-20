@@ -83,7 +83,7 @@ void ReportFormatCSV::generate_report()
    //
    // Check for Federation level report topics.
    //
-   if ( check_for_topic( THLAReportTopicsEnum::REPORT_TOPICS_FEDERATION ) ){
+   if ( has_report_topic( THLAReportTopicsEnum::REPORT_TOPICS_FEDERATION ) ){
 
       // Print Known Federates
       msg << endl << "Known Federates:" << endl;
@@ -109,7 +109,7 @@ void ReportFormatCSV::generate_report()
    //
    // Check for Federate level report topics.
    //
-   if ( check_for_topic( THLAReportTopicsEnum::REPORT_TOPICS_FEDERATE ) ){
+   if ( has_report_topic( THLAReportTopicsEnum::REPORT_TOPICS_FEDERATE ) ){
 
       // Print FOM Modules
       msg << endl << "FOM Modules:" << endl;
@@ -129,7 +129,7 @@ void ReportFormatCSV::generate_report()
    //
    // Check for Object level report topics.
    //
-   if ( check_for_topic( THLAReportTopicsEnum::REPORT_TOPICS_OBJECTS ) ){
+   if ( has_report_topic( THLAReportTopicsEnum::REPORT_TOPICS_OBJECTS ) ){
 
       // Print HLA Objects
       msg << endl << "Objects:" << endl;
@@ -169,7 +169,7 @@ void ReportFormatCSV::generate_report()
    //
    // Check for Interaction level report topics.
    //
-   if ( check_for_topic( THLAReportTopicsEnum::REPORT_TOPICS_INTERACTIONS ) ){
+   if ( has_report_topic( THLAReportTopicsEnum::REPORT_TOPICS_INTERACTIONS ) ){
 
       // Print HLA Interactions
       msg << endl << "Interactions:" << endl;
@@ -200,7 +200,7 @@ void ReportFormatCSV::generate_report()
    //
    // Check for Object level report topics.
    //
-   if ( check_for_topic( THLAReportTopicsEnum::REPORT_TOPICS_OBJECTS ) ){
+   if ( has_report_topic( THLAReportTopicsEnum::REPORT_TOPICS_OBJECTS ) ){
 
       // Write HLA Objects to CSV file
       if ( object_service->obj_count > 0 ) {
@@ -241,7 +241,7 @@ void ReportFormatCSV::generate_report()
    //
    // Check for Interaction level report topics.
    //
-   if ( check_for_topic( THLAReportTopicsEnum::REPORT_TOPICS_INTERACTIONS ) ){
+   if ( has_report_topic( THLAReportTopicsEnum::REPORT_TOPICS_INTERACTIONS ) ){
 
       // Write HLA Interactions to CSV file
       if ( interaction_service->inter_count > 0 ) {

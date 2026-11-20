@@ -136,20 +136,20 @@ void ReportFormatBase::remove_topic( THLAReportTopicsEnum topic )
 /*!
  *  @job_class{initialization}
  */
-bool ReportFormatBase::check_for_topic( THLAReportTopicsEnum topic )
+bool ReportFormatBase::has_report_topic( THLAReportTopicsEnum topic )
 {
    // Check for special cases.
    if ( topic == THLAReportTopicsEnum::REPORT_TOPICS_NONE ){
       return( (topics == 0) ? true : false );
    }
    else if ( topic == THLAReportTopicsEnum::REPORT_TOPICS_ALL ){
-      return(    (check_for_topic( THLAReportTopicsEnum::REPORT_TOPICS_FEDERATION ))
-              && (check_for_topic( THLAReportTopicsEnum::REPORT_TOPICS_FEDERATE ))
-              && (check_for_topic( THLAReportTopicsEnum::REPORT_TOPICS_OBJECTS ))
-              && (check_for_topic( THLAReportTopicsEnum::REPORT_TOPICS_ATTRIBUTES ))
-              && (check_for_topic( THLAReportTopicsEnum::REPORT_TOPICS_INTERACTIONS ))
-              && (check_for_topic( THLAReportTopicsEnum::REPORT_TOPICS_PARAMETERS ))
-              && (check_for_topic( THLAReportTopicsEnum::REPORT_TOPICS_SYNC_POINTS )) );
+      return(    (has_report_topic( THLAReportTopicsEnum::REPORT_TOPICS_FEDERATION ))
+              && (has_report_topic( THLAReportTopicsEnum::REPORT_TOPICS_FEDERATE ))
+              && (has_report_topic( THLAReportTopicsEnum::REPORT_TOPICS_OBJECTS ))
+              && (has_report_topic( THLAReportTopicsEnum::REPORT_TOPICS_ATTRIBUTES ))
+              && (has_report_topic( THLAReportTopicsEnum::REPORT_TOPICS_INTERACTIONS ))
+              && (has_report_topic( THLAReportTopicsEnum::REPORT_TOPICS_PARAMETERS ))
+              && (has_report_topic( THLAReportTopicsEnum::REPORT_TOPICS_SYNC_POINTS )) );
    }
 
    // Return true is format is found in the report formats bit field.

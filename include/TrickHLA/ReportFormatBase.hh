@@ -122,7 +122,7 @@ class ReportFormatBase : public CheckpointConversionBase
 
    /*! @brief Check the report detail level.
     *  @param report_detail Detail level for this report. */
-   virtual bool check_detail( THLAReportDetailEnum report_detail )
+   virtual bool is_detail_level( THLAReportDetailEnum report_detail )
    {
       return( (report_detail == detail) ? true : false );
    }
@@ -142,7 +142,7 @@ class ReportFormatBase : public CheckpointConversionBase
    /*! @brief Check for a topic.
     *  @param topic Report topic to check for.
     *  @return Returns true if report topic is set in the specified topics. */
-   bool check_for_topic( THLAReportTopicsEnum topic );
+   bool has_report_topic( THLAReportTopicsEnum topic );
 
    
    //-------------------------------------------------------------------------
