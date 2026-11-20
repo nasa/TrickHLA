@@ -49,30 +49,6 @@ using namespace RTI1516_NAMESPACE;
 using namespace std;
 using namespace TrickHLA;
 
-//-----------------------------------------------------------
-// ReportFormat enumeration support functions.
-//-----------------------------------------------------------
-std::string TrickHLA::to_string( THLAReportFormatEnum report_format )
-{
-   switch ( report_format ) {
-      case THLAReportFormatEnum::REPORT_FORMAT_NONE:
-         return ( "REPORT_FORMAT_UNKNOWN" );
-         break;
-      case THLAReportFormatEnum::REPORT_FORMAT_CSV:
-         return ( "REPORT_FORMAT_CSV" );
-         break;
-      case THLAReportFormatEnum::REPORT_FORMAT_MD:
-         return ( "REPORT_FORMAT_MD" );
-         break;
-      case THLAReportFormatEnum::REPORT_FORMAT_LATEX:
-         return ( "REPORT_FORMAT_LATEX" );
-         break;
-      default:
-         return ( "REPORT_FORMAT_UNKNOWN" );
-   }
-   return ( "REPORT_FORMAT_UNKNOWN" );
-}
-
 /*!
  * @details NOTE: In most cases, we would allocate and set default names in
  * the constructor. However, since we want this class to be Input Processor

@@ -18,6 +18,9 @@ NASA, Johnson Space Center\n
 
 @python_module{TrickHLA}
 
+@tldh
+@trick_link_dependency{../../source/TrickHLA/ReportFormatBase.cpp}
+
 @revs_title
 @revs_begin
 @rev_entry{Edwin Z. Crues, NASA ER7, TrickHLA, November 2026, --, Initial implementation.}
@@ -53,6 +56,10 @@ enum class THLAReportFormatEnum : uint16_t {
    REPORT_FORMAT_ALL   = 0x7FFF  ///< Gereat rports in all formats.
 };
 
+/*! @brief Convert a THLAReportFormatEnum value into a string representation.
+ *  @param report_format Value to convert to a string. */
+std::string to_string( THLAReportFormatEnum report_format );
+
 /*
  * Enumerated type used limit report generation detail.
  */
@@ -79,10 +86,6 @@ enum class THLAReportTopicsEnum : uint16_t {
    REPORT_TOPICS_ALL          = 0x7FFF  ///< Generate report information for all topics.
 };
 
-/*! @brief Convert a THLAReportFormatEnum value into a string representation.
- *  @param report_format Value to convert to a string. */
-std::string to_string( THLAReportFormatEnum report_format );
-
 class ReportFormatBase : public CheckpointConversionBase
 {
    // Let the Trick input processor access protected and private data.
@@ -105,57 +108,29 @@ class ReportFormatBase : public CheckpointConversionBase
   public:
    /*! @brief Default constructor for the TrickHLA ReportFormatBase class.
     *  @param services Reference to the reporting services. */
-   ReportFormatBase( ReportingServices & service )
-   : format( THLAReportFormatEnum::REPORT_FORMAT_NONE ),
-     detail( THLAReportDetailEnum::REPORT_DETAIL_NOMINAL ),
-     topics( static_cast<uint16_t>(THLAReportTopicsEnum::REPORT_TOPICS_ALL) )
-   {
-      reporting_service = &service;
-      return;
-   };
+   ReportFormatBase( ReportingServices & service );
 
    /*! @brief Destructor for the TrickHLA ReportFormatBase class. */
-   virtual ~ReportFormatBase()
-   {
-      return;
-   };
+   virtual ~ReportFormatBase() = 0;
 
    /*! @brief Function called to generate requested reports. */
    virtual void generate_report() = 0;
 
    /*! @brief Set the report detail level.
     *  @param report_detail Detail level for this report. */
-   virtual void set_detail( THLAReportDetailEnum report_detail )
-   {
-      detail = report_detail;
-      return;
-   }
+   virtual void set_detail( THLAReportDetailEnum report_detail );
 
    /*! @brief Set the report topics filter.
     *  @param report_topics Topic selections for this report. */
-   virtual void set_topics( uint16_t report_topics )
-   {
-      topics = report_topics;
-      return;
-   }
+   virtual void set_topics( uint16_t report_topics );
    
    /*! @brief Add a report topic.
-    *  @param format Rreport format to add. */
-   void add_report( THLAReportTopicsEnum topic )
-   {
-      // Add the topic to the reporting topics bit field.
-      topics |= static_cast<uint16_t>(topic);
-      return;
-   }
+    *  @param topic Report topic to add. */
+   virtual void add_topic( THLAReportTopicsEnum topic );
 
    /*! @brief Remove a report topic.
-    *  @param format Rreport format to add. */
-   void remove_report( THLAReportTopicsEnum topic )
-   {
-      // Remove the topic to the reporting topics bit field.
-      topics &= ~(static_cast<uint16_t>(topic));
-      return;
-   }
+    *  @param topic Report topic to remove. */
+   virtual void remove_topic( THLAReportTopicsEnum topic );
 
    
    //-------------------------------------------------------------------------
@@ -163,22 +138,13 @@ class ReportFormatBase : public CheckpointConversionBase
    //-------------------------------------------------------------------------
 
    /*! @brief Convert data to a form Trick can checkpoint. */
-   virtual void convert_data_before_checkpoint() override
-   {
-      return;
-   }
+   virtual void convert_data_before_checkpoint() override;
 
    /*! @brief Restore data structures after loading a Trick checkpoint. */
-   virtual void restore_data_after_checkpoint() override
-   {
-      return;
-   }
+   virtual void restore_data_after_checkpoint() override;
 
    /*! @brief Clear/release the memory used for the conversion data for the checkpoint. */
-   virtual void free_converted_data_for_checkpoint() override
-   {
-      return;
-   }
+   virtual void free_converted_data_for_checkpoint() override;
 
   protected:
    THLAReportFormatEnum format; ///< @trick_units{1} Format for this report.
