@@ -32,6 +32,8 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_REPORT_FORMAT_CSV_HH
 
 // System includes.
+#include <string>
+#include <fstream>
 
 // TrickHLA includes.
 #include "TrickHLA/ReportFormatBase.hh"
@@ -61,6 +63,28 @@ class ReportFormatCSV : public ReportFormatBase
 
    /*! @brief Function called to generate requested reports. */
    virtual void generate_report();
+
+  protected:
+   std::string   objects_file_name;      ///< @trick_units{--} Objects reporting file full path name.
+   std::ofstream objects_file;           ///< @trick_io{**} Objects reporting file.
+   std::string   interactions_file_name; ///< @trick_units{--} Interactions reporting file full path name.
+   std::ofstream interactions_file;      ///< @trick_io{**} Interactions reporting file.
+
+   /*! @brief Open the report files. */
+   virtual void open_report_files();
+
+   /*! @brief Close the report files. */
+   virtual void close_report_files();
+
+  private:
+   // Do not allow the copy constructor or assignment operator.
+   /*! @brief Copy constructor for ReportFormatCSV class.
+    *  @details This constructor is private to prevent inadvertent copies. */
+   ReportFormatCSV( ReportFormatCSV const &rhs );
+
+   /*! @brief Assignment operator for ReportFormatCSV class.
+    *  @details This assignment operator is private to prevent inadvertent copies. */
+   ReportFormatCSV &operator=( ReportFormatCSV const &rhs );
 
 };
 

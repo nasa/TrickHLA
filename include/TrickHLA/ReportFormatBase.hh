@@ -142,7 +142,7 @@ class ReportFormatBase : public CheckpointConversionBase
    /*! @brief Check for a topic.
     *  @param topic Report topic to check for.
     *  @return Returns true if report topic is set in the specified topics. */
-   bool has_report_topic( THLAReportTopicsEnum topic );
+   virtual bool has_report_topic( THLAReportTopicsEnum topic );
 
    
    //-------------------------------------------------------------------------
@@ -164,6 +164,16 @@ class ReportFormatBase : public CheckpointConversionBase
    uint16_t             topics; ///< @trick_units{1} Topics filter for this report.
 
    ReportingServices * reporting_service; ///< @trick_units{--} Reporting services.
+
+  private:
+   // Do not allow the copy constructor or assignment operator.
+   /*! @brief Copy constructor for ReportFormatBase class.
+    *  @details This constructor is private to prevent inadvertent copies. */
+   ReportFormatBase( ReportFormatBase const &rhs );
+
+   /*! @brief Assignment operator for ReportFormatBase class.
+    *  @details This assignment operator is private to prevent inadvertent copies. */
+   ReportFormatBase &operator=( ReportFormatBase const &rhs );
 
 };
 

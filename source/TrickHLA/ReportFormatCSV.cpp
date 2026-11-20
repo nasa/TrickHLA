@@ -30,7 +30,6 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
-#include <fstream>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -79,6 +78,9 @@ void ReportFormatCSV::generate_report()
    Federate            * federate            = reporting_service->federate;
    ObjectServices      * object_service      = reporting_service->object_services;
    InteractionServices * interaction_service = reporting_service->interaction_service;
+
+   // Open the report files.
+   open_report_files();
 
    //
    // Check for Federation level report topics.
@@ -204,31 +206,27 @@ void ReportFormatCSV::generate_report()
 
       // Write HLA Objects to CSV file
       if ( object_service->obj_count > 0 ) {
-         string file_name = reporting_service->get_reports_directory() + "/" + federate->get_federation_name() + "__" + federate->get_federate_name() + "__objects.csv";
-         ofstream file(file_name);
 
-         file << "Object FOM Name,";
-         file << "Object Name,";
-         file << "Attribute FOM Name,";
-         file << federate->get_federate_name() << " Publish"   << ",";
-         file << federate->get_federate_name() << " Subscribe" << ",";
-         file << federate->get_federate_name()                 << endl;
+         objects_file << "Object FOM Name,";
+         objects_file << "Object Name,";
+         objects_file << "Attribute FOM Name,";
+         objects_file << federate->get_federate_name() << " Publish"   << ",";
+         objects_file << federate->get_federate_name() << " Subscribe" << ",";
+         objects_file << federate->get_federate_name()                 << endl;
 
          for ( int i = 0; i < object_service->obj_count; ++i ) {
             for ( int j = 0; j < object_service->objects[i].get_attribute_count(); ++j ) {
-               file << object_service->objects[i].get_FOM_name() << "." << object_service->objects[i].get_name() << "." << object_service->objects[i].get_attributes()[j].get_FOM_name() << ",";
-               file << object_service->objects[i].get_FOM_name()                                          << ",";
-               file << object_service->objects[i].get_name()                                              << ",";
-               file << object_service->objects[i].get_attributes()[j].get_FOM_name()                      << ",";
-               file <<(object_service->objects[i].get_attributes()[j].is_publish()    ? "True" : "False") << ",";
-               file <<(object_service->objects[i].get_attributes()[j].is_subscribe()  ? "True" : "False") << ",";
-               file << object_service->objects[i].get_attributes()[j].get_trick_name()                    << endl;
+               objects_file << object_service->objects[i].get_FOM_name() << "." << object_service->objects[i].get_name() << "." << object_service->objects[i].get_attributes()[j].get_FOM_name() << ",";
+               objects_file << object_service->objects[i].get_FOM_name()                                          << ",";
+               objects_file << object_service->objects[i].get_name()                                              << ",";
+               objects_file << object_service->objects[i].get_attributes()[j].get_FOM_name()                      << ",";
+               objects_file <<(object_service->objects[i].get_attributes()[j].is_publish()    ? "True" : "False") << ",";
+               objects_file <<(object_service->objects[i].get_attributes()[j].is_subscribe()  ? "True" : "False") << ",";
+               objects_file << object_service->objects[i].get_attributes()[j].get_trick_name()                    << endl;
             }
          }
 
-         file.close();
-
-         msg << "List of HLA Objects written to " + file_name << endl;
+         msg << "List of HLA Objects written to " + objects_file_name << endl;
          if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_REPORTING_SERVICES ) ) {
             DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_NORMAL );
          }
@@ -245,14 +243,11 @@ void ReportFormatCSV::generate_report()
 
       // Write HLA Interactions to CSV file
       if ( interaction_service->inter_count > 0 ) {
-         string file_name = reporting_service->get_reports_directory() + "/" + federate->get_federation_name() + "__" + federate->get_federate_name() + "__interactions.csv";
-         ofstream file(file_name);
 
          // TODO
-         file << "TO DO";
-         file.close();
+         interactions_file << "TO DO";
 
-         msg << "List of HLA Interactions written to " + file_name << endl;
+         msg << "List of HLA Interactions written to " + interactions_file_name << endl;
          if ( DebugHandler::show( DEBUG_LEVEL_1_TRACE, DEBUG_SOURCE_REPORTING_SERVICES ) ) {
             DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, msg.str(), MSG_NORMAL );
          }
@@ -260,6 +255,46 @@ void ReportFormatCSV::generate_report()
 
    }
 
+   // Close the report files.
+   close_report_files();
+
+   return;
+}
+
+/*!
+ *  @job_class{initialization}
+ */
+void ReportFormatCSV::open_report_files()
+{
+   Federate            * federate            = reporting_service->federate;
+   ObjectServices      * object_service      = reporting_service->object_services;
+   InteractionServices * interaction_service = reporting_service->interaction_service;
+
+   string objects_file_name =   reporting_service->get_reports_directory() + "/"
+                              + federate->get_federation_name() + "__"
+                              + federate->get_federate_name() + "__objects.csv";
+   if (    (object_service->obj_count > 0)
+        && (!objects_file_name.empty())      ) {
+      objects_file.open( objects_file_name );
+   }
+
+   string interactions_file_name =   reporting_service->get_reports_directory() + "/"
+                                   + federate->get_federation_name() + "__"
+                                   + federate->get_federate_name() + "__interactions.csv";
+   if (    (interaction_service->inter_count > 0)
+        && (!interactions_file_name.empty())      ) {
+      interactions_file.open( interactions_file_name );
+   }
+   return;
+}
+
+/*!
+ *  @job_class{initialization}
+ */
+void ReportFormatCSV::close_report_files()
+{
+   objects_file.close();
+   interactions_file.close();
    return;
 }
 
