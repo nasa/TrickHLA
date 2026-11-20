@@ -37,7 +37,6 @@ NASA, Johnson Space Center\n
 #include <regex>
 
 // Trick includes.
-#include "trick/message_proto.h"
 
 // TrickHLA includes.
 #include "TrickHLA/Federate.hh"
@@ -78,8 +77,8 @@ ReportFormatBase::ReportFormatBase( ReportingServices & service )
   detail( THLAReportDetailEnum::REPORT_DETAIL_NOMINAL ),
   topics( static_cast<uint16_t>(THLAReportTopicsEnum::REPORT_TOPICS_ALL) )
 {
-    reporting_service = &service;
-    return;
+   reporting_service = &service;
+   return;
 };
 
 /*!
@@ -101,8 +100,8 @@ ReportFormatBase::~ReportFormatBase()
  */
 void ReportFormatBase::set_detail( THLAReportDetailEnum report_detail )
 {
-    detail = report_detail;
-    return;
+   detail = report_detail;
+   return;
 }
 
 /*!
@@ -110,8 +109,8 @@ void ReportFormatBase::set_detail( THLAReportDetailEnum report_detail )
  */
 void ReportFormatBase::set_topics( uint16_t report_topics )
 {
-    topics = report_topics;
-    return;
+   topics = report_topics;
+   return;
 }
 
 /*!
@@ -119,9 +118,9 @@ void ReportFormatBase::set_topics( uint16_t report_topics )
  */
 void ReportFormatBase::add_topic( THLAReportTopicsEnum topic )
 {
-    // Add the topic to the reporting topics bit field.
-    topics |= static_cast<uint16_t>(topic);
-    return;
+   // Add the topic to the reporting topics bit field.
+   topics |= static_cast<uint16_t>(topic);
+   return;
 }
 
 /*!
@@ -129,9 +128,9 @@ void ReportFormatBase::add_topic( THLAReportTopicsEnum topic )
  */
 void ReportFormatBase::remove_topic( THLAReportTopicsEnum topic )
 {
-    // Remove the topic to the reporting topics bit field.
-    topics &= ~(static_cast<uint16_t>(topic));
-    return;
+   // Remove the topic to the reporting topics bit field.
+   topics &= ~(static_cast<uint16_t>(topic));
+   return;
 }
 
 /*!
@@ -167,7 +166,7 @@ bool ReportFormatBase::check_for_topic( THLAReportTopicsEnum topic )
  */
 void ReportFormatBase::convert_data_before_checkpoint()
 {
-    return;
+   return;
 }
 
 /*!
@@ -175,7 +174,7 @@ void ReportFormatBase::convert_data_before_checkpoint()
  */
 void ReportFormatBase::restore_data_after_checkpoint()
 {
-    return;
+   return;
 }
 
 /*!
@@ -183,5 +182,5 @@ void ReportFormatBase::restore_data_after_checkpoint()
  */
 void ReportFormatBase::free_converted_data_for_checkpoint()
 {
-    return;
+   return;
 }

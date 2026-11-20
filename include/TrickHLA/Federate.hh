@@ -137,7 +137,7 @@ class Federate : public CheckpointConversionBase
 
    std::string local_settings; /**< @trick_units{--}
       Vendor specific HLA-Evolved local settings for the connect API.
-      Pitch RTI: "crcHost = 192.168.1.1\ncrcPort = 8989" \n
+      Pitch RTI: "crcHost = 192.168.1.1:8989"
       MAK RTI: "(setqb RTI_tcpForwarderAddr \"192.168.1.1\") (setqb RTI_distributedForwarderPort 5000)" */
 
    std::string FOM_modules; /**< @trick_units{--}

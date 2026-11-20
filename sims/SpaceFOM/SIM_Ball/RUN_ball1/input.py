@@ -201,8 +201,13 @@ ball_fed_config.add_known_federate(True, str(ball_fed_config.federate.name))
 ball_fed_config.add_known_federate(True, "Ball 2 Sim")
 ball_fed_config.add_known_federate(False, "Ball 3 Sim")
 
-# Activate report
+#
+# Set up CSV report generation
+#
 THLA.federate.add_report( trick.TrickHLA.THLAReportFormatEnum_REPORT_FORMAT_CSV )
+reporting_service = THLA.federate.get_reporting_service()
+reporting_service.format_csv.add_topic( trick.TrickHLA.THLAReportTopicsEnum_REPORT_TOPICS_ALL )
+reporting_service.format_csv.set_detail( trick.TrickHLA.THLAReportDetailEnum_REPORT_DETAIL_NOMINAL )
 
 
 # ---------------------------------------------------------------------------

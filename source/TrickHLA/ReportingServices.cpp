@@ -60,12 +60,15 @@ using namespace TrickHLA;
  * @job_class{initialization}
  */
 ReportingServices::ReportingServices( Federate &fed )
-   : reports_directory( "" ),
+   : format_csv( *this ),
+     //format_md( *this ),
+     //format_latex( *this ),
+     reports_directory( "" ),
      report_formats( static_cast<uint16_t>(THLAReportFormatEnum::REPORT_FORMAT_NONE) ),
      federate( &fed ),
      object_services( &(fed.object_service) ),
-     interaction_service( &(fed.interaction_service) ),
-     format_csv( *this )
+     interaction_service( &(fed.interaction_service) )
+     
 {
    return;
 }
@@ -201,11 +204,17 @@ void ReportingServices::generate_reports()
    // Check for Markdown format report generation.
    if ( check_for_report( THLAReportFormatEnum::REPORT_FORMAT_MD ) ) {
       //format_md.generate_report();
+      ostringstream errmsg;
+      errmsg << "Markdown format not yet implemented!\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_ERROR );
    }
 
-   //// Check for CSV format report generation.
+   //// Check for LaTeX format report generation.
    if ( check_for_report( THLAReportFormatEnum::REPORT_FORMAT_LATEX ) ) {
       //format_latex.generate_report();
+      ostringstream errmsg;
+      errmsg << "LaTeX format not yet implemented!\n";
+      DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_ERROR );
    }
 
    return;

@@ -77,6 +77,16 @@ class ReportingServices : public CheckpointConversionBase
 
   public:
 
+   //--------------------------------------------------------------------------
+   // User accessible data.
+   //--------------------------------------------------------------------------
+   //
+   // Known report formats.
+   //
+   ReportFormatCSV   format_csv; ///< @trick_units{--} CSV report generation instance.
+   //ReportFormatMD    format_md; ///< @trick_units{--} Markdown report generation instance.
+   //ReportFormatLaTeX format_latex; ///< @trick_units{--} LaTeX report generation instance.
+
    //
    // Public constructors and destructor.
    //
@@ -164,13 +174,6 @@ class ReportingServices : public CheckpointConversionBase
    Federate            *federate;            ///< @trick_units{--} Associated TrickHLA::Federate.
    ObjectServices      *object_services;     ///< @trick_units{--} Object services associated with the federate.
    InteractionServices *interaction_service; ///< @trick_units{--} Interaction services associated with the federate.
-
-   //
-   // Known report formats.
-   //
-   ReportFormatCSV   format_csv; ///< @trick_units{--} CSV report generation instance.
-   //ReportFormatMD    format_md; ///< @trick_units{--} Markdown report generation instance.
-   //ReportFormatLaTeX format_latex; ///< @trick_units{--} LaTeX report generation instance.
 
   private:
    // Do not allow the copy constructor or assignment operator.
