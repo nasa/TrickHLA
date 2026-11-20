@@ -99,27 +99,24 @@ ReportFormatBase::~ReportFormatBase()
 /*!
  *  @job_class{initialization}
  */
-
-
-
-/*! @brief Set the report detail level.
-*  @param report_detail Detail level for this report. */
 void ReportFormatBase::set_detail( THLAReportDetailEnum report_detail )
 {
     detail = report_detail;
     return;
 }
 
-/*! @brief Set the report topics filter.
-*  @param report_topics Topic selections for this report. */
+/*!
+ *  @job_class{initialization}
+ */
 void ReportFormatBase::set_topics( uint16_t report_topics )
 {
     topics = report_topics;
     return;
 }
 
-/*! @brief Add a report topic.
-*  @param topic Report topic to add. */
+/*!
+ *  @job_class{initialization}
+ */
 void ReportFormatBase::add_topic( THLAReportTopicsEnum topic )
 {
     // Add the topic to the reporting topics bit field.
@@ -127,8 +124,9 @@ void ReportFormatBase::add_topic( THLAReportTopicsEnum topic )
     return;
 }
 
-/*! @brief Remove a report topic.
-*  @param topic Report topic to remove. */
+/*!
+ *  @job_class{initialization}
+ */
 void ReportFormatBase::remove_topic( THLAReportTopicsEnum topic )
 {
     // Remove the topic to the reporting topics bit field.
@@ -136,24 +134,53 @@ void ReportFormatBase::remove_topic( THLAReportTopicsEnum topic )
     return;
 }
 
+/*!
+ *  @job_class{initialization}
+ */
+bool ReportFormatBase::check_for_topic( THLAReportTopicsEnum topic )
+{
+   // Check for special cases.
+   if ( topic == THLAReportTopicsEnum::REPORT_TOPICS_NONE ){
+      return( (topics == 0) ? true : false );
+   }
+   else if ( topic == THLAReportTopicsEnum::REPORT_TOPICS_ALL ){
+      return(    (check_for_topic( THLAReportTopicsEnum::REPORT_TOPICS_FEDERATION ))
+              && (check_for_topic( THLAReportTopicsEnum::REPORT_TOPICS_FEDERATE ))
+              && (check_for_topic( THLAReportTopicsEnum::REPORT_TOPICS_OBJECTS ))
+              && (check_for_topic( THLAReportTopicsEnum::REPORT_TOPICS_ATTRIBUTES ))
+              && (check_for_topic( THLAReportTopicsEnum::REPORT_TOPICS_INTERACTIONS ))
+              && (check_for_topic( THLAReportTopicsEnum::REPORT_TOPICS_PARAMETERS ))
+              && (check_for_topic( THLAReportTopicsEnum::REPORT_TOPICS_SYNC_POINTS )) );
+   }
+
+   // Return true is format is found in the report formats bit field.
+   return( ((topics & static_cast<uint16_t>(topic)) ? true : false ) );
+}
+
    
 //-------------------------------------------------------------------------
 // CheckpointConversionBase Interface.
 //-------------------------------------------------------------------------
 
-/*! @brief Convert data to a form Trick can checkpoint. */
+/*!
+ *  @job_class{freeze}
+ */
 void ReportFormatBase::convert_data_before_checkpoint()
 {
     return;
 }
 
-/*! @brief Restore data structures after loading a Trick checkpoint. */
+/*!
+ *  @job_class{freeze}
+ */
 void ReportFormatBase::restore_data_after_checkpoint()
 {
     return;
 }
 
-/*! @brief Clear/release the memory used for the conversion data for the checkpoint. */
+/*!
+ *  @job_class{freeze}
+ */
 void ReportFormatBase::free_converted_data_for_checkpoint()
 {
     return;

@@ -53,7 +53,7 @@ enum class THLAReportFormatEnum : uint16_t {
    REPORT_FORMAT_CSV   = 0x0001, ///< Comma separated value format.
    REPORT_FORMAT_MD    = 0x0002, ///< Markdown format.
    REPORT_FORMAT_LATEX = 0x0004, ///< LaTeX format.
-   REPORT_FORMAT_ALL   = 0x7FFF  ///< Gereat rports in all formats.
+   REPORT_FORMAT_ALL   = 0xFFFF  ///< Gereat rports in all formats.
 };
 
 /*! @brief Convert a THLAReportFormatEnum value into a string representation.
@@ -83,7 +83,7 @@ enum class THLAReportTopicsEnum : uint16_t {
    REPORT_TOPICS_INTERACTIONS = 0x0010, ///< Reports information on interactions.
    REPORT_TOPICS_PARAMETERS   = 0x0020, ///< Reports information on interaction parameters.
    REPORT_TOPICS_SYNC_POINTS  = 0x0040, ///< Reports information on synchronization points.
-   REPORT_TOPICS_ALL          = 0x7FFF  ///< Generate report information for all topics.
+   REPORT_TOPICS_ALL          = 0xFFFF  ///< Generate report information for all topics.
 };
 
 class ReportFormatBase : public CheckpointConversionBase
@@ -97,13 +97,6 @@ class ReportFormatBase : public CheckpointConversionBase
    // IMPORTANT Note: you must have the following line too.
    // Syntax: friend void init_attr<namespace>__<class name>();
    friend void init_attrTrickHLA__ReportFormatBase();
-
-  public:
-   //----------------------------- USER VARIABLES -----------------------------
-   // Variables below this point are for either use within a users simulation
-   // or must be configured by the user.
-
-   bool active; ///< @trick_units{1} Report generation activation flag.
 
   public:
    /*! @brief Default constructor for the TrickHLA ReportFormatBase class.
@@ -120,6 +113,20 @@ class ReportFormatBase : public CheckpointConversionBase
     *  @param report_detail Detail level for this report. */
    virtual void set_detail( THLAReportDetailEnum report_detail );
 
+   /*! @brief Get the report detail level.
+    *  @return Detail level for this report. */
+   virtual THLAReportDetailEnum get_detail()
+   {
+      return( detail );
+   }
+
+   /*! @brief Check the report detail level.
+    *  @param report_detail Detail level for this report. */
+   virtual bool check_detail( THLAReportDetailEnum report_detail )
+   {
+      return( (report_detail == detail) ? true : false );
+   }
+
    /*! @brief Set the report topics filter.
     *  @param report_topics Topic selections for this report. */
    virtual void set_topics( uint16_t report_topics );
@@ -131,6 +138,11 @@ class ReportFormatBase : public CheckpointConversionBase
    /*! @brief Remove a report topic.
     *  @param topic Report topic to remove. */
    virtual void remove_topic( THLAReportTopicsEnum topic );
+
+   /*! @brief Check for a topic.
+    *  @param topic Report topic to check for.
+    *  @return Returns true if report topic is set in the specified topics. */
+   bool check_for_topic( THLAReportTopicsEnum topic );
 
    
    //-------------------------------------------------------------------------

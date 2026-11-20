@@ -124,11 +124,11 @@ class ReportingServices : public CheckpointConversionBase
    void add_report( THLAReportFormatEnum format );
 
    /*! @brief Remove a report format to generate.
-    *  @param format Rreport format to remove. */
+    *  @param format Report format to remove. */
    void remove_report( THLAReportFormatEnum format );
 
    /*! @brief Check for a report format.
-    *  @param format Rreport format to remove.
+    *  @param format Report format to check for.
     *  @return Returns true if report format is set in the specified report formats. */
    bool check_for_report( THLAReportFormatEnum format );
 
@@ -145,22 +145,13 @@ class ReportingServices : public CheckpointConversionBase
    //-------------------------------------------------------------------------
 
    /*! @brief Convert data to a form Trick can checkpoint. */
-   virtual void convert_data_before_checkpoint() override
-   {
-      return;
-   }
+   virtual void convert_data_before_checkpoint() override;
 
    /*! @brief Restore data structures after loading a Trick checkpoint. */
-   virtual void restore_data_after_checkpoint() override
-   {
-      return;
-   }
+   virtual void restore_data_after_checkpoint() override;
 
    /*! @brief Clear/release the memory used for the conversion data for the checkpoint. */
-   virtual void free_converted_data_for_checkpoint() override
-   {
-      return;
-   }
+   virtual void free_converted_data_for_checkpoint() override;
 
   protected:
 

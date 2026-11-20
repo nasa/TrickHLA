@@ -212,3 +212,41 @@ void ReportingServices::generate_reports()
 }
 
 
+//-------------------------------------------------------------------------
+// CheckpointConversionBase Interface.
+//-------------------------------------------------------------------------
+
+/*!
+ *  @job_class{freeze}
+ */
+void ReportingServices::convert_data_before_checkpoint()
+{
+   format_csv.convert_data_before_checkpoint();
+   //format_md.convert_data_before_checkpoint();
+   //format_latex.convert_data_before_checkpoint();
+   return;
+}
+
+/*!
+ *  @job_class{freeze}
+ */
+void ReportingServices::restore_data_after_checkpoint()
+{
+   format_csv.restore_data_after_checkpoint();
+   //format_md.restore_data_after_checkpoint();
+   //format_latex.restore_data_after_checkpoint();
+   return;
+}
+
+/*!
+ *  @job_class{freeze}
+ */
+void ReportingServices::free_converted_data_for_checkpoint()
+{
+   format_csv.free_converted_data_for_checkpoint();
+   //format_md.free_converted_data_for_checkpoint();
+   //format_latex.free_converted_data_for_checkpoint();
+   return;
+}
+
+
