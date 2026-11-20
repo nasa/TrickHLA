@@ -85,7 +85,7 @@ std::string TrickHLA::to_string( THLAReportFormatEnum report_format )
  */
 ReportingServices::ReportingServices( Federate &fed )
    : reports_directory( "" ),
-     report_formats( (uint16_t)THLAReportFormatEnum::REPORT_FORMAT_NONE ),
+     report_formats( static_cast<uint16_t>(THLAReportFormatEnum::REPORT_FORMAT_NONE) ),
      federate( &fed ),
      object_services( &(fed.object_service) ),
      interaction_service( &(fed.interaction_service) ),
@@ -172,7 +172,7 @@ bool ReportingServices::check_reports_directory()
 void ReportingServices::add_report( THLAReportFormatEnum format )
 {
    // Add the format to the reporting formats bit field.
-   report_formats |= (uint16_t)format;
+   report_formats |= static_cast<uint16_t>(format);
 
    return;
 }
@@ -183,9 +183,28 @@ void ReportingServices::add_report( THLAReportFormatEnum format )
 void ReportingServices::remove_report( THLAReportFormatEnum format )
 {
    // Remove the format to the reporting formats bit field.
-   report_formats &= ~((uint16_t)format);
+   report_formats &= ~(static_cast<uint16_t>(format));
 
    return;
+}
+
+/*!
+ *  @job_class{initialization}
+ */
+bool ReportingServices::check_for_report( THLAReportFormatEnum format )
+{
+   // Check for special cases.
+   if ( format == THLAReportFormatEnum::REPORT_FORMAT_NONE ){
+      return( (report_formats == 0) ? true : false );
+   }
+   else if ( format == THLAReportFormatEnum::REPORT_FORMAT_ALL ){
+      return(    (check_for_report( THLAReportFormatEnum::REPORT_FORMAT_CSV ))
+              && (check_for_report( THLAReportFormatEnum::REPORT_FORMAT_MD ))
+              && (check_for_report( THLAReportFormatEnum::REPORT_FORMAT_LATEX )) );
+   }
+
+   // Return true is format is found in the report formats bit field.
+   return( ((report_formats & static_cast<uint16_t>(format)) ? true : false ) );
 }
 
 /*!
@@ -194,22 +213,22 @@ void ReportingServices::remove_report( THLAReportFormatEnum format )
 void ReportingServices::generate_reports()
 {
    // Check to see if any reports are being generated.
-   if ( report_formats ==  (uint16_t)THLAReportFormatEnum::REPORT_FORMAT_NONE ) {
+   if ( check_for_report( THLAReportFormatEnum::REPORT_FORMAT_NONE) ) {
       return;
    }
 
    // Check for CSV format report generation.
-   if ( report_formats & (uint16_t)THLAReportFormatEnum::REPORT_FORMAT_CSV ) {
+   if ( check_for_report( THLAReportFormatEnum::REPORT_FORMAT_CSV ) ) {
       format_csv.generate_report();
    }
 
    // Check for Markdown format report generation.
-   if ( report_formats & (uint16_t)THLAReportFormatEnum::REPORT_FORMAT_MD ) {
+   if ( check_for_report( THLAReportFormatEnum::REPORT_FORMAT_MD ) ) {
       //format_md.generate_report();
    }
 
-   // Check for CSV format report generation.
-   if ( report_formats & (uint16_t)THLAReportFormatEnum::REPORT_FORMAT_LATEX ) {
+   //// Check for CSV format report generation.
+   if ( check_for_report( THLAReportFormatEnum::REPORT_FORMAT_LATEX ) ) {
       //format_latex.generate_report();
    }
 

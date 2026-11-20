@@ -123,9 +123,14 @@ class ReportingServices : public CheckpointConversionBase
     *  @param format Rreport format to add. */
    void add_report( THLAReportFormatEnum format );
 
-   /*! @brief Add a report format to generate.
-    *  @param format Rreport format to add. */
+   /*! @brief Remove a report format to generate.
+    *  @param format Rreport format to remove. */
    void remove_report( THLAReportFormatEnum format );
+
+   /*! @brief Check for a report format.
+    *  @param format Rreport format to remove.
+    *  @return Returns true if report format is set in the specified report formats. */
+   bool check_for_report( THLAReportFormatEnum format );
 
    //..........................................................................
    // Report Generation functions.
