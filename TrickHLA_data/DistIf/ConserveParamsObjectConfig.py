@@ -28,7 +28,6 @@ class ConserveParamsObjectConfig(TrickHLAObjectConfig):
       FOM_type="ConservationParams",  # FOM objectClass type
       threadId=None,  # Trick child thread
    ):
-
       # Call the base class constructor and tell it the FOM object class.
       TrickHLAObjectConfig.__init__(
          self,

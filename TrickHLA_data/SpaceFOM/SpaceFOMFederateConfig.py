@@ -53,7 +53,6 @@ class SpaceFOMFederateConfig(TrickHLAFederateConfig):
       thla_enabled=True,
       thla_FOMs_path=None,
    ):
-
       # Copy a FOM path if provided.
       if thla_FOMs_path:
          self.SpaceFOMs_path = thla_FOMs_path

@@ -59,7 +59,6 @@ class TrickHLAObjectConfig:
       thla_required=True,
       thla_blocking_cyclic_read=False,
    ):
-
       # Allocate an empty attribute list.
       self.attributes = []
 

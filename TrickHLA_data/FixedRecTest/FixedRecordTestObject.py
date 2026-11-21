@@ -44,7 +44,6 @@ class FixedRecordTestObject(TrickHLAObjectConfig):
       fixed_rec_attribute_subscribe=None,
       fixed_rec_attribute_config=None,
    ):
-
       # Save the Trick sim-object name to use for trick_data_name generation.
       self.trick_sim_obj_name = str(fixed_rec_trick_sim_obj_name)
 

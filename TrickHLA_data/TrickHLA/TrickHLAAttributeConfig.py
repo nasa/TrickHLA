@@ -38,7 +38,6 @@ class TrickHLAAttributeConfig(TrickHLARecordElementConfig):
       rti_encoding=trick.TrickHLA.ENCODING_UNKNOWN,
       preferred_order=trick.TrickHLA.TRANSPORT_SPECIFIED_IN_FOM,
    ):
-
       TrickHLARecordElementConfig.__init__(self, rti_encoding, trick_name)
 
       self.FOM_name = FOM_name

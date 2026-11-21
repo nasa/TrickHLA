@@ -41,7 +41,6 @@ class JEODRefFrameTreeObject:
       create_frame_objects=False,
       lag_comp_type=trick.TrickHLA.LAG_COMPENSATION_NONE,
    ):
-
       # Refernce the federate object.
       federate = federate_instance
 

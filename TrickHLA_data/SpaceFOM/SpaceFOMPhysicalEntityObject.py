@@ -42,7 +42,6 @@ class SpaceFOMPhysicalEntityObject(TrickHLAObjectConfig):
       entity_thla_manager_object=None,
       entity_thread_IDs=None,
    ):
-
       # Save the PhysicalEntity name to use for trick_data_name generation.
       self.trick_entity_sim_obj_name = str(entity_S_define_instance_name)
 

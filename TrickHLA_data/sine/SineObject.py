@@ -44,7 +44,6 @@ class SineObject(TrickHLAObjectConfig):
       sine_attribute_subscribe=None,
       sine_attribute_config=None,
    ):
-
       # Save the Trick sim-object name to use for trick_data_name generation.
       self.trick_sim_obj_name = str(sine_trick_sim_obj_name)
 

@@ -41,7 +41,6 @@ class SpaceFOMPhysicalInterfaceObject(TrickHLAObjectConfig):
       interface_thla_manager_object=None,
       interface_thread_IDs=None,
    ):
-
       # Copy the PhysicalInterface federation execution instance name.
       str(interface_instance_name)
 

@@ -32,7 +32,6 @@ class SpaceFOMFederateConfig2(SpaceFOMFederateConfig):
       thla_enabled=True,
       thla_FOMs_path=None,
    ):
-
       # Call the base class constructor.
       SpaceFOMFederateConfig.__init__(
          self,

@@ -70,7 +70,6 @@ class TrickHLAFederateConfig:
       thla_federate_type=None,
       thla_enabled=True,
    ):
-
       self.federate = thla_federate
       self.enabled = thla_enabled
       self.control = thla_control

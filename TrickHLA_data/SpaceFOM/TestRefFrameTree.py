@@ -53,7 +53,6 @@ class TestFrameTree(TrickHLAObjectConfig):
       leaf_frame_sim_obj,
       tree_debug=False,
    ):
-
       # Set the class data.
       self.federate_config = federate_config
       self.test_tree = test_tree_sim_obj

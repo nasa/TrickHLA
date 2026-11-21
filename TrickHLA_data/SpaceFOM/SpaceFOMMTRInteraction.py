@@ -32,7 +32,6 @@ class SpaceFOMMTRInteraction(TrickHLAInteractionConfig):
       S_define_instance_name,
       manger_interaction=None,
    ):
-
       # Set the name of the interaction.
       S_define_instance.name = "ModeTransitionRequest"
 

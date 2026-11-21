@@ -41,7 +41,6 @@ class FluidDistIfObjectConfig(TrickHLAObjectConfig):
       FOM_type="FluidDistIfData_6_4",  # FOM objectClass type
       threadId=None,  # Trick child thread
    ):
-
       self.initDirection(isBusA)
 
       # Call the base class constructor and tell it the FOM object class.

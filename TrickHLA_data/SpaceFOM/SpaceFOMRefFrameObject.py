@@ -39,7 +39,6 @@ class SpaceFOMRefFrameObject(TrickHLAObjectConfig):
       frame_thla_manager_object=None,
       frame_thread_IDs=None,
    ):
-
       # The Reference Frame FOM name is fixed for the SpaceFOM.
       frame_FOM_name = "ReferenceFrame"
 

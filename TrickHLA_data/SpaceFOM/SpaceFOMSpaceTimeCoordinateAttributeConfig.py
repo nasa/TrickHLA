@@ -31,7 +31,6 @@ class SpaceFOMSpaceTimeCoordinateAttributeConfig(
       stc_config=trick.TrickHLA.CONFIG_CYCLIC,
       stc_preferred_order=trick.TrickHLA.TRANSPORT_SPECIFIED_IN_FOM,
    ):
-
       TrickHLAAttributeConfig.__init__(
          self,
          FOM_name=stc_FOM_name,

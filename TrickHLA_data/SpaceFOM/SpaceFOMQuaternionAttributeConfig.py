@@ -31,7 +31,6 @@ class SpaceFOMQuaternionAttributeConfig(
       quat_config=trick.TrickHLA.CONFIG_CYCLIC,
       quat_preferred_order=trick.TrickHLA.TRANSPORT_SPECIFIED_IN_FOM,
    ):
-
       TrickHLAAttributeConfig.__init__(
          self,
          FOM_name=quat_FOM_name,

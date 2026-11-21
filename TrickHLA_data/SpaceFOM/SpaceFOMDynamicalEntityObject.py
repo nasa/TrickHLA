@@ -36,7 +36,6 @@ class SpaceFOMDynamicalEntityObject(SpaceFOMPhysicalEntityObject):
       entity_thla_manager_object=None,
       entity_thread_IDs=None,
    ):
-
       # The DynamicalEntity FOM name is fixed for the SpaceFOM and
       # needs to be overridden before calling the DynamicalEntity constructor.
       self.entity_FOM_name = "PhysicalEntity.DynamicalEntity"
