@@ -17,10 +17,9 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{ReportingServices.cpp}
 @trick_link_dependency{DebugHandler.cpp}
-@trick_link_dependency{ExecutionControlBase.cpp}
 @trick_link_dependency{Federate.cpp}
-@trick_link_dependency{ObjectServices.cpp}
-@trick_link_dependency{InteractionServices.cpp}
+@trick_link_dependency{ReportFormatBase.cpp}
+@trick_link_dependency{ReportFormatCSV.cpp}
 
 @revs_title
 @revs_begin
@@ -30,20 +29,23 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
-#include <fstream>
-#include <iostream>
+#include <cstdint>
 #include <sstream>
 #include <string>
 #include <sys/stat.h>
-#include <regex>
 
 // Trick includes.
 #include "trick/command_line_protos.h"
-#include "trick/message_proto.h"
+#include "trick/message_type.h"
 
 // TrickHLA includes.
+#include "TrickHLA/DebugHandler.hh"
 #include "TrickHLA/Federate.hh"
+#include "TrickHLA/HLAStandardSupport.hh"
+#include "TrickHLA/ReportFormatBase.hh"
+#include "TrickHLA/ReportFormatCSV.hh"
 #include "TrickHLA/ReportingServices.hh"
+#include "TrickHLA/Types.hh"
 
 using namespace RTI1516_NAMESPACE;
 using namespace std;
@@ -61,14 +63,13 @@ using namespace TrickHLA;
  */
 ReportingServices::ReportingServices( Federate &fed )
    : format_csv( *this ),
-     //format_md( *this ),
-     //format_latex( *this ),
+     // format_md( *this ),
+     // format_latex( *this ),
      reports_directory( "" ),
-     report_formats( static_cast<uint16_t>(THLAReportFormatEnum::REPORT_FORMAT_NONE) ),
+     report_formats( static_cast< uint16_t >( THLAReportFormatEnum::REPORT_FORMAT_NONE ) ),
      federate( &fed ),
-     object_services( &(fed.object_service) ),
-     interaction_service( &(fed.interaction_service) )
-     
+     object_services( &( fed.object_service ) ),
+     interaction_service( &( fed.interaction_service ) )
 {
    return;
 }
@@ -151,7 +152,7 @@ bool ReportingServices::check_reports_directory()
 void ReportingServices::add_report( THLAReportFormatEnum format )
 {
    // Add the format to the reporting formats bit field.
-   report_formats |= static_cast<uint16_t>(format);
+   report_formats |= static_cast< uint16_t >( format );
 
    return;
 }
@@ -162,7 +163,7 @@ void ReportingServices::add_report( THLAReportFormatEnum format )
 void ReportingServices::remove_report( THLAReportFormatEnum format )
 {
    // Remove the format to the reporting formats bit field.
-   report_formats &= ~(static_cast<uint16_t>(format));
+   report_formats &= ~( static_cast< uint16_t >( format ) );
 
    return;
 }
@@ -173,17 +174,16 @@ void ReportingServices::remove_report( THLAReportFormatEnum format )
 bool ReportingServices::check_for_report( THLAReportFormatEnum format )
 {
    // Check for special cases.
-   if ( format == THLAReportFormatEnum::REPORT_FORMAT_NONE ){
-      return( (report_formats == 0) ? true : false );
-   }
-   else if ( format == THLAReportFormatEnum::REPORT_FORMAT_ALL ){
-      return(    (check_for_report( THLAReportFormatEnum::REPORT_FORMAT_CSV ))
-              && (check_for_report( THLAReportFormatEnum::REPORT_FORMAT_MD ))
-              && (check_for_report( THLAReportFormatEnum::REPORT_FORMAT_LATEX )) );
+   if ( format == THLAReportFormatEnum::REPORT_FORMAT_NONE ) {
+      return ( report_formats == 0 );
+   } else if ( format == THLAReportFormatEnum::REPORT_FORMAT_ALL ) {
+      return ( check_for_report( THLAReportFormatEnum::REPORT_FORMAT_CSV )
+               && check_for_report( THLAReportFormatEnum::REPORT_FORMAT_MD )
+               && check_for_report( THLAReportFormatEnum::REPORT_FORMAT_LATEX ) );
    }
 
    // Return true is format is found in the report formats bit field.
-   return( ((report_formats & static_cast<uint16_t>(format)) ? true : false ) );
+   return ( ( ( report_formats & static_cast< uint16_t >( format ) ) ? true : false ) );
 }
 
 /*!
@@ -192,7 +192,7 @@ bool ReportingServices::check_for_report( THLAReportFormatEnum format )
 void ReportingServices::generate_reports()
 {
    // Check to see if any reports are being generated.
-   if ( check_for_report( THLAReportFormatEnum::REPORT_FORMAT_NONE) ) {
+   if ( check_for_report( THLAReportFormatEnum::REPORT_FORMAT_NONE ) ) {
       return;
    }
 
@@ -203,7 +203,7 @@ void ReportingServices::generate_reports()
 
    // Check for Markdown format report generation.
    if ( check_for_report( THLAReportFormatEnum::REPORT_FORMAT_MD ) ) {
-      //format_md.generate_report();
+      // format_md.generate_report();
       ostringstream errmsg;
       errmsg << "Markdown format not yet implemented!\n";
       DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_ERROR );
@@ -211,7 +211,7 @@ void ReportingServices::generate_reports()
 
    //// Check for LaTeX format report generation.
    if ( check_for_report( THLAReportFormatEnum::REPORT_FORMAT_LATEX ) ) {
-      //format_latex.generate_report();
+      // format_latex.generate_report();
       ostringstream errmsg;
       errmsg << "LaTeX format not yet implemented!\n";
       DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_ERROR );
@@ -219,7 +219,6 @@ void ReportingServices::generate_reports()
 
    return;
 }
-
 
 //-------------------------------------------------------------------------
 // CheckpointConversionBase Interface.
@@ -231,8 +230,8 @@ void ReportingServices::generate_reports()
 void ReportingServices::convert_data_before_checkpoint()
 {
    format_csv.convert_data_before_checkpoint();
-   //format_md.convert_data_before_checkpoint();
-   //format_latex.convert_data_before_checkpoint();
+   // format_md.convert_data_before_checkpoint();
+   // format_latex.convert_data_before_checkpoint();
    return;
 }
 
@@ -242,8 +241,8 @@ void ReportingServices::convert_data_before_checkpoint()
 void ReportingServices::restore_data_after_checkpoint()
 {
    format_csv.restore_data_after_checkpoint();
-   //format_md.restore_data_after_checkpoint();
-   //format_latex.restore_data_after_checkpoint();
+   // format_md.restore_data_after_checkpoint();
+   // format_latex.restore_data_after_checkpoint();
    return;
 }
 
@@ -253,9 +252,7 @@ void ReportingServices::restore_data_after_checkpoint()
 void ReportingServices::free_converted_data_for_checkpoint()
 {
    format_csv.free_converted_data_for_checkpoint();
-   //format_md.free_converted_data_for_checkpoint();
-   //format_latex.free_converted_data_for_checkpoint();
+   // format_md.free_converted_data_for_checkpoint();
+   // format_latex.free_converted_data_for_checkpoint();
    return;
 }
-
-

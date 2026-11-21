@@ -21,6 +21,7 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{ExecutionControlBase.cpp}
 @trick_link_dependency{Federate.cpp}
 @trick_link_dependency{ObjectServices.cpp}
+@trick_link_dependency{ReportingServices.cpp}
 @trick_link_dependency{SaveRestoreServices.cpp}
 @trick_link_dependency{SyncPointManagerBase.cpp}
 @trick_link_dependency{Types.cpp}
@@ -67,6 +68,7 @@ class Clock;
 #include "TrickHLA/InteractionServices.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/ObjectServices.hh"
+#include "TrickHLA/ReportingServices.hh"
 #include "TrickHLA/SaveRestoreServices.hh"
 #include "TrickHLA/SyncPointManagerBase.hh"
 #include "TrickHLA/Types.hh"

@@ -71,8 +71,8 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/MemoryServices.hh"
 #include "TrickHLA/Object.hh"
 #include "TrickHLA/ObjectServices.hh"
-#include "TrickHLA/SaveRestoreServices.hh"
 #include "TrickHLA/ReportingServices.hh"
+#include "TrickHLA/SaveRestoreServices.hh"
 #include "TrickHLA/Types.hh"
 #include "TrickHLA/time/TimeManagementServices.hh"
 #include "TrickHLA/utils/ElapsedTimeStats.hh"
@@ -91,7 +91,9 @@ NASA, Johnson Space Center\n
 namespace TrickHLA
 {
 class ExecutionConfigurationBase;
-}
+
+enum class THLAReportFormatEnum : uint16_t;
+} // namespace TrickHLA
 
 // C++11 deprecated dynamic exception specifications for a function so we need
 // to silence the warnings coming from the IEEE 1516 declared functions.
@@ -1523,16 +1525,19 @@ bool Federate::verify_joined_federates()
                }
             } else {
                if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_FEDERATE ) ) {
-                  string name_str, type_str, mom_name_str, fed_hndl_str;
+                  string name_str;
                   StringUtilities::to_string( name_str, joined_federate.name );
+                  string type_str;
                   StringUtilities::to_string( type_str, joined_federate.type );
+                  string mom_name_str;
                   StringUtilities::to_string( mom_name_str, joined_federate.MOM_instance_name );
+                  string fed_hndl_str;
                   StringUtilities::to_string( fed_hndl_str, joined_federate.federate_handle );
                   ostringstream errmsg;
                   errmsg << "Incomplete joined federate:\n"
                          << "   Name: " << name_str << "\n"
                          << "   Type: " << type_str << "\n"
-                         << "   Required: " << (joined_federate.required ? "Yes\n" : "No\n")
+                         << "   Required: " << ( joined_federate.required ? "Yes\n" : "No\n" )
                          << "   MOM name: " << mom_name_str << "\n"
                          << "   Fed handle: " << fed_hndl_str << "\n";
                   DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, errmsg.str(), MSG_WARNING );
@@ -1827,13 +1832,15 @@ wstring Federate::list_joined_federates()
       }
 
       // List out the federate information.
-      string mom_name_str, fed_hdnl_str, obj_hndl_str;
+      string mom_name_str;
       StringUtilities::to_string( mom_name_str, joined_federate.MOM_instance_name );
+      string fed_hdnl_str;
       StringUtilities::to_string( fed_hdnl_str, joined_federate.federate_handle );
+      string obj_hndl_str;
       StringUtilities::to_string( obj_hndl_str, joined_federate.object_instance_handle );
       summary << "  " << joined_federate.name;
       summary << ", " << joined_federate.type;
-      summary << ", " << ( joined_federate.required ? "True" : "False"  );
+      summary << ", " << ( joined_federate.required ? "True" : "False" );
       summary << ", " << joined_federate.MOM_instance_name;
       summary << ", " << joined_federate.federate_handle.toString();
       summary << ", " << joined_federate.object_instance_handle.toString();
@@ -3594,9 +3601,8 @@ void Federate::remove_report( THLAReportFormatEnum format )
    return;
 }
 
-
 //-------------------------------------------------------------------------
-// 
+//
 //-------------------------------------------------------------------------
 
 /*!

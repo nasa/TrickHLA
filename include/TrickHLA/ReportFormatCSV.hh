@@ -32,8 +32,8 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_REPORT_FORMAT_CSV_HH
 
 // System includes.
-#include <string>
 #include <fstream>
+#include <string>
 
 // TrickHLA includes.
 #include "TrickHLA/ReportFormatBase.hh"
@@ -56,13 +56,13 @@ class ReportFormatCSV : public ReportFormatBase
   public:
    /*! @brief Constructor for the TrickHLA ReportFormatBase class.
     *  @param services Reference to the reporting services. */
-   ReportFormatCSV( ReportingServices & service );
+   explicit ReportFormatCSV( ReportingServices &service );
 
    /*! @brief Destructor for the TrickHLA ReportFormatCSV class. */
-   virtual ~ReportFormatCSV();
+   virtual ~ReportFormatCSV() override;
 
    /*! @brief Function called to generate requested reports. */
-   virtual void generate_report();
+   virtual void generate_report() override;
 
   protected:
    std::string   objects_file_name;      ///< @trick_units{--} Objects reporting file full path name.
@@ -85,7 +85,6 @@ class ReportFormatCSV : public ReportFormatBase
    /*! @brief Assignment operator for ReportFormatCSV class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
    ReportFormatCSV &operator=( ReportFormatCSV const &rhs );
-
 };
 
 } // namespace TrickHLA

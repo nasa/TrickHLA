@@ -32,8 +32,8 @@ NASA, Johnson Space Center\n
 #define TRICKHLA_REPORTING_SERVICES_HH
 
 // System includes.
-#include <string>
 #include <cstdint>
+#include <string>
 
 // Trick includes.
 
@@ -76,16 +76,15 @@ class ReportingServices : public CheckpointConversionBase
    friend class ReportFormatLaTeX;
 
   public:
-
    //--------------------------------------------------------------------------
    // User accessible data.
    //--------------------------------------------------------------------------
    //
    // Known report formats.
    //
-   ReportFormatCSV   format_csv; ///< @trick_units{--} CSV report generation instance.
-   //ReportFormatMD    format_md; ///< @trick_units{--} Markdown report generation instance.
-   //ReportFormatLaTeX format_latex; ///< @trick_units{--} LaTeX report generation instance.
+   ReportFormatCSV format_csv; ///< @trick_units{--} CSV report generation instance.
+   // ReportFormatMD    format_md; ///< @trick_units{--} Markdown report generation instance.
+   // ReportFormatLaTeX format_latex; ///< @trick_units{--} LaTeX report generation instance.
 
    //
    // Public constructors and destructor.
@@ -128,7 +127,7 @@ class ReportingServices : public CheckpointConversionBase
     * for info and build the absolute path of the RUN directory.
     * @return Success of HLA Save directory path. */
    bool check_reports_directory();
-   
+
    /*! @brief Add a report format to generate.
     *  @param format Rreport format to add. */
    void add_report( THLAReportFormatEnum format );
@@ -149,7 +148,6 @@ class ReportingServices : public CheckpointConversionBase
    /*! @brief Function called to generate all requested reports. */
    void generate_reports();
 
-
    //-------------------------------------------------------------------------
    // CheckpointConversionBase Interface.
    //-------------------------------------------------------------------------
@@ -164,7 +162,6 @@ class ReportingServices : public CheckpointConversionBase
    virtual void free_converted_data_for_checkpoint() override;
 
   protected:
-
    std::string reports_directory; ///< @trick_units{--} Path to the reports directory.
    uint16_t    report_formats;    ///< @trick_units{1} Report formats to generate.
 

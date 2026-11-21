@@ -19,8 +19,15 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{DebugHandler.cpp}
 @trick_link_dependency{ExecutionControlBase.cpp}
 @trick_link_dependency{Federate.cpp}
+@trick_link_dependency{InteractionServices.cpp}
+@trick_link_dependency{ObjectServices.cpp}
+@trick_link_dependency{SaveRestoreServices.cpp}
+@trick_link_dependency{ObjectServices.cpp}
 @trick_link_dependency{Types.cpp}
+@trick_link_dependency{time/Int64Time.cpp}
+@trick_link_dependency{time/TimeManagementServices.cpp}
 @trick_link_dependency{utils/SleepTimeout.cpp}
+@trick_link_dependency{utils/StringUtilities.cpp}
 @trick_link_dependency{utils/Utilities.cpp}
 
 @revs_title
@@ -1952,8 +1959,8 @@ bool SaveRestoreServices::restore_waiting_for_completion()
    // THLARestoreProcessEnum::RESTORE_WAITING_COMPLETION or
    // THLARestoreProcessEnum::RESTORE_COMPLETE.
    // If not, then we are not in the Restore state we think we should be in.
-   if (    (this->restore_state != THLARestoreProcessEnum::RESTORE_WAITING_COMPLETION)
-        && (this->restore_state != THLARestoreProcessEnum::RESTORE_COMPLETE) ) {
+   if ( ( this->restore_state != THLARestoreProcessEnum::RESTORE_WAITING_COMPLETION )
+        && ( this->restore_state != THLARestoreProcessEnum::RESTORE_COMPLETE ) ) {
       string restore_label_str;
       StringUtilities::to_string( restore_label_str, restore_label );
       ostringstream errmsg;
@@ -2149,7 +2156,6 @@ void SaveRestoreServices::restore_joined_federates()
       // Macro to restore the saved FPU Control Word register value.
       TRICKHLA_RESTORE_FPU_CONTROL_WORD;
       TRICKHLA_VALIDATE_FPU_CONTROL_WORD;
-
    }
 
    return;

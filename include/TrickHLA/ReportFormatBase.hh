@@ -101,10 +101,10 @@ class ReportFormatBase : public CheckpointConversionBase
   public:
    /*! @brief Default constructor for the TrickHLA ReportFormatBase class.
     *  @param services Reference to the reporting services. */
-   ReportFormatBase( ReportingServices & service );
+   ReportFormatBase( ReportingServices &service );
 
    /*! @brief Destructor for the TrickHLA ReportFormatBase class. */
-   virtual ~ReportFormatBase() = 0;
+   virtual ~ReportFormatBase() override = 0;
 
    /*! @brief Function called to generate requested reports. */
    virtual void generate_report() = 0;
@@ -117,20 +117,20 @@ class ReportFormatBase : public CheckpointConversionBase
     *  @return Detail level for this report. */
    virtual THLAReportDetailEnum get_detail()
    {
-      return( detail );
+      return ( detail );
    }
 
    /*! @brief Check the report detail level.
     *  @param report_detail Detail level for this report. */
    virtual bool is_detail_level( THLAReportDetailEnum report_detail )
    {
-      return( (report_detail == detail) ? true : false );
+      return ( report_detail == detail );
    }
 
    /*! @brief Set the report topics filter.
     *  @param report_topics Topic selections for this report. */
    virtual void set_topics( uint16_t report_topics );
-   
+
    /*! @brief Add a report topic.
     *  @param topic Report topic to add. */
    virtual void add_topic( THLAReportTopicsEnum topic );
@@ -144,7 +144,6 @@ class ReportFormatBase : public CheckpointConversionBase
     *  @return Returns true if report topic is set in the specified topics. */
    virtual bool has_report_topic( THLAReportTopicsEnum topic );
 
-   
    //-------------------------------------------------------------------------
    // CheckpointConversionBase Interface.
    //-------------------------------------------------------------------------
@@ -163,7 +162,7 @@ class ReportFormatBase : public CheckpointConversionBase
    THLAReportDetailEnum detail; ///< @trick_units{1} Detail for this report.
    uint16_t             topics; ///< @trick_units{1} Topics filter for this report.
 
-   ReportingServices * reporting_service; ///< @trick_units{--} Reporting services.
+   ReportingServices *reporting_service; ///< @trick_units{--} Reporting services.
 
   private:
    // Do not allow the copy constructor or assignment operator.
@@ -174,7 +173,6 @@ class ReportFormatBase : public CheckpointConversionBase
    /*! @brief Assignment operator for ReportFormatBase class.
     *  @details This assignment operator is private to prevent inadvertent copies. */
    ReportFormatBase &operator=( ReportFormatBase const &rhs );
-
 };
 
 } // namespace TrickHLA

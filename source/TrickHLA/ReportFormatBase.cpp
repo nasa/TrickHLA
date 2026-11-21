@@ -17,10 +17,7 @@ NASA, Johnson Space Center\n
 @tldh
 @trick_link_dependency{ReportFormatBase.cpp}
 @trick_link_dependency{DebugHandler.cpp}
-@trick_link_dependency{Federate.cpp}
-@trick_link_dependency{ExecutionControlBase.cpp}
-@trick_link_dependency{ObjectServices.cpp}
-@trick_link_dependency{InteractionServices.cpp}
+@trick_link_dependency{ReportingServices.cpp}
 
 @revs_title
 @revs_begin
@@ -30,17 +27,18 @@ NASA, Johnson Space Center\n
 */
 
 // System include files.
-#include <fstream>
-#include <iostream>
-#include <sstream>
+#include <cstdint>
 #include <string>
-#include <regex>
 
 // Trick includes.
 
 // TrickHLA includes.
-#include "TrickHLA/Federate.hh"
 #include "TrickHLA/ReportFormatBase.hh"
+
+namespace TrickHLA
+{
+class ReportingServices;
+}
 
 using namespace std;
 using namespace TrickHLA;
@@ -72,10 +70,10 @@ std::string TrickHLA::to_string( THLAReportFormatEnum report_format )
 /*!
  * @job_class{initialization}
  */
-ReportFormatBase::ReportFormatBase( ReportingServices & service )
-: format( THLAReportFormatEnum::REPORT_FORMAT_NONE ),
-  detail( THLAReportDetailEnum::REPORT_DETAIL_NOMINAL ),
-  topics( static_cast<uint16_t>(THLAReportTopicsEnum::REPORT_TOPICS_ALL) )
+ReportFormatBase::ReportFormatBase( ReportingServices &service )
+   : format( THLAReportFormatEnum::REPORT_FORMAT_NONE ),
+     detail( THLAReportDetailEnum::REPORT_DETAIL_NOMINAL ),
+     topics( static_cast< uint16_t >( THLAReportTopicsEnum::REPORT_TOPICS_ALL ) )
 {
    reporting_service = &service;
    return;
@@ -119,7 +117,7 @@ void ReportFormatBase::set_topics( uint16_t report_topics )
 void ReportFormatBase::add_topic( THLAReportTopicsEnum topic )
 {
    // Add the topic to the reporting topics bit field.
-   topics |= static_cast<uint16_t>(topic);
+   topics |= static_cast< uint16_t >( topic );
    return;
 }
 
@@ -129,7 +127,7 @@ void ReportFormatBase::add_topic( THLAReportTopicsEnum topic )
 void ReportFormatBase::remove_topic( THLAReportTopicsEnum topic )
 {
    // Remove the topic to the reporting topics bit field.
-   topics &= ~(static_cast<uint16_t>(topic));
+   topics &= ~( static_cast< uint16_t >( topic ) );
    return;
 }
 
@@ -139,24 +137,22 @@ void ReportFormatBase::remove_topic( THLAReportTopicsEnum topic )
 bool ReportFormatBase::has_report_topic( THLAReportTopicsEnum topic )
 {
    // Check for special cases.
-   if ( topic == THLAReportTopicsEnum::REPORT_TOPICS_NONE ){
-      return( (topics == 0) ? true : false );
-   }
-   else if ( topic == THLAReportTopicsEnum::REPORT_TOPICS_ALL ){
-      return(    (has_report_topic( THLAReportTopicsEnum::REPORT_TOPICS_FEDERATION ))
-              && (has_report_topic( THLAReportTopicsEnum::REPORT_TOPICS_FEDERATE ))
-              && (has_report_topic( THLAReportTopicsEnum::REPORT_TOPICS_OBJECTS ))
-              && (has_report_topic( THLAReportTopicsEnum::REPORT_TOPICS_ATTRIBUTES ))
-              && (has_report_topic( THLAReportTopicsEnum::REPORT_TOPICS_INTERACTIONS ))
-              && (has_report_topic( THLAReportTopicsEnum::REPORT_TOPICS_PARAMETERS ))
-              && (has_report_topic( THLAReportTopicsEnum::REPORT_TOPICS_SYNC_POINTS )) );
+   if ( topic == THLAReportTopicsEnum::REPORT_TOPICS_NONE ) {
+      return ( topics == 0 );
+   } else if ( topic == THLAReportTopicsEnum::REPORT_TOPICS_ALL ) {
+      return ( has_report_topic( THLAReportTopicsEnum::REPORT_TOPICS_FEDERATION )
+               && has_report_topic( THLAReportTopicsEnum::REPORT_TOPICS_FEDERATE )
+               && has_report_topic( THLAReportTopicsEnum::REPORT_TOPICS_OBJECTS )
+               && has_report_topic( THLAReportTopicsEnum::REPORT_TOPICS_ATTRIBUTES )
+               && has_report_topic( THLAReportTopicsEnum::REPORT_TOPICS_INTERACTIONS )
+               && has_report_topic( THLAReportTopicsEnum::REPORT_TOPICS_PARAMETERS )
+               && has_report_topic( THLAReportTopicsEnum::REPORT_TOPICS_SYNC_POINTS ) );
    }
 
    // Return true is format is found in the report formats bit field.
-   return( ((topics & static_cast<uint16_t>(topic)) ? true : false ) );
+   return ( ( ( topics & static_cast< uint16_t >( topic ) ) ? true : false ) );
 }
 
-   
 //-------------------------------------------------------------------------
 // CheckpointConversionBase Interface.
 //-------------------------------------------------------------------------
