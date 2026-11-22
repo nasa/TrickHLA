@@ -88,12 +88,10 @@ class SpaceFOMRefFrameObject(TrickHLAObjectConfig):
       self.add_attributes()
 
    def initialize(self, thla_object):
-
       # Call the base class initialization utility function.
       TrickHLAObjectConfig.initialize(self, thla_object)
 
    def add_attributes(self):
-
       # Short cut the sim_object name for the frame data.
       frame_instance_name = self.trick_frame_sim_obj_name
 

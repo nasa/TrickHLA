@@ -23,6 +23,8 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{../../source/TrickHLA/SyncPointList.cpp}
 @trick_link_dependency{../../source/TrickHLA/SyncPoint.cpp}
 @trick_link_dependency{../../source/TrickHLA/SyncPointTimed.cpp}
+@trick_link_dependency{../../source/TrickHLA/Types.cpp}
+@trick_link_dependency{../../source/TrickHLA/time/Int64Time.cpp}
 
 @revs_title
 @revs_begin
@@ -137,6 +139,11 @@ class SyncPointList : public CheckpointConversionBase
 
    bool mark_synchronized( std::wstring const &label );
 
+   void set_achieve_sync_point_list_behavior( SyncPtListAchieveBehaviorEnum const behavior )
+   {
+      this->achieve_list_behavior = behavior;
+   }
+
    std::string to_string();
 
    std::string to_string( std::wstring const &label );
@@ -157,6 +164,8 @@ class SyncPointList : public CheckpointConversionBase
    SyncPointVector list; ///< @trick_units{--} Vector of sync-points objects
 
    std::string list_name; ///< @trick_units{--} Name of this sync-point list.
+
+   SyncPtListAchieveBehaviorEnum achieve_list_behavior; ///< @trick_units{--} Achieve sync-point list behavior (Default: ACHIEVE_ALL_AT_ONCE).
 
   private:
    // Do not allow the copy constructor or assignment operator.

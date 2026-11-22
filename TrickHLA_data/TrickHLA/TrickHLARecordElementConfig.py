@@ -23,19 +23,16 @@ class TrickHLARecordElementConfig:
    elements = None
 
    def __init__(self, rti_encoding, trick_name=None):
-
       self.rti_encoding = rti_encoding
       self.trick_name = trick_name
 
    def add_record_element(self, element):
-
       if self.elements == None:
          self.elements = []
 
       self.elements.append(element)
 
    def initialize_fixed_record(self, thla_elem, input_elem):
-
       if input_elem.rti_encoding == trick.TrickHLA.ENCODING_FIXED_RECORD:
          thla_elem.rti_encoding = trick.TrickHLA.ENCODING_FIXED_RECORD
          thla_elem.element_count = len(input_elem.elements)

@@ -19,7 +19,6 @@ from ..TrickHLA.TrickHLARecordElementConfig import *
 
 class SpaceFOMQuaternionFixedRecordConfig(TrickHLARecordElementConfig):
    def __init__(self, quat_rec_trick_name):
-
       TrickHLARecordElementConfig.__init__(
          self,
          rti_encoding=trick.TrickHLA.ENCODING_FIXED_RECORD,

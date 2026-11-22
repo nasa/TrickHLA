@@ -1093,6 +1093,41 @@ bool SyncPointManagerBase::achieve_sync_point_and_wait_for_synchronization(
    return true;
 }
 
+bool SyncPointManagerBase::achieve_and_wait_for_all_sync_points_synchronized(
+   string const &list_name )
+{
+   // NOTE: Locking mutex while waiting can cause deadlock for FedAmb callbacks.
+   bool status = false;
+
+   SyncPointList const *sp_list = get_sync_point_list( list_name );
+
+   if ( sp_list != nullptr ) {
+      if ( sp_list->achieve_list_behavior == TrickHLA::SYNC_PT_LIST_ACHIEVE_ONE_AT_A_TIME ) {
+         // Achieve and wait for synchronization for each sync-point one at a time.
+         for ( auto const *sp : sp_list->list ) {
+            if ( achieve_sync_point_and_wait_for_synchronization( sp->get_label() ) ) {
+               status = true;
+            }
+         }
+      } else {
+         // Achieve sync-points all at once then wait for synchronized.
+         achieve_all_sync_points( list_name );
+         status = wait_for_all_sync_points_synchronized( list_name );
+      }
+   }
+   return status;
+}
+
+void SyncPointManagerBase::set_achieve_sync_point_list_behavior(
+   SyncPtListAchieveBehaviorEnum const behavior,
+   std::string const                  &list_name )
+{
+   SyncPointList *sp_list = get_sync_point_list( list_name );
+   if ( sp_list != nullptr ) {
+      sp_list->set_achieve_sync_point_list_behavior( behavior );
+   }
+}
+
 string SyncPointManagerBase::to_string()
 {
    ostringstream msg;

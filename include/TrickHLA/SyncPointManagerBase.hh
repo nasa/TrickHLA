@@ -160,6 +160,11 @@ class SyncPointManagerBase : public CheckpointConversionBase
 
    bool achieve_sync_point_and_wait_for_synchronization( std::wstring const &label );
 
+   bool achieve_and_wait_for_all_sync_points_synchronized( std::string const &list_name );
+
+   void set_achieve_sync_point_list_behavior( SyncPtListAchieveBehaviorEnum const behavior,
+                                              std::string const                  &list_name );
+
    std::string to_string();
 
    std::string to_string( std::wstring const &label );

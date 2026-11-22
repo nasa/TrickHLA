@@ -264,6 +264,12 @@ class Federate : public CheckpointConversionBase
       execution_control->clear_multiphase_init_sync_points();
    }
 
+   void set_achieve_init_sync_points_behavior(
+      SyncPtListAchieveBehaviorEnum const behavior )
+   {
+      execution_control->set_achieve_init_sync_points_behavior( behavior );
+   }
+
    //
    // Federate management functions.
    //

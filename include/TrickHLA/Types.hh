@@ -329,6 +329,17 @@ typedef enum {
 } SyncPtStateEnum;
 
 /*!
+@enum SyncPtListAchieveBehaviorEnum
+@brief Define the TrickHLA achieve synchronization point list behavior.
+*/
+typedef enum {
+
+   SYNC_PT_LIST_ACHIEVE_ALL_AT_ONCE   = 0, ///< Achieve all sync-points in the list first before waiting for synchronization.
+   SYNC_PT_LIST_ACHIEVE_ONE_AT_A_TIME = 1  ///< Achieve sync-points in the list one at a time and wait for synchronization.
+
+} SyncPtListAchieveBehaviorEnum;
+
+/*!
 @enum ThreadStateEnum
 @brief Define the Trick child thread state for TrickHLA jobs.
 */

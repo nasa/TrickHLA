@@ -83,7 +83,6 @@ class SpaceFOMFederateConfig(TrickHLAFederateConfig):
       # self.add_multiphase_init_sync_point( 'sync_point_name' )
 
    def set_designated_late_joiner(self, designated_late_joiner):
-
       # You can only set the designated late joiner state before initialize method is called.
       if self.initialized:
          print(
@@ -96,7 +95,6 @@ class SpaceFOMFederateConfig(TrickHLAFederateConfig):
             self.federate.set_join_constraint(trick.TrickHLA.FEDERATE_JOIN_EARLY_OR_LATE)
 
    def set_master_role(self, master_state=True):
-
       # You can only change master state before initialize method is called.
       if self.initialized:
          print(
@@ -107,7 +105,6 @@ class SpaceFOMFederateConfig(TrickHLAFederateConfig):
          self.control.master = master_state
 
    def set_pacing_role(self, pacing_state=True):
-
       # You can only change pacing state before initialize method is called.
       if self.initialized:
          print(
@@ -118,7 +115,6 @@ class SpaceFOMFederateConfig(TrickHLAFederateConfig):
          self.control.pacing = pacing_state
 
    def set_RRFP_role(self, RRFP_state=True):
-
       # You can only change RRFP state before initialize method is called.
       if self.initialized:
          print(
@@ -129,7 +125,6 @@ class SpaceFOMFederateConfig(TrickHLAFederateConfig):
          self.control.root_frame_pub = RRFP_state
 
    def set_config_S_define_name(self, config_S_define_name):
-
       # You can only change RRFP state before initialize method is called.
       if self.initialized:
          print(
@@ -139,7 +134,6 @@ class SpaceFOMFederateConfig(TrickHLAFederateConfig):
          self.config_S_define_name = config_S_define_name
 
    def set_scenario_timeline_epoch(self, epoch):
-
       # You can only set sim_config path before initialize method is called.
       if self.initialized:
          print(
@@ -154,7 +148,6 @@ class SpaceFOMFederateConfig(TrickHLAFederateConfig):
       return
 
    def set_root_frame(self, root_frame):
-
       # You can only set root frame before initialize method is called.
       if self.initialized:
          print(
@@ -194,7 +187,6 @@ class SpaceFOMFederateConfig(TrickHLAFederateConfig):
       return
 
    def set_FOMs_path(self, FOMs_path):
-
       # You can only set SpaceFOM FOM module path before initialize method is called.
       if self.initialized:
          print(
@@ -236,7 +228,6 @@ class SpaceFOMFederateConfig(TrickHLAFederateConfig):
       return
 
    def initialize(self):
-
       # You can only initialize once.
       if self.initialized:
          print(

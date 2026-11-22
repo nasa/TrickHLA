@@ -64,12 +64,10 @@ class SpaceFOMMTRInteraction(TrickHLAInteractionConfig):
       self.add_parameters()
 
    def initialize(self, thla_interaction):
-
       # Call the base class initialization utility function.
       TrickHLAInteractionConfig.initialize(self, thla_interaction)
 
    def add_parameters(self):
-
       # Set up the map to the MTR interaction execution mode.
       parameter = TrickHLAParameterConfig(
          FOM_name="execution_mode",

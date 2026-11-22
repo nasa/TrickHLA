@@ -20,7 +20,6 @@ from ..TrickHLA.TrickHLARecordElementConfig import *
 
 class SpaceFOMSpaceTimeCoordinateFixedRecordConfig(TrickHLARecordElementConfig):
    def __init__(self, stc_rec_trick_name):
-
       TrickHLARecordElementConfig.__init__(
          self,
          rti_encoding=trick.TrickHLA.ENCODING_FIXED_RECORD,

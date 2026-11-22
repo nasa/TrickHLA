@@ -11,7 +11,6 @@
 #
 # PROGRAMMERS:
 #    (((Edwin Z. Crues) (NASA) (Jan 2019) (--) (SpaceFOM support and testing.))
-#     ((Dan Dexter) (NASA/ER6) (June 2021) (--) (Added set_wait_status_time.))
 #     ((Dan Dexter) (NASA/ER6) (July 2023) (--) (Added support for HLA base time unit.))
 #     ((Dan Dexter) (NASA/ER6) (Mar 2026) (--) (Added support for Federate Type string.)))
 ##############################################################################
@@ -86,7 +85,6 @@ class TrickHLAFederateConfig:
       self.setup_HLA_time_management()
 
    def initialize(self):
-
       # You can only initialize once.
       if self.initialized:
          print(
@@ -224,7 +222,6 @@ class TrickHLAFederateConfig:
       return
 
    def disable_trick_thread_associations(self, disable_thread_ids):
-
       # You can only disable thread IDS before initialize method is called.
       if self.initialized:
          print(
@@ -234,7 +231,6 @@ class TrickHLAFederateConfig:
          self.federate.disable_trick_thread_associations(str(disable_thread_ids))
 
    def set_federation_name(self, name):
-
       # You can only set federation name before initialize method is called.
       if self.initialized:
          print(
@@ -245,7 +241,6 @@ class TrickHLAFederateConfig:
             self.federate.federation_name = str(name)
 
    def set_federate_name(self, name):
-
       # You can only set the federate name before initialize method is called.
       if self.initialized:
          print(
@@ -256,7 +251,6 @@ class TrickHLAFederateConfig:
             self.federate.name = str(name)
 
    def set_federate_type(self, type):
-
       # You can only set the federate type before initialize method is called.
       if self.initialized:
          print(
@@ -267,7 +261,6 @@ class TrickHLAFederateConfig:
             self.federate.type = str(type)
 
    def set_HLA_base_time_unit(self, new_base_time_unit):
-
       # You can only set the HLA base time unit before initialize method is called.
       if self.initialized:
          print(
@@ -277,7 +270,6 @@ class TrickHLAFederateConfig:
          self.federate.set_HLA_base_time_unit(new_base_time_unit)
 
    def set_HLA_base_time_unit_and_scale_trick_tics(self, new_base_time_unit):
-
       # You can only set the HLA base time unit before initialize method is called.
       if self.initialized:
          print(
@@ -287,7 +279,6 @@ class TrickHLAFederateConfig:
          self.federate.set_HLA_base_time_unit_and_scale_trick_tics(new_base_time_unit)
 
    def set_HLA_base_time_multiplier(self, new_base_time_multiplier: int):
-
       # You can only set the HLA base time multiplier before initialize method is called.
       if self.initialized:
          print(
@@ -299,7 +290,6 @@ class TrickHLAFederateConfig:
    def set_HLA_base_time_multiplier_and_scale_trick_tics(
       self, new_base_time_multiplier: int
    ):
-
       # You can only set the HLA base time multiplier before initialize method is called.
       if self.initialized:
          print(
@@ -311,7 +301,6 @@ class TrickHLAFederateConfig:
          )
 
    def set_lookahead_time(self, lookahead_time: float):
-
       # You can only set lookahead time before initialize method is called.
       if self.initialized:
          print(
@@ -328,7 +317,6 @@ class TrickHLAFederateConfig:
          self.federate.set_lookahead(lookahead_time)
 
    def set_least_common_time_step(self, new_lcts: float):
-
       # You can only set LCTS before initialize method is called.
       if self.initialized:
          print(
@@ -352,7 +340,6 @@ class TrickHLAFederateConfig:
       return
 
    def set_time_padding(self, new_padding: float):
-
       # You can only set passing before initialize method is called.
       if self.initialized:
          print(
@@ -374,7 +361,6 @@ class TrickHLAFederateConfig:
       return
 
    def set_time_constrained(self, time_constrained):
-
       # You can only set time constrained before initialize method is called.
       if self.initialized:
          print(
@@ -385,7 +371,6 @@ class TrickHLAFederateConfig:
          time_management_srvc.time_constrained = time_constrained
 
    def set_time_regulating(self, time_regulating):
-
       # You can only set time regulating before initialize method is called.
       if self.initialized:
          print(
@@ -396,7 +381,6 @@ class TrickHLAFederateConfig:
          time_management_srvc.time_regulating = time_regulating
 
    def set_time_management(self, time_management):
-
       # You can only set time management before initialize method is called.
       if self.initialized:
          print(
@@ -414,7 +398,6 @@ class TrickHLAFederateConfig:
       time_managed=True,
       base_time_unit=trick.HLA_BASE_TIME_MICROSECONDS,
    ):
-
       # You can only setup parameters before initialize method is called.
       if self.initialized:
          print(
@@ -428,7 +411,6 @@ class TrickHLAFederateConfig:
          self.set_time_management(time_managed)
 
    def add_sim_object(self, sim_object):
-
       # You can only add simulation objects before initialize method is called.
       if self.initialized:
          print(
@@ -438,7 +420,6 @@ class TrickHLAFederateConfig:
          self.sim_objects.append(sim_object)
 
    def add_fed_object(self, fed_object):
-
       # You can only add federation objects before initialize method is called.
       if self.initialized:
          print(
@@ -448,7 +429,6 @@ class TrickHLAFederateConfig:
          self.fed_objects.append(fed_object)
 
    def add_fed_interaction(self, fed_interaction):
-
       # You can only add federation interactions before initialize method is called.
       if self.initialized:
          print(
@@ -458,7 +438,6 @@ class TrickHLAFederateConfig:
          self.fed_interactions.append(fed_interaction)
 
    def enable(self):
-
       self.enabled = True
 
       # Turn on all the HLA sim objects associated with this HLA federate.
@@ -466,7 +445,6 @@ class TrickHLAFederateConfig:
          trick.exec_set_sim_object_onoff(sim_object.name, True)
 
    def disable(self):
-
       self.enabled = False
 
       # Turn off all the HLA sim objects associated with this HLA federate.
@@ -474,25 +452,21 @@ class TrickHLAFederateConfig:
          trick.exec_set_sim_object_onoff(sim_object.name, False)
 
    def set_join_constraint(self, join_constraint):
-
       self.federate.set_join_constraint(join_constraint)
 
-   def set_debug_level(self, debug_level):
+   def set_achieve_init_sync_points_behavior(self, behavior):
+      # Achieve sync-point list behavior is one of
+      # trick.TrickHLA.SYNC_PT_LIST_ACHIEVE_ALL_AT_ONCE (default) or
+      # trick.TrickHLA.SYNC_PT_LIST_ACHIEVE_ONE_AT_A_TIME
+      self.federate.set_achieve_init_sync_points_behavior(behavior)
 
+   def set_debug_level(self, debug_level):
       self.federate.debug_level = debug_level
 
    def set_debug_source(self, debug_source):
-
       self.federate.code_section = debug_source
 
-   def set_wait_status_time(self, wait_status_time: float):
-
-      # Set the time in seconds TrickHLA will wait in a any spin-lock
-      # before it will print a status message to the console.
-      self.federate.wait_status_time = wait_status_time
-
    def add_known_federate(self, is_required, name, type=None):
-
       # If the type isn't specified, use an empty string.
       if not type:
          type = ""
@@ -506,7 +480,6 @@ class TrickHLAFederateConfig:
          self.known_federates.append((str(name), str(type), is_required))
 
    def add_FOM_module(self, name):
-
       # You can only add FOM modules before initialize method is called.
       if self.initialized:
          print(
@@ -516,7 +489,6 @@ class TrickHLAFederateConfig:
          self.fom_modules.append(str(name))
 
    def add_multiphase_init_sync_point(self, sync_point):
-
       # You can only add sync points before initialize method is called.
       if self.initialized:
          print(

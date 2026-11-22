@@ -197,14 +197,8 @@ class ExecutionControlBase : public SyncPointManagerBase
     *  that have not been achieved and wait for the federation to be
     *  synchronized on it. */
    virtual void clear_multiphase_init_sync_points();
-   /*! @brief Achieve all the user defined mulit-phase initialization
-    *  synchronization points if they are not already achieved and are not
-    *  one of the predefined ExecutionControl synchronization points. */
-   virtual void achieve_all_multiphase_init_sync_points();
-   /*! @brief Wait for all the user defined mulit-phase initialization
-    *  synchronization points if they are not already achieved and are not
-    *  one of the predefined ExecutionControl synchronization points. */
-   virtual void wait_for_all_multiphase_init_sync_points();
+   /*! @brief Set the achieve init sync-points behavior. */
+   void set_achieve_init_sync_points_behavior( SyncPtListAchieveBehaviorEnum const behavior );
 
    /*! Publish the ExecutionControl objects and interactions. */
    virtual void publish() = 0;

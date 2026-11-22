@@ -135,7 +135,6 @@ class TrickDataRecordingGroup(ABC):
    # created and configured.
    @staticmethod
    def initialize_groups():
-
       # Iterate through the Data Recording Group Collection
       for dr_group in TrickDataRecordingGroup.groups.values():
          trick.add_data_record_group(dr_group.drg, dr_group.buffer)
@@ -143,7 +142,6 @@ class TrickDataRecordingGroup(ABC):
    # A static method to retrieve a named Data Recording Group from the collection.
    @staticmethod
    def find_drg(group_name):
-
       # Check to see if the Trick Data Recording Group is in the collection.
       if group_name not in TrickDataRecordingGroup.groups:
          raise ValueError(
@@ -157,7 +155,6 @@ class TrickDataRecordingGroup(ABC):
    # A static method to retrieve a named Trick Data Recording Group from the collection.
    @staticmethod
    def find_trick_drg(group_name):
-
       # Find the Data Recording Group by name.
       dr_group = find_drg(group_name)
 
@@ -189,7 +186,6 @@ class TrickDataRecordingGroup(ABC):
 
    # A class variable to add a recording variable to this Data Recording Group.
    def add_variable(self, trick_variable):
-
       # Check to make sure that the Trick variable is a string.
       if not isinstance(trick_variable, str):
          raise TypeError(

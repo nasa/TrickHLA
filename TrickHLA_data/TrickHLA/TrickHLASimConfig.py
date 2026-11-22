@@ -35,7 +35,6 @@ from TrickHLA_data.Trick.TrickSimConfig import *
 class TrickHLASimConfig(TrickSimConfig):
    # Class constructor.
    def __init__(self, sim_name):
-
       # Set the name for the simulation.
       self.sim_name = sim_name
 

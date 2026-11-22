@@ -44,6 +44,7 @@ NASA, Johnson Space Center\n
 #include "TrickHLA/SyncPoint.hh"
 #include "TrickHLA/SyncPointList.hh"
 #include "TrickHLA/SyncPointTimed.hh"
+#include "TrickHLA/Types.hh"
 #include "TrickHLA/time/Int64Time.hh"
 #include "TrickHLA/utils/StringUtilities.hh"
 
@@ -74,7 +75,8 @@ using namespace TrickHLA;
  */
 SyncPointList::SyncPointList()
    : list(),
-     list_name()
+     list_name(),
+     achieve_list_behavior( TrickHLA::SYNC_PT_LIST_ACHIEVE_ALL_AT_ONCE )
 {
    return;
 }
@@ -85,7 +87,8 @@ SyncPointList::SyncPointList()
 SyncPointList::SyncPointList(
    string const &name )
    : list(),
-     list_name( name )
+     list_name( name ),
+     achieve_list_behavior( TrickHLA::SYNC_PT_LIST_ACHIEVE_ALL_AT_ONCE )
 {
    return;
 }

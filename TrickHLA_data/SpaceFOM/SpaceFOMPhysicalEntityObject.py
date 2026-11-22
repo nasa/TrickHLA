@@ -72,12 +72,10 @@ class SpaceFOMPhysicalEntityObject(TrickHLAObjectConfig):
       self.add_attributes()
 
    def initialize(self, thla_object):
-
       # Call the base class initialization utility function.
       TrickHLAObjectConfig.initialize(self, thla_object)
 
    def add_attributes(self):
-
       # Short cut the sim_object name for the PhysicalEntity data.
       entity_instance_name = self.trick_entity_sim_obj_name
 

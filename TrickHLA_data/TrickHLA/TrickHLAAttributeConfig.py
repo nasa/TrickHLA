@@ -48,7 +48,6 @@ class TrickHLAAttributeConfig(TrickHLARecordElementConfig):
       self.preferred_order = preferred_order
 
    def initialize(self, attribute):
-
       attribute.FOM_name = str(self.FOM_name)
       attribute.trick_name = str(self.trick_name)
       attribute.publish = self.publish

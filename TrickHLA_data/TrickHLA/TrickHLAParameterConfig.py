@@ -22,13 +22,10 @@ class TrickHLAParameterConfig(TrickHLARecordElementConfig):
    FOM_name = None
 
    def __init__(self, FOM_name, trick_name=None, rti_encoding=trick.ENCODING_UNKNOWN):
-
       TrickHLARecordElementConfig.__init__(self, rti_encoding, trick_name)
-
       self.FOM_name = FOM_name
 
    def initialize(self, parameter):
-
       parameter.FOM_name = str(self.FOM_name)
       parameter.trick_name = str(self.trick_name)
       parameter.rti_encoding = self.rti_encoding

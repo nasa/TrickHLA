@@ -134,7 +134,6 @@ class TrickHLAObjectConfig:
       # specific implementation classes.
 
    def initialize(self, thla_object=None):
-
       # Assign the associated TrickHLA object if specified.
       if thla_object != None:
          self.hla_object = thla_object
@@ -196,126 +195,101 @@ class TrickHLAObjectConfig:
          self.attributes[indx].initialize(self.hla_object.attributes[indx])
 
    def set_create(self, create_obj):
-
       self.hla_create = create_obj
       if self.hla_object != None:
          self.hla_object.create_HLA_instance = self.hla_create
 
    def get_create(self):
-
       return self.hla_create
 
    def set_required(self, required_state):
-
       self.hla_required = required_state
       if self.hla_object != None:
          self.hla_object.required = self.hla_required
 
    def set_instance_name(self, name):
-
       self.hla_instance_name = str(name)
       if self.hla_object != None:
          self.hla_object.name = str(name)
 
    def get_instance_name(self):
-
       return str(self.hla_instance_name)
 
    def set_FOM_name(self, name):
-
       self.hla_FOM_name = str(name)
       if self.hla_object != None:
          self.hla_object.FOM_name = str(name)
 
    def get_FOM_name(self):
-
       return str(self.hla_FOM_name)
 
    def set_thread_IDs(self, threadIDs):
-
       self.hla_thread_IDs = str(threadIDs)
       if self.hla_object != None:
          self.hla_object.thread_ids = str(threadIDs)
 
    def get_thread_IDs(self):
-
       return str(self.hla_thread_IDs)
 
    def set_lag_comp_instance(self, obj_lag_comp):
-
       self.hla_lag_comp_instance = obj_lag_comp
       if self.hla_object != None:
          self.hla_object.lag_comp = obj_lag_comp
          self.hla_object.lag_comp_type = trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE
 
    def set_lag_comp_type(self, lag_comp_type):
-
       self.hla_lag_comp_type = lag_comp_type
       if self.hla_object != None:
          self.hla_object.lag_comp_type = lag_comp_type
 
    def set_deleted_instance(self, obj_deleted):
-
       self.hla_deleted_instance = obj_deleted
       if self.hla_object != None:
          self.hla_object.deleted = obj_deleted
 
    def set_ownership_instance(self, obj_ownership_handler):
-
       self.hla_ownership_instance = obj_ownership_handler
       if self.hla_object != None:
          self.hla_object.ownership = obj_ownership_handler
 
    def set_conditional_instance(self, obj_conditional):
-
       self.hla_conditional_instance = obj_conditional
       if self.hla_object != None:
          self.hla_object.conditional = obj_conditional
 
    def set_packing_instance(self, obj_packing):
-
       self.hla_packing_instance = obj_packing
       if self.hla_object != None:
          self.hla_object.packing = obj_packing
 
    def get_packing_instance(self):
-
       return self.hla_packing_instance
 
    def add_attribute(self, attribute):
-
       self.attributes.append(attribute)
 
    def set_attribute_publish(self, publish):
-
       self.hla_attribute_publish = publish
 
    def get_attribute_publish(self):
-
       return self.hla_attribute_publish
 
    def set_attribute_subscribe(self, subscribe):
-
       self.hla_attribute_subscribe = subscribe
 
    def get_attribute_subscribe(self):
-
       return self.hla_attribute_subscribe
 
    def set_attribute_config(self, attribute_config):
-
       self.hla_attribute_config = attribute_config
 
    def get_attribute_config(self):
-
       return self.hla_attribute_config
 
    def set_blocking_cyclic_read(self, blocking_cyclic_read):
-
       self.hla_blocking_cyclic_read = blocking_cyclic_read
       if self.hla_object != None:
          self.hla_object.blocking_cyclic_read = self.hla_blocking_cyclic_read
 
    def get_blocking_cyclic_read(self):
-
       return self.hla_blocking_cyclic_read

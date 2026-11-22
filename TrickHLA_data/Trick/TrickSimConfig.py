@@ -42,7 +42,6 @@ class TrickSimConfig(ABC):
 
    # Override the allocation function to ensure one and only one instance.
    def __new__(tsc, *args, **kwargs):
-
       # Check if and instance already exists.
       if tsc._instance is None:
          # Not already allocated.  So, allocate one and only one instance.
@@ -57,7 +56,6 @@ class TrickSimConfig(ABC):
    @abstractmethod
    # Class constructor.
    def __init__(self, name):
-
       trick.exec_set_trap_sigfpe(True)
       trick.exec_set_stack_trace(False)
 
@@ -66,23 +64,19 @@ class TrickSimConfig(ABC):
 
    # Set the Trick software and freeze frame times.
    def set_software_and_freeze_frame_time(self, software_frame_time):
-
       self.set_software_frame_time(software_frame_time)
       self.set_freeze_frame_time(software_frame_time)
 
    # Set the Trick software frame time.
    def set_software_frame_time(self, software_frame_time):
-
       trick.exec_set_software_frame(software_frame_time)
 
    # Set the Trick freeze frame time.
    def set_freeze_frame_time(self, freeze_frame_time):
-
       trick.exec_set_freeze_frame(freeze_frame_time)
 
    # Common Trick realtime configuration.
    def realtime(self, software_frame_time):
-
       trick.frame_log_on()
       trick.real_time_enable()
       trick.itimer_enable()
@@ -90,7 +84,6 @@ class TrickSimConfig(ABC):
 
    # Setup to use the Trick Simulation Control Panel
    def sim_control_panel(self):
-
       self.fix_var_server_source_address()
       trick.var_resolve_hostname()
       trick.var_allow_connections()
@@ -99,7 +92,6 @@ class TrickSimConfig(ABC):
 
    # Setup to start the simulation in freeze or run.
    def start_in_freeze(self, freeze=True):
-
       # Enable CTRL-C keyboard interrupt signal to freeze/unfreeze the simulation.
       trick.exec_set_enable_freeze(True)
 

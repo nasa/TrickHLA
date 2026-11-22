@@ -68,12 +68,10 @@ class SpaceFOMDynamicalEntityObject(SpaceFOMPhysicalEntityObject):
       # self.add_attributes()
 
    def initialize(self, thla_object):
-
       # Call the base class initialization utility function.
       SpaceFOMPhysicalEntityObject.initialize(self, thla_object)
 
    def add_attributes(self):
-
       # Add the PhysicalEntity attributes.
       SpaceFOMPhysicalEntityObject.add_attributes(self)
 

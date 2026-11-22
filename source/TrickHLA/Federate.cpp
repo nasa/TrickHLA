@@ -238,7 +238,6 @@ Federate::Federate()
  */
 Federate::~Federate()
 {
-
    // Clear the list of known federates.
    known_federates.clear();
 
@@ -251,8 +250,6 @@ Federate::~Federate()
    // Make sure we destroy the mutex.
    time_management_service.time_adv_state_mutex.destroy();
    joined_federate_mutex.destroy();
-
-   return;
 }
 
 /*!

@@ -49,7 +49,6 @@ class SpaceFOMFederateConfig2(SpaceFOMFederateConfig):
       self.add_FOM_module(self.SpaceFOMs_path + "SISO_SpaceFOM_management2.xml")
 
    def set_FOMs_path(self, FOMs_path):
-
       # You can only set SpaceFOM FOM module path before initialize method is called.
       if self.initialized:
          print(

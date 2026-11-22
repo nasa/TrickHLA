@@ -20,6 +20,8 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{ExecutionConfigurationBase.cpp}
 @trick_link_dependency{ExecutionControlBase.cpp}
 @trick_link_dependency{Federate.cpp}
+@trick_link_dependency{InteractionServices.cpp}
+@trick_link_dependency{Object.cpp}
 @trick_link_dependency{ObjectServices.cpp}
 @trick_link_dependency{ReportingServices.cpp}
 @trick_link_dependency{SaveRestoreServices.cpp}
@@ -27,8 +29,10 @@ NASA, Johnson Space Center\n
 @trick_link_dependency{Types.cpp}
 @trick_link_dependency{time/CTETimelineBase.cpp}
 @trick_link_dependency{time/Int64BaseTime.cpp}
+@trick_link_dependency{time/Int64Time.cpp}
 @trick_link_dependency{time/ScenarioTimeline.cpp}
 @trick_link_dependency{time/SimTimeline.cpp}
+@trick_link_dependency{time/TimeManagementServices.cpp}
 @trick_link_dependency{utils/SleepTimeout.cpp}
 
 @revs_title
@@ -535,12 +539,7 @@ void ExecutionControlBase::clear_multiphase_init_sync_points()
       DebugHandler::print_message( __PRETTY_FUNCTION__, __LINE__, "\n" );
    }
 
-   // Achieve all the multiphase initialization synchronization points except.
-   achieve_all_multiphase_init_sync_points();
-
-   // Now wait for all the multiphase initialization sync-points to be
-   // synchronized in the federation.
-   wait_for_all_multiphase_init_sync_points();
+   achieve_and_wait_for_all_sync_points_synchronized( TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST );
 
    if ( DebugHandler::show( DEBUG_LEVEL_2_TRACE, DEBUG_SOURCE_EXECUTION_CONTROL ) ) {
       print_sync_points();
@@ -550,21 +549,10 @@ void ExecutionControlBase::clear_multiphase_init_sync_points()
 /*!
  * @job_class{initialization}
  */
-void ExecutionControlBase::achieve_all_multiphase_init_sync_points()
+void ExecutionControlBase::set_achieve_init_sync_points_behavior(
+   SyncPtListAchieveBehaviorEnum const behavior )
 {
-   // Iterate through this ExecutionControl's user defined multiphase
-   // initialization synchronization point list and achieve them.
-   achieve_all_sync_points( TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST );
-}
-
-/*!
- * @job_class{initialization}
- */
-void ExecutionControlBase::wait_for_all_multiphase_init_sync_points()
-{
-   // Wait for all the user defined multiphase initialization synchronization
-   // points to be achieved.
-   wait_for_all_sync_points_synchronized( TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST );
+   set_achieve_sync_point_list_behavior( behavior, TrickHLA::MULTIPHASE_INIT_SYNC_POINT_LIST );
 }
 
 /*!

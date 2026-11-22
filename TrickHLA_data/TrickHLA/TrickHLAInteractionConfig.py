@@ -63,7 +63,6 @@ class TrickHLAInteractionConfig:
       # specific implementation classes.
 
    def initialize(self, thla_manager_interaction=None):
-
       # Assign the associated TrickHLA object if specified.
       if thla_manager_interaction != None:
          self.hla_manager_interaction = thla_manager_interaction
@@ -93,45 +92,36 @@ class TrickHLAInteractionConfig:
          self.parameters[indx].initialize(self.hla_manager_interaction.parameters[indx])
 
    def set_FOM_name(self, name):
-
       self.hla_FOM_name = str(name)
       if self.hla_manager_interaction != None:
          self.hla_manager_interaction.FOM_name = str(name)
 
    def get_FOM_name(self):
-
       return str(self.hla_FOM_name)
 
    def set_publish(self, publish):
-
       self.hla_publish = publish
       if self.hla_manager_interaction != None:
          self.hla_manager_interaction.publish = self.hla_publish
 
    def get_publish(self):
-
       return self.hla_publish
 
    def set_subscribe(self, subscribe):
-
       self.hla_subscribe = subscribe
       if self.hla_manager_interaction != None:
          self.hla_manager_interaction.subscribe = self.hla_subscribe
 
    def get_subscribe(self):
-
       return self.hla_subscribe
 
    def set_handler_instance(self, inter_hndlr):
-
       self.hla_handler_instance = inter_hndlr
       if self.hla_manager_interaction != None:
          self.hla_manager_interaction.handler = inter_hndlr
 
    def get_handler_instance(self):
-
       return self.hla_handler_instance
 
    def add_parameter(self, param):
-
       self.parameters.append(param)
