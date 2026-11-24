@@ -43,7 +43,6 @@ class BallStateDRG(TrickDataRecordingGroup):
       buffer=TrickDRBuffer.BUFFER,
       enabled=True,
    ):
-
       # Set the base name for looking up the state variables.
       self.base_name = base_name
 

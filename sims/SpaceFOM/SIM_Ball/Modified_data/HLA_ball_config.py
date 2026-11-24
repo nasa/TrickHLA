@@ -11,7 +11,6 @@ def HLA_ball_config(
    obj_subscribe=None,
    obj_owns=None,
 ):
-
    # Perform some logical settings allowing for overrides.
    # If not overriding Publish, align with create flag.
    if obj_publish == None:

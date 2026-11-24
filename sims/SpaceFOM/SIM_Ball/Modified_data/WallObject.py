@@ -49,7 +49,6 @@ class WallsObject(TrickHLAObjectConfig):
       walls_thla_manager_object=None,
       walls_thread_IDs=None,
    ):
-
       # The Walls FOM name is fixed for the SpaceFOM.
       walls_FOM_name = "Walls"
 
@@ -76,12 +75,10 @@ class WallsObject(TrickHLAObjectConfig):
       self.add_attributes()
 
    def initialize(self, thla_object):
-
       # Call the base class initialization utility function.
       TrickHLAObjectConfig.initialize(self, thla_object)
 
    def add_attributes(self):
-
       # Short cut the sim_object name for the walls data.
       walls_instance_name = self.trick_walls_sim_obj_name
 

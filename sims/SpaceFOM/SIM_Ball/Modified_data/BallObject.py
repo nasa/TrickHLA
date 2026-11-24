@@ -49,7 +49,6 @@ class BallObject(TrickHLAObjectConfig):
       ball_thla_manager_object=None,
       ball_thread_IDs=None,
    ):
-
       # The Ball FOM name is fixed for the SpaceFOM.
       ball_FOM_name = "Ball"
 
@@ -79,12 +78,10 @@ class BallObject(TrickHLAObjectConfig):
       self.add_attributes()
 
    def initialize(self, thla_object):
-
       # Call the base class initialization utility function.
       TrickHLAObjectConfig.initialize(self, thla_object)
 
    def add_attributes(self):
-
       # Short cut the sim_object name for the ball data.
       ball_instance_name = self.trick_ball_sim_obj_name
 

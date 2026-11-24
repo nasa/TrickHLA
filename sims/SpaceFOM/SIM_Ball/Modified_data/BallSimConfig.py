@@ -37,7 +37,6 @@ from TrickHLA_data.Trick.TrickSimConfig import *
 class BallSimConfig(TrickSimConfig):
    # Class constructor.
    def __init__(self, sim_name):
-
       # Newer Trick releases require activation of the variable server interface.
       if "var_allow_connections" in dir(trick):
          trick.var_resolve_hostname()
@@ -57,7 +56,6 @@ class BallSimConfig(TrickSimConfig):
       TrickSimConfig.__init__(self, sim_name)
 
    def ball_graphics(self):
-
       # Set the Ball graphics command path.
       self.command_path = "../../../models/Ball/graphics/dist/BallDisplay.jar"
 
@@ -84,7 +82,6 @@ class BallSimConfig(TrickSimConfig):
          )
 
    def thlamcp(self):
-
       # Set the Ball graphics command path.
       self.command_path = "../../../scripts/thlamcp.py"
 
