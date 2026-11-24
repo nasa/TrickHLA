@@ -45,7 +45,6 @@ class BallFederateConfig(SpaceFOMFederateConfig2):
       federation_name="BallFederation",
       enabled=True,
    ):
-
       # Save the Ball simple sim configuration.
       self.ball_config = thla.ExCO
 
@@ -72,7 +71,7 @@ class BallFederateConfig(SpaceFOMFederateConfig2):
 
       # Configure the CRC.
       # Pitch specific local settings designator:
-      thla.federate.local_settings = "crcHost = localhost\n crcPort = 8989"
+      thla.federate.local_settings = "crcHost = localhost:8989"
 
       # Specify the HLA base time unit (default: trick.HLA_BASE_TIME_MICROSECONDS)
       # and scale the Trick time tics value.
@@ -92,7 +91,6 @@ class BallFederateConfig(SpaceFOMFederateConfig2):
       self.set_time_constrained(True)
 
    def initialize(self):
-
       # You can only initialize once.
       if self.initialized:
          print("BallFederateConfig.initialize(): Warning, already initialized! Ignoring!")

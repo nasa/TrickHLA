@@ -75,7 +75,7 @@ class BallFederateConfig(TrickHLAFederateConfig):
 
       # Configure the CRC.
       # Pitch specific local settings designator:
-      thla.federate.local_settings = "crcHost = localhost\n crcPort = 8989"
+      thla.federate.local_settings = "crcHost = localhost:8989"
 
       # Set the federate lookahead time.
       self.set_lookahead_time(0.100)
