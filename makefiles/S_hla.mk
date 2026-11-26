@@ -84,6 +84,17 @@ ifeq ($(IS_PITCH_RTI),1)
          export PRTI6_ROOT = ${RTI_HOME}
          $(info ${GREEN_TXT}S_hla.mk:INFO: Overriding PRTI6_ROOT = ${PRTI6_ROOT}${RESET_TXT})
       endif
+      # The Pitch libraries depend on the PRTI6_ROOT environment variable,
+      # so pass it to Trick so the simulation executable can run.
+      export TRICK_GTE_EXT += PRTI6_ROOT
+   else
+      # Is RTI_HOME pointing to version 6 of the Pitch RTI.
+      ifneq ("$(wildcard ${RTI_HOME}/bin/prti6.sh)","")
+         # The Pitch libraries depend on the PRTI6_ROOT environment variable,
+         # so define it and pass it to Trick so the simulation executable can run.
+         export PRTI6_ROOT = ${RTI_HOME}
+         export TRICK_GTE_EXT += PRTI6_ROOT
+      endif
    endif
    ifdef PRTI1516E_HOME
       ifneq ($(PRTI1516E_HOME),$(RTI_HOME))
@@ -205,10 +216,9 @@ ifeq ($(TRICK_HOST_TYPE),Darwin)
          # Using gcc compiler instead of clang.
          $(error ${RED_TXT}S_hla.mk:ERROR: Pitch RTI for HLA 4 only supports clang on the Mac.${RESET_TXT})
       endif
-      # Add the CLASSPATH and DYLD_LIBRARY_PATH environment variables to the
-      # simulation executable.
-      export CLASSPATH     += ${RTI_HOME}/lib/prti1516_hla4.jar
-      export TRICK_GTE_EXT += CLASSPATH DYLD_LIBRARY_PATH
+
+      # Add the DYLD_LIBRARY_PATH environment variables to the simulation executable.
+      export TRICK_GTE_EXT += DYLD_LIBRARY_PATH
 
    else ifeq ($(RTI_VENDOR),Pitch_HLA_Evolved)
       # Allow the user to override RTI_JAVA_HOME or RTI_JAVA_LIB_PATH,
@@ -262,10 +272,9 @@ ifeq ($(TRICK_HOST_TYPE),Darwin)
          # Using gcc compiler instead of clang.
          $(error ${RED_TXT}S_hla.mk:ERROR: Pitch RTI only supports clang on the Mac.${RESET_TXT})
       endif
-      # Add the CLASSPATH and DYLD_LIBRARY_PATH environment variables to the
-      # simulation executable.
-      export CLASSPATH     += ${RTI_HOME}/lib/prti1516e.jar
-      export TRICK_GTE_EXT += CLASSPATH DYLD_LIBRARY_PATH
+
+      # Add the DYLD_LIBRARY_PATH environment variables to the simulation executable.
+      export TRICK_GTE_EXT += DYLD_LIBRARY_PATH
    else
       $(error ${RED_TXT}S_hla.mk:ERROR: Unsupported RTI_VENDOR '${RTI_VENDOR}', must specify Pitch_HLA_4 or Pitch_HLA_Evolved.${RESET_TXT})
    endif
@@ -322,10 +331,6 @@ else
       endif
       TRICK_USER_LINK_LIBS += -L${RTI_JAVA_LIB_PATH}/.. -L${RTI_JAVA_LIB_PATH} -Wl,-rpath,${RTI_JAVA_LIB_PATH}/.. -Wl,-rpath,${RTI_JAVA_LIB_PATH} -ljava -ljvm -lverify
 
-      # Add the CLASSPATH environment variable to the simulation executable.
-      export CLASSPATH     += ${RTI_HOME}/lib/prti1516_hla4.jar
-      export TRICK_GTE_EXT += CLASSPATH
-
       # Determine which gcc library version to use.
       ifeq ($(shell [ $(COMPILER_VERSION) -ge 7 ] && echo true),true)
          RTI_LIB_PATH = ${RTI_HOME}/lib
@@ -381,10 +386,6 @@ else
          $(error ${RED_TXT}S_hla.mk:ERROR: The path specified by RTI_JAVA_LIB_PATH is invalid for ${RTI_JAVA_LIB_PATH}${RESET_TXT})
       endif
       TRICK_USER_LINK_LIBS += -L${RTI_JAVA_LIB_PATH}/.. -L${RTI_JAVA_LIB_PATH} -Wl,-rpath,${RTI_JAVA_LIB_PATH}/.. -Wl,-rpath,${RTI_JAVA_LIB_PATH} -ljava -ljvm -lverify
-
-      # Add the CLASSPATH environment variable to the simulation executable.
-      export CLASSPATH     += ${RTI_HOME}/lib/prti1516e.jar
-      export TRICK_GTE_EXT += CLASSPATH
 
       # Determine which gcc library version to use.
       ifeq ($(shell [ $(COMPILER_VERSION) -ge 7 ] && echo true),true)

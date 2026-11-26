@@ -61,6 +61,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Changed
 - Improved performance by removing the reflected attribute queue internal mutex because of unnecessary multiple mutex locking.
 - Fixed enable and disable functions in Federate config (issue #191).
+- Updated the S_hla.mk makefile to add the PRTI6_ROOT environment variable to the simulation executable because the Pitch RTI libraries for version 6 depend on it in order find and load its jar files.
 
 
 ## [v3.3.0] - 2026-10-05
