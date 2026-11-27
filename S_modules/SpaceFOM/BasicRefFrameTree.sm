@@ -1,0 +1,132 @@
+/*****************************************************************************
+ * General TrickHLA Space Reference Federation Object Model (SpaceFOM)
+ * Simulation Definition Object for the standard reference frames.
+ *---------------------------------------------------------------------------*
+ * PURPOSE:
+ *    (This is a Simulation Definition 'S_define' module that defines
+ *     the standard SpaceFOM reference frame tree.)
+ ****************************************************************************/
+/*****************************************************************************
+ *       Author: Edwin Z. Crues
+ *         Date: July 2023
+ *       E-Mail: Edwin.Z.Crues@nasa.gov
+ *        Phone: 281-483-2902
+ * Organization: Mail Code ER7
+ *               Simulation & Graphics Branch
+ *               Software, Robotics & Simulation Division
+ *               2101 NASA Parkway
+ *               Houston, Texas 77058
+ *---------------------------------------------------------------------------*
+ * Modified By: Dan Dexter
+ *        Date: November 24, 2026
+ * Description: Refactored from TestRefFrameTree.sm
+ ****************************************************************************/
+#ifndef SPACEFOM_BASIC_REF_FRAME_TREE_SIM_OBJECT
+#define SPACEFOM_BASIC_REF_FRAME_TREE_SIM_OBJECT
+
+// TrickHLA include files.
+##include "TrickHLA/DebugHandler.hh"
+##include "TrickHLA/Federate.hh"
+
+// SpaceFOM include files.
+##include "SpaceFOM/ExecutionControl.hh"
+##include "SpaceFOM/RefFrameData.hh"
+##include "SpaceFOM/RefFrameBase.hh"
+
+#include "SpaceFOM/RefFrameTreeBase.sm"
+
+//==========================================================================
+// SIM_OBJECT: SpaceFOMBasicRefFrameTreeSimObject - An example reference
+// frame tree simulation object definition.
+//==========================================================================
+class SpaceFOMBasicRefFrameTreeSimObject : public SpaceFOMRefFrameTreeBaseSimObject {
+
+  public:
+
+   // Working SpaceFOM reference frames.
+   SpaceFOM::RefFrameData root_frame_data;
+
+   // References to working SpaceFOM reference frames.
+   SpaceFOM::RefFrameBase * root_frame_ptr;
+
+   // _ADD and _BUILD phases need to be less than 60, when TrickHLA is initialized.
+   SpaceFOMBasicRefFrameTreeSimObject( TrickHLA::Federate         & thla_fed,
+                                       SpaceFOM::ExecutionControl & exec_cntrl_in,
+                                       unsigned short               _INIT = P_HLA_INIT,
+                                       unsigned short               _BUILD = (P_HLA_INIT+1) )
+      : SpaceFOMRefFrameTreeBaseSimObject( thla_fed, exec_cntrl_in, _INIT, _BUILD ),
+        root_frame_ptr( nullptr )
+   {
+      //
+      // NOTE: P_BUILD has to run after P_INIT!
+      //
+      
+      return;
+   }
+
+  private:
+   
+   // Define the interface to configure the reference frame tree.
+   // This is the implementation of the configure_tree default_data interface
+   // called in the SpaceFOMRefFrameTreeBaseSimObject base class.
+   void configure_tree()
+   {
+      // This is a very simple SpaceFOM-compliant reference frame tree.
+      // It has just a root frame (root_ref_frame).
+
+      // Note that we do NOT need to configure the reference frames here.
+      // The frames will be configured separately as part of the simulation
+      // default_data and initialization processes.
+   }
+
+   // Define the interface to configure the reference frame tree.
+   // This is the implementation of the configure_tree default_data interface
+   // called in the SpaceFOMRefFrameTreeBaseSimObject base class.
+   void initialize()
+   {
+      // Check to see if the root reference frame is actualy being configured.
+      // If not, don't tell the ExecutionControl about it.
+      if ( root_frame_ptr->get_object() != nullptr ) {
+         // Set the root reference frame in the ExCO.
+         exec_cntrl.root_ref_frame = root_frame_ptr;
+      }
+   }
+
+  private:
+   // This object is not copyable
+   SpaceFOMBasicRefFrameTreeSimObject( SpaceFOMBasicRefFrameTreeSimObject const & );
+   SpaceFOMBasicRefFrameTreeSimObject & operator=( SpaceFOMBasicRefFrameTreeSimObject const & );
+};
+
+
+//==========================================================================
+// SIM_OBJECT: SpaceFOMRefFrameSimObject - An example reference frame
+// simulation object definition. This can be used for SpaceFOM ReferenceFrame
+// object discovery and data exchange.
+//==========================================================================
+#include "SpaceFOM/RefFrame.sm"
+
+
+//==========================================================================
+// Instantiate the reference frame tree and constituent frames.
+//==========================================================================
+
+// SimObject used for root reference frame discovery.
+SpaceFOMBasicRefFrameTreeSimObject ref_frame_tree( THLA.federate,
+                                                   THLA.execution_control );
+SpaceFOMRefFrameSimObject root_ref_frame( true,
+                                          "root_ref_frame",
+                                          "RootFrame",
+                                          ref_frame_tree.frame_tree,
+                                          ref_frame_tree.root_frame_data );
+
+
+//==========================================================================
+// Create the THLA connections for the SpaceFOM Reference Frame Tree.
+//==========================================================================
+void create_connections() {
+   // Make the connections for the root and child frame in the reference frame tree.
+   ref_frame_tree.root_frame_ptr = &root_ref_frame.frame_packing;
+}
+
+#endif // SPACEFOM_BASIC_REF_FRAME_TREE_SIM_OBJECT
