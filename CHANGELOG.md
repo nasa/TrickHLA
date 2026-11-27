@@ -56,6 +56,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 - Added support to change the behavior of the <i>("initialization") federate.clear_init_sync_points();</i> job to either achieve all the multiphase initialization synchronization points all at once (default: SYNC_PT_LIST_ACHIEVE_ALL_AT_ONCE) or one at a time (SYNC_PT_LIST_ACHIEVE_ONE_AT_A_TIME). The achieve synchronization points behavior can be set in the input file by calling either federate_config.set_achieve_init_sync_points_behavior(trick.TrickHLA.SYNC_PT_LIST_ACHIEVE_ALL_AT_ONCE) or federate_config.set_achieve_init_sync_points_behavior(trick.TrickHLA.SYNC_PT_LIST_ACHIEVE_ONE_AT_A_TIME).
+- Added support for a basic reference tree with a root reference frame. See the SpaceFOM sine wave example simulations.
 
 
 ### Changed
