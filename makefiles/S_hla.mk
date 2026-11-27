@@ -11,6 +11,7 @@
 # Info and error message text colors.
 RED_TXT   =[31m
 GREEN_TXT =[32m
+AMBER_TXT =[33m
 RESET_TXT =[00m
 
 # Make sure the cut, grep, and which system commands can be found.
@@ -81,19 +82,21 @@ endif
 ifeq ($(IS_PITCH_RTI),1)
    ifdef PRTI6_ROOT
       ifneq ($(PRTI6_ROOT),$(RTI_HOME))
+         # The Pitch libraries depend on the PRTI6_ROOT environment variable,
+         # so pass it to Trick so the simulation executable can run because we
+         # are overriding the value.
          export PRTI6_ROOT = ${RTI_HOME}
-         $(info ${GREEN_TXT}S_hla.mk:INFO: Overriding PRTI6_ROOT = ${PRTI6_ROOT}${RESET_TXT})
+         export TRICK_GTE_EXT += PRTI6_ROOT
+         $(info ${AMBER_TXT}S_hla.mk:WARNING: Overriding PRTI6_ROOT = ${PRTI6_ROOT}${RESET_TXT})
       endif
-      # The Pitch libraries depend on the PRTI6_ROOT environment variable,
-      # so pass it to Trick so the simulation executable can run.
-      export TRICK_GTE_EXT += PRTI6_ROOT
    else
       # Is RTI_HOME pointing to version 6 of the Pitch RTI.
       ifneq ("$(wildcard ${RTI_HOME}/bin/prti6.sh)","")
          # The Pitch libraries depend on the PRTI6_ROOT environment variable,
-         # so define it and pass it to Trick so the simulation executable can run.
+         # so set it and pass it to Trick so the simulation executable can run.
          export PRTI6_ROOT = ${RTI_HOME}
          export TRICK_GTE_EXT += PRTI6_ROOT
+         $(info ${AMBER_TXT}S_hla.mk:WARNING: PRTI6_ROOT environment variable is not set! Setting PRTI6_ROOT = ${PRTI6_ROOT}${RESET_TXT})
       endif
    endif
    ifdef PRTI1516E_HOME
