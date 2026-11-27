@@ -36,6 +36,9 @@ if trickhla_home not in sys.path:
 # Load the sine specific Sine object.
 from TrickHLA_data.sine.SineObject import *
 
+# Import the Basic Root Reverence Frame Tree configuration object.
+from TrickHLA_data.SpaceFOM.BasicRefFrameTree import *
+
 # Load the SpaceFOM specific federate configuration object.
 from TrickHLA_data.SpaceFOM.SpaceFOMFederateConfig2 import *
 
@@ -406,96 +409,16 @@ sine_P = SineObject(
 federate.add_fed_object(sine_P)
 
 # ---------------------------------------------------------------------------
-# Set up for Root Reference Frame data.
-# ---------------------------------------------------------------------------
-ref_frame_tree.root_frame_data.name = root_frame_name
-ref_frame_tree.root_frame_data.parent_name = ""
-
-ref_frame_tree.root_frame_data.state.pos[0] = 0.0
-ref_frame_tree.root_frame_data.state.pos[1] = 0.0
-ref_frame_tree.root_frame_data.state.pos[2] = 0.0
-ref_frame_tree.root_frame_data.state.vel[0] = 0.0
-ref_frame_tree.root_frame_data.state.vel[1] = 0.0
-ref_frame_tree.root_frame_data.state.vel[2] = 0.0
-ref_frame_tree.root_frame_data.state.att.scalar = 1.0
-ref_frame_tree.root_frame_data.state.att.vector[0] = 0.0
-ref_frame_tree.root_frame_data.state.att.vector[1] = 0.0
-ref_frame_tree.root_frame_data.state.att.vector[2] = 0.0
-ref_frame_tree.root_frame_data.state.ang_vel[0] = 0.0
-ref_frame_tree.root_frame_data.state.ang_vel[1] = 0.0
-ref_frame_tree.root_frame_data.state.ang_vel[2] = 0.0
-ref_frame_tree.root_frame_data.state.time = 0.0
-
-ref_frame_tree.leaf_frame_data.name = "FrameA"
-ref_frame_tree.leaf_frame_data.parent_name = root_frame_name
-
-ref_frame_tree.leaf_frame_data.state.pos[0] = 10.0
-ref_frame_tree.leaf_frame_data.state.pos[1] = 10.0
-ref_frame_tree.leaf_frame_data.state.pos[2] = 10.0
-ref_frame_tree.leaf_frame_data.state.vel[0] = 0.0
-ref_frame_tree.leaf_frame_data.state.vel[1] = 0.1
-ref_frame_tree.leaf_frame_data.state.vel[2] = 0.0
-ref_frame_tree.leaf_frame_data.state.att.scalar = 1.0
-ref_frame_tree.leaf_frame_data.state.att.vector[0] = 0.0
-ref_frame_tree.leaf_frame_data.state.att.vector[1] = 0.0
-ref_frame_tree.leaf_frame_data.state.att.vector[2] = 0.0
-ref_frame_tree.leaf_frame_data.state.ang_vel[0] = 0.0
-ref_frame_tree.leaf_frame_data.state.ang_vel[1] = 0.1
-ref_frame_tree.leaf_frame_data.state.ang_vel[2] = 0.0
-ref_frame_tree.leaf_frame_data.state.time = 0.0
-
-# ---------------------------------------------------------------------------
-# Set up the Root Reference Frame object for discovery.
+# Set up the Basic Root Reference Frame object for discovery.
 # If it is the RRFP, it will publish the frame.
 # If it is NOT the RRFP, it will subscribe to the frame.
 # ---------------------------------------------------------------------------
-root_frame = SpaceFOMRefFrameObject(
-   create_frame_object=federate.is_RRFP,
-   frame_instance_name=root_frame_name,
-   frame_S_define_instance=root_ref_frame.frame_packing,
-   frame_S_define_instance_name="root_ref_frame.frame_packing",
-   frame_conditional=root_ref_frame.conditional,
+root_frame_tree = BasicRefFrameTree(
+   federate_config=federate,
+   ref_tree_sim_obj=ref_frame_tree,
+   root_frame_sim_obj=root_ref_frame,
+   tree_debug=False,
 )
-
-# Set the debug flag for the root reference frame.
-root_ref_frame.frame_packing.debug = verbose
-
-# Set the root frame for the federate.
-federate.set_root_frame(root_frame)
-
-# Set the lag compensation parameters.
-# NOTE: The ROOT REFERENCE FRAME never needs to be compensated!
-
-# ---------------------------------------------------------------------------
-# Set up an alternate vehicle reference frame object for discovery.
-# ---------------------------------------------------------------------------
-frame_A = SpaceFOMRefFrameObject(
-   create_frame_object=True,
-   frame_instance_name="FrameA",
-   frame_S_define_instance=leaf_ref_frame.frame_packing,
-   frame_S_define_instance_name="leaf_ref_frame.frame_packing",
-   parent_S_define_instance=root_ref_frame.frame_packing,
-   parent_name=root_frame_name,
-   frame_conditional=leaf_ref_frame.conditional,
-   frame_lag_comp=leaf_ref_frame.lag_compensation,
-   frame_ownership=leaf_ref_frame.ownership_handler,
-   frame_deleted=leaf_ref_frame.deleted_callback,
-)
-
-# Set the debug flag for the root reference frame.
-leaf_ref_frame.frame_packing.debug = verbose
-
-# Add this reference frame to the list of managed object.
-federate.add_fed_object(frame_A)
-
-# Set the lag compensation parameters.
-# The reality is that the ROOT REFERENCE FRAME never needs to be compensated!
-leaf_ref_frame.lag_compensation.debug = False
-leaf_ref_frame.lag_compensation.set_integ_tolerance(1.0e-6)
-leaf_ref_frame.lag_compensation.set_integ_dt(0.025)
-
-# frame_A.set_lag_comp_type( trick.TrickHLA.LAG_COMPENSATION_NONE )
-frame_A.set_lag_comp_type(trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE)
 
 # ---------------------------------------------------------------------------
 # Add the HLA SimObjects associated with this federate.
@@ -505,7 +428,6 @@ frame_A.set_lag_comp_type(trick.TrickHLA.LAG_COMPENSATION_RECEIVE_SIDE)
 federate.add_sim_object(THLA)
 federate.add_sim_object(THLA_INIT)
 federate.add_sim_object(root_ref_frame)
-federate.add_sim_object(leaf_ref_frame)
 federate.add_sim_object(A)
 federate.add_sim_object(P)
 

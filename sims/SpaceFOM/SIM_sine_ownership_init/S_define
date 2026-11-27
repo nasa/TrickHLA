@@ -75,10 +75,11 @@
 
 
 //==========================================================================
-// SIM_OBJECT: SpaceFOMRefFrameTreeSimObject - An example reference frame
-// tree simulation object definition.
+// SIM_OBJECT: SpaceFOMBasicRefFrameTreeSimObject - A basic reference
+// frame tree simulation object definition. This simulation module also
+// intantiates a root reference frame to populate the tree: root_ref_frame
 //==========================================================================
-#include "SpaceFOM/TestRefFrameTree.sm"
+#include "SpaceFOM/BasicRefFrameTree.sm"
 
 
 //=============================================================================
